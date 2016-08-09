@@ -1,0 +1,10 @@
+.contact-edit-dialog-header {
+    background-color: #216FB5;
+    color: white;
+    font-size: small
+}
+
+.contact-edit-dialog-form-body {
+  display: flex;
+  flex-direction: column;
+}
