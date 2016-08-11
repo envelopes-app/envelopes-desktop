@@ -27,6 +27,7 @@ ReactDOM.render(
       <Route path='/' component={App}>
         <IndexRoute component={CContactsContainer} />
       </Route>
+	  <Route path='*' component={App} />
     </Router>
   </Provider>,
   document.getElementById('root')

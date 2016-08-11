@@ -8,7 +8,6 @@ var paths = require('./paths');
 module.exports = {
   devtool: 'eval',
   entry: [
-    require.resolve('webpack-dev-server/client'),
     require.resolve('webpack/hot/dev-server'),
     require.resolve('./polyfills'),
     'font-awesome-loader', 

@@ -30,8 +30,8 @@ module.exports = {
     publicPath: publicPath
   },
   resolve: {
-    extensions: ['', '.js', '.ts', '.tsx', 'css'],
-    modulesDirectories: [path.appSrc, path.ownNodeModules, path.bootstrapCSSPath]
+    extensions: ['', '.js', '.ts', '.tsx', 'css']
+//    modulesDirectories: [path.appSrc, path.ownNodeModules, path.bootstrapCSSPath]
   },
   resolveLoader: {
     root: paths.ownNodeModules,
