@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const {app, ipcMain, BrowserWindow, Menu} = require('electron');
-const { initializeSharedLibrary, handleRequest } = require('./app-sl/SLMain');
+const { app, ipcMain, BrowserWindow, Menu } = require('electron');
+const { initializeDatabase, closeDatabase, executeDatabaseQueries } = require('./electron-database');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -37,27 +37,24 @@ const createWindow = () => {
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', () => {
-		// Dereference the window object, usually you would store windows
-		// in an array if your app supports multi windows, this is the time
-		// when you should delete the corresponding element.
-		mainWindow = null
+		// Set the local reference to the main window to null
+		mainWindow = null;
+		// Close the database. We will re-initialize it if we activate.
+		closeDatabase();
 	});
 }
 
-const initializeSL = () => {
+const handleDatabaseMessage = (event, args) => {
 
-	// Ensure that the directory for storing the database file exists
-	var databaseDir = path.join(app.getPath('documents'), "ENAB");
-	if (!fs.existsSync(databaseDir)) {
-		fs.mkdirSync(databaseDir);
-	}
-	var databaseFileName = path.join(databaseDir,'enab.db');
-	// Initialize the shared library
-	initializeSharedLibrary(databaseFileName);
-	// Start listing for ipc messages
-	ipcMain.on('asynchronous-message', (event, args) => {
-		handleRequest(event,args);
-	});
+	return executeDatabaseQueries(args)
+		.then((resultObj)=>{
+			// pass the result object received from the database back to the caller
+			event.sender.send('database-reply', resultObj);
+		})
+		.catch(function(error) {
+			// In case of error, send the error object back to the caller
+			event.sender.send('database-reply', error);
+		});
 }
 
 /*
@@ -75,16 +72,32 @@ const installExtensions = async () => {
 	}
 };
 */
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
 	// Install the required extensions
   	// await installExtensions();
+
 	// Start listening for ipc messages
-	initializeSL();
-	// Create the main window
-	createWindow();
+	ipcMain.on('database-message', (event, args) => {
+		handleDatabaseMessage(event, args);
+	});
+
+	ipcMain.on('test-message', (event, args) => {
+		event.sender.send('test-reply', args);
+	});
+
+	// Initialize the database 
+	initializeDatabase()
+		.then(()=>{
+			// Create the main window
+			createWindow();
+		})
+		.catch(function(error) {
+			console.log(error);
+		});
 });
 
 // Quit when all windows are closed.
@@ -92,16 +105,22 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
 })
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
+	// On macOS it's common to re-create a window in the app when the
+	// dock icon is clicked and there are no other windows open.
+	if (mainWindow === null) {
+		initializeDatabase()
+			.then(()=>{
+				createWindow();
+			})
+			.catch(function(error) {
+				console.log(error);
+			});
+	}
 })
 
 // In this file you can include the rest of your app's specific main process

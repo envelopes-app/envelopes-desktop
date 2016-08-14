@@ -14,7 +14,7 @@ module.exports = {
     require.resolve('./polyfills'),
     'font-awesome-loader', 
     'bootstrap-loader',
-    path.join(paths.appFESrc, 'index')
+    path.join(paths.appSrc, 'index')
   ],
   output: {
     // Next line is not used in dev but WebpackDevServer crashes without it:
@@ -35,29 +35,29 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'eslint!source-map',
-        include: paths.appFESrc
+        include: paths.appSrc
       }
     ],
     loaders: [
       {
         test: /\.js$/,
-        include: paths.appFESrc,
+        include: paths.appSrc,
         loader: 'babel',
         query: require('./babel.dev')
       },
       { 
         test: /\.(ts|tsx)?$/, 
-        include: paths.appFESrc,
+        include: paths.appSrc,
         loader: 'ts' 
       }, 
       {
         test: /\.css$/,
-        include: [paths.appFESrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'style!css!postcss'
       },
       {
         test: /\.json$/,
-        include: [paths.appFESrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'json'
       },
       {
@@ -90,9 +90,6 @@ module.exports = {
       }
     ]
   },
-  ts: {
-	configFileName: path.join(paths.appFESrc, 'tsconfig.json')
-  },
   eslint: {
     configFile: path.join(__dirname, 'eslint.js'),
     useEslintrc: false
@@ -101,6 +98,7 @@ module.exports = {
     return [autoprefixer];
   },
   plugins: [
+	new webpack.IgnorePlugin(/vertx/),
     new LodashModuleReplacementPlugin,
     new HtmlWebpackPlugin({
       inject: true,

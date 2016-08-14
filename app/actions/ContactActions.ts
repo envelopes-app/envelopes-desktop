@@ -2,7 +2,7 @@
 
 import { Contact } from '../models/Contact';
 import { ApplicationState } from '../models/ApplicationState';
-import * as RSVP from 'es6-promise';
+import { Promise } from 'es6-promise';
 
 // ********************************************************************************************
 // Action Names
@@ -99,7 +99,7 @@ export function setContactSearchFilter(searchPhrase:string):SetContactSearchFilt
 // Dummy Async function that returns contacts data
 function getContactsFromServer():Promise<Array<Contact>> {
 
-	return RSVP.Promise.resolve([
+	return Promise.resolve([
 		{
 			contactId: null,
 			firstName: "Faisal",

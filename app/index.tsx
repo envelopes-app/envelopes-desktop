@@ -7,6 +7,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { ipcRenderer } from 'electron';
 
 import { App } from './components/App';
 import CContactsContainer from './components/contacts/CContactsContainer';
@@ -20,6 +21,12 @@ injectTapEventPlugin();
 const initialState = {};
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
 store.dispatch(fetchContacts());
+
+ipcRenderer.on('test-reply', (event:Electron.IpcRendererEvent, ...args:any[])=>{
+	console.log(args);
+});
+
+ipcRenderer.send('test-message', { a: "value of a"});
 
 ReactDOM.render(
   <Provider store={store}>

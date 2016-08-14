@@ -1,13 +1,13 @@
 /// <reference path='../_includes.ts' />
 
 import * as sqlite3 from 'sqlite3';
-import * as RSVP from 'es6-promise';
+import * as RSVP from 'rsvp';
 
 export class PersistenceManager {
 
 	protected _refDatabase:sqlite3.Database;
 
-        public initialize(databaseFileName:string):Promise<boolean> {
+        public initialize(databaseFileName:string):RSVP.Promise<boolean> {
 
 			return new RSVP.Promise<any>((resolve, reject)=>{
 

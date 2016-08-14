@@ -122,6 +122,7 @@ module.exports = {
     return [autoprefixer];
   },
   plugins: [
+	new webpack.IgnorePlugin(/vertx/),
     new LodashModuleReplacementPlugin,
     new HtmlWebpackPlugin({
       inject: true,

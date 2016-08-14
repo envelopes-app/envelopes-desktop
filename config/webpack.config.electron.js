@@ -24,7 +24,7 @@ module.exports = {
 		filename: 'electron.js'
 	},
 	resolve: {
-		extensions: ['', '.js', '.ts']
+		extensions: ['', '.js']
 	},
 	resolveLoader: {
 		root: paths.ownNodeModules,
@@ -45,20 +45,12 @@ module.exports = {
 				loader: 'babel',
 				query: require('./babel.dev')
 			},
-			{ 
-				test: /\.ts?$/, 
-				include: paths.appSLSrc,
-				loader: 'ts' 
-			}, 
 			{
 				test: /\.json$/,
 				include: [paths.appSLSrc, paths.appNodeModules],
 				loader: 'json'
 			},
 		]
-	},
-	ts: {
-		configFileName: path.join(paths.appSLSrc, 'tsconfig.json')
 	},
 	eslint: {
 		configFile: path.join(__dirname, 'eslint.js'),

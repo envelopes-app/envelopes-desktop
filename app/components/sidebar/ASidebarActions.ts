@@ -2,7 +2,7 @@
 
 import { Account, AccountTypeConstants } from '../../models/Account';
 import { ApplicationState } from '../../models/ApplicationState';
-import * as RSVP from 'es6-promise';
+import { Promise } from 'es6-promise';
 
 // ********************************************************************************************
 // Action Names
@@ -87,7 +87,7 @@ export function deleteContact(accountId:string):DeleteAccountAction {
 // Dummy Async function that returns contacts data
 function getAccountsFromDB():Promise<Array<Account>> {
 
-	return RSVP.Promise.resolve([
+	return Promise.resolve([
 		{
 			accountId: "1",
 			accountType: "Checking",
