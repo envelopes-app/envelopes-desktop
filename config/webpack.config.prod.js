@@ -1,3 +1,4 @@
+var fs = require('fs');
 var path = require('path');
 var autoprefixer = require('autoprefixer');
 var webpack = require('webpack');
@@ -14,6 +15,15 @@ if (!publicPath.endsWith('/')) {
   publicPath += '/';
 }
 
+var nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+	nodeModules[mod] = 'commonjs ' + mod;
+  });
+
 module.exports = {
   bail: true,
   devtool: 'source-map',
@@ -21,7 +31,7 @@ module.exports = {
     require.resolve('./polyfills'),
     'font-awesome-loader', 
     'bootstrap-loader',
-    path.join(paths.appSrc, 'index')
+    path.join(paths.appFESrc, 'index')
   ],
   output: {
     path: paths.appBuild,
@@ -31,7 +41,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.ts', '.tsx', 'css']
-//    modulesDirectories: [path.appSrc, path.ownNodeModules, path.bootstrapCSSPath]
   },
   resolveLoader: {
     root: paths.ownNodeModules,
@@ -42,24 +51,24 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'eslint!source-map',
-        include: paths.appSrc
+        include: paths.appFESrc
       }
     ],
     loaders: [
       {
         test: /\.js$/,
-        include: paths.appSrc,
+        include: paths.appFESrc,
         loader: 'babel',
         query: require('./babel.prod')
       },
       { 
         test: /\.(ts|tsx)?$/, 
-        include: paths.appSrc,
+        include: paths.appFESrc,
         loader: 'ts' 
       }, 
       {
         test: /\.css$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appFESrc, paths.appNodeModules],
         // Disable autoprefixer in css-loader itself:
         // https://github.com/webpack/css-loader/issues/281
         // We already have it thanks to postcss.
@@ -67,7 +76,7 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appFESrc, paths.appNodeModules],
         loader: 'json'
       },
       {
@@ -99,6 +108,9 @@ module.exports = {
         loader: 'imports?jQuery=jquery' 
       }
     ]
+  },
+  ts: {
+	configFileName: path.join(paths.appFESrc, 'tsconfig.json')
   },
   eslint: {
     // TODO: consider separate config for production,
@@ -145,5 +157,6 @@ module.exports = {
       }
     }),
     new ExtractTextPlugin('[name].[contenthash:8].css')
-  ]
+  ],
+  externals: [nodeModules]
 };

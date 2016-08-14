@@ -92,7 +92,9 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 						<span className={glyphiconClass} aria-hidden="true"></span>
 						&nbsp;{this.props.label}
 					</button>
-					{valueNode}
+					<div>
+						{valueNode}
+					</div>
 					<span style={{width:'8px'}} />
 				</div>
 				<div className="collapse in" id={collapseContainerIdentity}>

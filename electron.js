@@ -1,4 +1,7 @@
-const {app, BrowserWindow} = require('electron');
+const fs = require('fs');
+const path = require('path');
+const {app, ipcMain, BrowserWindow, Menu} = require('electron');
+const { initializeSharedLibrary, handleRequest } = require('./app-sl/SLMain');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -40,6 +43,23 @@ const createWindow = () => {
 		mainWindow = null
 	});
 }
+
+const initializeSL = () => {
+
+	// Ensure that the directory for storing the database file exists
+	var databaseDir = path.join(app.getPath('documents'), "ENAB");
+	if (!fs.existsSync(databaseDir)) {
+		fs.mkdirSync(databaseDir);
+	}
+	var databaseFileName = path.join(databaseDir,'enab.db');
+	// Initialize the shared library
+	initializeSharedLibrary(databaseFileName);
+	// Start listing for ipc messages
+	ipcMain.on('asynchronous-message', (event, args) => {
+		handleRequest(event,args);
+	});
+}
+
 /*
 const installExtensions = async () => {
   	if (process.env.NODE_ENV === 'development') {
@@ -59,7 +79,10 @@ const installExtensions = async () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+	// Install the required extensions
   	// await installExtensions();
+	// Start listening for ipc messages
+	initializeSL();
 	// Create the main window
 	createWindow();
 });

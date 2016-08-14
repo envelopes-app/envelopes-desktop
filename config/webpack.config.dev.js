@@ -1,3 +1,4 @@
+var fs = require('fs');
 var path = require('path');
 var autoprefixer = require('autoprefixer');
 var webpack = require('webpack');
@@ -7,12 +8,13 @@ var paths = require('./paths');
 
 module.exports = {
   devtool: 'eval',
+  target: 'electron-renderer',
   entry: [
     require.resolve('webpack/hot/dev-server'),
     require.resolve('./polyfills'),
     'font-awesome-loader', 
     'bootstrap-loader',
-    path.join(paths.appSrc, 'index')
+    path.join(paths.appFESrc, 'index')
   ],
   output: {
     // Next line is not used in dev but WebpackDevServer crashes without it:
@@ -23,7 +25,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.ts', '.tsx', 'css']
-//    modulesDirectories: [path.appSrc, path.ownNodeModules, path.bootstrapCSSPath]
   },
   resolveLoader: {
     root: paths.ownNodeModules,
@@ -34,29 +35,29 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'eslint!source-map',
-        include: paths.appSrc,
+        include: paths.appFESrc
       }
     ],
     loaders: [
       {
         test: /\.js$/,
-        include: paths.appSrc,
+        include: paths.appFESrc,
         loader: 'babel',
         query: require('./babel.dev')
       },
       { 
         test: /\.(ts|tsx)?$/, 
-        include: paths.appSrc,
+        include: paths.appFESrc,
         loader: 'ts' 
       }, 
       {
         test: /\.css$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appFESrc, paths.appNodeModules],
         loader: 'style!css!postcss'
       },
       {
         test: /\.json$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appFESrc, paths.appNodeModules],
         loader: 'json'
       },
       {
@@ -88,6 +89,9 @@ module.exports = {
         loader: 'imports?jQuery=jquery' 
       }
     ]
+  },
+  ts: {
+	configFileName: path.join(paths.appFESrc, 'tsconfig.json')
   },
   eslint: {
     configFile: path.join(__dirname, 'eslint.js'),

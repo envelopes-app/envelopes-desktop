@@ -12,5 +12,6 @@
 /// <reference path="globals/redux-logger/index.d.ts" />
 /// <reference path="globals/redux-thunk/index.d.ts" />
 /// <reference path="globals/redux/index.d.ts" />
+/// <reference path="globals/sqlite3/index.d.ts" />
 /// <reference path="modules/lodash/index.d.ts" />
 /// <reference path="modules/node-uuid/index.d.ts" />

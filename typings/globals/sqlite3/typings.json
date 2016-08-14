@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/934e591c7a36e5b51e0723c1e1544b37eeb478d8/sqlite3/sqlite3.d.ts",
+    "raw": "registry:dt/sqlite3#2.2.3+20160724070935",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/934e591c7a36e5b51e0723c1e1544b37eeb478d8/sqlite3/sqlite3.d.ts"
+  }
+}

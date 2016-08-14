@@ -77,16 +77,21 @@
     "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "sqlite3": "^3.1.4"
   },
   "bin": {
+    "webpack": "./node_modules/.bin/webpack",
     "electron": "./node_modules/.bin/electron",
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild",
     "webpack-dev-server": "./node_modules/.bin/webpack-dev-server"
   },
   "scripts": {
-	"start": "webpack-dev-server --inline --config './config/webpack.config.dev.js'",
+    "start": "webpack-dev-server --inline --config './config/webpack.config.dev.js'",
     "build": "node ./scripts/build.js",
-    "start-electron": "NODE_ENV=development electron -r babel-register -r babel-polyfill ./electron.js"
+    "build-electron": "webpack --config './config/webpack.config.electron.js'",
+    "start-electron": "electron ./build/electron.js",
+    "rebuild-modules": "electron-rebuild --pre-gyp-fix"
   },
   "eslintConfig": {
     "extends": "./config/eslint.js"

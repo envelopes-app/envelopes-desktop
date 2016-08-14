@@ -7,6 +7,6 @@
         "jsx": "react"
     },
     "files": [
-        "./src/index.tsx"
+        "./index.tsx"
     ]
 }

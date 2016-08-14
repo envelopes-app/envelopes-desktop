@@ -24,7 +24,7 @@ store.dispatch(fetchContacts());
 ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path='/' component={App}>
+      <Route path='/index.html' component={App}>
         <IndexRoute component={CContactsContainer} />
       </Route>
 	  <Route path='*' component={App} />
