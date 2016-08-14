@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const sqlite3 = require('sqlite3');
-const RSVP = require('rsvp');
+const { Promise } = require('es6-promise');
 const { app } = require('electron');
 
 let database; 
 
 function initializeDatabase() {
 
-	return new RSVP.Promise((resolve, reject)=>{
+	return new Promise((resolve, reject)=>{
 
 		// Ensure that the directory for storing the database file exists
 		var databaseDir = path.join(app.getPath('documents'), "ENAB");
@@ -31,7 +31,7 @@ function initializeDatabase() {
 
 function closeDatabase() {
 
-	return new RSVP.Promise((resolve, reject)=>{
+	return new Promise((resolve, reject)=>{
 		database.close(function(error) {
 
 			database = null;
@@ -50,7 +50,7 @@ function executeDatabaseQueries(databaseQueries) {
 	// - name?: string
 	// - query: string
 	// - arguments: Array<any>
-	return new RSVP.Promise((resolve, reject)=>{
+	return new Promise((resolve, reject)=>{
 		
 		database.serialize(function() {
 
@@ -61,7 +61,7 @@ function executeDatabaseQueries(databaseQueries) {
 				return executeDatabaseQuery(databaseQuery, resultObj);
 			});
 
-			RSVP.all(promises)
+			Promise.all(promises)
 				.then(()=>{
 					// Commit the transaction
 					database.exec('COMMIT');
@@ -80,7 +80,7 @@ function executeDatabaseQueries(databaseQueries) {
 
 function executeDatabaseQuery(databaseQuery, resultObj) {
 
-	return new RSVP.Promise((resolve, reject)=>{
+	return new Promise((resolve, reject)=>{
 
 		database.all(databaseQuery.query, databaseQuery.arguments, function(err, rows) {
 
