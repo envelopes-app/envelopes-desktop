@@ -1,72 +1,71 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-    export class SettingQueries {
+export class SettingQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.budgetEntities.IDatabaseSetting):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:budgetEntities.ISetting):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "settings",
-                query: `REPLACE INTO Settings (
-                            budgetVersionId, 
-                            entityId, 
-                            settingName, 
-                            settingValue, 
-                            deviceKnowledge
-                        ) VALUES (?,?,?,?,?)`,
-                arguments: [
-                    dbObject.budgetVersionId,
-                    dbObject.entityId,
-                    dbObject.settingName,
-                    dbObject.settingValue ? dbObject.settingValue : null,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			name: "settings",
+			query: `REPLACE INTO Settings (
+						budgetId, 
+						entityId, 
+						settingName, 
+						settingValue, 
+						deviceKnowledge
+					) VALUES (?,?,?,?,?)`,
+			arguments: [
+				dbObject.budgetId,
+				dbObject.entityId,
+				dbObject.settingName,
+				dbObject.settingValue ? dbObject.settingValue : null,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(budgetVersionId:string, deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(budgetId:string, deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "be_settings",
-                query: "SELECT * FROM Settings WHERE budgetVersionId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
-                arguments: [
-                    budgetVersionId,
-                    deviceKnowledge
-                ]
-            };
+			name: "settings",
+			query: "SELECT * FROM Settings WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
+			arguments: [
+				budgetId,
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static getAllSettings(budgetVersionId:string, includeTombstonedEntities:boolean = false):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static getAllSettings(budgetId:string, includeTombstonedEntities:boolean = false):IDatabaseQuery {
 
-            // "includeTombstonedEntities" parameter added to the method just for consistency. Settings do not have a tombstone column.
-            return {
-                name: "settings",
-                query: "Select * FROM Settings WHERE budgetVersionId = ?",
-                arguments: [budgetVersionId]
-            };
-        }
+		// "includeTombstonedEntities" parameter added to the method just for consistency. Settings do not have a tombstone column.
+		return {
+			name: "settings",
+			query: "Select * FROM Settings WHERE budgetId = ?",
+			arguments: [budgetId]
+		};
+	}
 
-        public static findSettingByName(budgetVersionId:string, settingName:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static findSettingByName(budgetId:string, settingName:string):IDatabaseQuery {
 
-            return {
-                name: "settings",
-                query: "Select * FROM Settings WHERE budgetVersionId = ? AND settingName = ?",
-                arguments: [budgetVersionId, settingName]
-            };
-        }
-    }
+		return {
+			name: "settings",
+			query: "Select * FROM Settings WHERE budgetId = ? AND settingName = ?",
+			arguments: [budgetId, settingName]
+		};
+	}
 }

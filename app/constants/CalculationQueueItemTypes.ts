@@ -1,4 +1,4 @@
-export class CalculationQueueItemType {
+export class CalculationQueueItemTypes {
 
 	public static AgeOfMoneyCalculation:string                  = "ageOfMoneyCalculation";
 	public static CompleteCalculation:string                    = "completeCalculation";

@@ -1,128 +1,122 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-    export class PayeeQueries {
+export class PayeeQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.budgetEntities.IDatabasePayee):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:budgetEntities.IPayee):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "payees",
-                query: `REPLACE INTO Payees (
-                            budgetVersionId, 
-                            entityId, 
-                            isTombstone, 
-                            accountId, 
-                            enabled, 
-                            autoFillSubCategoryId, 
-                            autoFillMemo, 
-                            autoFillAmount, 
-                            name, 
-                            internalName, 
-                            deviceKnowledge
-                        ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-                arguments: [
-                    dbObject.budgetVersionId,
-                    dbObject.entityId,
-                    dbObject.isTombstone,
-                    dbObject.accountId ? dbObject.accountId : null,
-                    dbObject.enabled,
-                    dbObject.autoFillSubCategoryId ? dbObject.autoFillSubCategoryId : null,
-                    dbObject.autoFillMemo ? dbObject.autoFillMemo : null,
-                    dbObject.autoFillAmount ? dbObject.autoFillAmount : null,
-                    dbObject.name,
-                    dbObject.internalName ? dbObject.internalName : null,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			name: "payees",
+			query: `REPLACE INTO Payees (
+						budgetId, 
+						entityId, 
+						isTombstone, 
+						accountId, 
+						enabled, 
+						autoFillSubCategoryId, 
+						name, 
+						internalName, 
+						deviceKnowledge
+					) VALUES (?,?,?,?,?,?,?,?,?)`,
+			arguments: [
+				dbObject.budgetId,
+				dbObject.entityId,
+				dbObject.isTombstone,
+				dbObject.accountId ? dbObject.accountId : null,
+				dbObject.enabled,
+				dbObject.autoFillSubCategoryId ? dbObject.autoFillSubCategoryId : null,
+				dbObject.name,
+				dbObject.internalName ? dbObject.internalName : null,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(budgetVersionId:string, deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(budgetId:string, deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "be_payees",
-                query: "SELECT * FROM Payees WHERE budgetVersionId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
-                arguments: [
-                    budgetVersionId,
-                    deviceKnowledge
-                ]
-            };
+			name: "payees",
+			query: "SELECT * FROM Payees WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			arguments: [
+				budgetId,
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static getAllPayees(budgetVersionId:string, includeTombstonedEntities:boolean = false):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static getAllPayees(budgetId:string, includeTombstonedEntities:boolean = false):IDatabaseQuery {
 
-            if(includeTombstonedEntities) {
-                return {
-                    name: "payees",
-                    query: "Select * FROM Payees WHERE budgetVersionId = ?",
-                    arguments: [budgetVersionId]
-                };
-            }
-            else {
-                return {
-                    name: "payees",
-                    query: "Select * FROM Payees WHERE budgetVersionId = ? AND isTombstone = 0",
-                    arguments: [budgetVersionId]
-                };
-            }
-        }
+		if(includeTombstonedEntities) {
+			return {
+				name: "payees",
+				query: "Select * FROM Payees WHERE budgetId = ?",
+				arguments: [budgetId]
+			};
+		}
+		else {
+			return {
+				name: "payees",
+				query: "Select * FROM Payees WHERE budgetId = ? AND isTombstone = 0",
+				arguments: [budgetId]
+			};
+		}
+	}
 
-        public static getInternalPayees(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getInternalPayees(budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "payees",
-                query: "Select * FROM Payees WHERE budgetVersionId = ? AND isTombstone = 0 AND internalName IS NOT NULL",
-                arguments: [budgetVersionId]
-            };
-        }
+		return {
+			name: "payees",
+			query: "Select * FROM Payees WHERE budgetId = ? AND isTombstone = 0 AND internalName IS NOT NULL",
+			arguments: [budgetId]
+		};
+	}
 
-        public static getTransferPayees(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getTransferPayees(budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "payees",
-                query: "Select * FROM Payees WHERE budgetVersionId = ? AND isTombstone = 0 AND accountId IS NOT NULL",
-                arguments: [budgetVersionId]
-            };
-        }
+		return {
+			name: "payees",
+			query: "Select * FROM Payees WHERE budgetId = ? AND isTombstone = 0 AND accountId IS NOT NULL",
+			arguments: [budgetId]
+		};
+	}
 
-        public static findPayeeByEntityId(budgetVersionId:string, entityId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static findPayeeByEntityId(budgetId:string, entityId:string):IDatabaseQuery {
 
-            return {
-                name: "payees",
-                query: "Select * FROM Payees WHERE budgetVersionId = ? AND entityId = ?",
-                arguments: [budgetVersionId, entityId]
-            };
-        }
+		return {
+			name: "payees",
+			query: "Select * FROM Payees WHERE budgetId = ? AND entityId = ?",
+			arguments: [budgetId, entityId]
+		};
+	}
 
-        public static findPayeeByName(budgetVersionId:string, payeeName:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static findPayeeByName(budgetId:string, payeeName:string):IDatabaseQuery {
 
-            return {
-                name: "payees",
-                query: "Select * FROM Payees WHERE budgetVersionId = ? AND name = ?",
-                arguments: [budgetVersionId, payeeName]
-            };
-        }
+		return {
+			name: "payees",
+			query: "Select * FROM Payees WHERE budgetId = ? AND name = ?",
+			arguments: [budgetId, payeeName]
+		};
+	}
 
-        public static findTransferPayees(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
-            return {
-                name: "payees",
-                query: "Select * FROM Payees WHERE budgetVersionId = ? AND isTombstone = 0 AND accountId IS NOT NULL",
-                arguments: [budgetVersionId]
-            };
-        }
-
-    }
+	public static findTransferPayees(budgetId:string):IDatabaseQuery {
+		return {
+			name: "payees",
+			query: "Select * FROM Payees WHERE budgetId = ? AND isTombstone = 0 AND accountId IS NOT NULL",
+			arguments: [budgetId]
+		};
+	}
 }

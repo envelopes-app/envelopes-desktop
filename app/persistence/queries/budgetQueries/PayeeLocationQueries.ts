@@ -1,84 +1,82 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-    export class PayeeLocationQueries {
+export class PayeeLocationQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.budgetEntities.IDatabasePayeeLocation):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:budgetEntities.IPayeeLocation):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "payeeLocations",
-                query: `REPLACE INTO PayeeLocations (
-                            budgetVersionId, 
-                            entityId, 
-                            isTombstone, 
-                            payeeId, 
-                            latitude, 
-                            longitude, 
-                            deviceKnowledge
-                        ) VALUES (?,?,?,?,?,?,?)`,
-                arguments: [
-                    dbObject.budgetVersionId,
-                    dbObject.entityId,
-                    dbObject.isTombstone,
-                    dbObject.payeeId,
-                    dbObject.latitude,
-                    dbObject.longitude,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			name: "payeeLocations",
+			query: `REPLACE INTO PayeeLocations (
+						budgetId, 
+						entityId, 
+						isTombstone, 
+						payeeId, 
+						latitude, 
+						longitude, 
+						deviceKnowledge
+					) VALUES (?,?,?,?,?,?,?)`,
+			arguments: [
+				dbObject.budgetId,
+				dbObject.entityId,
+				dbObject.isTombstone,
+				dbObject.payeeId,
+				dbObject.latitude,
+				dbObject.longitude,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(budgetVersionId:string, deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(budgetId:string, deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "be_payee_locations",
-                query: "SELECT * FROM PayeeLocations WHERE budgetVersionId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
-                arguments: [
-                    budgetVersionId,
-                    deviceKnowledge
-                ]
-            };
+			name: "payeeLocations",
+			query: "SELECT * FROM PayeeLocations WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			arguments: [
+				budgetId,
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static getAllPayeeLocations(budgetVersionId:string, includeTombstonedEntities:boolean = false):ynab.interfaces.adapters.IDatabaseQuery {
+		return query;
+	}
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static getAllPayeeLocations(budgetId:string, includeTombstonedEntities:boolean = false):IDatabaseQuery {
 
-            if(includeTombstonedEntities) {
-                return {
-                    name: "payeeLocations",
-                    query: "Select * FROM PayeeLocations WHERE budgetVersionId = ?",
-                    arguments: [budgetVersionId]
-                };
-            }
-            else {
-                return {
-                    name: "payeeLocations",
-                    query: "Select * FROM PayeeLocations WHERE budgetVersionId = ? AND isTombstone = 0",
-                    arguments: [budgetVersionId]
-                };
-            }
-        }
+		if(includeTombstonedEntities) {
+			return {
+				name: "payeeLocations",
+				query: "Select * FROM PayeeLocations WHERE budgetId = ?",
+				arguments: [budgetId]
+			};
+		}
+		else {
+			return {
+				name: "payeeLocations",
+				query: "Select * FROM PayeeLocations WHERE budgetId = ? AND isTombstone = 0",
+				arguments: [budgetId]
+			};
+		}
+	}
 
-        public static findPayeeLocationsByPayeeEntityId(budgetVersionId:string, payeeEntityId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static findPayeeLocationsByPayeeEntityId(budgetId:string, payeeEntityId:string):IDatabaseQuery {
 
-            return {
-                name: "payeeLocations",
-                query: "Select * FROM PayeeLocations WHERE budgetVersionId = ? AND payeeId = ?",
-                arguments: [budgetVersionId, payeeEntityId]
-            };
-        }
-
-    }
+		return {
+			name: "payeeLocations",
+			query: "Select * FROM PayeeLocations WHERE budgetId = ? AND payeeId = ?",
+			arguments: [budgetId, payeeEntityId]
+		};
+	}
 }

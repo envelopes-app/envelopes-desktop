@@ -1,2 +1,3 @@
-﻿import * as AccountMappingQueries from './AccountMappingQueries';
-import * as AccountQueries from './AccountQueries';
+﻿export { AccountMappingQueries } from './AccountMappingQueries';
+export { AccountQueries } from './AccountQueries';
+export { MasterCategoryQueries } from './MasterCategoryQueries';

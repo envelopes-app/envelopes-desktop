@@ -2,6 +2,6 @@ import { IEntity } from './IEntity';
 
 export interface IBudgetEntity extends IEntity {
 
-	budgetVersionId:string;
+	budgetId:string;
 	isTombstone:number;
 }

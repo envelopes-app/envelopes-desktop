@@ -1,75 +1,74 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-    export class PayeeRenameConditionQueries {
+export class PayeeRenameConditionQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.budgetEntities.IDatabasePayeeRenameCondition):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:budgetEntities.IPayeeRenameCondition):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "payeeRenameConditions",
-                query: `REPLACE INTO PayeeRenameConditions (
-                            budgetVersionId, 
-                            entityId, 
-                            isTombstone, 
-                            payeeId, 
-                            operator, 
-                            operand, 
-                            deviceKnowledge
-                        ) VALUES (?,?,?,?,?,?,?)`,
-                arguments: [
-                    dbObject.budgetVersionId,
-                    dbObject.entityId,
-                    dbObject.isTombstone,
-                    dbObject.payeeId,
-                    dbObject.operator ? dbObject.operator : null,
-                    dbObject.operand ? dbObject.operand : null,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			name: "payeeRenameConditions",
+			query: `REPLACE INTO PayeeRenameConditions (
+						budgetId, 
+						entityId, 
+						isTombstone, 
+						payeeId, 
+						operator, 
+						operand, 
+						deviceKnowledge
+					) VALUES (?,?,?,?,?,?,?)`,
+			arguments: [
+				dbObject.budgetId,
+				dbObject.entityId,
+				dbObject.isTombstone,
+				dbObject.payeeId,
+				dbObject.operator ? dbObject.operator : null,
+				dbObject.operand ? dbObject.operand : null,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(budgetVersionId:string, deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(budgetId:string, deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "be_payee_rename_conditions",
-                query: "SELECT * FROM PayeeRenameConditions WHERE budgetVersionId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
-                arguments: [
-                    budgetVersionId,
-                    deviceKnowledge
-                ]
-            };
+			name: "payeeRenameConditions",
+			query: "SELECT * FROM PayeeRenameConditions WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			arguments: [
+				budgetId,
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static getAllPayeeRenameConditions(budgetVersionId:string, includeTombstonedEntities:boolean = false):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static getAllPayeeRenameConditions(budgetId:string, includeTombstonedEntities:boolean = false):IDatabaseQuery {
 
-            if(includeTombstonedEntities) {
-                return {
-                    name: "payeeRenameConditions",
-                    query: "Select * FROM PayeeRenameConditions WHERE budgetVersionId = ?",
-                    arguments: [budgetVersionId]
-                };
-            }
-            else {
-                return {
-                    name: "payeeRenameConditions",
-                    query: "Select * FROM PayeeRenameConditions WHERE budgetVersionId = ? AND isTombstone = 0",
-                    arguments: [budgetVersionId]
-                };
-            }
-        }
-    }
+		if(includeTombstonedEntities) {
+			return {
+				name: "payeeRenameConditions",
+				query: "Select * FROM PayeeRenameConditions WHERE budgetId = ?",
+				arguments: [budgetId]
+			};
+		}
+		else {
+			return {
+				name: "payeeRenameConditions",
+				query: "Select * FROM PayeeRenameConditions WHERE budgetId = ? AND isTombstone = 0",
+				arguments: [budgetId]
+			};
+		}
+	}
 }

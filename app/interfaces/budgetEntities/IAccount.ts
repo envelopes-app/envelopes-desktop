@@ -8,7 +8,7 @@ export interface IAccount extends IBudgetEntity {
 	lastReconciledDate:number;
 	lastReconciledBalance:number;
 	note:string;
-	hidden:number;
+	closed:number;
 	sortableIndex:number;
 	onBudget:number;
 	clearedBalance:number;
