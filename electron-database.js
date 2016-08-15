@@ -87,7 +87,9 @@ function executeDatabaseQuery(databaseQuery, resultObj) {
 			if(err)
 				reject(err);
 
-			resultObj.name = rows;
+			if(databaseQuery.name)
+				resultObj[databaseQuery.name] = rows;
+
 			resolve();
 		});
 	});

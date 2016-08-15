@@ -46,14 +46,17 @@ const createWindow = () => {
 
 const handleDatabaseMessage = (event, args) => {
 
-	return executeDatabaseQueries(args)
+	var requestId = args.requestId;
+	var queryList = args.queryList;
+
+	return executeDatabaseQueries(queryList)
 		.then((resultObj)=>{
-			// pass the result object received from the database back to the caller
-			event.sender.send('database-reply', resultObj);
+			// Pass the result object received from the database back to the caller
+			event.sender.send(requestId, null, resultObj);
 		})
 		.catch(function(error) {
 			// In case of error, send the error object back to the caller
-			event.sender.send('database-reply', error);
+			event.sender.send(requestId, error, null);
 		});
 }
 
@@ -81,12 +84,8 @@ app.on('ready', () => {
   	// await installExtensions();
 
 	// Start listening for ipc messages
-	ipcMain.on('database-message', (event, args) => {
+	ipcMain.on('database-request', (event, args) => {
 		handleDatabaseMessage(event, args);
-	});
-
-	ipcMain.on('test-message', (event, args) => {
-		event.sender.send('test-reply', args);
 	});
 
 	// Initialize the database 

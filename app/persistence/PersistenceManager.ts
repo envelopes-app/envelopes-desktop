@@ -1,26 +1,15 @@
 /// <reference path='../_includes.ts' />
 
-import * as sqlite3 from 'sqlite3';
-import * as RSVP from 'rsvp';
+import { Promise } from 'es6-promise';
+
+import { DatabaseFactory } from './DatabaseFactory';
 
 export class PersistenceManager {
 
-	protected _refDatabase:sqlite3.Database;
+	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
 
-        public initialize(databaseFileName:string):RSVP.Promise<boolean> {
-
-			return new RSVP.Promise<any>((resolve, reject)=>{
-
-				// Open a connection to the database.
-				this._refDatabase = new sqlite3.Database(databaseFileName);
-				// Provide an error handler on the database object
-				this._refDatabase.on('error', (err:Error)=>{
-					reject(err);
-				});
-				// Provide a success handler to use the returned database object when it is opened
-				this._refDatabase.on('open', ()=>{
-					resolve(true);
-				});
-			});
-        }
+		// Ensure that the database tables are created and all the migrations have been run
+		var databaseFactory = new DatabaseFactory();
+		return databaseFactory.createDatabase(refreshDatabaseAtStartup);
+	}
 }

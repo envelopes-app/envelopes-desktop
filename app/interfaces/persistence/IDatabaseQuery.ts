@@ -1,5 +1,3 @@
-/// <reference path='../_includes.ts' />
-
 export interface IDatabaseQuery {
 
 	name?: string;
