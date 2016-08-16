@@ -6,6 +6,16 @@ import * as uuid from 'node-uuid';
 
 import { IDatabaseQuery } from '../interfaces/persistence/IDatabaseQuery';
 import { BudgetKnowledge } from './KnowledgeObjects';
+import { KnowledgeValueQueries } from './queries/miscQueries';
+
+export function executeSqlQueriesAndSaveKnowledge(queryList:Array<IDatabaseQuery>,
+											budgetId:string,
+											budgetKnowledge:BudgetKnowledge):Promise<any> {
+
+	// Append the query to persist the budgetKnowledge values to the list of queries
+	queryList.push( KnowledgeValueQueries.getSaveBudgetKnowledgeValueQuery(budgetId, budgetKnowledge) );
+	return this.executeSqlQueries(queryList);
+}
 
 export function executeSqlQueries(queryList:Array<IDatabaseQuery>):Promise<any> {
 

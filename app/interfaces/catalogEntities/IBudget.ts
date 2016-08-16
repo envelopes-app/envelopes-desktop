@@ -6,6 +6,7 @@ export interface IBudget extends IEntity {
 	lastAccessedOn:number;
 	dateFormat:string;
 	currencyFormat:string;
-	source:string;
+	firstMonth:string;
+	lastMonth:string;
 	isTombstone:number;
 }

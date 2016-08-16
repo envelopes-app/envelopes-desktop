@@ -1,87 +1,83 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import { CatalogKnowledge, BudgetKnowledge } from '../../KnowledgeObjects';
 
-    export class KnowledgeValueQueries {
+export class KnowledgeValueQueries {
 
-        public static getLoadCatalogKnowledgeValueQuery(userId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getLoadCatalogKnowledgeValueQuery(userId:string):IDatabaseQuery {
 
-            return {
-                name: "catalogKnowledge",
-                query: "SELECT currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer FROM UserKnowledge WHERE userId = ?",
-                arguments: [userId]
-            };
-        }
+		return {
+			name: "catalogKnowledge",
+			query: "SELECT currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer FROM UserKnowledge WHERE userId = ?",
+			arguments: [userId]
+		};
+	}
 
-        public static getSaveCatalogKnowledgeValueQuery(userId:string, catalogKnowledge:ynab.adapters.CatalogKnowledge):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getSaveCatalogKnowledgeValueQuery(userId:string, catalogKnowledge:CatalogKnowledge):IDatabaseQuery {
 
-            return {
-                query: "REPLACE INTO UserKnowledge (userId, currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer) VALUES (?,?,?,?)",
-                arguments: [userId, catalogKnowledge.currentDeviceKnowledge, catalogKnowledge.serverKnowledgeOfDevice, catalogKnowledge.deviceKnowledgeOfServer]
-            };
-        }
+		return {
+			query: "REPLACE INTO UserKnowledge (userId, currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer) VALUES (?,?,?,?)",
+			arguments: [userId, catalogKnowledge.currentDeviceKnowledge, catalogKnowledge.serverKnowledgeOfDevice, catalogKnowledge.deviceKnowledgeOfServer]
+		};
+	}
 
-        public static getLoadBudgetKnowledgeValueQuery(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getLoadBudgetKnowledgeValueQuery(budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "budgetKnowledge",
-                query: `SELECT currentDeviceKnowledge, 
-                            currentDeviceKnowledgeForCalculations, 
-                            serverKnowledgeOfDevice, 
-                            deviceKnowledgeOfServer, 
-                            queueCalculationsForServerEntities 
-                        FROM BudgetVersionKnowledge WHERE budgetVersionId = ?`,
-                arguments: [budgetVersionId]
-            };
-        }
+		return {
+			name: "budgetKnowledge",
+			query: `SELECT currentDeviceKnowledge, 
+						currentDeviceKnowledgeForCalculations, 
+						serverKnowledgeOfDevice, 
+						deviceKnowledgeOfServer
+					FROM BudgetVersionKnowledge WHERE budgetId = ?`,
+			arguments: [budgetId]
+		};
+	}
 
-        public static getSaveBudgetKnowledgeValueQuery(budgetVersionId:string, budgetKnowledge:ynab.adapters.BudgetKnowledge):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getSaveBudgetKnowledgeValueQuery(budgetId:string, budgetKnowledge:BudgetKnowledge):IDatabaseQuery {
 
-            return {
-                query: `REPLACE INTO BudgetVersionKnowledge (
-                            budgetVersionId,
-                            currentDeviceKnowledge, 
-                            currentDeviceKnowledgeForCalculations, 
-                            serverKnowledgeOfDevice, 
-                            deviceKnowledgeOfServer, 
-                            queueCalculationsForServerEntities
-                        ) 
-                        VALUES (?,?,?,?,?,?)`,
-                arguments: [
-                    budgetVersionId,
-                    budgetKnowledge.currentDeviceKnowledge,
-                    budgetKnowledge.currentDeviceKnowledgeForCalculations,
-                    budgetKnowledge.serverKnowledgeOfDevice,
-                    budgetKnowledge.deviceKnowledgeOfServer,
-                    budgetKnowledge.queueCalculationsForServerEntities
-                ]
-            };
-        }
+		return {
+			query: `REPLACE INTO BudgetVersionKnowledge (
+						budgetId,
+						currentDeviceKnowledge, 
+						currentDeviceKnowledgeForCalculations, 
+						serverKnowledgeOfDevice, 
+						deviceKnowledgeOfServer
+					) 
+					VALUES (?,?,?,?,?)`,
+			arguments: [
+				budgetId,
+				budgetKnowledge.currentDeviceKnowledge,
+				budgetKnowledge.currentDeviceKnowledgeForCalculations,
+				budgetKnowledge.serverKnowledgeOfDevice,
+				budgetKnowledge.deviceKnowledgeOfServer
+			]
+		};
+	}
 
-        public static getMaxDeviceKnowledgeFromBudgetEntities(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getMaxDeviceKnowledgeFromBudgetEntities(budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "budgetKnowledgeFromEntities",
-                query: `SELECT MAX(deviceKnowledge) as deviceKnowledge FROM (
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Accounts WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMonthlyCalculations WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMappings WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MasterCategories WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlyBudgets WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlySubCategoryBudgets WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Payees WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeLocations WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeRenameConditions WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledSubTransactions WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledTransactions WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Settings WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubCategories WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubTransactions WHERE budgetVersionId = ?1 UNION ALL
-                    SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Transactions WHERE budgetVersionId = ?1
-                )`,
-                arguments: [budgetVersionId]
-            }
-        }
-    }
+		return {
+			name: "budgetKnowledgeFromEntities",
+			query: `SELECT MAX(deviceKnowledge) as deviceKnowledge FROM (
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Accounts WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMonthlyCalculations WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMappings WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MasterCategories WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlyBudgets WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlySubCategoryBudgets WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Payees WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeLocations WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeRenameConditions WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledSubTransactions WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledTransactions WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Settings WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubCategories WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubTransactions WHERE budgetId = ?1 UNION ALL
+				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Transactions WHERE budgetId = ?1
+			)`,
+			arguments: [budgetId]
+		}
+	}
 }

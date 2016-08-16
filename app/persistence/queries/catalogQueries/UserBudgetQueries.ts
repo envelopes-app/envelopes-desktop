@@ -1,55 +1,53 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as catalogEntities from '../../../interfaces/catalogEntities';
 
-    export class UserBudgetQueries {
+export class UserBudgetQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.catalogEntities.IDatabaseUserBudget):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:catalogEntities.IUserBudget):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                query: "REPLACE INTO UserBudgets (entityId, userId, budgetId, permissions, isTombstone, deviceKnowledge) VALUES (?,?,?,?,?,?)",
-                arguments: [
-                    dbObject.entityId,
-                    dbObject.userId,
-                    dbObject.budgetId,
-                    dbObject.permissions,
-                    dbObject.isTombstone,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			query: "REPLACE INTO UserBudgets (entityId, userId, budgetId, isTombstone, deviceKnowledge) VALUES (?,?,?,?,?)",
+			arguments: [
+				dbObject.entityId,
+				dbObject.userId,
+				dbObject.budgetId,
+				dbObject.isTombstone,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "ce_user_budgets",
-                query: "SELECT * FROM UserBudgets WHERE deviceKnowledge = 0 OR deviceKnowledge > ?",
-                arguments: [
-                    deviceKnowledge
-                ]
-            };
+			name: "userBudgets",
+			query: "SELECT * FROM UserBudgets WHERE deviceKnowledge = 0 OR deviceKnowledge > ?",
+			arguments: [
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static findUserBudgetByUserIdAndBudgetVersionId(userId:string, budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static findUserBudgetByUserIdAndBudgetId(userId:string, budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "userBudgets",
-                query: "SELECT * FROM UserBudgets WHERE userId = ? AND budgetId = (SELECT budgetId FROM BudgetVersions WHERE entityId = ?)",
-                arguments: [userId, budgetVersionId]
-            }
-        }
-    }
+		return {
+			name: "userBudgets",
+			query: "SELECT * FROM UserBudgets WHERE userId = ? AND budgetId = ?",
+			arguments: [userId, budgetId]
+		}
+	}
 }

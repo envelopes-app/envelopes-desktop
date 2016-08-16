@@ -1,7 +1,9 @@
+/// <reference path='../../../_includes.ts' />
+
 import * as _ from 'lodash';
 import { IDatabaseQuery } from '../../../interfaces/persistence';
 import { ICalculationQueueItem } from '../../../interfaces/calculations';
-import { CalculationQueueItemType } from '../../../constants';
+import { CalculationQueueItemTypes } from '../../../constants';
 import { KeyGenerator } from '../../../utilities';
 
 export class CalculationQueries {
@@ -30,23 +32,23 @@ export class CalculationQueries {
 			query: `
 SELECT
 COUNT(queueId) as queueCount,
-MIN(CASE WHEN calculationType = '${CalculationQueueItemType.TransactionCalculation}' THEN month ELSE NULL END) 
+MIN(CASE WHEN calculationType = '${CalculationQueueItemTypes.TransactionCalculation}' THEN month ELSE NULL END) 
 	as transactionCalculationsMinMonth,
-GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemType.TransactionCalculation}' THEN entityId ELSE NULL END)
+GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemTypes.TransactionCalculation}' THEN entityId ELSE NULL END)
 	as transactionCalculationAccountIds,
-MIN(CASE WHEN calculationType = '${CalculationQueueItemType.AccountCalculation}' THEN month ELSE NULL END)
+MIN(CASE WHEN calculationType = '${CalculationQueueItemTypes.AccountCalculation}' THEN month ELSE NULL END)
 	as accountCalculationsMinMonth,
-GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemType.AccountCalculation}' THEN entityId ELSE NULL END)
+GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemTypes.AccountCalculation}' THEN entityId ELSE NULL END)
 	as accountCalculationIds,
-MIN(CASE WHEN calculationType = '${CalculationQueueItemType.MonthlySubCategoryBudgetCalculation}' THEN month ELSE NULL END)
+MIN(CASE WHEN calculationType = '${CalculationQueueItemTypes.MonthlySubCategoryBudgetCalculation}' THEN month ELSE NULL END)
 	as subCategoryCalculationsMinMonth,
-GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemType.MonthlySubCategoryBudgetCalculation}' THEN entityId ELSE NULL END)
+GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemTypes.MonthlySubCategoryBudgetCalculation}' THEN entityId ELSE NULL END)
 	as subCategoryCalculationIds,
-MAX(CASE WHEN calculationType = '${CalculationQueueItemType.MonthlySubCategoryBudgetCalculation}' AND entityId IS NULL THEN 1 ELSE 0 END)
+MAX(CASE WHEN calculationType = '${CalculationQueueItemTypes.MonthlySubCategoryBudgetCalculation}' AND entityId IS NULL THEN 1 ELSE 0 END)
 	as unCategoriedSubCategoryQueued,
-GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemType.ScheduledTransactionCalculation}' THEN entityId ELSE NULL END)
+GROUP_CONCAT(CASE WHEN calculationType = '${CalculationQueueItemTypes.ScheduledTransactionCalculation}' THEN entityId ELSE NULL END)
 	as scheduledTransactionCalculationIds,
-MAX(CASE WHEN calculationType = '${CalculationQueueItemType.CompleteCalculation}' THEN 1 ELSE 0 END)
+MAX(CASE WHEN calculationType = '${CalculationQueueItemTypes.CompleteCalculation}' THEN 1 ELSE 0 END)
 	as runFullCalculations
 FROM CalculationQueue                
 WHERE budgetId = ?
@@ -87,7 +89,7 @@ WHERE budgetId = ?
 			arguments: [
 				queueId,
 				budgetId,
-				CalculationQueueItemType.CompleteCalculation,
+				CalculationQueueItemTypes.CompleteCalculation,
 				null,
 				null
 			]
@@ -102,7 +104,7 @@ WHERE budgetId = ?
 			arguments: [
 				queueId,
 				budgetId,
-				CalculationQueueItemType.ScheduledTransactionCalculation,
+				CalculationQueueItemTypes.ScheduledTransactionCalculation,
 				scheduledTransactionId,
 				null
 			]
@@ -117,7 +119,7 @@ WHERE budgetId = ?
 			arguments: [
 				queueId,
 				budgetId,
-				CalculationQueueItemType.AccountCalculation,
+				CalculationQueueItemTypes.AccountCalculation,
 				accountId,
 				month
 			]
@@ -132,7 +134,7 @@ WHERE budgetId = ?
 			arguments: [
 				queueId,
 				budgetId,
-				CalculationQueueItemType.MonthlySubCategoryBudgetCalculation,
+				CalculationQueueItemTypes.MonthlySubCategoryBudgetCalculation,
 				subCategoryId,
 				month
 			]
@@ -147,7 +149,7 @@ WHERE budgetId = ?
 			arguments: [
 				queueId,
 				budgetId,
-				CalculationQueueItemType.TransactionCalculation,
+				CalculationQueueItemTypes.TransactionCalculation,
 				accountId,
 				month
 			]

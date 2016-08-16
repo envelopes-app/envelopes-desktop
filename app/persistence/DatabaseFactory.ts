@@ -180,7 +180,7 @@ export class DatabaseFactory {
 				query: `CREATE TABLE IF NOT EXISTS 'Users' (
 						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
 						'userName' VARCHAR,
-						'email' VARCHAR NOT NULL,
+						'email' VARCHAR,
 						'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
 			},
@@ -199,6 +199,8 @@ export class DatabaseFactory {
 					'dateFormat' VARCHAR,
 					'currencyFormat' VARCHAR,
 					'lastAccessedOn' DATETIME,
+					'firstMonth' VARCHAR,
+					'lastMonth' VARCHAR,
 					'isTombstone' BOOL NOT NULL,
 					'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
@@ -207,6 +209,7 @@ export class DatabaseFactory {
 				query: `CREATE TABLE IF NOT EXISTS 'BudgetKnowledge' (
 						'budgetId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
 						'currentDeviceKnowledge' NUMERIC,
+						'currentDeviceKnowledgeForCalculations' NUMERIC,
 						'serverKnowledgeOfDevice' NUMERIC,
 						'deviceKnowledgeOfServer' NUMERIC)`,
 				arguments: []

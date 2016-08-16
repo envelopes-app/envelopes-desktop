@@ -1,53 +1,57 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
+import * as catalogEntities from '../../../interfaces/catalogEntities';
 
-    export class BudgetQueries {
+export class BudgetQueries {
 
-        // *********************************************************************************************************
-        // Queries for inserting data into the database
-        // *********************************************************************************************************
-        public static insertDatabaseObject(dbObject:ynab.interfaces.catalogEntities.IDatabaseBudget):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for inserting data into the database
+	// *********************************************************************************************************
+	public static insertDatabaseObject(dbObject:catalogEntities.IBudget):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                query: "REPLACE INTO Budgets (entityId, budgetName, isTombstone, deviceKnowledge) VALUES (?,?,?,?)",
-                arguments: [
-                    dbObject.entityId,
-                    dbObject.budgetName,
-                    dbObject.isTombstone,
-                    dbObject.deviceKnowledge
-                ]
-            };
+			query: "REPLACE INTO Budgets (entityId, budgetName, dateFormat, currencyFormat, lastAccessedOn, firstMonth, lastMonth, isTombstone, deviceKnowledge) VALUES (?,?,?,?,?,?,?)",
+			arguments: [
+				dbObject.entityId,
+				dbObject.budgetName,
+				dbObject.dateFormat,
+				dbObject.currencyFormat,
+				dbObject.lastAccessedOn,
+				dbObject.firstMonth,
+				dbObject.lastMonth,
+				dbObject.isTombstone,
+				dbObject.deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        public static loadDatabaseObject(deviceKnowledge:number):ynab.interfaces.adapters.IDatabaseQuery {
+	public static loadDatabaseObject(deviceKnowledge:number):IDatabaseQuery {
 
-            var query:ynab.interfaces.adapters.IDatabaseQuery = {
+		var query:IDatabaseQuery = {
 
-                name: "ce_budgets",
-                query: "SELECT * FROM Budgets WHERE deviceKnowledge = 0 OR deviceKnowledge > ?",
-                arguments: [
-                    deviceKnowledge
-                ]
-            };
+			name: "budgets",
+			query: "SELECT * FROM Budgets WHERE deviceKnowledge = 0 OR deviceKnowledge > ?",
+			arguments: [
+				deviceKnowledge
+			]
+		};
 
-            return query;
-        }
+		return query;
+	}
 
-        // *********************************************************************************************************
-        // Queries for reading data from the database
-        // *********************************************************************************************************
-        public static findBudgetByBudgetVersionId(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	// *********************************************************************************************************
+	// Queries for reading data from the database
+	// *********************************************************************************************************
+	public static findBudgetById(budgetId:string):IDatabaseQuery {
 
-            return {
-                name: "budgets",
-                query: "SELECT * FROM Budgets WHERE entityId = (SELECT budgetId FROM BudgetVersions WHERE entityId = ?)",
-                arguments: [budgetVersionId]
-            }
-        }
-     }
+		return {
+			name: "budgets",
+			query: "SELECT * FROM Budgets WHERE entityId = ?",
+			arguments: [budgetId]
+		}
+	}
 }

@@ -61,4 +61,30 @@ export class CatalogKnowledge extends SyncKnowledge { }
 
 export class BudgetKnowledge extends SyncKnowledge {
 
+	// This is a counter that is used to get knowledge value for new calculation entities or
+	// changes to existing calculation entities. This is used only on the mobile.
+	public currentDeviceKnowledgeForCalculations:number = 0;
+
+	// This is used to store the knowledge values that we last loaded from the local storage into the EntityManager.
+	// Since these represent the knowledge values for the in-memory EntityManager, these are not persisted to the database.
+	// Like the above field, this is used only on the mobile.
+	public lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage:number = 0;
+
+	public getCurrentValueForCalculations():number {
+
+		return this.currentDeviceKnowledgeForCalculations;
+	}
+
+	public getNextValueForCalculations():number {
+
+		++this.currentDeviceKnowledgeForCalculations;
+		return this.currentDeviceKnowledgeForCalculations;
+	}
+
+	public resetValues():void {
+
+		super.resetValues();
+		this.currentDeviceKnowledgeForCalculations = 0;
+		this.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage = 0;
+	}
 }
