@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 
 import { Contact } from '../../models/Contact';
-import * as ContactActions from '../../actions/ContactActions';
+import * as ContactActions from '../../actionCreators/ContactActions';
 import { ApplicationState } from '../../models/ApplicationState';
 import { PContactsContainer} from './PContactsContainer';
 

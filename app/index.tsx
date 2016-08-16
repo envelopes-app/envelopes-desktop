@@ -11,19 +11,14 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { App } from './components/App';
 import CContactsContainer from './components/contacts/CContactsContainer';
 
-import { fetchContacts } from './actions/ContactActions';
+import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
-import { ApplicationState } from './models/ApplicationState';
 import './styles/index.css';
-
-import { PersistenceManager } from './persistence/PersistenceManager';
-const persistenceManager = new PersistenceManager();
-persistenceManager.initialize(true);
 
 injectTapEventPlugin();
 const initialState = {};
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
-store.dispatch(fetchContacts());
+store.dispatch(GlobalActionsCreator.initializeDatabase(true));
 
 ReactDOM.render(
   <Provider store={store}>
@@ -31,7 +26,6 @@ ReactDOM.render(
       <Route path='/index.html' component={App}>
         <IndexRoute component={CContactsContainer} />
       </Route>
-	  <Route path='*' component={App} />
     </Router>
   </Provider>,
   document.getElementById('root')

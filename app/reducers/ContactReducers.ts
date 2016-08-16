@@ -1,7 +1,7 @@
 /// <reference path="../_includes.ts" />
 
 import { Contact } from '../models/Contact';
-import * as ContactActions from '../actions/ContactActions';
+import * as ContactActions from '../actionCreators/ContactActions';
 import { ApplicationState } from '../models/ApplicationState';
 
 export function contacts(previousValue:Array<Contact>, action:Redux.Action):Array<Contact> {

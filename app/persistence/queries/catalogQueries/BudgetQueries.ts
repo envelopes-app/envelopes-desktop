@@ -46,6 +46,15 @@ export class BudgetQueries {
 	// *********************************************************************************************************
 	// Queries for reading data from the database
 	// *********************************************************************************************************
+	public static findBudgetByUserId(userId:string):IDatabaseQuery {
+
+		return {
+			name: "budgets",
+			query: "SELECT * FROM Budgets WHERE entityId IN (SELECT DISTINCT budgetId from UserBudgets where userId = ?)",
+			arguments: [userId]
+		}
+	}
+
 	public static findBudgetById(budgetId:string):IDatabaseQuery {
 
 		return {

@@ -28,6 +28,7 @@ export class DatabaseFactory {
 			.then((result:any)=>{
 
 				// Get the initial database creation scripts and run them
+				Logger.info("DatabaseFactory::Running create database scripts.");
 				queryList = this.getCreateDatabaseScripts();
 				return executeSqlQueries(queryList)
 			})
@@ -60,7 +61,7 @@ export class DatabaseFactory {
 				}
 				else {
 
-					Logger.info(`DatabaseFactory::Database is at version ${currentVersionNumber}. No migrations are required to be run.`);
+					Logger.info(`DatabaseFactory::Database is at version ${currentVersionNumber}. No migrations need to be run.`);
 					return true;
 				}
 			})
@@ -118,7 +119,7 @@ export class DatabaseFactory {
 		if(refreshDatabaseAtStartup) {
 
 			// Get the remove database scripts and run them
-			Logger.info("DatabaseFactory::removeDatabase::Running remove database scripts.");
+			Logger.info("DatabaseFactory::Running remove database scripts.");
 			var queryList:Array<IDatabaseQuery> = this.getRemoveDatabaseScripts();
 			return executeSqlQueries(queryList)
 				.catch((error:Error) => {
@@ -237,7 +238,6 @@ export class DatabaseFactory {
 						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
 						'userId' VARCHAR NOT NULL,
 						'budgetId' VARCHAR NOT NULL,
-						'permissions' NUMERIC,
 						'isTombstone' BOOL NOT NULL,
 						'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
