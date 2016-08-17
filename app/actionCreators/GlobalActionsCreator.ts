@@ -48,9 +48,9 @@ export class GlobalActionsCreator {
 			return persistenceManager.initialize(refreshDatabase)
 				.then((retVal:boolean)=>{
 
-					// If this is the first time that the user is launching the application, the database
-					// would be empty. This ensures that we have a user and a budget created for first time use.
-					return persistenceManager.createInitialUserAndBudget();					
+					// Load the default budget (one with the most recent lastAccessedOn value). If 
+					// there is no budget in the database, a new blank budget would be created.
+					return persistenceManager.loadDefaultBudget();
 				});
 		};
 	}

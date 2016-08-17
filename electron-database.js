@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const { Promise } = require('es6-promise');
 const { app } = require('electron');
 
@@ -84,8 +84,10 @@ function executeDatabaseQuery(databaseQuery, resultObj) {
 
 		database.all(databaseQuery.query, databaseQuery.arguments, function(err, rows) {
 
-			if(err)
+			if(err) {
+				console.log(err);
 				reject(err);
+			}
 
 			if(databaseQuery.name)
 				resultObj[databaseQuery.name] = rows;

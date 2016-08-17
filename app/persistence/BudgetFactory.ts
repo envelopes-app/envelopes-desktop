@@ -6,9 +6,10 @@ import { Promise } from 'es6-promise';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import * as commonInterfaces from '../interfaces/common'; 
+import * as catalogEntities from '../interfaces/catalogEntities'; 
 import * as budgetEntities from '../interfaces/budgetEntities'; 
 import { IDatabaseQuery, IReferenceDataForEnsuringMonthlyDataExists } from '../interfaces/persistence';
-import { DateWithoutTime, KeyGenerator } from '../utilities';
+import { DateWithoutTime, KeyGenerator, Logger } from '../utilities';
 import { InternalCategories, InternalCategoryNames, InternalPayees, SubCategoryType } from '../constants';
 import * as catalogQueries from './queries/catalogQueries';
 import * as budgetQueries from './queries/budgetQueries';
@@ -16,8 +17,9 @@ import * as miscQueries from './queries/miscQueries';
 
 export class BudgetFactory {
 
-	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, currencyFormat:string, dateFormat:string):Promise<string> {
+	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, currencyFormat:string, dateFormat:string):Promise<catalogEntities.IBudget> {
 
+		Logger.info(`BudgetFactory::Creating budget ${budgetName}.`);
 		var subCategoryIds:Array<string> = [];
 		var queriesList:Array<IDatabaseQuery> = [];
 		var budgetKnowledge = new BudgetKnowledge();
@@ -26,7 +28,7 @@ export class BudgetFactory {
 		var lastMonth = DateWithoutTime.createForCurrentMonth().addMonths(1);
 
 		// Create the budget entity
-		queriesList.push(catalogQueries.BudgetQueries.insertDatabaseObject({
+		var budget:catalogEntities.IBudget = {
 			entityId: budgetId,
 			budgetName: budgetName,
 			dateFormat: dateFormat,
@@ -36,7 +38,9 @@ export class BudgetFactory {
 			lastMonth: lastMonth.toISOString(),
 			isTombstone: 0,
 			deviceKnowledge: catalogKnowledge.getNextValue()
-		}));
+		};
+
+		queriesList.push(catalogQueries.BudgetQueries.insertDatabaseObject(budget));
 
 		// Create any setting entities that are required
 		queriesList = queriesList.concat( this.createSettings(budgetId, budgetKnowledge) );
@@ -80,7 +84,8 @@ export class BudgetFactory {
 
 		return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge)
 			.then((result:any)=>{
-				return budgetId;
+
+				return budget;
 			});
 	}
 
@@ -151,7 +156,6 @@ export class BudgetFactory {
 	}
 
 	public cloneBudget(budgetIdOfOriginalBudget:string,
-						userId:string,
 						clonedBudgetName:string,
 						catalogKnowledge:CatalogKnowledge):Promise<string> {
 
@@ -197,15 +201,6 @@ export class BudgetFactory {
 					lastAccessedOn: null,
 					firstMonth: existingBudget.firstMonth,
 					lastMonth: existingBudget.lastMonth,
-					isTombstone: 0,
-					deviceKnowledge: catalogKnowledge.getNextValue()
-				}));
-
-				// Create the UserBudget entity to associate this budget with the user
-				queriesList.push(catalogQueries.UserBudgetQueries.insertDatabaseObject({
-					entityId: userBudgetId,
-					userId: userId,
-					budgetId: budgetId,
 					isTombstone: 0,
 					deviceKnowledge: catalogKnowledge.getNextValue()
 				}));
@@ -396,7 +391,7 @@ export class BudgetFactory {
 				budgetKnowledge.deviceKnowledgeOfServer = 0;
 				budgetKnowledge.serverKnowledgeOfDevice = 0;
 
-				queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(userId, catalogKnowledge) );
+				queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 
 				// Execute the queries
 				return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
@@ -621,7 +616,6 @@ export class BudgetFactory {
 				note: null,
 				previousIncome: 0,
 				immediateIncome: 0,
-				deferredIncome: 0,
 				budgeted: 0,
 				cashOutflows: 0,
 				creditOutflows: 0,
@@ -636,7 +630,6 @@ export class BudgetFactory {
 				hiddenCreditOutflows: 0,
 				hiddenBalance: 0,
 				additionalToBeBudgeted: 0,
-				calculationNotes: null,
 				ageOfMoney: null,
 				deviceKnowledge: budgetKnowledge.getNextValue(),
 				deviceKnowledgeForCalculatedFields: 0
@@ -674,12 +667,10 @@ export class BudgetFactory {
 					month: month.toISOString(),
 					subCategoryId: subCategoryId,
 					budgeted: 0,
-					overspendingHandling: null,
 					note: null,
 					cashOutflows: 0,
 					positiveCashOutflows: 0,
 					creditOutflows: 0,
-					overspendingAffectsBuffer: 1,
 					balance: 0,
 					budgetedCashOutflows: 0,
 					budgetedCreditOutflows: 0,
@@ -703,16 +694,6 @@ export class BudgetFactory {
 					goalOverallLeft: 0,
 					goalUnderFunded: 0,
 					goalExpectedCompletion: 0,
-					subCategoryInternalName: subCategory ? subCategory.internalName : null,
-					subCategoryType: subCategory ? subCategory.type : null,
-					subCategoryName: subCategory ? subCategory.name : null,
-					subCategorySortableIndex: subCategory ? subCategory.sortableIndex : null,
-					subCategoryPinnedIndex: null,
-					subCategoryNote: subCategory ? subCategory.note : null,
-					masterCategoryId: subCategory ? subCategory.masterCategoryId : null,
-					masterCategoryName: masterCategory ? masterCategory.name : null,
-					masterCategoryInternalName: masterCategory ? masterCategory.internalName : null,
-					masterCategorySortableIndex: masterCategory ? masterCategory.sortableIndex : null,
 					deviceKnowledge: budgetKnowledge.getNextValue(),
 					deviceKnowledgeForCalculatedFields: 0
 				}));

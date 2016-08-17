@@ -5,15 +5,14 @@ export interface IMonthlySubCategoryBudget extends IBudgetEntity {
 	monthlyBudgetId:string;
 	subCategoryId:string;
 	budgeted:number;
-	overspendingHandling:string;
 	note:string;
+	month:string;
 
 	// These properties are actually coming from the monthly subcategory budget calculation entity from the server
 	cashOutflows:number;
 	positiveCashOutflows:number;
 	creditOutflows:number;
 	balance:number;
-	overspendingAffectsBuffer:number;
 	budgetedCashOutflows:number;
 	budgetedCreditOutflows:number;
 	unBudgetedCashOutflows:number;
@@ -38,21 +37,6 @@ export interface IMonthlySubCategoryBudget extends IBudgetEntity {
 	goalOverallLeft:number;
 	goalUnderFunded:number;
 	goalExpectedCompletion:number;
-
-	// Duplicated properties from other entities
-	month:string;
-
-	subCategoryInternalName:string;
-	subCategoryType:string;
-	subCategoryName:string;
-	subCategorySortableIndex:number;
-	subCategoryPinnedIndex:number;
-	subCategoryNote:string;
-
-	masterCategoryId:string;
-	masterCategoryName:string;
-	masterCategoryInternalName:string;
-	masterCategorySortableIndex:number;
 
 	deviceKnowledgeForCalculatedFields:number;
 }

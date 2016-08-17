@@ -3,6 +3,7 @@
 import { Promise } from 'es6-promise';
 
 import { executeSqlQueries } from './QueryExecutionUtility';
+import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import * as catalogQueries from './queries/catalogQueries';
 import * as miscQueries from './queries/miscQueries';
@@ -11,6 +12,7 @@ import * as budgetEntities from '../interfaces/budgetEntities';
 import { IDatabaseQuery } from '../interfaces/persistence';
 import { IEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
+import { Logger } from '../utilities';
 
 export class PersistenceManager {
 
@@ -49,12 +51,48 @@ export class PersistenceManager {
 			});
 	}
 
-	public createInitialUserAndBudget():Promise<boolean> {
+	public loadDefaultBudget():Promise<boolean> {
 
-		// Ensure that we have at least one user in the database, and that user should
-		// have at least one budget associated with him. If there is no budget associated
-		// with the user, then create a blank "My Budget" for that user.
-		return Promise.resolve(true);		
+		// Get all the budget entities from the database
+		var query = catalogQueries.BudgetQueries.getAllBudgets();
+		return executeSqlQueries([query])
+			.then((result:any)=>{
+
+				if(result.budgets && result.budgets.length > 0) {
+					// Iterate through the budgets to find the one that has the latest 'lastAccesson' value
+					var budget = result.budgets[0];
+					for(var i = 1; i < result.budgets.length; i++) {
+
+						if(result.budgets[i].lastAccessedOn > budget.lastAccessedOn)
+							budget = result.budgets[i];
+					}
+
+					return budget;
+				}
+				else {
+
+					// Currently there is no budget in the database. Create a blank new budget.
+					var budgetFactory = new BudgetFactory();
+					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null, null)
+				}
+			})
+			.then((budget:catalogEntities.IBudget)=>{
+
+				// Set this as the currently active budget
+				this.activeBudget = budget;
+				// Load the budget knowledge values for this budget
+				return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId);
+			})
+			.then((budgetKnowledge:BudgetKnowledge)=>{
+
+				this.budgetKnowledge = budgetKnowledge;
+				return true;
+			})
+			.catch((error:Error)=>{
+
+				Logger.error(error.toString());
+				return false;
+			});
 	}
 
 	public syncDataWithDatabase(entitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {

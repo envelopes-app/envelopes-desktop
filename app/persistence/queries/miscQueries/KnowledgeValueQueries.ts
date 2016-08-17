@@ -30,7 +30,7 @@ export class KnowledgeValueQueries {
 						currentDeviceKnowledgeForCalculations, 
 						serverKnowledgeOfDevice, 
 						deviceKnowledgeOfServer
-					FROM BudgetVersionKnowledge WHERE budgetId = ?`,
+					FROM BudgetKnowledge WHERE budgetId = ?`,
 			arguments: [budgetId]
 		};
 	}
@@ -38,7 +38,7 @@ export class KnowledgeValueQueries {
 	public static getSaveBudgetKnowledgeValueQuery(budgetId:string, budgetKnowledge:BudgetKnowledge):IDatabaseQuery {
 
 		return {
-			query: `REPLACE INTO BudgetVersionKnowledge (
+			query: `REPLACE INTO BudgetKnowledge (
 						budgetId,
 						currentDeviceKnowledge, 
 						currentDeviceKnowledgeForCalculations, 
