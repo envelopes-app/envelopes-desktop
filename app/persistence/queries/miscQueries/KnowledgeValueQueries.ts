@@ -5,20 +5,20 @@ import { CatalogKnowledge, BudgetKnowledge } from '../../KnowledgeObjects';
 
 export class KnowledgeValueQueries {
 
-	public static getLoadCatalogKnowledgeValueQuery(userId:string):IDatabaseQuery {
+	public static getLoadCatalogKnowledgeValueQuery():IDatabaseQuery {
 
 		return {
 			name: "catalogKnowledge",
-			query: "SELECT currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer FROM UserKnowledge WHERE userId = ?",
-			arguments: [userId]
+			query: "SELECT currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer FROM CatalogKnowledge",
+			arguments: []
 		};
 	}
 
-	public static getSaveCatalogKnowledgeValueQuery(userId:string, catalogKnowledge:CatalogKnowledge):IDatabaseQuery {
+	public static getSaveCatalogKnowledgeValueQuery(catalogKnowledge:CatalogKnowledge):IDatabaseQuery {
 
 		return {
-			query: "REPLACE INTO UserKnowledge (userId, currentDeviceKnowledge, serverKnowledgeOfDevice, deviceKnowledgeOfServer) VALUES (?,?,?,?)",
-			arguments: [userId, catalogKnowledge.currentDeviceKnowledge, catalogKnowledge.serverKnowledgeOfDevice, catalogKnowledge.deviceKnowledgeOfServer]
+			query: "UPDATE CatalogKnowledge SET currentDeviceKnowledge = ?, serverKnowledgeOfDevice = ?, deviceKnowledgeOfServer = ?",
+			arguments: [catalogKnowledge.currentDeviceKnowledge, catalogKnowledge.serverKnowledgeOfDevice, catalogKnowledge.deviceKnowledgeOfServer]
 		};
 	}
 

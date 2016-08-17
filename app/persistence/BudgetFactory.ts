@@ -16,14 +16,12 @@ import * as miscQueries from './queries/miscQueries';
 
 export class BudgetFactory {
 
-	public createNewBudget(catalogKnowledge:CatalogKnowledge,
-								userId:string, budgetName:string, currencyFormat:string, dateFormat:string):Promise<string> {
+	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, currencyFormat:string, dateFormat:string):Promise<string> {
 
 		var subCategoryIds:Array<string> = [];
 		var queriesList:Array<IDatabaseQuery> = [];
 		var budgetKnowledge = new BudgetKnowledge();
 		var budgetId = KeyGenerator.generateUUID();
-		var userBudgetId = KeyGenerator.generateUUID();
 		var firstMonth = DateWithoutTime.createForCurrentMonth();
 		var lastMonth = DateWithoutTime.createForCurrentMonth().addMonths(1);
 
@@ -36,15 +34,6 @@ export class BudgetFactory {
 			lastAccessedOn: null,
 			firstMonth: firstMonth.toISOString(),
 			lastMonth: lastMonth.toISOString(),
-			isTombstone: 0,
-			deviceKnowledge: catalogKnowledge.getNextValue()
-		}));
-
-		// Create the UserBudget entity to associate this budget with the user
-		queriesList.push(catalogQueries.UserBudgetQueries.insertDatabaseObject({
-			entityId: userBudgetId,
-			userId: userId,
-			budgetId: budgetId,
 			isTombstone: 0,
 			deviceKnowledge: catalogKnowledge.getNextValue()
 		}));
@@ -87,7 +76,7 @@ export class BudgetFactory {
 		// Queue a full calculation for this budget
 		queriesList.push( miscQueries.CalculationQueries.getQueueCompleteCalculationQuery(budgetId) );
 
-		queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(userId, catalogKnowledge) );
+		queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 
 		return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge)
 			.then((result:any)=>{

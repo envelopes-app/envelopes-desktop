@@ -178,16 +178,7 @@ export class DatabaseFactory {
 				arguments: []
 			},
 			{
-				query: `CREATE TABLE IF NOT EXISTS 'Users' (
-						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'userName' VARCHAR,
-						'email' VARCHAR,
-						'deviceKnowledge' NUMERIC NOT NULL)`,
-				arguments: []
-			},
-			{
-				query: `CREATE TABLE IF NOT EXISTS 'UserKnowledge' (
-						'userId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
+				query: `CREATE TABLE IF NOT EXISTS 'CatalogKnowledge' (
 						'currentDeviceKnowledge' NUMERIC DEFAULT 0 NOT NULL,
 						'serverKnowledgeOfDevice' NUMERIC DEFAULT 0 NOT NULL,
 						'deviceKnowledgeOfServer' NUMERIC DEFAULT 0 NOT NULL)`,
@@ -225,20 +216,10 @@ export class DatabaseFactory {
 				arguments: []
 			},
 			{
-				query: `CREATE TABLE IF NOT EXISTS 'UserSettings' (
+				query: `CREATE TABLE IF NOT EXISTS 'GlobalSettings' (
 						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'userId' VARCHAR NOT NULL,
 						'settingName' VARCHAR NOT NULL,
 						'settingValue' VARCHAR NOT NULL,
-						'deviceKnowledge' NUMERIC NOT NULL)`,
-				arguments: []
-			},
-			{
-				query: `CREATE TABLE IF NOT EXISTS 'UserBudgets' (
-						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'userId' VARCHAR NOT NULL,
-						'budgetId' VARCHAR NOT NULL,
-						'isTombstone' BOOL NOT NULL,
 						'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
 			},
@@ -544,6 +525,12 @@ export class DatabaseFactory {
 			{query: "CREATE INDEX IF NOT EXISTS 'MonthlySubCategoryBudgets_index_01' ON MonthlySubCategoryBudgets (budgetId, month, subCategoryId, masterCategoryInternalName)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'MonthlySubCategoryBudgets_index_02' ON MonthlySubCategoryBudgets (budgetId, month, masterCategoryId, masterCategoryInternalName)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'SubCategories_index_01' ON SubCategories (budgetId, isTombstone)", arguments: []},
+
+			// ********************************************************************************************
+			// Insert the required data
+			// ********************************************************************************************
+			{query: "INSERT INTO VersionInfo VALUES (?)", arguments: [DatabaseFactory.INITIAL_DATABASE_VERSION]},
+			{query: "INSERT INTO CatalogKnowledge VALUES (?,?,?)", arguments: [0, 0, 0]}
 		];
 
 		return queryList;

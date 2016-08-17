@@ -41,15 +41,16 @@ export class GlobalActionsCreator {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>) {
 
+			var persistenceManager = PersistenceManager.getInstance();
 			// Initialize the persistence manager. This would create the database if it does 
 			// not already exist. If it does, then this would ensure that any pending migrations 
 			// are run on the database.
-			return PersistenceManager.initialize(refreshDatabase)
+			return persistenceManager.initialize(refreshDatabase)
 				.then((retVal:boolean)=>{
 
 					// If this is the first time that the user is launching the application, the database
 					// would be empty. This ensures that we have a user and a budget created for first time use.
-					return PersistenceManager.createInitialUserAndBudget();					
+					return persistenceManager.createInitialUserAndBudget();					
 				});
 		};
 	}
@@ -62,10 +63,9 @@ export class GlobalActionsCreator {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>) {
 
-			// Initialize the persistence manager. This would create the database if it does 
-			// not already exist. If it does, then this would ensure that any pending migrations 
-			// are run on the database.
-			return PersistenceManager.syncDataWithDatabase(entitiesCollection)
+			var persistenceManager = PersistenceManager.getInstance();
+
+			return persistenceManager.syncDataWithDatabase(entitiesCollection)
 				.then((updatedEntities:IEntitiesCollection)=>{
 
 
