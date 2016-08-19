@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { IAccount } from '../../interfaces/budgetEntities';
 import { IApplicationState } from '../../interfaces/state';
-import { AccountActionsCreator } from '../../actionCreators';
+import { SidebarActionsCreator } from '../../actionCreators';
 
 import { PSidebar } from './PSidebar';
 
@@ -17,14 +17,28 @@ const mapStateToProps = (state:IApplicationState) => {
 
 const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
   	return {
-    	onAddAccount: (account:IAccount, currentBalance:number) => {
-			// Dispatch action to create the account
-      		dispatch(AccountActionsCreator.createNewAccount(account, currentBalance));
+		setSelectedTab: (selectedTab:string, selectedAccountId:string) => {
+			dispatch(SidebarActionsCreator.setSelectedTab(selectedTab, selectedAccountId));
+		},  
+
+		setBudgetAccountsExpanded: (expanded:boolean) => {
+			dispatch(SidebarActionsCreator.setBudgetAccountsExpanded(expanded));
+		},
+
+		setTrackingAccountsExpanded: (expanded:boolean) => {
+			dispatch(SidebarActionsCreator.setTrackingAccountsExpanded(expanded));
+		},
+
+		setClosedAccountsExpanded: (expanded:boolean) => {
+			dispatch(SidebarActionsCreator.setClosedAccountsExpanded(expanded));
+		},
+
+    	addAccount: (account:IAccount, currentBalance:number) => {
+      		dispatch(SidebarActionsCreator.createNewAccount(account, currentBalance));
     	},
 
-    	onUpdateAccount: (account:IAccount, currentBalance:number) => {
-			// Dispatch action to update the account
-      		dispatch(AccountActionsCreator.updateExistingAccount(account, currentBalance));
+    	updateAccount: (account:IAccount, currentBalance:number) => {
+      		dispatch(SidebarActionsCreator.updateExistingAccount(account, currentBalance));
     	}
 	}
 }

@@ -44,10 +44,16 @@ const ModuleButtonIconStyle = {
 }
 
 export interface PSidebarProps {
+	// State Variables
     accounts: Array<IAccount>;
 	sidebarState: ISidebarState;
-	onAddAccount: (account:IAccount, currentBalance:number)=>void;
-	onUpdateAccount: (account:IAccount, currentBalance:number)=>void;
+	// Dispatcher Functions
+	setSelectedTab: (selectedTab:string, selectedAccountId:string)=>void;
+	setBudgetAccountsExpanded: (expanded:boolean)=>void;
+	setTrackingAccountsExpanded: (expanded:boolean)=>void;
+	setClosedAccountsExpanded: (expanded:boolean)=>void;
+	addAccount: (account:IAccount, currentBalance:number)=>void;
+	updateAccount: (account:IAccount, currentBalance:number)=>void;
 }
 
 export class PSidebar extends React.Component<PSidebarProps, {}> {
@@ -104,16 +110,18 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 					<AccountBalance style={ModuleButtonIconStyle} />
 				</PModuleButton>
 				<Divider style={{backgroundColor: ColorPalette.Shade600}} />
-				<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget">
+				<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
+					expanded={this.props.sidebarState.budgetAccountsExpanded} setExpanded={this.props.setBudgetAccountsExpanded}>
 					{budgetAccountNodes}
 				</PAccountButtonContainer>
-				<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking">
+				<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
+					expanded={this.props.sidebarState.trackingAccountsExpanded} setExpanded={this.props.setTrackingAccountsExpanded}>
 					{trackingAccountNodes}
 				</PAccountButtonContainer>
 
 				<RaisedButton label="Add Account" primary={true} onClick={this.onAddAccountClick} />
 
-				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.onAddAccount} />
+				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
 			</div>
 		);
   	}

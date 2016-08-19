@@ -1,2 +1,2 @@
-export { AccountActionsCreator } from './AccountActionsCreator';
 export { GlobalActionsCreator } from './GlobalActionsCreator';
+export { SidebarActionsCreator } from './SidebarActionsCreator';

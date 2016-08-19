@@ -32,11 +32,11 @@ export class SidebarReducers {
 				break;
 
 			case ActionNames.SIDEBAR_SET_TRACKING_ACCOUNT_EXPANDED:
-				newValue.budgetAccountsExpanded = (action as SetTrackingAccountsExpandedAction).expanded;
+				newValue.trackingAccountsExpanded = (action as SetTrackingAccountsExpandedAction).expanded;
 				break;
 
 			case ActionNames.SIDEBAR_SET_CLOSED_ACCOUNT_EXPANDED:
-				newValue.budgetAccountsExpanded = (action as SetClosedAccountsExpandedAction).expanded;
+				newValue.closedAccountsExpanded = (action as SetClosedAccountsExpandedAction).expanded;
 				break;
 		}
 
