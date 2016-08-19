@@ -12,7 +12,6 @@ import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 
 import ColorPalette from '../common/ColorPalette';
-import { PSidebarHeader } from './PSidebarHeader';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
@@ -102,7 +101,6 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 
 		return (
 			<div className="sidebar" style={PSidebarStyle}>
-				<PSidebarHeader title="Home Budget 2016" />
 				<PModuleButton label="Budget" selected={false}>
 					<MailOutline style={ModuleButtonIconStyle} />
 				</PModuleButton>

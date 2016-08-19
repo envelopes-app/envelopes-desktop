@@ -11,7 +11,6 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import './styles/index.css';
 // Components that are to be used in route map
 import { App } from './components/App';
-import CContactsContainer from './components/contacts/CContactsContainer';
 
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
@@ -25,7 +24,6 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path='/index.html' component={App}>
-        <IndexRoute component={CContactsContainer} />
       </Route>
     </Router>
   </Provider>,

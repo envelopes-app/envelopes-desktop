@@ -8,7 +8,18 @@ import { MuiThemeProvider, lightBaseTheme } from 'material-ui/styles';
 
 import CSidebar from './sidebar/CSidebar';
 
-import '../styles/App.css';
+const AppStyle = {
+  display: "flex",
+  flexFlow: "row nowrap"
+}
+
+const AppSidebarStyle = {
+	flex: "0 1 260em"
+}
+
+const AppModuleContainerStyle = {
+	flex: "1 1 auto"
+}
 
 export interface AppProps {}
 
@@ -17,11 +28,11 @@ export class App extends React.Component<AppProps, {}> {
 	public render() {
     	return (
 			<MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-				<div className="App">
-					<div className="App-Sidebar">
+				<div style={AppStyle}>
+					<div style={AppSidebarStyle}>
 						<CSidebar />
 					</div>
-					<div className="App-ModuleContainer">
+					<div style={AppModuleContainerStyle}>
 						{this.props.children}
 					</div>
 				</div>

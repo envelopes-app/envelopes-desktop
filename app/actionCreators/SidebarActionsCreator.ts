@@ -68,8 +68,11 @@ export class SidebarActionsCreator {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
+			var transactions = null;
 			// Create the balance adjustment transaction
 			var transaction = SidebarActionsCreator.createBalanceAdjustmentTransactionForAccount(account, currentBalance);
+			if(transaction)
+				transactions = [ transaction ];
 
 			// Create an entities collection object with the entities to save
 			var entitiesCollection:IEntitiesCollection  = {
