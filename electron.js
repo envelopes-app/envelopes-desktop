@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { app, ipcMain, BrowserWindow, Menu } = require('electron');
-const { initializeDatabase, closeDatabase, executeDatabaseQueries } = require('./electron-database');
+const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus');
+const { initializeDatabaseModule, finalizeDatabaseModule } = require('./electron-database');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,7 +10,7 @@ let mainWindow;
 
 const createWindow = () => {
 	// Create the browser window.
-	mainWindow = new BrowserWindow({width: 800, height: 600})
+	mainWindow = new BrowserWindow({width: 1024, height: 768})
 	// and load the index.html of the app.
 	if (process.env.NODE_ENV === 'development') {
 		mainWindow.loadURL('http://localhost:8080/index.html')
@@ -39,25 +40,9 @@ const createWindow = () => {
 	mainWindow.on('closed', () => {
 		// Set the local reference to the main window to null
 		mainWindow = null;
-		// Close the database. We will re-initialize it if we activate.
-		closeDatabase();
+		// Finalize the database module. We will re-initialize it if we activate.
+		finalizeDatabaseModule();
 	});
-}
-
-const handleDatabaseMessage = (event, args) => {
-
-	var requestId = args.requestId;
-	var queryList = args.queryList;
-
-	return executeDatabaseQueries(queryList)
-		.then((resultObj)=>{
-			// Pass the result object received from the database back to the caller
-			event.sender.send(requestId, null, resultObj);
-		})
-		.catch(function(error) {
-			// In case of error, send the error object back to the caller
-			event.sender.send(requestId, error, null);
-		});
 }
 
 /*
@@ -83,13 +68,8 @@ app.on('ready', () => {
 	// Install the required extensions
   	// await installExtensions();
 
-	// Start listening for ipc messages
-	ipcMain.on('database-request', (event, args) => {
-		handleDatabaseMessage(event, args);
-	});
-
-	// Initialize the database 
-	initializeDatabase()
+	// Initialize the database module 
+	initializeDatabaseModule()
 		.then(()=>{
 			// Create the main window
 			createWindow();
@@ -112,7 +92,7 @@ app.on('activate', () => {
 	// On macOS it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
 	if (mainWindow === null) {
-		initializeDatabase()
+		initializeDatabaseModule()
 			.then(()=>{
 				createWindow();
 			})
@@ -121,6 +101,3 @@ app.on('activate', () => {
 			});
 	}
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

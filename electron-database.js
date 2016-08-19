@@ -2,9 +2,42 @@ const fs = require('fs');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const { Promise } = require('es6-promise');
-const { app } = require('electron');
+const { app, ipcMain } = require('electron');
 
 let database; 
+
+function initializeModule() {
+
+	// Start listening for ipc messages related to database
+	ipcMain.on('database-request', handleDatabaseMessage);
+
+	// Initialize the database 
+	return initializeDatabase();
+}
+
+function finalizeModule() {
+
+	// Remove the listener from ipcMain
+	ipcMain.removeListener('database-request', handleDatabaseMessage);
+	// Close the database. We will re-initialize it if we activate.
+	closeDatabase();
+}
+
+function handleDatabaseMessage(event, args) {
+
+	var requestId = args.requestId;
+	var queryList = args.queryList;
+
+	return executeDatabaseQueries(queryList)
+		.then((resultObj)=>{
+			// Pass the result object received from the database back to the caller
+			event.sender.send(requestId, null, resultObj);
+		})
+		.catch(function(error) {
+			// In case of error, send the error object back to the caller
+			event.sender.send(requestId, error, null);
+		});
+}
 
 function initializeDatabase() {
 
@@ -98,7 +131,6 @@ function executeDatabaseQuery(databaseQuery, resultObj) {
 }
 
 module.exports = {
-	initializeDatabase: initializeDatabase,
-	closeDatabase: closeDatabase,
-	executeDatabaseQueries: executeDatabaseQueries
+	initializeDatabaseModule: initializeModule,
+	finalizeDatabaseModule: finalizeModule
 };
