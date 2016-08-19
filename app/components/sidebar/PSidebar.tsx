@@ -1,5 +1,6 @@
 /// <reference path="../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Divider from 'material-ui/Divider';
@@ -19,6 +20,7 @@ import { PAccountCreationDialog } from './PAccountCreationDialog';
 
 import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
+import { ISidebarState } from '../../interfaces/state';
 
 let SelectableList = MakeSelectable(List);
 
@@ -43,6 +45,7 @@ const ModuleButtonIconStyle = {
 
 export interface PSidebarProps {
     accounts: Array<IAccount>;
+	sidebarState: ISidebarState;
 	onAddAccount: (account:IAccount, currentBalance:number)=>void;
 	onUpdateAccount: (account:IAccount, currentBalance:number)=>void;
 }
@@ -64,6 +67,33 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 	}
 
   	public render() {
+		
+		var budgetAccountNodes = [];
+		var trackingAccountNodes = [];
+		var closedAccountNodes = [];
+		var budgetAccountsBalance:number = 0;
+		var trackingAccountsBalance:number = 0;
+
+		_.forEach(this.props.accounts, (account)=>{
+			if(account.onBudget == 1 && account.closed == 0) {
+				budgetAccountNodes.push(
+					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
+				);
+				budgetAccountsBalance += account.clearedBalance + account.unclearedBalance;
+			}
+			else if(account.onBudget == 0 && account.closed == 0) {
+				trackingAccountNodes.push(
+					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
+				);
+				trackingAccountsBalance += account.clearedBalance + account.unclearedBalance;
+			}
+			else if(account.closed == 1) {
+				closedAccountNodes.push(
+					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
+				);
+			}
+		});
+
 		return (
 			<div className="sidebar" style={PSidebarStyle}>
 				<PSidebarHeader title="Home Budget 2016" />
@@ -74,11 +104,11 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 					<AccountBalance style={ModuleButtonIconStyle} />
 				</PModuleButton>
 				<Divider style={{backgroundColor: ColorPalette.Shade600}} />
-				<PAccountButtonContainer label="BUDGET" value={1234} identity="budget">
-					<PAccountButton label="Checking" value={1234} selected={false} />
+				<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget">
+					{budgetAccountNodes}
 				</PAccountButtonContainer>
-				<PAccountButtonContainer label="TRACKING" value={-1234} identity="tracking">
-					<PAccountButton label="Saving" value={-1234} selected={false} />
+				<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking">
+					{trackingAccountNodes}
 				</PAccountButtonContainer>
 
 				<RaisedButton label="Add Account" primary={true} onClick={this.onAddAccountClick} />

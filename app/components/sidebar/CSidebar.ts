@@ -10,7 +10,8 @@ import { PSidebar } from './PSidebar';
 
 const mapStateToProps = (state:IApplicationState) => {
 	return {
-    	accounts: state.entitiesCollection.accounts
+    	accounts: state.entitiesCollection.accounts,
+		sidebarState: state.sidebarState
   	};
 };
 

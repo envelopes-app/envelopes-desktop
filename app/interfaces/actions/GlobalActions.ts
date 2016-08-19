@@ -1,3 +1,5 @@
+/// <reference path="../../_includes.ts" />
+
 import { IEntitiesCollection } from '../state/IEntitiesCollection';
 import * as catalogEntities from '../catalogEntities';
 

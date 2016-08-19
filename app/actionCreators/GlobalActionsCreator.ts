@@ -6,7 +6,7 @@ import { IApplicationState, IEntitiesCollection } from '../interfaces/state';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
 import * as catalogEntities from '../interfaces/catalogEntities';
-import { CreateBudgetCompletedAction, OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction } from '../interfaces/actions/GlobalActions';
+import { CreateBudgetCompletedAction, OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction } from '../interfaces/actions';
 
 export class GlobalActionsCreator {
 

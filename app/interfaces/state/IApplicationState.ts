@@ -1,12 +1,19 @@
 import { IEntitiesCollectionWithMaps } from './IEntitiesCollectionWithMaps';
+import { ISidebarState } from './ISidebarState';
+import { IRegisterState } from './IRegisterState';
+import { IBudgetState } from './IBudgetState';
 
 export interface IApplicationState {
 
+	// ****************************************************************************************************
+	// Data
+	// ****************************************************************************************************
 	entitiesCollection:IEntitiesCollectionWithMaps;
 	
 	// ****************************************************************************************************
-	// UI-Related State
+	// UI State
 	// ****************************************************************************************************
-	sidebar_selectedTab:string; // Budget or Accounts
-	sidebar_selectedAccountId:string; // 'allAccount' or a specific account's id 
+	sidebarState:ISidebarState;
+	registerState:IRegisterState;
+	budgetState:IBudgetState;
 }

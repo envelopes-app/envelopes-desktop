@@ -10,6 +10,10 @@ export class ActionNames {
 	// ****************************************************************************************
 	// Sidebar Action Names
 	// ****************************************************************************************
+	public static SIDEBAR_SET_SELECTED_TAB:string = "SIDEBAR_SET_SELECTED_TAB";
+	public static SIDEBAR_SET_BUDGETS_ACCOUNT_EXPANDED:string = "SIDEBAR_SET_BUDGETS_ACCOUNT_EXPANDED";
+	public static SIDEBAR_SET_TRACKING_ACCOUNT_EXPANDED:string = "SIDEBAR_SET_TRACKING_ACCOUNT_EXPANDED";
+	public static SIDEBAR_SET_CLOSED_ACCOUNT_EXPANDED:string = "SIDEBAR_SET_CLOSED_ACCOUNT_EXPANDED";
 
 
 	// ****************************************************************************************
