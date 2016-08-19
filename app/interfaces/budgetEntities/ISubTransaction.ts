@@ -7,7 +7,6 @@ export interface ISubTransaction extends IBudgetEntity {
 	subCategoryId:string;
 	amount:number;
 	memo:string;
-	checkNumber:string;
 	transferAccountId:string;
 	transferTransactionId:string;
 	sortableIndex:number;

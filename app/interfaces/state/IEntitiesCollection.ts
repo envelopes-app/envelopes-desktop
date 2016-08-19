@@ -3,7 +3,10 @@ import * as budgetEntities from '../budgetEntities';
 
 export interface IEntitiesCollection {
 
-	// Arrays to save all entities by their types
+	// The budget entity to which the below entitied belong
+	budget?:catalogEntities.IBudget;
+	
+	// Arrays to save all budget entities by their types
 	accounts?:Array<budgetEntities.IAccount>;
 	accountMappings?:Array<budgetEntities.IAccountMapping>;
 	masterCategories?:Array<budgetEntities.IMasterCategory>;

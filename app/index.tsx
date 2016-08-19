@@ -8,17 +8,18 @@ import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
+import './styles/index.css';
+// Components that are to be used in route map
 import { App } from './components/App';
 import CContactsContainer from './components/contacts/CContactsContainer';
 
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
-import './styles/index.css';
 
 injectTapEventPlugin();
-const initialState = {};
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
-store.dispatch(GlobalActionsCreator.initializeDatabase(true));
+var refreshDatabase:boolean = (process.env.NODE_ENV === 'development') ? true : false;
+store.dispatch(GlobalActionsCreator.initializeDatabase(refreshDatabase));
 
 ReactDOM.render(
   <Provider store={store}>

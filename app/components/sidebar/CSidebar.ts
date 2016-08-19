@@ -2,27 +2,28 @@
 
 import { connect } from 'react-redux';
 
-import { Account } from '../../models/Account';
-import { ApplicationState } from '../../models/ApplicationState';
-import * as AccountActions from './ASidebarActions';
+import { IAccount } from '../../interfaces/budgetEntities';
+import { IApplicationState } from '../../interfaces/state';
+import { AccountActionsCreator } from '../../actionCreators';
+
 import { PSidebar } from './PSidebar';
 
-const mapStateToProps = (state:ApplicationState) => {
+const mapStateToProps = (state:IApplicationState) => {
 	return {
-    	accounts: state.accounts
+    	accounts: state.entitiesCollection.accounts
   	};
 };
 
-const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<ApplicationState>) => {
+const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
   	return {
-    	onAddAccount: (account:Account) => {
-      		dispatch(AccountActions.addAccount(account));
+    	onAddAccount: (account:IAccount, currentBalance:number) => {
+			// Dispatch action to create the account
+      		dispatch(AccountActionsCreator.createNewAccount(account, currentBalance));
     	},
-    	onUpdateAccount: (account:Account) => {
-      		dispatch(AccountActions.updateContact(account));
-    	},
-    	onDeleteAccount: (accountId:string) => {
-      		dispatch(AccountActions.deleteContact(accountId));
+
+    	onUpdateAccount: (account:IAccount, currentBalance:number) => {
+			// Dispatch action to update the account
+      		dispatch(AccountActionsCreator.updateExistingAccount(account, currentBalance));
     	}
 	}
 }

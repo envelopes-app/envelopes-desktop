@@ -1,4 +1,4 @@
-export { AccountTypes } from './AccountTypes';
+export { AccountTypes, AccountTypeNames } from './AccountTypes';
 export { ActionNames } from './ActionNames';
 export { CalculationQueueItemTypes } from './CalculationQueueItemTypes';
 export { InternalCategories, InternalCategoryNames } from './InternalCategories';

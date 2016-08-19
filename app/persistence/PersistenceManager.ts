@@ -1,14 +1,17 @@
 /// <reference path='../_includes.ts' />
 
+import * as _ from 'lodash';
 import { Promise } from 'es6-promise';
 
-import { executeSqlQueries } from './QueryExecutionUtility';
+import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
-import * as catalogQueries from './queries/catalogQueries';
-import * as miscQueries from './queries/miscQueries';
+import * as commonInterfaces from '../interfaces/common'; 
 import * as catalogEntities from '../interfaces/catalogEntities';
 import * as budgetEntities from '../interfaces/budgetEntities';
+import * as catalogQueries from './queries/catalogQueries';
+import * as budgetueries from './queries/budgetQueries';
+import * as miscQueries from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence';
 import { IEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
@@ -51,7 +54,7 @@ export class PersistenceManager {
 			});
 	}
 
-	public loadDefaultBudget():Promise<boolean> {
+	public selectBudgetToOpen():Promise<catalogEntities.IBudget> {
 
 		// Get all the budget entities from the database
 		var query = catalogQueries.BudgetQueries.getAllBudgets();
@@ -73,12 +76,12 @@ export class PersistenceManager {
 
 					// Currently there is no budget in the database. Create a blank new budget.
 					var budgetFactory = new BudgetFactory();
-					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null, null)
+					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null, null);
 				}
 			})
 			.then((budget:catalogEntities.IBudget)=>{
 
-				// Set this as the currently active budget
+				// Set this as the currently active budget in persistence manager
 				this.activeBudget = budget;
 				// Load the budget knowledge values for this budget
 				return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId);
@@ -86,31 +89,46 @@ export class PersistenceManager {
 			.then((budgetKnowledge:BudgetKnowledge)=>{
 
 				this.budgetKnowledge = budgetKnowledge;
-				return true;
+				return this.activeBudget;
 			})
 			.catch((error:Error)=>{
 
 				Logger.error(error.toString());
-				return false;
+				return null;
 			});
 	}
 
 	public syncDataWithDatabase(entitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {
 
 		// Persist the passed entities into the database
+		return this.saveBudgetEntitiesToDatabase(entitiesCollection)
+			.then((retVal:boolean)=>{
 
-		// Run any pending calculations
+				// Run pending calculations
+				return this.runQueuedCalculations();
+			})
+			.then((retVal:boolean)=>{
+				
+				// Load updated data from the database
+				var budgetId = this.activeBudget.entityId;
+				var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+				return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
+			});
+	}
 
-		// Load updated data from the database
+	public loadBudgetData():Promise<IEntitiesCollection> {
 
-		// Resolve the promise with the updated data that we loaded
-		return Promise.resolve(null);		
+		var budgetId = this.activeBudget.entityId;
+		var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+		var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+		return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
 	}
 
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************
-	public loadCatalogKnowledgeValuesFromDatabase():Promise<CatalogKnowledge> {
+	private loadCatalogKnowledgeValuesFromDatabase():Promise<CatalogKnowledge> {
 
 		var queryList:Array<IDatabaseQuery> = [
 			miscQueries.KnowledgeValueQueries.getLoadCatalogKnowledgeValueQuery()
@@ -131,13 +149,13 @@ export class PersistenceManager {
 			});
 	}
 
-	protected saveCatalogKnowledgeValuesToDatabase(catalogKnowledge:CatalogKnowledge):Promise<any> {
+	private saveCatalogKnowledgeValuesToDatabase(catalogKnowledge:CatalogKnowledge):Promise<any> {
 
 		var query = miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge);
 		return executeSqlQueries([query]);
 	}
 
-	public loadBudgetKnowledgeValuesFromDatabase(budgetId:string):Promise<BudgetKnowledge> {
+	private loadBudgetKnowledgeValuesFromDatabase(budgetId:string):Promise<BudgetKnowledge> {
 
 		var budgetKnowledge:BudgetKnowledge = new BudgetKnowledge();
 		var queryList:Array<IDatabaseQuery> = [
@@ -171,9 +189,94 @@ export class PersistenceManager {
 			});
 	}
 
-	protected saveBudgetKnowledgeValuesToDatabase(budgetId:string, budgetKnowledge:BudgetKnowledge):Promise<any> {
+	private saveBudgetKnowledgeValuesToDatabase(budgetId:string, budgetKnowledge:BudgetKnowledge):Promise<any> {
 
 		var query = miscQueries.KnowledgeValueQueries.getSaveBudgetKnowledgeValueQuery(budgetId, budgetKnowledge);
 		return executeSqlQueries([query]);
+	}
+
+	private saveBudgetEntitiesToDatabase(entitiesCollection:IEntitiesCollection):Promise<boolean> {
+
+		// Iterate through the passed entities, and ensure that each of them has the budgetId set
+		// Also update the deviceKnowledge value on each entity 
+		var budgetId = this.activeBudget.entityId;
+		var budgetKnowledge = this.budgetKnowledge;
+
+		var updateEntities = (entitiesArray:Array<commonInterfaces.IBudgetEntity>)=>{
+
+			if(entitiesArray && entitiesArray.length > 0) {
+				_.forEach(entitiesArray, (entity:commonInterfaces.IBudgetEntity)=>{
+
+					entity.budgetId = budgetId;
+					entity.deviceKnowledge = budgetKnowledge.getNextValue();
+				});
+			}
+		};
+
+		// Call the updateEntities method on each type of entity array in the passed entities collection 
+		updateEntities(entitiesCollection.accounts);
+		updateEntities(entitiesCollection.accountMappings);
+		updateEntities(entitiesCollection.masterCategories);
+		updateEntities(entitiesCollection.monthlyBudgets);
+		updateEntities(entitiesCollection.monthlySubCategoryBudgets);
+		updateEntities(entitiesCollection.payees);
+		updateEntities(entitiesCollection.payeeLocations);
+		updateEntities(entitiesCollection.payeeRenameConditions);
+		updateEntities(entitiesCollection.scheduledSubTransactions);
+		updateEntities(entitiesCollection.scheduledTransactions);
+		updateEntities(entitiesCollection.settings);
+		updateEntities(entitiesCollection.subCategories);
+		updateEntities(entitiesCollection.subTransactions);
+		updateEntities(entitiesCollection.transactions);
+
+		// Create queries to persist these entities
+		var queriesList:Array<IDatabaseQuery> = [];
+		queriesList = _.concat(
+			_.map(entitiesCollection.accounts, (entity)=>{ return budgetueries.AccountQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.accountMappings, (entity)=>{ return budgetueries.AccountMappingQueries.insertDatabaseObject(entity); })
+		)
+
+		if(queriesList.length > 0)
+			return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
+		else	
+			return Promise.resolve(true);
+	}
+
+	private loadBudgetEntitiesFromDatabase(budgetId:string, deviceKnowlege:number, deviceKnowledgeForCalculations:number):Promise<IEntitiesCollection> {
+
+		var queryList = [
+			budgetueries.AccountQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetueries.AccountMappingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.MasterCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.MonthlyBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetueries.MonthlySubCategoryBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetueries.PayeeQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.PayeeLocationQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.PayeeRenameConditionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.ScheduledSubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.ScheduledTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetueries.SettingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.SubCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetueries.SubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetueries.TransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			// Also load the knowledge values that are in the database
+			miscQueries.KnowledgeValueQueries.getLoadBudgetKnowledgeValueQuery(budgetId),
+		];
+
+		return executeSqlQueries(queryList)
+			.then((result:any)=>{
+
+				// Use the loaded knowledge values to update the values in the budgetKnowledge object
+				this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage = result.budgetKnowledge[0].currentDeviceKnowledge;
+				this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage = result.budgetKnowledge[0].currentDeviceKnowledgeForCalculations;
+
+				// resolve the promise with the result object
+				return Promise.resolve(result);
+			});
+	}
+
+	private runQueuedCalculations():Promise<boolean> {
+
+		return Promise.resolve(true);
 	}
 }

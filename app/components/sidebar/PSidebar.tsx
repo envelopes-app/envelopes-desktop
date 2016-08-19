@@ -15,8 +15,10 @@ import { PSidebarHeader } from './PSidebarHeader';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
+import { PAccountCreationDialog } from './PAccountCreationDialog';
 
-import { Account } from '../../models/Account';
+import { EntityFactory } from '../../persistence';
+import { IAccount } from '../../interfaces/budgetEntities';
 
 let SelectableList = MakeSelectable(List);
 
@@ -40,15 +42,28 @@ const ModuleButtonIconStyle = {
 }
 
 export interface PSidebarProps {
-    accounts: Array<Account>;
-	onAddAccount: (account:Account)=>void;
-	onUpdateAccount: (account:Account)=>void;
-	onDeleteAccount: (accountId:string)=>void;
+    accounts: Array<IAccount>;
+	onAddAccount: (account:IAccount, currentBalance:number)=>void;
+	onUpdateAccount: (account:IAccount, currentBalance:number)=>void;
 }
 
 export class PSidebar extends React.Component<PSidebarProps, {}> {
   
-  	render() {
+	private accountCreationDialog:PAccountCreationDialog;
+
+	constructor(props: any) {
+        super(props);
+		this.onAddAccountClick = this.onAddAccountClick.bind(this);
+	}
+
+	private onAddAccountClick() {
+
+		// Create a new account entity and pass it to the account creation dialog
+		var account = EntityFactory.createNewAccount();
+		this.accountCreationDialog.show(account);
+	}
+
+  	public render() {
 		return (
 			<div className="sidebar" style={PSidebarStyle}>
 				<PSidebarHeader title="Home Budget 2016" />
@@ -66,7 +81,9 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 					<PAccountButton label="Saving" value={-1234} selected={false} />
 				</PAccountButtonContainer>
 
-				<RaisedButton label="Add Account" primary={true} />
+				<RaisedButton label="Add Account" primary={true} onClick={this.onAddAccountClick} />
+
+				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.onAddAccount} />
 			</div>
 		);
   	}

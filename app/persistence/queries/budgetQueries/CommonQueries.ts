@@ -1,4 +1,4 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
 module ynab.queries {
     'use strict';

@@ -28,13 +28,12 @@ export class SubTransactionQueries {
 						creditAmount, 
 						subCategoryCreditAmountPreceding, 
 						memo, 
-						checkNumber, 
 						transferAccountId, 
 						transferTransactionId, 
 						sortableIndex, 
 						deviceKnowledge,
 						deviceKnowledgeForCalculatedFields
-					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			arguments: [
 				dbObject.budgetId,
 				dbObject.entityId,
@@ -47,7 +46,6 @@ export class SubTransactionQueries {
 				dbObject.creditAmount,
 				dbObject.subCategoryCreditAmountPreceding,
 				dbObject.memo ? dbObject.memo : null,
-				dbObject.checkNumber ? dbObject.checkNumber : null,
 				dbObject.transferAccountId ? dbObject.transferAccountId : null,
 				dbObject.transferTransactionId ? dbObject.transferTransactionId : null,
 				dbObject.sortableIndex,

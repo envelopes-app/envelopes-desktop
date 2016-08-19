@@ -1,7 +1,8 @@
 /// <reference path="../../_includes.ts" />
 
-import { Account, AccountTypeConstants } from '../../models/Account';
-import { ApplicationState } from '../../models/ApplicationState';
+import { AccountTypeConstants } from '../../models/Account';
+import { IAccount } from '../../interfaces/budgetEntities'; 
+import { IApplicationState } from '../../interfaces/state';
 import { Promise } from 'es6-promise';
 
 // ********************************************************************************************
@@ -19,15 +20,15 @@ export const DELETE_ACCOUNT:string = "DELETE_ACCOUNT";
 export interface RequestAccountsAction extends Redux.Action { }
 
 export interface ReceiveAccountsAction extends Redux.Action { 
-	accounts:Array<Account>;
+	accounts:Array<IAccount>;
 }
 
 export interface AddAccountAction extends Redux.Action {
-	account:Account;
+	account:IAccount;
 }
 
 export interface UpdateAccountAction extends Redux.Action {
-	account:Account;
+	account:IAccount;
 }
 
 export interface DeleteAccountAction extends Redux.Action {
@@ -45,39 +46,39 @@ export function requestAccounts():RequestAccountsAction {
 
 export function fetchAccounts() {
 
-	return function(dispatch:ReactRedux.Dispatch<ApplicationState>) {
+	return function(dispatch:ReactRedux.Dispatch<IApplicationState>) {
 
 		dispatch(requestAccounts);
 		return getAccountsFromDB()
-			.then((accounts:Array<Account>)=>{
+			.then((accounts:Array<IAccount>)=>{
 				// Dispatch a RECEIVE_ACCOUNTS action with the returned accounts array
 				dispatch(receiveAccounts(accounts));
 			});
 	};
 }
 
-export function receiveAccounts(accounts:Array<Account>):ReceiveAccountsAction {
+export function receiveAccounts(accounts:Array<IAccount>):ReceiveAccountsAction {
 	return {
 		type: RECEIVE_ACCOUNTS,
 		accounts: accounts
 	};
 }
 
-export function addAccount(account:Account):AddAccountAction {
+export function addAccount(account:IAccount):AddAccountAction {
 	return {
 		type: ADD_ACCOUNT,
 		account: account
 	};
 }
 
-export function updateContact(account:Account):UpdateAccountAction {
+export function updateAccount(account:IAccount):UpdateAccountAction {
 	return {
 		type: UPDATE_ACCOUNT,
 		account: account
 	};
 }
 
-export function deleteContact(accountId:string):DeleteAccountAction {
+export function deleteAccount(accountId:string):DeleteAccountAction {
 	return {
 		type: DELETE_ACCOUNT,
 		accountId: accountId
@@ -85,19 +86,7 @@ export function deleteContact(accountId:string):DeleteAccountAction {
 }
 
 // Dummy Async function that returns contacts data
-function getAccountsFromDB():Promise<Array<Account>> {
+function getAccountsFromDB():Promise<Array<IAccount>> {
 
-	return Promise.resolve([
-		{
-			accountId: "1",
-			accountType: "Checking",
-			name: "Checking",
-			note: null,
-			lastReconciledDate: null,
-			lastReconciledBalance: 0,
-			closed: false,
-			sortableIndex: 0,
-			onBudget: true
-		}
-	]);
+	return Promise.resolve([]);
 }

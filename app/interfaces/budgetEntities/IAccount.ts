@@ -16,7 +16,6 @@ export interface IAccount extends IBudgetEntity {
 	infoCount:number;
 	warningCount:number;
 	errorCount:number;
-	transactionCount:number;
 
 	deviceKnowledgeForCalculatedFields:number;
 }

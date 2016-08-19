@@ -6,9 +6,11 @@ export interface CreateBudgetCompletedAction extends Redux.Action {
 	budgetId:string;
 }
 
-export interface LoadBudgetCompletedAction extends Redux.Action { 
+export interface OpenBudgetCompletedAction extends Redux.Action { 
 	// The opened budget 
 	budget:catalogEntities.IBudget;
+	// All the entities for the budget
+	entities:IEntitiesCollection;
 }
 
 export interface SyncDataWithDatabaseCompletedAction extends Redux.Action { 

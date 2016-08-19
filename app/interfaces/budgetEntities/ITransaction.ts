@@ -2,7 +2,6 @@
 
 export interface ITransaction extends IBudgetEntity {
 
-	source:string;
 	accountId:string;
 	payeeId:string;
 	subCategoryId:string;
@@ -12,14 +11,13 @@ export interface ITransaction extends IBudgetEntity {
 	memo:string;
 	cleared:string;
 	accepted:number;
-	checkNumber:string;
 	flag:string;
 	transferAccountId:string;
 	transferTransactionId:string;
 	transferSubTransactionId:string;
 	scheduledTransactionId:string;
 	matchedTransactionId:string;
-	ynabId:string;
+	importId:string;
 	importedPayee:string;
 	importedDate:number;
 
