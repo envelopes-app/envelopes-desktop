@@ -10,11 +10,15 @@ import CSidebar from './sidebar/CSidebar';
 
 const AppStyle = {
   display: "flex",
-  flexFlow: "row nowrap"
+  flexFlow: "row nowrap",
+  alignItems: "stretch",
+  position: "absolute",
+  width: "100%",
+  height: "100%"
 }
 
 const AppSidebarStyle = {
-	flex: "0 1 260em"
+	flex: "0 0 260px"
 }
 
 const AppModuleContainerStyle = {

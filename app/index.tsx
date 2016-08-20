@@ -11,6 +11,8 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import './styles/index.css';
 // Components that are to be used in route map
 import { App } from './components/App';
+import { PBudget } from './components/budget/PBudget';
+import { PRegister } from './components/register/PRegister';
 
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
@@ -24,6 +26,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path='/index.html' component={App}>
+	  	<IndexRoute component={PBudget} />
       </Route>
     </Router>
   </Provider>,

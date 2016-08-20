@@ -5,30 +5,43 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
-import {List, ListItem, MakeSelectable} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import * as colors from 'material-ui/styles/colors';
 import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 
-import ColorPalette from '../common/ColorPalette';
+import { PContainer } from '../common/PContainer';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
 import { PAccountCreationDialog } from './PAccountCreationDialog';
 
+import ColorPalette from '../common/ColorPalette';
 import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { ISidebarState } from '../../interfaces/state';
 
-let SelectableList = MakeSelectable(List);
-
 const PSidebarStyle = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
-	width: '100%',
-	height: '100%',
-	backgroundColor: colors.cyan400,
+	height: "100%",
+	backgroundColor: ColorPalette.Shade500,
+};
+
+const PModuleButtonStyle = {
+	flex: "0 0 auto"
+};
+
+const PDividerStyle = {
+	flex: "0 0 auto",
+	backgroundColor: ColorPalette.Shade600
+}
+
+const PContainerStyle = {
+	flex: "1 1 100%",
+	overflowY: "scroll"
+}
+
+const PButtonStyle = {
+	flex: "0 0 auto"
 };
 
 const ModuleButtonIconStyle = {
@@ -100,24 +113,26 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 		});
 
 		return (
-			<div className="sidebar" style={PSidebarStyle}>
+			<div style={PSidebarStyle}>
 				<PModuleButton label="Budget" selected={false}>
 					<MailOutline style={ModuleButtonIconStyle} />
 				</PModuleButton>
 				<PModuleButton label="All Accounts" selected={false}>
 					<AccountBalance style={ModuleButtonIconStyle} />
 				</PModuleButton>
-				<Divider style={{backgroundColor: ColorPalette.Shade600}} />
-				<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
-					expanded={this.props.sidebarState.budgetAccountsExpanded} setExpanded={this.props.setBudgetAccountsExpanded}>
-					{budgetAccountNodes}
-				</PAccountButtonContainer>
-				<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
-					expanded={this.props.sidebarState.trackingAccountsExpanded} setExpanded={this.props.setTrackingAccountsExpanded}>
-					{trackingAccountNodes}
-				</PAccountButtonContainer>
+				<Divider style={PDividerStyle} />
+				<div style={PContainerStyle}>
+					<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
+						expanded={this.props.sidebarState.budgetAccountsExpanded} setExpanded={this.props.setBudgetAccountsExpanded}>
+						{budgetAccountNodes}
+					</PAccountButtonContainer>
+					<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
+						expanded={this.props.sidebarState.trackingAccountsExpanded} setExpanded={this.props.setTrackingAccountsExpanded}>
+						{trackingAccountNodes}
+					</PAccountButtonContainer>
+				</div>
 
-				<RaisedButton label="Add Account" primary={true} onClick={this.onAddAccountClick} />
+				<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
 
 				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
 			</div>
