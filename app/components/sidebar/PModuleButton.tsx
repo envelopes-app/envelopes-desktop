@@ -20,6 +20,7 @@ const ModuleButtonContainerStyle = {
 	top: '0px',
 	paddingLeft: '16px', 
 	alignItems: 'center',
+	cursor: 'pointer',
 	backgroundColor: ColorPalette.Shade500
 };
 
@@ -46,17 +47,11 @@ export class PModuleButton extends React.Component<PModuleButtonProps, {}> {
 	}
 
 	private handleMouseEnter() {
-		// We only want to show hover state if we are not selected
-		if(this.props.selected == false) {
-			this.setState({hoverState:true});
-		}
+		this.setState({hoverState:true});
 	}
 
 	private handleMouseLeave() {
-		// We only want to show hover state if we are not selected
-		if(this.props.selected == false) {
-			this.setState({hoverState:false});
-		}
+		this.setState({hoverState:false});
 	}
 
   	public render() {

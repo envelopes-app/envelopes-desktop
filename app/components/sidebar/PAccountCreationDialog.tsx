@@ -1,3 +1,5 @@
+/// <reference path="../../_includes.ts" />
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';

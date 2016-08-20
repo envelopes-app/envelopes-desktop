@@ -26,7 +26,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path='/index.html' component={App}>
-	  	<IndexRoute component={PBudget} />
+	  	<IndexRoute component={PRegister} />
       </Route>
     </Router>
   </Provider>,

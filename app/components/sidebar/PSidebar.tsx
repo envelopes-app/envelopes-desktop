@@ -8,10 +8,10 @@ import RaisedButton from 'material-ui/RaisedButton';
 import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 
-import { PContainer } from '../common/PContainer';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
+import { PAccountEditingDialog } from './PAccountEditingDialog';
 import { PAccountCreationDialog } from './PAccountCreationDialog';
 
 import ColorPalette from '../common/ColorPalette';
@@ -70,11 +70,54 @@ export interface PSidebarProps {
 
 export class PSidebar extends React.Component<PSidebarProps, {}> {
   
+	private accountEditingDialog:PAccountEditingDialog;
 	private accountCreationDialog:PAccountCreationDialog;
 
 	constructor(props: any) {
         super(props);
+		this.onBudgetSelect = this.onBudgetSelect.bind(this);
+		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
+		this.onAccountSelect = this.onAccountSelect.bind(this);
+		this.onAccountEdit = this.onAccountEdit.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
+	}
+
+	private onBudgetSelect() {
+		// If the "Budget" tab is not already the selected tab then
+		if(this.props.sidebarState.selectedTab != "Budget") {
+
+			// Set the "Budget" as selected tab in the sidebar state 
+			this.props.setSelectedTab("Budget", null);
+			// Navigate to the Budget
+		}
+	}
+
+	private onAllAccountsSelect() {
+		// If the "Budget" tab is not already the selected tab then
+		if(this.props.sidebarState.selectedTab != "All Accounts") {
+
+			// Set the "All Accounts" as selected tab in the sidebar state 
+			this.props.setSelectedTab("All Accounts", null);
+			// Navigate to All Accounts
+		}
+	}
+
+	private onAccountSelect(accountId:string) {
+
+		// If the selection is not already set to this particular account then
+		if(this.props.sidebarState.selectedTab != "Account" && this.props.sidebarState.selectedAccountId != accountId) {
+
+			// Set the "Account" as selected tab in the sidebar state 
+			this.props.setSelectedTab("Account", accountId);
+			// Navigate to this account
+		}
+	}
+
+	private onAccountEdit(accountId:string) {
+
+		// Get the account entity corresponding to this accountId
+		var account = _.find(this.props.accounts, { entityId: accountId });
+		this.accountEditingDialog.show(account);
 	}
 
 	private onAddAccountClick() {
@@ -91,33 +134,35 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 		var closedAccountNodes = [];
 		var budgetAccountsBalance:number = 0;
 		var trackingAccountsBalance:number = 0;
+		var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
+		var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 
 		_.forEach(this.props.accounts, (account)=>{
+
+			// Is this account button selected?
+			var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
+			var accountNode = <PAccountButton account={account} selectAccount={this.onAccountSelect} editAccount={this.onAccountEdit} key={account.entityId} selected={accountSelected} />;
+			var accountBalance = account.clearedBalance + account.unclearedBalance;
+
 			if(account.onBudget == 1 && account.closed == 0) {
-				budgetAccountNodes.push(
-					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
-				);
-				budgetAccountsBalance += account.clearedBalance + account.unclearedBalance;
+				budgetAccountNodes.push(accountNode);
+				budgetAccountsBalance += accountBalance;
 			}
 			else if(account.onBudget == 0 && account.closed == 0) {
-				trackingAccountNodes.push(
-					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
-				);
-				trackingAccountsBalance += account.clearedBalance + account.unclearedBalance;
+				trackingAccountNodes.push(accountNode);
+				trackingAccountsBalance += accountBalance;
 			}
 			else if(account.closed == 1) {
-				closedAccountNodes.push(
-					<PAccountButton key={account.entityId} label={account.accountName} value={account.clearedBalance + account.unclearedBalance} selected={false} />
-				);
+				closedAccountNodes.push(accountNode);
 			}
 		});
 
 		return (
 			<div style={PSidebarStyle}>
-				<PModuleButton label="Budget" selected={false}>
+				<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
 					<MailOutline style={ModuleButtonIconStyle} />
 				</PModuleButton>
-				<PModuleButton label="All Accounts" selected={false}>
+				<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
 					<AccountBalance style={ModuleButtonIconStyle} />
 				</PModuleButton>
 				<Divider style={PDividerStyle} />
@@ -135,6 +180,7 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 				<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
 
 				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
+				<PAccountEditingDialog ref={(d)=> this.accountEditingDialog = d } onUpdateAccount={this.props.updateAccount} />
 			</div>
 		);
   	}

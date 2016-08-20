@@ -5,13 +5,7 @@ import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 
 import ColorPalette from '../common/ColorPalette';
-
-export interface PAccountButtonProps {
-	label: string,
-	value: number,
-	selected: boolean;
-	onClick?: ()=>void;
-}
+import { IAccount } from '../../interfaces/budgetEntities';
 
 const AccountButtonContainerStyle = {
 	display: 'flex',
@@ -20,6 +14,7 @@ const AccountButtonContainerStyle = {
 	top: '0px',
 	paddingLeft: '16px', 
 	alignItems: 'center',
+	cursor: 'pointer',
 	backgroundColor: ColorPalette.Shade500
 };
 
@@ -29,6 +24,11 @@ const AccountButtonLabelStyle = {
 	fontWeight: 'normal', 
 	margin: '0px', 
 	paddingLeft: '8px', 
+	color: 'white'
+};
+
+const GlyphStyle = {
+	paddingLeft: '5px',
 	color: 'white'
 };
 
@@ -48,55 +48,104 @@ const AccountButtonValueWithBadgeStyle = {
 	backgroundColor: 'white'
 };
 
+export interface PAccountButtonProps {
+	account:IAccount;
+	selected: boolean;
+	editAccount?: (accountId:string)=>void;
+	selectAccount?: (accountId:string)=>void;
+}
+
 export class PAccountButton extends React.Component<PAccountButtonProps, {}> {
   
 	constructor(props: any) {
         super(props);
+		this.handleClick = this.handleClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
-		this.state = {hoverState:false};
+		this.handleGlyphClick = this.handleGlyphClick.bind(this);
+		this.handleGlyphMouseEnter = this.handleGlyphMouseEnter.bind(this);
+		this.handleGlyphMouseLeave = this.handleGlyphMouseLeave.bind(this);
+		this.state = {hoverState:false, glyphHoverState:false};
+	}
+
+	private handleClick() {
+		this.props.selectAccount(this.props.account.entityId);
 	}
 
 	private handleMouseEnter() {
-		// We only want to show hover state if we are not selected
-		if(this.props.selected == false) {
-			this.setState({hoverState:true});
-		}
+
+		var state:any = _.assign({}, this.state);
+		state.hoverState = true;
+		this.setState(state);
 	}
 
 	private handleMouseLeave() {
-		// We only want to show hover state if we are not selected
-		if(this.props.selected == false) {
-			this.setState({hoverState:false});
-		}
+
+		var state:any = _.assign({}, this.state);
+		state.hoverState = false;
+		this.setState(state);
+	}
+
+	private handleGlyphClick() {
+		this.props.editAccount(this.props.account.entityId);
+	}
+
+	private handleGlyphMouseEnter() {
+
+		var state:any = _.assign({}, this.state);
+		state.glyphHoverState = true;
+		this.setState(state);
+	}
+
+	private handleGlyphMouseLeave() {
+
+		var state:any = _.assign({}, this.state);
+		state.glyphHoverState = false;
+		this.setState(state);
 	}
 
   	public render() {
-		var colorValue:string;
-		if(this.props.selected == true)
-			colorValue = ColorPalette.Shade800;
-		else {
-			var hoverState = (this.state as any).hoverState;
+
+		var hoverState = (this.state as any).hoverState;
+		var glyphHoverState = (this.state as any).glyphHoverState;
+
+		// Based on the hoverState, determine the backgroundColor value
+		var backgroundColorValue:string = ColorPalette.Shade800;
+		if(this.props.selected == false) {
 			if(hoverState == true)
-				colorValue = ColorPalette.Shade700;
+				backgroundColorValue = ColorPalette.Shade700;
 			else
-				colorValue = ColorPalette.Shade500;
+				backgroundColorValue = ColorPalette.Shade500;
 		}
 
 		// Create a clone of the style object, and update the backgroundColor value in it
-		var moduleButtonContainerStyle = _.assign({}, AccountButtonContainerStyle, {backgroundColor: colorValue}); 
+		var accountButtonContainerStyle = _.assign({}, AccountButtonContainerStyle, {backgroundColor: backgroundColorValue}); 
+
+		// Based on the hoverState and glyphHoverState, determine the opacity for the glyph
+		var opacity:number = 0;
+		if(hoverState == true) {
+			if(glyphHoverState == true)
+				opacity = 1;
+			else
+				opacity = 0.5;
+		}
+
+		// Create a clone of the style object, and update the opacity value in it
+		var glyphStyle = _.assign({}, GlyphStyle, {opacity: opacity}); 
 
 		var valueNode;
-		if(this.props.value < 0)
-			valueNode = <span className="badge" style={AccountButtonValueWithBadgeStyle}>{this.props.value}</span>;
+		var balanceValue = this.props.account.clearedBalance + this.props.account.unclearedBalance;
+		if(balanceValue < 0)
+			valueNode = <span className="badge" style={AccountButtonValueWithBadgeStyle}>{balanceValue}</span>;
 		else
-			valueNode = <span style={AccountButtonValueStyle}>{this.props.value}</span>;
+			valueNode = <span style={AccountButtonValueStyle}>{balanceValue}</span>;
 
 		return (
-			<div style={moduleButtonContainerStyle} ref="moduleButtonContainer" 
-				onClick={this.props.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-				<span style={AccountButtonLabelStyle}>{this.props.label}</span>
-				<span className="glyphicon glyphicon-edit" style={{paddingLeft: '5px', color:'white'}}/>
+			<div style={accountButtonContainerStyle} 
+				onClick={this.handleClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+				<span style={AccountButtonLabelStyle}>{this.props.account.accountName}</span>
+				<span className="glyphicon glyphicon-edit" style={glyphStyle} 
+					onClick={this.handleGlyphClick} onMouseEnter={this.handleGlyphMouseEnter} onMouseLeave={this.handleGlyphMouseLeave} />
 				<span style={{flex: '1 1 auto'}} />
 				{valueNode}
 				<span style={{width:'8px'}} />
