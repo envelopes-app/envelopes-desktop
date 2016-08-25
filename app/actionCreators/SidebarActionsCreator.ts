@@ -56,7 +56,7 @@ export class SidebarActionsCreator {
 			// Create an entities collection object with the entities to save
 			var entitiesCollection:IEntitiesCollection  = {
 				accounts: [account],
-				transactions: [transaction]
+				transactions: transaction ? [transaction] : null
 			};
 
 			// Dispatch action to persist the entities collection to the database
@@ -69,15 +69,13 @@ export class SidebarActionsCreator {
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			var transactions = null;
-			// Create the balance adjustment transaction
+			// Create the balance adjustment transaction for this account
 			var transaction = SidebarActionsCreator.createBalanceAdjustmentTransactionForAccount(account, currentBalance);
-			if(transaction)
-				transactions = [ transaction ];
 
 			// Create an entities collection object with the entities to save
 			var entitiesCollection:IEntitiesCollection  = {
 				accounts: [account],
-				transactions: [transaction]
+				transactions: transaction ? [transaction] : null
 			};
 
 			// Dispatch action to persist the entities collection to the database
@@ -104,6 +102,16 @@ export class SidebarActionsCreator {
 
 	private static createBalanceAdjustmentTransactionForAccount(account:IAccount, balance:number):ITransaction {
 
-		return null;
+		var transaction:ITransaction = null;
+		// Check if the passed current balance is different from what the balance currently is in the account
+		if(balance !== account.clearedBalance + account.unclearedBalance) {
+
+			// Create a new transaction entity
+			transaction = EntityFactory.createNewTransaction();
+			transaction.accountId = account.entityId;
+			transaction.amount = balance;
+		}
+
+		return transaction;
 	}
 }

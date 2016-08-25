@@ -11,7 +11,6 @@ import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
-import { PAccountEditingDialog } from './PAccountEditingDialog';
 import { PAccountCreationDialog } from './PAccountCreationDialog';
 
 import ColorPalette from '../common/ColorPalette';
@@ -70,7 +69,6 @@ export interface PSidebarProps {
 
 export class PSidebar extends React.Component<PSidebarProps, {}> {
   
-	private accountEditingDialog:PAccountEditingDialog;
 	private accountCreationDialog:PAccountCreationDialog;
 
 	constructor(props: any) {
@@ -78,7 +76,6 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 		this.onBudgetSelect = this.onBudgetSelect.bind(this);
 		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
 		this.onAccountSelect = this.onAccountSelect.bind(this);
-		this.onAccountEdit = this.onAccountEdit.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
 	}
 
@@ -113,13 +110,6 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 		}
 	}
 
-	private onAccountEdit(accountId:string) {
-
-		// Get the account entity corresponding to this accountId
-		var account = _.find(this.props.accounts, { entityId: accountId });
-		this.accountEditingDialog.show(account);
-	}
-
 	private onAddAccountClick() {
 
 		// Create a new account entity and pass it to the account creation dialog
@@ -141,7 +131,7 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 
 			// Is this account button selected?
 			var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
-			var accountNode = <PAccountButton account={account} selectAccount={this.onAccountSelect} editAccount={this.onAccountEdit} key={account.entityId} selected={accountSelected} />;
+			var accountNode = <PAccountButton account={account} selectAccount={this.onAccountSelect} updateAccount={this.props.updateAccount} key={account.entityId} selected={accountSelected} />;
 			var accountBalance = account.clearedBalance + account.unclearedBalance;
 
 			if(account.onBudget == 1 && account.closed == 0) {
@@ -180,7 +170,6 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 				<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
 
 				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
-				<PAccountEditingDialog ref={(d)=> this.accountEditingDialog = d } onUpdateAccount={this.props.updateAccount} />
 			</div>
 		);
   	}

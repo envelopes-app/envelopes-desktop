@@ -50,7 +50,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 
 	public render() {
 		return (
-			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false}>
+			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false} style={{width: '500px'}}>
 				<Modal.Header bsClass="modal-header">
 					<Modal.Title>Add a New Account</Modal.Title>
 				</Modal.Header>
@@ -89,10 +89,10 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 				</Modal.Body>
 				<Modal.Footer>
 					<Button onClick={this.close}>
-						Cancel&nbsp;<Glyphicon glyph="remove-circle" />
+						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 					</Button>
 					<Button onClick={this.save}>
-						Add Account&nbsp;<Glyphicon glyph="ok-circle" />
+						Add Account&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
 				</Modal.Footer>
 			</Modal>
