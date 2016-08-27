@@ -1,7 +1,5 @@
 /// <reference path="../_includes.ts" />
 
-import { Promise } from 'es6-promise';
-
 import { IApplicationState, IEntitiesCollection } from '../interfaces/state';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';

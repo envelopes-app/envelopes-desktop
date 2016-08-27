@@ -1,9 +1,8 @@
 /// <reference path="../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as _ from 'lodash';
-
 import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Glyphicon, Overlay } from 'react-bootstrap';
 
 import ColorPalette from '../common/ColorPalette';

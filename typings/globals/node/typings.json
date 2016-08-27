@@ -1,8 +1,8 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "https://raw.githubusercontent.com/types/env-node/252791c3e37ad437365f1b4b27237c2028b2187d/6/typings.json",
-    "raw": "registry:env/node#6.0.0+20160723033700",
+    "src": "https://raw.githubusercontent.com/types/env-node/9b4d855e359806908a607fa53ad04dc5a8598e45/6/typings.json",
+    "raw": "registry:env/node#6.0.0+20160825160117",
     "version": "6",
     "files": [
       "node.d.ts"

@@ -1,7 +1,6 @@
 /// <reference path='../_includes.ts' />
 
 import * as _ from 'lodash';
-import { Promise } from 'es6-promise';
 
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { BudgetFactory } from './BudgetFactory';

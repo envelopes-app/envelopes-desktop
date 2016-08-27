@@ -1,7 +1,6 @@
 /// <reference path='../_includes.ts' />
 
 import { ipcRenderer } from 'electron';
-import { Promise } from 'es6-promise';
 import * as uuid from 'node-uuid';
 
 import { IDatabaseQuery } from '../interfaces/persistence/IDatabaseQuery';
