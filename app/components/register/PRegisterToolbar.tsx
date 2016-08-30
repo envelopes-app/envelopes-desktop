@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 import { PToolbarButton } from '../common/PToolbarButton';
 
 export interface PRegisterToolbarProps {
-
+	onAddTransactionSelected:()=>void;
 }
 
 const RegisterToolbarContainerStyle = {
@@ -33,7 +33,7 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
     	return (
 			<div style={RegisterToolbarContainerStyle}>
 				<div style={RegisterToolbarStyle}>
-					<PToolbarButton text="Add a transaction" glyphName="glyphicon-plus-sign" />
+					<PToolbarButton text="Add a transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
 					<PToolbarButton text="Edit" glyphName="glyphicon-edit" />
 				</div>
 			</div>
