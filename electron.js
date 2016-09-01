@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const { Promise } = require('es6-promise');
 const { app, ipcMain, BrowserWindow, Menu } = require('electron');
 const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus');
 const { initializeDatabaseModule, finalizeDatabaseModule } = require('./electron-database');
+
+//import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -45,31 +48,34 @@ const createWindow = () => {
 	});
 }
 
+const installExtensions = () => {
 /*
-const installExtensions = async () => {
   	if (process.env.NODE_ENV === 'development') {
-    	const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
 
-		const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
-		const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-		for (const name of extensions) {
-			try {
-				await installer.default(installer[name], forceDownload);
-			} catch (e) {} // eslint-disable-line
-		}
+		return installExtension(REACT_DEVELOPER_TOOLS)
+			.then((name) => {
+				console.log(`Added Extension:  ${name}`);
+			})
+			.catch((err)=>{
+				console.log('An error occurred: ', err);
+			});
 	}
-};
+	else
 */
+	return Promise.resolve(null);
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-	// Install the required extensions
-  	// await installExtensions();
 
-	// Initialize the database module 
-	initializeDatabaseModule()
+	// Install the required extensions
+  	return installExtensions()
+		.then(()=>{
+			// Initialize the database module 
+			initializeDatabaseModule()
+		})
 		.then(()=>{
 			// Create the main window
 			createWindow();
