@@ -24,7 +24,7 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['', '.js', '.ts', '.tsx', 'css']
+    extensions: ['', '.js', '.jsx', '.ts', '.tsx', 'css']
   },
   resolveLoader: {
     root: paths.ownNodeModules,

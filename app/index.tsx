@@ -9,6 +9,8 @@ import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import './styles/index.css';
+import './styles/react-datepicker.css';
+
 // Components that are to be used in route map
 import { App } from './components/App';
 import { PBudget } from './components/budget/PBudget';

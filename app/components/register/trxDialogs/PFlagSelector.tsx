@@ -3,9 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Form, FormControl, FormGroup, Glyphicon, Overlay, Popover } from 'react-bootstrap';
-
-import * as budgetEntities from '../../../interfaces/budgetEntities';
+import { FormGroup, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 export interface PFlagSelectorProps { 
 	width: number;
@@ -74,7 +72,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		var flagTextColor = this.flagTextColorMapping[flagColorName];
 		if(selected) {
 			return (
-				<div className="flag-dropdown-list-item-selected" style={{backgroundColor:flagColor}} onClick={this.setSelectedFlag.bind(this, flagColorName)}>
+				<div key={flagColorName} className="flag-dropdown-list-item-selected" style={{backgroundColor:flagColor}} onClick={this.setSelectedFlag.bind(this, flagColorName)}>
 					<button className="flag-dropdown-list-item-button" style={{backgroundColor:flagTextColor, borderColor:flagTextColor}}>{flagColorName}</button>
 					<Glyphicon glyph="ok-circle" style={{color:'white'}}/>
 				</div>
@@ -82,7 +80,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		}
 		else {
 			return (
-				<div className="flag-dropdown-list-item" style={{backgroundColor:flagColor}} onClick={this.setSelectedFlag.bind(this, flagColorName)}>
+				<div key={flagColorName} className="flag-dropdown-list-item" style={{backgroundColor:flagColor}} onClick={this.setSelectedFlag.bind(this, flagColorName)}>
 					<button className="flag-dropdown-list-item-button" style={{backgroundColor:flagTextColor, borderColor:flagTextColor}}>{flagColorName}</button>
 				</div>
 			);

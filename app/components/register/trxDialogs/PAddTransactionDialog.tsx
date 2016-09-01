@@ -6,7 +6,10 @@ import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } 
 
 import { PFlagSelector } from './PFlagSelector';
 import { PAccountSelector } from './PAccountSelector';
+import { PDateSelector } from './PDateSelector';
+import { PPayeeSelector } from './PPayeeSelector';
 
+import * as utilities from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 
@@ -28,7 +31,22 @@ export interface PAddTransactionDialogProps {
 	updateEntities:(entities:IEntitiesCollection)=>void;
 }
 
-export class PAddTransactionDialog extends React.Component<PAddTransactionDialogProps, {showModal:boolean}> {
+export interface PAddTransactionDialogState {
+	showModal: boolean;
+	// Fields to save the values for the different fields.
+	entityId?:string;
+	flag?:string;
+	accountId?:string;
+	payeeId?:string;
+	date?:utilities.DateWithoutTime;
+	frequency?:string;
+	subCategoryId?:string;
+	memo?:string;
+	amount?:number;
+	cleared?:string;
+}
+
+export class PAddTransactionDialog extends React.Component<PAddTransactionDialogProps, PAddTransactionDialogState> {
 
 	private ctrlAccountName:FormControl;
 	private ctrlAccountType:FormControl;
@@ -39,6 +57,17 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		{ entityId: 2, accountName: "Savings" },
 		{ entityId: 3, accountName: "Visa" },
 		{ entityId: 4, accountName: "Master" }
+	];
+
+	private dummyPayees = [
+		{ entityId: 1, name: "Transfer: Checking", accountId: 1 },
+		{ entityId: 2, name: "Transfer: Savings", accountId: 2 },
+		{ entityId: 3, name: "Transfer: Visa", accountId: 3 },
+		{ entityId: 4, name: "Transfer: Master", accountId: 4 },
+		{ entityId: 5, name: "HTH Store", accountId: null },
+		{ entityId: 6, name: "Rockland Bakery", accountId: null },
+		{ entityId: 7, name: "Prince Departmental Store", accountId: null },
+		{ entityId: 8, name: "E-Mart", accountId: null }
 	];
 
 	constructor(props: any) {
@@ -81,12 +110,16 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 							<PFlagSelector width={30} />
 						</FormGroup>
 						<FormGroup>
-							<ControlLabel>Account:</ControlLabel>
+							<ControlLabel>ACCOUNT:</ControlLabel>
 							<PAccountSelector width={90} accounts={this.dummyAccounts as Array<any>} />
 						</FormGroup>
 						<FormGroup>
-							<ControlLabel>Today's Balance:</ControlLabel>
-							<FormControl ref={(c)=> {this.ctrlAccountBalance = c;}} type="text" placeholder="What is the balance of this account right now?"/>
+							<ControlLabel>DATE:</ControlLabel>
+							<PDateSelector width={90} />
+						</FormGroup>
+						<FormGroup>
+							<ControlLabel>PAYEE:</ControlLabel>
+							<PPayeeSelector width={90} payees={this.dummyPayees as Array<any>} />
 						</FormGroup>
 					</Form>
 				</Modal.Body>
