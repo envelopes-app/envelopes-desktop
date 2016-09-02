@@ -74,11 +74,15 @@ app.on('ready', () => {
   	return installExtensions()
 		.then(()=>{
 			// Initialize the database module 
-			initializeDatabaseModule()
+			initializeDatabaseModule();
 		})
 		.then(()=>{
 			// Create the main window
 			createWindow();
+		})
+		.then(()=>{
+			// Initialize the menu module 
+			initializeMenusModule();
 		})
 		.catch(function(error) {
 			console.log(error);
@@ -87,12 +91,12 @@ app.on('ready', () => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-})
+	// On macOS it is common for applications and their menu bar
+	// to stay active until the user quits explicitly with Cmd + Q
+	if (process.platform !== 'darwin') {
+		app.quit();
+	}
+});
 
 app.on('activate', () => {
 	// On macOS it's common to re-create a window in the app when the
@@ -102,8 +106,12 @@ app.on('activate', () => {
 			.then(()=>{
 				createWindow();
 			})
+			.then(()=>{
+				// Initialize the menu module 
+				initializeMenusModule();
+			})
 			.catch(function(error) {
 				console.log(error);
 			});
 	}
-})
+});
