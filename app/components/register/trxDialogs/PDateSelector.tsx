@@ -34,15 +34,10 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 
 	constructor(props: any) {
         super(props);
-		this.onClick = this.onClick.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.setSelectedDate = this.setSelectedDate.bind(this);
 		this.state = {showPopover:false, selectedDate:this.props.selectedDate};	
-	}
-
-	private onClick() {
-		var state:any = _.assign({}, this.state);
-		state.showPopover = true;
-		this.setState(state);
 	}
 
 	private onChange(date?:any):void {
@@ -62,6 +57,9 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 			state.showPopover = true;
 			this.setState(state);
 		}
+
+		// Set the focus on the input control
+		(ReactDOM.findDOMNode(this.dateInput) as any).focus();
 	}
 
 	public hidePopover():void {
@@ -73,6 +71,16 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 		}
 	}
 
+	private onFocus() {
+		// If the popover is not already showing, then show it.
+		this.showPopover();
+	}
+
+	private onBlur() {
+		// If the popover is showing, hide it.
+		this.hidePopover();
+	}
+
 	public render() {
 		return (
 			<FormGroup>
@@ -81,7 +89,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
-						onClick={this.onClick} contentEditable={false} 
+						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false} 
 						defaultValue={this.state.selectedDate ? this.state.selectedDate : ""} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>

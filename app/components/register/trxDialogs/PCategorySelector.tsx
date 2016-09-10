@@ -121,7 +121,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false} 
 						defaultValue={this.state.selectedCategory ? this.state.selectedCategory.name : ""} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
-						<Popover id="selectCategoryPopover" style={PopoverStyle} title="Categories">
+						<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
 							<div style={ScrollableContainerStyle}>
 								<ul className="custom-dropdown-list">
 									{categoiresPopoverItems}

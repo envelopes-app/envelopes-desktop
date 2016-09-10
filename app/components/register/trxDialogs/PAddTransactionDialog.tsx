@@ -17,7 +17,8 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, IEntitiesCollectionWithMaps, ITransactionValues } from '../../../interfaces/state';
 
 export interface PAddTransactionDialogProps { 
-	// entities collections from the global state 
+
+	// Entities collections from the global state 
 	entitiesCollection:IEntitiesCollectionWithMaps;
 	// Dispatch methods
 	updateEntities:(entities:IEntitiesCollection)=>void;
@@ -41,7 +42,6 @@ export interface PAddTransactionDialogState {
 
 export class PAddTransactionDialog extends React.Component<PAddTransactionDialogProps, PAddTransactionDialogState> {
 
-	private flagSelector:PFlagSelector;
 	private accountSelector:PAccountSelector;
 	private dateSelector:PDateSelector;
 	private payeeSelector:PPayeeSelector;
@@ -49,17 +49,51 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
 	constructor(props: any) {
         super(props);
-        this.state = { showModal: false };
 		this.show = this.show.bind(this);
 		this.save = this.save.bind(this);
 		this.close = this.close.bind(this);
+		this.onEntered = this.onEntered.bind(this);
 
-		this.handleTabPressedOnFlagSelector = this.handleTabPressedOnFlagSelector.bind(this);
+		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
+		this.handleTabPressedOnAccountSelector = this.handleTabPressedOnAccountSelector.bind(this);
+
+        this.state = { showModal: false };
     }
 
-	private close():void {
-		// Hide the modal, and set the account in state to null
-		this.setState({ showModal: false });
+	private saveAndAddAnother():void {
+
+	}
+
+	public show(accountId:string = null):void {
+
+		// if this dialog is being shown from the "All Accounts", we would get a null accountId.
+		// In that case, we need to choose a default account that would be set initially in the accounts field.
+		if(!accountId) {
+			var account = utilities.EntitiesLookupHelper.getDefaultAccountForAddTransactionDialog(this.props.entitiesCollection);
+			if(account)
+				accountId = account.entityId;
+		}
+
+		// If no account was passed, and neither were we able to select a default one, then that means there are
+		// no usable accounts in the budget.
+		if(accountId) {
+			// Update the state of this dialog to make it visible. 
+			// Also reset all the fields for storing the values for the new transaction 
+			this.setState({ 
+				showModal: true,
+				entityId: utilities.KeyGenerator.generateUUID(),
+				accountId: accountId,
+				payeeId: null,
+				date: utilities.DateWithoutTime.createForToday(),
+				frequency: null,
+				subCategoryId: null,
+				memo: null,
+				amount: 0,
+			});
+		}
+		else {
+			utilities.Logger.info("We cannot show the Add Transaction Dialog as there are no open accounts.");
+		}
 	};
 
 	private save():void {
@@ -68,73 +102,48 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.close();
 	}
 
-	private saveAndAddAnother():void {
-
-	}
-
-	public show():void {
-
-		var account = this.props.entitiesCollection.accounts ? this.props.entitiesCollection.accounts[0] : null;
-		var accountId = account ? account.entityId : null;
-
-		if(accountId) {
-			this.setState({ 
-				showModal: true,
-				entityId: utilities.KeyGenerator.generateUUID(),
-				flag: 'None',
-				accountId: null,
-				payeeId: null,
-				date: utilities.DateWithoutTime.createForToday(),
-				frequency: null,
-				subCategoryId: null,
-				memo: null,
-				amount: 0,
-				cleared: constants.ClearedFlag.Uncleared
-			});
-		}
-		else {
-			utilities.Logger.info("We cannot show the Add Transaction Dialog as there are no defined accounts yet.");
-		}
+	private close():void {
+		// Hide the modal, and set the account in state to null
+		this.setState({ showModal: false });
 	};
 
-	private handleTabPressedOnFlagSelector(shiftKeyPressed:boolean):void {
+	private onEntered():void {
+		var accountSelector = this.accountSelector;
+		setTimeout(function(){
+			accountSelector.showPopover();
+		}, 100);
+	}
 
-		// Get the selected flag from the flag selector and set it in the state
+	private setSelectedAccountId(accountId:string):void {
 		var state = _.assign({}, this.state) as PAddTransactionDialogState;
-		state.flag = this.flagSelector.getSelectedFlag();
+		state.accountId = accountId;
 		this.setState(state);
-
-		// If shift key is not pressed then move the focus on to the account selector.
-		if(!shiftKeyPressed)
-			this.accountSelector.showPopover();
 	}
 
 	private handleTabPressedOnAccountSelector(shiftKeyPressed:boolean):void {
 
-		// Get the selected account from the account selector and set it in the state
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
-		state.accountId = this.accountSelector.getSelectedAccountId();
-		this.setState(state);
-
 		// If shift key is not pressed then move the focus on to the date selector. 
 		// Otherwise move the focus back to the flag selector. 
-		if(!shiftKeyPressed)
-			this.flagSelector.showPopover();
-		else
+		if(!shiftKeyPressed) {
+			// Show the date selector popover
 			this.dateSelector.showPopover();
+			// Hide the account selector popover
+			this.accountSelector.hidePopover(); 
+		}
 	}
 
 	public render() {
 
 		return (
-			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
+			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 				<Modal.Header bsClass="modal-header">
 					<Modal.Title>Add Transaction</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form horizontal>
-						<PFlagSelector ref={(c) => this.flagSelector = c} selectedFlag={this.state.flag} handleTabPressed={this.handleTabPressedOnFlagSelector} />
-						<PAccountSelector ref={(c) => this.accountSelector = c} selectedAccountId={this.state.accountId} entitiesCollection={this.props.entitiesCollection} handleTabPressed={this.handleTabPressedOnAccountSelector} />
+						<PAccountSelector ref={(c) => this.accountSelector = c} 
+							selectedAccountId={this.state.accountId} entitiesCollection={this.props.entitiesCollection} 
+							setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
 						<PDateSelector ref={(c) => this.dateSelector = c} selectedDate={this.state.date} />
 						<PPayeeSelector ref={(c) => this.payeeSelector = c} selectedPayeeId={this.state.payeeId} entitiesCollection={this.props.entitiesCollection} />
 						<PCategorySelector ref={(c) => this.categorySelector = c} selectedCategoryId={this.state.subCategoryId} entitiesCollection={this.props.entitiesCollection} />
