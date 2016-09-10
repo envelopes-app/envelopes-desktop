@@ -1,5 +1,6 @@
 /// <reference path="../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -11,18 +12,14 @@ import { PAddTransactionDialog } from './trxDialogs/PAddTransactionDialog';
 import './SRegister.css';
 
 import * as budgetEntities from '../../interfaces/budgetEntities';
-import { IEntitiesCollection, IRegisterState } from '../../interfaces/state';
+import { IApplicationState, IEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
 export interface PRegisterProps {
-	accounts: Array<budgetEntities.IAccount>;
-	transactions: Array<budgetEntities.ITransaction>;
-	subTransactions: Array<budgetEntities.ISubTransaction>;
-	scheduledTransactions: Array<budgetEntities.IScheduledTransaction>;
-	scheduledSubTransactions: Array<budgetEntities.IScheduledSubTransaction>;
-	payees: Array<budgetEntities.IPayee>;
-	masterCategories: Array<budgetEntities.IMasterCategory>;
-	subCategories: Array<budgetEntities.ISubCategory>;
-	registerState: IRegisterState;
+	// State Variables
+	applicationState: IApplicationState;
+	// Dispatcher Functions
+	addTransaction:(transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>)=>void;	
+	updateTransaction:(transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>)=>void;
 }
 
 const RegisterContainerStyle = {
@@ -56,20 +53,52 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 	}
 
 	public render() {
+
+		var accountName:string;
+		var clearedBalance:number = 0;
+		var unclearedBalance:number = 0;
+		var workingBalance:number = 0;
+		var showAccountsColumn:boolean = true;
+
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
+
+		// Determine which account we are showing from the sidebar state
+		var accounts:Array<budgetEntities.IAccount>;
+		var sidebarState = this.props.applicationState.sidebarState;
+		if(sidebarState.selectedTab == "All Accounts") {
+
+			accountName = "All Accounts";
+			accounts = entitiesCollection.accounts;
+			showAccountsColumn = true;
+		}
+		else if(sidebarState.selectedTab == "Account") {
+
+			var account = _.find(entitiesCollection.accounts, {entityId: sidebarState.selectedAccountId});
+			accountName = account.accountName;
+			accounts = [account];
+			showAccountsColumn = false;
+		}
+
+		// Calculate the cleared and uncleared balance values for the displayed account/s
+		_.forEach(accounts, (account)=>{
+			clearedBalance += (account.clearedBalance ? account.clearedBalance : 0);
+			unclearedBalance += (account.unclearedBalance ? account.unclearedBalance : 0);
+		});
+
+		// Calculate the working balance
+		workingBalance = clearedBalance + unclearedBalance;
+
     	return (
 			<div style={RegisterContainerStyle}>
-				<PRegisterHeader accounts={null} />
+				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} unclearedBalance={unclearedBalance} workingBalance={workingBalance} />
 				<PRegisterToolbar 
 					onAddTransactionSelected={this.onAddTransactionSelected}
 				/>
-				<PRegisterDataGrid />
+				<PRegisterDataGrid showAccountsColumn={showAccountsColumn}/>
 
 				<PAddTransactionDialog 
 					ref={(d)=> this.addTransactionDialog = d }
-					accounts={this.props.accounts}
-					masterCategories={this.props.masterCategories} 
-					subCategories={this.props.subCategories} 
-					payees={this.props.payees}
+					entitiesCollection={entitiesCollection}
 					updateEntities={this.updateEntities} 
 				/>
 			</div>

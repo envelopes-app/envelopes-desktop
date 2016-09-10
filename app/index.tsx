@@ -14,7 +14,7 @@ import './styles/react-datepicker.css';
 // Components that are to be used in route map
 import { App } from './components/App';
 import { PBudget } from './components/budget/PBudget';
-import { PRegister } from './components/register/PRegister';
+import CRegister from './components/register/CRegister';
 
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
@@ -28,7 +28,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path='/index.html' component={App}>
-	  	<IndexRoute component={PRegister} />
+	  	<IndexRoute component={CRegister} />
       </Route>
     </Router>
   </Provider>,

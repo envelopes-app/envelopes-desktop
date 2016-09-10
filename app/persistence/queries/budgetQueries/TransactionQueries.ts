@@ -85,7 +85,7 @@ export class TransactionQueries {
 
 		var query:IDatabaseQuery = {
 
-			name: "be_transactions",
+			name: "transactions",
 			query: `SELECT * FROM Transactions WHERE budgetId = ?1 AND 
 						(deviceKnowledge = 0 OR deviceKnowledge > ?2 OR deviceKnowledgeForCalculatedFields = 0 OR
 						deviceKnowledgeForCalculatedFields > ?3) AND isTombstone = 0`,

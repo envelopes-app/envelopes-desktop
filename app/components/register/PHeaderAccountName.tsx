@@ -7,36 +7,27 @@ export interface PHeaderAccountNameProps {
 	text:string
 }
 
-const TooltipContainerStyle = {
-	flex: '1 1 auto',
-	height: '34px'
+const AccountNameContainerStyle = {
+	flex: '0 0 auto',
+	paddingLeft: '10px',
+	paddingRight: '10px'
 }
 
-const TooltipInnerStyle = {
+const AccountNameInnerStyle = {
 	fontSize: '20px',
-	fontWeight: '300',
+	fontWeight: '200',
+	color: '#ffffff',
+	padding: '4px',
+	borderRadius: '4px',
 	backgroundColor: '#16A336'
-}
-
-const TooltipArrowStyle = {
-	top: '35%',
-	right: '-5px',
-	marginTop: '-5px',
-	borderWidth: '10px 0 10px 10px',
-	borderLeftColor: '#16A336'
 }
 
 export class PHeaderAccountName extends React.Component<PHeaderAccountNameProps, {}> {
   
 	public render() {
-    	return (
-			<div style={TooltipContainerStyle}>
-				<div className="tooltip left in" role="tooltip">
-					<div className="tooltip-arrow" style={TooltipArrowStyle}></div>
-					<div className="tooltip-inner" style={TooltipInnerStyle}>
-						{this.props.text}
-					</div>
-				</div>		
+		return (
+			<div style={AccountNameContainerStyle}>
+				<div style={AccountNameInnerStyle}>{this.props.text}</div>
 			</div>		
 		);
   	}

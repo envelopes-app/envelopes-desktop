@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 
+import * as budgetEntities from '../interfaces/budgetEntities';
 import { IEntitiesCollectionWithMaps } from '../interfaces/state';
 import { ActionNames } from '../constants';
 import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction } from '../interfaces/actions';
@@ -47,7 +48,8 @@ export class GlobalReducers {
 		newValue.subCategories = action.entities.subCategories;
 		newValue.subTransactions = action.entities.subTransactions;
 		newValue.transactions = action.entities.transactions;
-		// Build the map objects for each of the entity collections
+		
+		// Build the map objects for each of the entity collections. These maps are by the entityIds
 		newValue.accountsMap = _.keyBy(newValue.accounts, 'entityId');
 		newValue.accountMappingsMap = _.keyBy(newValue.accountMappings, 'entityId');
 		newValue.masterCategoriesMap = _.keyBy(newValue.masterCategories, 'entityId');
@@ -62,6 +64,27 @@ export class GlobalReducers {
 		newValue.subCategoriesMap = _.keyBy(newValue.subCategories, 'entityId');
 		newValue.subTransactionsMap = _.keyBy(newValue.subTransactions, 'entityId');
 		newValue.transactionsMap = _.keyBy(newValue.transactions, 'entityId');
+
+		// Build a map for internal master categories by their internal name
+		newValue.masterCategoriesMapByInternalName = {};
+		_.forEach(newValue.masterCategories, (masterCategory:budgetEntities.IMasterCategory)=>{
+			if(masterCategory.internalName)
+				newValue.masterCategoriesMapByInternalName[masterCategory.internalName] = masterCategory;
+		});
+
+		// Build a map for internal subcategories by their internal name
+		newValue.subCategoriesMapByInternalName = {};
+		_.forEach(newValue.subCategories, (subCategory:budgetEntities.ISubCategory)=>{
+			if(subCategory.internalName)
+				newValue.subCategoriesMapByInternalName[subCategory.internalName] = subCategory;
+		});
+
+		// Build a map for internal payees by their internal name
+		newValue.payeesMapByInternalName = {};
+		_.forEach(newValue.payees, (payee:budgetEntities.IPayee)=>{
+			if(payee.internalName)
+				newValue.payeesMapByInternalName[payee.internalName] = payee;
+		});
 	}
 
 	private static updateCollection(newValue:IEntitiesCollectionWithMaps, action:SyncDataWithDatabaseCompletedAction, collectionName:string, collectionMapName:string):void {

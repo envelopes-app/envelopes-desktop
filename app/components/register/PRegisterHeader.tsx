@@ -7,11 +7,11 @@ import { Tooltip } from 'react-bootstrap';
 import { PHeaderAccountName } from './PHeaderAccountName';
 import { PHeaderValue } from './PHeaderValue';
 
-import * as budgetEntities from '../../interfaces/budgetEntities';
-import { IRegisterState } from '../../interfaces/state';
-
 export interface PRegisterHeaderProps {
-	accounts:Array<budgetEntities.IAccount>
+	accountName:string;
+	clearedBalance:number;
+	unclearedBalance:number;
+	workingBalance:number;
 }
 
 const RegisterHeaderContainerStyle = {
@@ -48,12 +48,12 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
     	return (
 			<div style={RegisterHeaderContainerStyle}>
 				<div style={RegisterHeaderStyle}>
-					<PHeaderAccountName text="All Accounts" />
-					<PHeaderValue label="Cleared Balance" value={12345} />
+					<PHeaderAccountName text={this.props.accountName} />
+					<PHeaderValue label="Cleared Balance" value={this.props.clearedBalance} />
 					<text style={SymbolStyle}>+</text>
-					<PHeaderValue label="Uncleared Balance" value={12345} />
+					<PHeaderValue label="Uncleared Balance" value={this.props.unclearedBalance} />
 					<text style={SymbolStyle}>=</text>
-					<PHeaderValue label="Working Balance" value={12345} />
+					<PHeaderValue label="Working Balance" value={this.props.workingBalance} />
 				</div>
 			</div>
 		);

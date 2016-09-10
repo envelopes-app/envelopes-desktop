@@ -1,5 +1,6 @@
 /// <reference path="../../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
@@ -8,67 +9,43 @@ import { PFlagSelector } from './PFlagSelector';
 import { PAccountSelector } from './PAccountSelector';
 import { PDateSelector } from './PDateSelector';
 import { PPayeeSelector } from './PPayeeSelector';
+import { PCategorySelector } from './PCategorySelector';
 
+import * as constants from '../../../constants';
 import * as utilities from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { IEntitiesCollection } from '../../../interfaces/state';
-
-const PAddTransactionDialogStyle = {
-	position: 'absolute',
-	left: '50%',
-	marginLeft: '-500px',
-	top: '50%',
-	marginTop: '-300px'
-}
+import { IEntitiesCollection, IEntitiesCollectionWithMaps, ITransactionValues } from '../../../interfaces/state';
 
 export interface PAddTransactionDialogProps { 
-	// Collections needed to fill the drop downs in the dialog
-	accounts: Array<budgetEntities.IAccount>;
-	payees: Array<budgetEntities.IPayee>;
-	masterCategories: Array<budgetEntities.IMasterCategory>;
-	subCategories: Array<budgetEntities.ISubCategory>;
+	// entities collections from the global state 
+	entitiesCollection:IEntitiesCollectionWithMaps;
 	// Dispatch methods
 	updateEntities:(entities:IEntitiesCollection)=>void;
 }
 
 export interface PAddTransactionDialogState {
 	showModal: boolean;
-	// Fields to save the values for the different fields.
-	entityId?:string;
-	flag?:string;
-	accountId?:string;
-	payeeId?:string;
-	date?:utilities.DateWithoutTime;
-	frequency?:string;
-	subCategoryId?:string;
-	memo?:string;
-	amount?:number;
-	cleared?:string;
+	// Properties to save the values for the different fields. We wont create an actual transaction 
+	// or scheduled transaction object until the user presses save.
+	entityId?: string;
+	flag?: string;
+	accountId?: string;
+	payeeId?: string;
+	date?: utilities.DateWithoutTime;
+	frequency?: string;
+	subCategoryId?: string;
+	memo?: string;
+	amount?: number;
+	cleared?: string;
 }
 
 export class PAddTransactionDialog extends React.Component<PAddTransactionDialogProps, PAddTransactionDialogState> {
 
-	private ctrlAccountName:FormControl;
-	private ctrlAccountType:FormControl;
-	private ctrlAccountBalance:FormControl;
-
-	private dummyAccounts = [
-		{ entityId: 1, accountName: "Checking" },
-		{ entityId: 2, accountName: "Savings" },
-		{ entityId: 3, accountName: "Visa" },
-		{ entityId: 4, accountName: "Master" }
-	];
-
-	private dummyPayees = [
-		{ entityId: 1, name: "Transfer: Checking", accountId: 1 },
-		{ entityId: 2, name: "Transfer: Savings", accountId: 2 },
-		{ entityId: 3, name: "Transfer: Visa", accountId: 3 },
-		{ entityId: 4, name: "Transfer: Master", accountId: 4 },
-		{ entityId: 5, name: "HTH Store", accountId: null },
-		{ entityId: 6, name: "Rockland Bakery", accountId: null },
-		{ entityId: 7, name: "Prince Departmental Store", accountId: null },
-		{ entityId: 8, name: "E-Mart", accountId: null }
-	];
+	private flagSelector:PFlagSelector;
+	private accountSelector:PAccountSelector;
+	private dateSelector:PDateSelector;
+	private payeeSelector:PPayeeSelector;
+	private categorySelector:PCategorySelector;
 
 	constructor(props: any) {
         super(props);
@@ -76,6 +53,8 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.show = this.show.bind(this);
 		this.save = this.save.bind(this);
 		this.close = this.close.bind(this);
+
+		this.handleTabPressedOnFlagSelector = this.handleTabPressedOnFlagSelector.bind(this);
     }
 
 	private close():void {
@@ -95,32 +74,70 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
 	public show():void {
 
-		this.setState({ showModal: true });
+		var account = this.props.entitiesCollection.accounts ? this.props.entitiesCollection.accounts[0] : null;
+		var accountId = account ? account.entityId : null;
+
+		if(accountId) {
+			this.setState({ 
+				showModal: true,
+				entityId: utilities.KeyGenerator.generateUUID(),
+				flag: 'None',
+				accountId: null,
+				payeeId: null,
+				date: utilities.DateWithoutTime.createForToday(),
+				frequency: null,
+				subCategoryId: null,
+				memo: null,
+				amount: 0,
+				cleared: constants.ClearedFlag.Uncleared
+			});
+		}
+		else {
+			utilities.Logger.info("We cannot show the Add Transaction Dialog as there are no defined accounts yet.");
+		}
 	};
 
+	private handleTabPressedOnFlagSelector(shiftKeyPressed:boolean):void {
+
+		// Get the selected flag from the flag selector and set it in the state
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.flag = this.flagSelector.getSelectedFlag();
+		this.setState(state);
+
+		// If shift key is not pressed then move the focus on to the account selector.
+		if(!shiftKeyPressed)
+			this.accountSelector.showPopover();
+	}
+
+	private handleTabPressedOnAccountSelector(shiftKeyPressed:boolean):void {
+
+		// Get the selected account from the account selector and set it in the state
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.accountId = this.accountSelector.getSelectedAccountId();
+		this.setState(state);
+
+		// If shift key is not pressed then move the focus on to the date selector. 
+		// Otherwise move the focus back to the flag selector. 
+		if(!shiftKeyPressed)
+			this.flagSelector.showPopover();
+		else
+			this.dateSelector.showPopover();
+	}
+
 	public render() {
+
 		return (
-			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog" style={PAddTransactionDialogStyle}>
+			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 				<Modal.Header bsClass="modal-header">
 					<Modal.Title>Add Transaction</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form>
-						<FormGroup>
-							<PFlagSelector width={30} />
-						</FormGroup>
-						<FormGroup>
-							<ControlLabel>ACCOUNT:</ControlLabel>
-							<PAccountSelector width={90} accounts={this.dummyAccounts as Array<any>} />
-						</FormGroup>
-						<FormGroup>
-							<ControlLabel>DATE:</ControlLabel>
-							<PDateSelector width={90} />
-						</FormGroup>
-						<FormGroup>
-							<ControlLabel>PAYEE:</ControlLabel>
-							<PPayeeSelector width={90} payees={this.dummyPayees as Array<any>} />
-						</FormGroup>
+					<Form horizontal>
+						<PFlagSelector ref={(c) => this.flagSelector = c} selectedFlag={this.state.flag} handleTabPressed={this.handleTabPressedOnFlagSelector} />
+						<PAccountSelector ref={(c) => this.accountSelector = c} selectedAccountId={this.state.accountId} entitiesCollection={this.props.entitiesCollection} handleTabPressed={this.handleTabPressedOnAccountSelector} />
+						<PDateSelector ref={(c) => this.dateSelector = c} selectedDate={this.state.date} />
+						<PPayeeSelector ref={(c) => this.payeeSelector = c} selectedPayeeId={this.state.payeeId} entitiesCollection={this.props.entitiesCollection} />
+						<PCategorySelector ref={(c) => this.categorySelector = c} selectedCategoryId={this.state.subCategoryId} entitiesCollection={this.props.entitiesCollection} />
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>

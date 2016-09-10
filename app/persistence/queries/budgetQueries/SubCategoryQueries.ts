@@ -63,7 +63,7 @@ export class SubCategoryQueries {
 
 		var query:IDatabaseQuery = {
 
-			name: "be_subcategories",
+			name: "subCategories",
 			query: "SELECT * FROM SubCategories WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
 			arguments: [
 				budgetId,

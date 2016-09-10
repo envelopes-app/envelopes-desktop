@@ -3,23 +3,27 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { FormGroup, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { FormGroup, FormControl, Col, ControlLabel, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 export interface PFlagSelectorProps { 
-	width: number;
 	selectedFlag?:string;
-	selectionChanged?:(flag:string)=>void;
+	handleTabPressed:(shiftPressed:boolean)=>void;
+}
+
+export interface PFlagSelectorState {
+	showPopover:boolean;
+	selectedFlag:string;
 }
 
 const PopoverStyle = {
 	maxWidth: 'none', 
-	width:'200px'
+	width:'240px'
 }
 
-export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopover:boolean, selectedFlag:string}> {
+export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSelectorState> {
 
-	private flagInput:Glyphicon;
-
+	private flagInput:HTMLDivElement;
+	private flagColors:Array<string> = ['None', 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple'];
 	private flagColorMapping:any = {
 		'None': '#E1E1E1',
 		'Red': '#D43D2E',
@@ -29,8 +33,8 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		'Blue': '#0082CB',
 		'Purple': '#9384B7'
 	}
-
 	private flagTextColorMapping:any = {
+		'None': '#BEBEBE',
 		'Red': '#AA3125',
 		'Orange': '#CC6200',
 		'Yellow': '#C6B42B',
@@ -39,17 +43,92 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		'Purple': '#756992'
 	}
 
-	constructor(props: any) {
+	constructor(props:any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.setSelectedFlag = this.setSelectedFlag.bind(this);
-		this.state = {showPopover:false, selectedFlag:this.props.selectedFlag};	
+		// If the passed selected flag is null, then set it to 'None'
+		var selectedFlag = this.props.selectedFlag ? this.props.selectedFlag : 'None';
+		this.state = {showPopover:false, selectedFlag:selectedFlag };	
+	}
+
+	public getSelectedFlag():string {
+		return this.state.selectedFlag;
+	}
+
+	public showPopover():void {
+		// If the popover is already showing then we dont need to do anything
+		if(this.state.showPopover == false) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = true;
+			this.setState(state);
+		}
+	}
+
+	public hidePopover():void {
+		// If the popover is already hidden then we dont need to do anything
+		if(this.state.showPopover == true) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = false;
+			this.setState(state);
+		}
 	}
 
 	private onClick() {
-		var state:any = _.assign({}, this.state);
-		state.showPopover = true;
-		this.setState(state);
+		// If the popover is not already showing, then show it.
+		this.showPopover();
+	}
+
+	private onKeyDown(event:KeyboardEvent):void {
+
+		if(this.state.showPopover == true && event.keyCode == 38 || event.keyCode == 40) {
+
+			// Get the currently selected flag color
+			var currentFlagColor = this.state.selectedFlag;
+			var index = _.indexOf(this.flagColors, currentFlagColor);
+
+			// Up Arrow Key
+			if(event.keyCode == 38) {
+				// Decrement the index to get the previous color
+				index--;
+				// If we have gone below 0, go back to the last index
+				if(index < 0)
+					index = this.flagColors.length - 1;
+			}
+			// Down Arrow Key
+			else if(event.keyCode == 40) {
+				// Increment the index to get the next color
+				index++;
+				// If we have gone above the last index, go back to the first index
+				if(index >= this.flagColors.length)
+					index = 0;
+			}
+
+			// Get the color corresponding to the index and set it as the selected flag
+			var newFlagColor = this.flagColors[index];
+			var state:any = _.assign({}, this.state);
+			state.selectedFlag = newFlagColor;
+			this.setState(state);
+		}
+		// Escape Key
+		else if(event.keyCode == 27) {
+			// If the popover is showing, then hide it.
+			if(this.state.showPopover == true) {
+				var state:any = _.assign({}, this.state);
+				state.showPopover = false;
+				this.setState(state);
+			}
+		}
+		// Tab Key
+		else if(event.keyCode == 9) {
+			// Prevent the default action from happening as we are manually handling it
+			event.preventDefault();
+			// Hide the popover
+			this.hidePopover();
+			// Let the parent dialog know that tab was pressed
+			this.props.handleTabPressed(event.shiftKey);
+		}
 	}
 
 	private setSelectedFlag(flag:string) {
@@ -66,7 +145,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		}
 	}
 
-	private getListItem(flagColorName:string, selected:boolean) {
+	private getListItem(flagColorName:string = 'None', selected:boolean = false) {
 
 		var flagColor = this.flagColorMapping[flagColorName];
 		var flagTextColor = this.flagTextColorMapping[flagColorName];
@@ -89,12 +168,12 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 
 	public render() {
 
-		// Set the color for the flag glyph
-		var flagColor:string = this.flagColorMapping['None'];
-		if(this.state.selectedFlag != null)
-			flagColor = this.flagColorMapping[this.state.selectedFlag];
+		var flagColorName = this.state.selectedFlag ? this.state.selectedFlag : 'None';
+		var flagItemColor = this.flagColorMapping[flagColorName];
+		var flagTextColor = this.flagTextColorMapping[flagColorName];
 
 		var flagPopoverItems = [
+			this.getListItem("None", !this.state.selectedFlag || this.state.selectedFlag === 'None'),
 			this.getListItem("Red", this.state.selectedFlag === 'Red'),
 			this.getListItem("Orange", this.state.selectedFlag === 'Orange'),
 			this.getListItem("Yellow", this.state.selectedFlag === 'Yellow'),
@@ -104,18 +183,22 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, {showPopo
 		];
 
 		return (
-			<div>
-				<FormGroup width={this.props.width}>
-					<Glyphicon glyph="flag" ref={(n) => this.flagInput = n } style={{color:flagColor}} onClick={this.onClick}/>
-				</FormGroup>
-				<Overlay show={this.state.showPopover} placement="bottom" target={ ()=> ReactDOM.findDOMNode(this.flagInput) }>
-					<Popover id="selectFlagPopover" style={PopoverStyle}>
-						<ul className="flag-dropdown-list">
-							{flagPopoverItems}
-						</ul>
-					</Popover>
-				</Overlay>
-			</div>
+			<FormGroup onKeyDown={this.onKeyDown}>
+				<Col componentClass={ControlLabel} sm={3}>
+					Flag
+				</Col>
+				<Col sm={9}>
+					<FormControl ref={(n) => this.flagInput = n } type="text" componentClass="input" style={{backgroundColor:flagItemColor}} 
+						contentEditable={false} readOnly={true} onClick={this.onClick} />
+					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.flagInput) }>
+						<Popover id="selectFlagPopover" style={PopoverStyle}>
+							<ul className="flag-dropdown-list">
+								{flagPopoverItems}
+							</ul>
+						</Popover>
+					</Overlay>
+				</Col>
+			</FormGroup>
 		);
 	}
 }

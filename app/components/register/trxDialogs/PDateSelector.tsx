@@ -4,15 +4,15 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as moment from 'moment';
-import { Form, FormControl, FormGroup, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Form, FormControl, FormGroup, Col, ControlLabel, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 var DatePicker:any = require('react-datepicker');
 
+import { DateWithoutTime } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDateSelectorProps { 
-	width: number;
-	selectedDate?:Date;
+	selectedDate?:DateWithoutTime;
 	selectionChanged?:(date:Date)=>void;
 }
 
@@ -25,11 +25,10 @@ const DateSelectorStyle = {
 }
 
 const PopoverStyle = {
-	maxWidth: 'none', 
-//	width:'250px'
+	maxWidth: 'none'
 }
 
-export class PDateSelector extends React.Component<PDateSelectorProps, {showPopover:boolean, selectedDate:Date}> {
+export class PDateSelector extends React.Component<PDateSelectorProps, {showPopover:boolean, selectedDate:DateWithoutTime}> {
 
 	private dateInput:FormControl;
 
@@ -56,20 +55,41 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 		this.setState(state);
 	}
 
+	public showPopover():void {
+		// If the popover is already showing then we dont need to do anything
+		if(this.state.showPopover == false) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = true;
+			this.setState(state);
+		}
+	}
+
+	public hidePopover():void {
+		// If the popover is already hidden then we dont need to do anything
+		if(this.state.showPopover == true) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = false;
+			this.setState(state);
+		}
+	}
+
 	public render() {
 		return (
-			<div>
-				<FormGroup width={this.props.width}>
+			<FormGroup>
+				<Col componentClass={ControlLabel} sm={3}>
+					Date
+				</Col>
+				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
 						onClick={this.onClick} contentEditable={false} 
 						defaultValue={this.state.selectedDate ? this.state.selectedDate : ""} />
-				</FormGroup>
-				<Overlay show={this.state.showPopover} placement="bottom" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
-					<Popover id="selectDatePopover" style={PopoverStyle}>
-						<DatePicker inline onChange={this.onChange}  />
-					</Popover>
-				</Overlay>
-			</div>
+					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
+						<Popover id="selectDatePopover" style={PopoverStyle}>
+							<DatePicker inline onChange={this.onChange}  />
+						</Popover>
+					</Overlay>
+				</Col>
+			</FormGroup>
 		);
 	}
 }

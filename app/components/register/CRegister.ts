@@ -10,15 +10,7 @@ import { PRegister } from './PRegister';
 
 const mapStateToProps = (state:IApplicationState) => {
 	return {
-		accounts: state.entitiesCollection.accounts,
-    	transactions: state.entitiesCollection.transactions,
-		subTransactions: state.entitiesCollection.subTransactions,
-    	scheduledTransactions: state.entitiesCollection.scheduledTransactions,
-		scheduledSubTransactions: state.entitiesCollection.scheduledSubTransactions,
-		payees: state.entitiesCollection.payees,
-		masterCategories: state.entitiesCollection.masterCategories,
-		subCategories: state.entitiesCollection.subCategories,
-		registerState: state.registerState
+		applicationState: state
   	};
 };
 

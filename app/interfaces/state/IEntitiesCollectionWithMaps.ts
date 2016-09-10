@@ -20,4 +20,10 @@ export interface IEntitiesCollectionWithMaps extends IEntitiesCollection {
 	subCategoriesMap?:SimpleObjectMap<budgetEntities.ISubCategory>;
 	subTransactionsMap?:SimpleObjectMap<budgetEntities.ISubTransaction>;
 	transactionsMap?:SimpleObjectMap<budgetEntities.ITransaction>;
+
+	// Maps to index the internal master categories, subcategories and payees by their 
+	// internal name for quick access
+	masterCategoriesMapByInternalName?:SimpleObjectMap<budgetEntities.IMasterCategory>;
+	payeesMapByInternalName?:SimpleObjectMap<budgetEntities.IPayee>;
+	subCategoriesMapByInternalName?:SimpleObjectMap<budgetEntities.ISubCategory>;
 }
