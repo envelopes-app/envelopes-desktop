@@ -43,22 +43,43 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {showPo
 		this.state = {showPopover:false, selectedPayee: this.props.entitiesCollection.payees[0]};	
 	}
 
-	private onFocus() {
-		var state:any = _.assign({}, this.state);
-		state.showPopover = true;
-		this.setState(state);
-	}
-
-	private onBlur() {
-		// this.setState({showPopover:false});
-	}
-
 	private setSelectedPayee(entityId:string) {
 		// Get the payee from the list of payees that corresponds to this entityId
 		var selectedPayee = _.find(this.props.entitiesCollection.payees, { entityId: entityId});
 		var state:any = _.assign({}, this.state);
 		state.selectedPayee = selectedPayee;
 		this.setState(state);
+	}
+
+	public showPopover():void {
+		// If the popover is already showing then we dont need to do anything
+		if(this.state.showPopover == false) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = true;
+			this.setState(state);
+		}
+
+		// Set the focus on the input control
+		(ReactDOM.findDOMNode(this.payeeInput) as any).focus();
+	}
+
+	public hidePopover():void {
+		// If the popover is already hidden then we dont need to do anything
+		if(this.state.showPopover == true) {
+			var state:any = _.assign({}, this.state);
+			state.showPopover = false;
+			this.setState(state);
+		}
+	}
+
+	private onFocus() {
+		// If the popover is not already showing, then show it.
+		this.showPopover();
+	}
+
+	private onBlur() {
+		// If the popover is showing, hide it.
+		this.hidePopover();
 	}
 
 	public render() {

@@ -25,6 +25,10 @@ export class DateWithoutTime {
 	// ****************************************************************************************
 	// Static factory methods to create DateWithoutTime objects from either a date, or a string
 	// ****************************************************************************************
+	public static createFromMoment(momentValue:moment.Moment):DateWithoutTime {
+		var dateWithoutTime:DateWithoutTime = new DateWithoutTime(momentValue.year(), momentValue.month(), momentValue.date());
+		return dateWithoutTime;
+	}
 
 	// Assumes that the date passed in should be interpreted in the local timezone
 	// So if you pass in December 31st, 2013 at 11:59pm, in the local timezone (say GMT-6),

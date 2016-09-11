@@ -12,8 +12,13 @@ import { DateWithoutTime } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDateSelectorProps { 
-	selectedDate?:DateWithoutTime;
-	selectionChanged?:(date:Date)=>void;
+	selectedDate:DateWithoutTime;
+	setSelectedDate:(date:DateWithoutTime)=>void;
+	handleTabPressed:(shiftPressed:boolean)=>void;
+}
+
+export interface PDateSelectorState {
+	showPopover:boolean;
 }
 
 const DateSelectorStyle = {
@@ -28,7 +33,7 @@ const PopoverStyle = {
 	maxWidth: 'none'
 }
 
-export class PDateSelector extends React.Component<PDateSelectorProps, {showPopover:boolean, selectedDate:DateWithoutTime}> {
+export class PDateSelector extends React.Component<PDateSelectorProps, PDateSelectorState> {
 
 	private dateInput:FormControl;
 
@@ -36,26 +41,20 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.setSelectedDate = this.setSelectedDate.bind(this);
-		this.state = {showPopover:false, selectedDate:this.props.selectedDate};	
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onChange = this.onChange.bind(this);
+		this.state = {showPopover:false};	
 	}
 
-	private onChange(date?:any):void {
-		debugger;
-	}
-
-	private setSelectedDate(date:Date) {
-		var state:any = _.assign({}, this.state);
-		state.selectedDate = date;
-		this.setState(state);
+	private onChange(date:moment.Moment):void {
+		var newDate = DateWithoutTime.createFromMoment(date);
+		this.props.setSelectedDate(newDate);
 	}
 
 	public showPopover():void {
 		// If the popover is already showing then we dont need to do anything
 		if(this.state.showPopover == false) {
-			var state:any = _.assign({}, this.state);
-			state.showPopover = true;
-			this.setState(state);
+			this.setState({showPopover:true});		
 		}
 
 		// Set the focus on the input control
@@ -65,9 +64,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 	public hidePopover():void {
 		// If the popover is already hidden then we dont need to do anything
 		if(this.state.showPopover == true) {
-			var state:any = _.assign({}, this.state);
-			state.showPopover = false;
-			this.setState(state);
+			this.setState({showPopover:false});		
 		}
 	}
 
@@ -81,19 +78,59 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {showPopo
 		this.hidePopover();
 	}
 
+	private onKeyDown(event:KeyboardEvent):void {
+
+		if(this.state.showPopover == true && (event.keyCode >= 37 && event.keyCode <= 40)) {
+
+			// Get the currently selected date
+			var currentDate = this.props.selectedDate.clone();
+
+			// Left Arrow Key
+			if(event.keyCode == 37) {
+				// Decrement the date by 1 day
+				currentDate.subtractDays(1);
+			}
+			// Up Arrow Key
+			if(event.keyCode == 38) {
+				// Decrement the date by 7 days
+				currentDate.subtractDays(7);
+			}
+			// Right Arrow Key
+			if(event.keyCode == 39) {
+				// Increment the date by 1 day
+				currentDate.addDays(1);
+			}
+			// Down Arrow Key
+			else if(event.keyCode == 40) {
+				// Increment the date by 7 days
+				currentDate.addDays(7);
+			}
+
+			// Update the selectedDate to be this new date
+			this.props.setSelectedDate(currentDate);
+		}
+		// Tab Key
+		else if(event.keyCode == 9) {
+			// Prevent the default action from happening as we are manually handling it
+			event.preventDefault();
+			// Let the parent dialog know that tab was pressed
+			this.props.handleTabPressed(event.shiftKey);
+		}
+	}
+
 	public render() {
 		return (
-			<FormGroup>
+			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Date
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
 						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false} 
-						defaultValue={this.state.selectedDate ? this.state.selectedDate : ""} />
+						value={this.props.selectedDate.toISOString()} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
-							<DatePicker inline onChange={this.onChange}  />
+							<DatePicker inline onChange={this.onChange} selected={this.props.selectedDate.toUTCMoment()} />
 						</Popover>
 					</Overlay>
 				</Col>

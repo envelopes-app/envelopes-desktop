@@ -102,7 +102,7 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 	private onAccountSelect(accountId:string) {
 
 		// If the selection is not already set to this particular account then
-		if(this.props.sidebarState.selectedTab != "Account" && this.props.sidebarState.selectedAccountId != accountId) {
+		if(this.props.sidebarState.selectedTab != "Account" || this.props.sidebarState.selectedAccountId != accountId) {
 
 			// Set the "Account" as selected tab in the sidebar state 
 			this.props.setSelectedTab("Account", accountId);

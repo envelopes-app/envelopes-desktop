@@ -61,9 +61,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 	public showPopover():void {
 		// If the popover is already showing then we dont need to do anything
 		if(this.state.showPopover == false) {
-			var state:any = _.assign({}, this.state);
-			state.showPopover = true;
-			this.setState(state);
+			this.setState({showPopover:true});		
 		}
 
 		// Set the focus on the input control
@@ -73,9 +71,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 	public hidePopover():void {
 		// If the popover is already hidden then we dont need to do anything
 		if(this.state.showPopover == true) {
-			var state:any = _.assign({}, this.state);
-			state.showPopover = false;
-			this.setState(state);
+			this.setState({showPopover:false});		
 		}
 	}
 
@@ -91,7 +87,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 
 	private onKeyDown(event:KeyboardEvent):void {
 
-		if(this.state.showPopover == true && event.keyCode == 38 || event.keyCode == 40) {
+		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected accountId
 			var currentAccountId = this.props.selectedAccountId;
@@ -119,21 +115,10 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 			var newAccount = accounts[index];
 			this.props.setSelectedAccountId(newAccount.entityId);
 		}
-		// Escape Key
-		else if(event.keyCode == 27) {
-			// If the popover is showing, then hide it.
-			if(this.state.showPopover == true) {
-				var state:any = _.assign({}, this.state);
-				state.showPopover = false;
-				this.setState(state);
-			}
-		}
 		// Tab Key
 		else if(event.keyCode == 9) {
 			// Prevent the default action from happening as we are manually handling it
 			event.preventDefault();
-			// Hide the popover
-			this.hidePopover();
 			// Let the parent dialog know that tab was pressed
 			this.props.handleTabPressed(event.shiftKey);
 		}
@@ -150,7 +135,6 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		var selectedAccountId = this.props.selectedAccountId;
 		var selectedAccount = selectedAccountId ? accountsMap[selectedAccountId] : null;
 
-		debugger;
 		_.forEach(accounts, (account)=>{
 			if(account.isTombstone == 0 && account.closed == 0) {
 				var className = (selectedAccountId && selectedAccountId == account.entityId) ? "custom-dropdown-list-item-selected" : "custom-dropdown-list-item"; 
