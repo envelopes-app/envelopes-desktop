@@ -7,13 +7,12 @@ import { Form, FormControl, FormGroup, Col, ControlLabel, Glyphicon, Overlay, Po
 
 import * as constants from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { EntitiesLookupHelper } from '../../../utilities';
-import { IEntitiesCollectionWithMaps } from '../../../interfaces/state';
+import { IEntitiesCollection } from '../../../interfaces/state';
 
 export interface PCategorySelectorProps { 
 	selectedCategoryId:string;
 	// entities collections from the global state 
-	entitiesCollection:IEntitiesCollectionWithMaps;
+	entitiesCollection:IEntitiesCollection;
 }
 
 const CategorySelectorStyle = {
@@ -70,9 +69,9 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 		// Get the currently selected category from state so that we can highlight the corresponding item
 		var selectedCategory = this.state.selectedCategory;
-		var immediateIncomeSubCategory = EntitiesLookupHelper.getImmediateIncomeSubCategory(this.props.entitiesCollection);
 		var masterCategories = this.props.entitiesCollection.masterCategories;
 		var subCategories = this.props.entitiesCollection.subCategories;
+		var immediateIncomeSubCategory = subCategories.getImmediateIncomeSubCategory();
 
 		// At the top, we are going to add a list item for "inflow" and "To be Budgeted"
 		categoiresPopoverItem = <li key="inflow" className="custom-dropdown-2list-section">Inflow:</li>;

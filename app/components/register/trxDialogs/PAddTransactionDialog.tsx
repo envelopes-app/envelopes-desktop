@@ -14,12 +14,12 @@ import { PCategorySelector } from './PCategorySelector';
 import * as constants from '../../../constants';
 import * as utilities from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { IEntitiesCollection, IEntitiesCollectionWithMaps, ITransactionValues } from '../../../interfaces/state';
+import { IEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
 
 export interface PAddTransactionDialogProps { 
 
 	// Entities collections from the global state 
-	entitiesCollection:IEntitiesCollectionWithMaps;
+	entitiesCollection:IEntitiesCollection;
 	// Dispatch methods
 	updateEntities:(entities:IEntitiesCollection)=>void;
 }
@@ -128,6 +128,12 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.setState(state);
 	}
 
+	private setSelectedPayeeId(payeeId:string):void {
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.payeeId = payeeId;
+		this.setState(state);
+	}
+
 	private handleTabPressedOnAccountSelector(shiftKeyPressed:boolean):void {
 
 		// If shift key is not pressed then move the focus on to the date selector. 
@@ -155,6 +161,22 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		}
 	}
 
+	private handleTabPressedOnPayeeSelector(shiftKeyPressed:boolean):void {
+
+		// Hide the payee selector popover
+		this.payeeSelector.hidePopover(); 
+		// If shift key is not pressed then move the focus on to the category selector. 
+		// Otherwise move the focus back to the date selector. 
+		if(!shiftKeyPressed) {
+			// Show the category selector popover
+			//this.categorySelector.showPopover();
+		}
+		else {
+			// Show the date selector popover
+			this.dateSelector.showPopover();
+		}
+	}
+
 	public render() {
 
 		return (
@@ -169,7 +191,9 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 							setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
 						<PDateSelector ref={(c) => this.dateSelector = c} 
 							selectedDate={this.state.date} setSelectedDate={this.setSelectedDate} handleTabPressed={this.handleTabPressedOnDateSelector} />
-						<PPayeeSelector ref={(c) => this.payeeSelector = c} selectedPayeeId={this.state.payeeId} entitiesCollection={this.props.entitiesCollection} />
+						<PPayeeSelector ref={(c) => this.payeeSelector = c} 
+							selectedPayeeId={this.state.payeeId} entitiesCollection={this.props.entitiesCollection} 
+							setSelectedPayeeId={this.setSelectedPayeeId} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
 						<PCategorySelector ref={(c) => this.categorySelector = c} selectedCategoryId={this.state.subCategoryId} entitiesCollection={this.props.entitiesCollection} />
 					</Form>
 				</Modal.Body>

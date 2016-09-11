@@ -6,14 +6,14 @@ import * as ReactDOM from 'react-dom';
 import { Form, FormControl, FormGroup, Col, ControlLabel, Overlay, Popover } from 'react-bootstrap';
 
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { IEntitiesCollectionWithMaps } from '../../../interfaces/state';
+import { IEntitiesCollection } from '../../../interfaces/state';
 
 export interface PAccountSelectorProps { 
 	selectedAccountId:string;
 	setSelectedAccountId:(accountId:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 	// entities collections from the global state 
-	entitiesCollection:IEntitiesCollectionWithMaps;
+	entitiesCollection:IEntitiesCollection;
 }
 
 export interface PAccountSelectorState { 
@@ -131,9 +131,8 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 
 		// Get the currently selected account from state so that we can highlight the corresponding item
 		var accounts = this.props.entitiesCollection.accounts;
-		var accountsMap = this.props.entitiesCollection.accountsMap;
 		var selectedAccountId = this.props.selectedAccountId;
-		var selectedAccount = selectedAccountId ? accountsMap[selectedAccountId] : null;
+		var selectedAccount = selectedAccountId ? accounts.getEntityById(selectedAccountId) : null;
 
 		_.forEach(accounts, (account)=>{
 			if(account.isTombstone == 0 && account.closed == 0) {

@@ -1,5 +1,5 @@
+import * as collections from '../../collections';
 import * as catalogEntities from '../catalogEntities';
-import * as budgetEntities from '../budgetEntities';
 
 export interface IEntitiesCollection {
 
@@ -7,18 +7,18 @@ export interface IEntitiesCollection {
 	budget?:catalogEntities.IBudget;
 	
 	// Arrays to save all budget entities by their types
-	accounts?:Array<budgetEntities.IAccount>;
-	accountMappings?:Array<budgetEntities.IAccountMapping>;
-	masterCategories?:Array<budgetEntities.IMasterCategory>;
-	monthlyBudgets?:Array<budgetEntities.IMonthlyBudget>;
-	monthlySubCategoryBudgets?:Array<budgetEntities.IMonthlySubCategoryBudget>;
-	payees?:Array<budgetEntities.IPayee>;
-	payeeLocations?:Array<budgetEntities.IPayeeLocation>;
-	payeeRenameConditions?:Array<budgetEntities.IPayeeRenameCondition>;
-	scheduledSubTransactions?:Array<budgetEntities.IScheduledSubTransaction>;
-	scheduledTransactions?:Array<budgetEntities.IScheduledTransaction>;
-	settings?:Array<budgetEntities.ISetting>;
-	subCategories?:Array<budgetEntities.ISubCategory>;
-	subTransactions?:Array<budgetEntities.ISubTransaction>;
-	transactions?:Array<budgetEntities.ITransaction>;
+	accounts?:collections.AccountsArray;
+	accountMappings?:collections.AccountMappingsArray;
+	masterCategories?:collections.MasterCategoriesArray;
+	monthlyBudgets?:collections.MonthlyBudgetsArray;
+	monthlySubCategoryBudgets?:collections.MonthlySubCategoryBudgetsArray;
+	payees?:collections.PayeesArray;
+	payeeLocations?:collections.PayeeLocationsArray;
+	payeeRenameConditions?:collections.PayeeRenameConditionsArray;
+	scheduledSubTransactions?:collections.ScheduledSubTransactionsArray;
+	scheduledTransactions?:collections.ScheduledTransactionsArray;
+	settings?:collections.SettingsArray;
+	subCategories?:collections.SubCategoriesArray;
+	subTransactions?:collections.SubTransactionsArray;
+	transactions?:collections.TransactionsArray;
 }

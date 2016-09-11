@@ -1,5 +1,6 @@
 /// <reference path="../_includes.ts" />
 
+import * as collections from '../collections';
 import { ActionNames } from '../constants';
 import { IApplicationState, IEntitiesCollection } from '../interfaces/state';
 import { IAccount, ITransaction } from '../interfaces/budgetEntities';
@@ -53,8 +54,8 @@ export class SidebarActionsCreator {
 
 			// Create an entities collection object with the entities to save
 			var entitiesCollection:IEntitiesCollection  = {
-				accounts: [account],
-				transactions: transaction ? [transaction] : null
+				accounts: new collections.AccountsArray([account]),
+				transactions: transaction ? new collections.TransactionsArray([transaction]) : null
 			};
 
 			// Dispatch action to persist the entities collection to the database
@@ -72,8 +73,8 @@ export class SidebarActionsCreator {
 
 			// Create an entities collection object with the entities to save
 			var entitiesCollection:IEntitiesCollection  = {
-				accounts: [account],
-				transactions: transaction ? [transaction] : null
+				accounts: new collections.AccountsArray([account]),
+				transactions: transaction ? new collections.TransactionsArray([transaction]) : null
 			};
 
 			// Dispatch action to persist the entities collection to the database

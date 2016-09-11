@@ -17,6 +17,7 @@ import ColorPalette from '../common/ColorPalette';
 import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { ISidebarState } from '../../interfaces/state';
+import * as collections from '../../collections';
 
 const PSidebarStyle = {
 	display: 'flex',
@@ -56,7 +57,7 @@ const ModuleButtonIconStyle = {
 
 export interface PSidebarProps {
 	// State Variables
-    accounts: Array<IAccount>;
+    accounts: collections.AccountsArray;
 	sidebarState: ISidebarState;
 	// Dispatcher Functions
 	setSelectedTab: (selectedTab:string, selectedAccountId:string)=>void;
