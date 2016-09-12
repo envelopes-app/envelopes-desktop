@@ -3,17 +3,17 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Form, FormControl, FormGroup, Col, ControlLabel, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Form, FormControl, FormGroup, Col, ControlLabel, Overlay, Popover } from 'react-bootstrap';
 
+import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 
 export interface PPayeeSelectorProps { 
 	selectedPayeeId:string;
+	payeesList:Array<objects.IPayeeObject>;
 	setSelectedPayeeId:(payeeId:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-	// entities collections from the global state 
-	entitiesCollection:IEntitiesCollection;
 }
 
 export interface PPayeeSelectorState { 
@@ -26,10 +26,6 @@ const PayeeSelectorStyle = {
 	borderBottomWidth: '2px',
 	borderLeftWidth: '2px',
 	borderRightWidth: '2px',
-}
-
-const GlyphIconStyle = {
-	color: '#009CC2'
 }
 
 const PopoverStyle = {
@@ -45,17 +41,17 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.setSelectedPayee = this.setSelectedPayee.bind(this);
+		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
 		this.state = {showPopover:false};	
 	}
 
-	private setSelectedPayee(payeeId:string) {
+	private setSelectedPayeeId(payeeId:string) {
 
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedPayeeId != payeeId) {
 			this.props.setSelectedPayeeId(payeeId);
-			this.setState({showPopover:false});		
 		}
 
 		// Call handleTabPressed as we want to move the focus on to the next control
@@ -89,13 +85,15 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		this.hidePopover();
 	}
 
+	private onChange() { }
+
 	private onKeyDown(event:KeyboardEvent):void {
 
 		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected payeeId
 			var currentPayeeId = this.props.selectedPayeeId;
-			var payees = this.props.entitiesCollection.payees;
+			var payees = this.props.payeesList;
 			var index = _.findIndex(payees, {entityId: currentPayeeId});
 
 			// Up Arrow Key
@@ -132,46 +130,37 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 
 		var payeesPopoverItem;
 		var payeesPopoverItems = [];
-		var transferPayeesPopoverItems = [];
-		var nonTransferPayeesPopoverItems = [];
 
 		// Get the currently selected payee from state so that we can highlight the corresponding item
-		var payees = this.props.entitiesCollection.payees;
+		var payees = this.props.payeesList;
 		var selectedPayeeId = this.props.selectedPayeeId;
-		var selectedPayee = selectedPayeeId ? payees.getEntityById(selectedPayeeId) : null;
-
-		// Create section items for transfer and non-transfer payees
-		payeesPopoverItem = <li key="transferPayeesSection" className="custom-dropdown-2list-section">Transfer to/from account:</li>;
-		transferPayeesPopoverItems.push(payeesPopoverItem);
-		payeesPopoverItem = <li key="nonTransferPayeesSection" className="custom-dropdown-2list-section">Memorized:</li>;
-		nonTransferPayeesPopoverItems.push(payeesPopoverItem);
+		var selectedPayee = selectedPayeeId ? _.find(payees, {entityId: selectedPayeeId}) : null;
 
 		// Iterate through all the payees and create list items for them
-		_.forEach(this.props.entitiesCollection.payees, (payee)=>{
+		_.forEach(this.props.payeesList, (payee)=>{
 
-			if(selectedPayee && selectedPayee.entityId == payee.entityId)
+			if(payee.isSectionItem) {
+				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-section">{payee.name}</li>;
+			}
+			else if(selectedPayee && selectedPayee.entityId == payee.entityId) {
 				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item-selected" id={payee.entityId}>{payee.name}</li>;
-			else
-				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item" id={payee.entityId} onClick={this.setSelectedPayee.bind(this, payee.entityId)}>{payee.name}</li>;
+			}
+			else {
+				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item" id={payee.entityId} onClick={this.setSelectedPayeeId.bind(this, payee.entityId)}>{payee.name}</li>;
+			}
 
-			if(payee.accountId)
-				transferPayeesPopoverItems.push(payeesPopoverItem);
-			else
-				nonTransferPayeesPopoverItems.push(payeesPopoverItem);
+			payeesPopoverItems.push(payeesPopoverItem);
 		});
 
-		// Concatenate the two popovr items arrays
-		payeesPopoverItems = transferPayeesPopoverItems.concat(nonTransferPayeesPopoverItems);
-
 		return (
-			<FormGroup>
+			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Payee
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.payeeInput = n } type="text" componentClass="input" style={PayeeSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false} 
-						defaultValue={selectedPayee ? selectedPayee.name : ""} />
+						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false} 
+						value={selectedPayee ? selectedPayee.name : ""} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.payeeInput) }>
 						<Popover id="selectPayeePopover" style={PopoverStyle} title="Payees">
 							<ul className="custom-dropdown-list">

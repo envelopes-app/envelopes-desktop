@@ -53,7 +53,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 		else if(sidebarState.selectedTab == "Account") {
 
 			var accounts = this.props.applicationState.entitiesCollection.accounts;
-			var account = _.find(accounts, {entityId: sidebarState.selectedAccountId});
+			var account = accounts.getEntityById(sidebarState.selectedAccountId);
 			accountId = account.entityId;
 		}
 
@@ -88,7 +88,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 		}
 		else if(sidebarState.selectedTab == "Account") {
 
-			var account = _.find(entitiesCollection.accounts, {entityId: sidebarState.selectedAccountId});
+			var account = entitiesCollection.accounts.getEntityById(sidebarState.selectedAccountId);
 			accountName = account.accountName;
 			accounts = [account];
 			isAllAccounts = false;

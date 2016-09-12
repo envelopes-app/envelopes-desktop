@@ -41,12 +41,13 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onDateSelectionChange = this.onDateSelectionChange.bind(this);
 		this.state = {showPopover:false};	
 	}
 
-	private onChange(date:moment.Moment):void {
+	private onDateSelectionChange(date:moment.Moment):void {
 		var newDate = DateWithoutTime.createFromMoment(date);
 		this.props.setSelectedDate(newDate);
 	}
@@ -77,6 +78,8 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 		// If the popover is showing, hide it.
 		this.hidePopover();
 	}
+
+	private onChange() { }
 
 	private onKeyDown(event:KeyboardEvent):void {
 
@@ -126,11 +129,11 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false} 
+						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false} 
 						value={this.props.selectedDate.toISOString()} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
-							<DatePicker inline onChange={this.onChange} selected={this.props.selectedDate.toUTCMoment()} />
+							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} />
 						</Popover>
 					</Overlay>
 				</Col>

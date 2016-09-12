@@ -7,13 +7,13 @@ import { Form, FormControl, FormGroup, Col, ControlLabel, Overlay, Popover } fro
 
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
+import * as objects from '../../../interfaces/objects';
 
 export interface PAccountSelectorProps { 
 	selectedAccountId:string;
+	accountsList:Array<objects.IAccountObject>;
 	setSelectedAccountId:(accountId:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-	// entities collections from the global state 
-	entitiesCollection:IEntitiesCollection;
 }
 
 export interface PAccountSelectorState { 
@@ -41,6 +41,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
 		this.state = {showPopover:false};	
@@ -51,7 +52,6 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedAccountId != accountId) {
 			this.props.setSelectedAccountId(accountId);
-			this.setState({showPopover:false});		
 		}
 
 		// Call handleTabPressed as we want to move the focus on to the next control
@@ -85,13 +85,15 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		this.hidePopover();
 	}
 
+	private onChange() { }
+
 	private onKeyDown(event:KeyboardEvent):void {
 
 		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected accountId
 			var currentAccountId = this.props.selectedAccountId;
-			var accounts = this.props.entitiesCollection.accounts;
+			var accounts = this.props.accountsList;
 			var index = _.findIndex(accounts, {entityId: currentAccountId});
 
 			// Up Arrow Key
@@ -129,17 +131,15 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		var accountsPopoverItem;
 		var accountsPopoverItems = [];
 
-		// Get the currently selected account from state so that we can highlight the corresponding item
-		var accounts = this.props.entitiesCollection.accounts;
+		// Get the currently selected account so that we can highlight the corresponding item
+		var accounts = this.props.accountsList;
 		var selectedAccountId = this.props.selectedAccountId;
-		var selectedAccount = selectedAccountId ? accounts.getEntityById(selectedAccountId) : null;
+		var selectedAccount = _.find(accounts, {entityId: selectedAccountId});
 
 		_.forEach(accounts, (account)=>{
-			if(account.isTombstone == 0 && account.closed == 0) {
-				var className = (selectedAccountId && selectedAccountId == account.entityId) ? "custom-dropdown-list-item-selected" : "custom-dropdown-list-item"; 
-				accountsPopoverItem = <li key={account.entityId} className={className} id={account.entityId} onClick={this.setSelectedAccountId.bind(this, account.entityId)}>{account.accountName}</li>;
-				accountsPopoverItems.push(accountsPopoverItem);
-			}
+			var className = (selectedAccountId && selectedAccountId == account.entityId) ? "custom-dropdown-list-item-selected" : "custom-dropdown-list-item"; 
+			accountsPopoverItem = <li key={account.entityId} className={className} id={account.entityId} onClick={this.setSelectedAccountId.bind(this, account.entityId)}>{account.name}</li>;
+			accountsPopoverItems.push(accountsPopoverItem);
 		});
 
 		return (
@@ -149,8 +149,8 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.accountInput = n } type="text" componentClass="input" style={AccountSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} contentEditable={false}
-						value={selectedAccount ? selectedAccount.accountName : ""} />
+						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false}
+						value={selectedAccount ? selectedAccount.name : ""} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.accountInput) }>
 						<Popover id="selectAccountPopover" style={PopoverStyle} title="Accounts">
 							<ul className="custom-dropdown-list">

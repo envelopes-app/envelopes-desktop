@@ -1,4 +1,4 @@
-import { IEntitiesCollectionWithMaps } from './IEntitiesCollectionWithMaps';
+import { IEntitiesCollection } from './IEntitiesCollection';
 import { ISidebarState } from './ISidebarState';
 import { IRegisterState } from './IRegisterState';
 import { IBudgetState } from './IBudgetState';
@@ -8,7 +8,7 @@ export interface IApplicationState {
 	// ****************************************************************************************************
 	// Data
 	// ****************************************************************************************************
-	entitiesCollection:IEntitiesCollectionWithMaps;
+	entitiesCollection:IEntitiesCollection;
 	
 	// ****************************************************************************************************
 	// UI State

@@ -37,4 +37,16 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 	public getUncategorizedSubCategory():ISubCategory {
 		return this.uncategorizedSubCategory;
 	}
+
+	public getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategoryId:string):Array<ISubCategory> {
+
+		var subCategories:Array<ISubCategory> = [];		
+
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId && subCategory.isTombstone == 0 && subCategory.isHidden == 0)
+				subCategories.push(subCategory);
+		});
+
+		return subCategories;
+	}
 }
