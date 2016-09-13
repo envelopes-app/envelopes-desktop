@@ -19,7 +19,9 @@ const AccountNameInnerStyle = {
 	color: '#ffffff',
 	padding: '4px',
 	borderRadius: '4px',
-	backgroundColor: '#16A336'
+	backgroundColor: '#16A336',
+	paddingLeft: '10px',
+	paddingRight: '10px'
 }
 
 export class PHeaderAccountName extends React.Component<PHeaderAccountNameProps, {}> {

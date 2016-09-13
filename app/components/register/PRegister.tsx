@@ -105,7 +105,8 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 
     	return (
 			<div style={RegisterContainerStyle}>
-				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} unclearedBalance={unclearedBalance} workingBalance={workingBalance} />
+				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} 
+					unclearedBalance={unclearedBalance} workingBalance={workingBalance} showReconcileButton={isAllAccounts == false} />
 				<PRegisterToolbar 
 					onAddTransactionSelected={this.onAddTransactionSelected}
 				/>

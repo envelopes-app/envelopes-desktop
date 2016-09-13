@@ -1,5 +1,6 @@
 /// <reference path="../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Tooltip } from 'react-bootstrap';
@@ -12,6 +13,7 @@ export interface PRegisterHeaderProps {
 	clearedBalance:number;
 	unclearedBalance:number;
 	workingBalance:number;
+	showReconcileButton:boolean;
 }
 
 const RegisterHeaderContainerStyle = {
@@ -29,7 +31,8 @@ const RegisterHeaderStyle = {
 	justifyContent: 'flex-start',
 	alignItems: 'center',
 	height: '100%',
-	width: '100%'
+	width: '100%',
+	paddingRight: '5px'
 }
 
 const SymbolStyle = {
@@ -42,9 +45,26 @@ const BlankSpaceStyle = {
 	flex: '1 1 auto'
 }
 
+const ReconcileAccountButtonStyle = {
+	width: '100px',
+	color: '#009CC2',
+	borderColor: '#009CC2',
+	borderStyle: 'solid',
+	backgroundColor: '#005164',
+	borderWidth: '1px',
+	borderRadius: '3px',
+	visibility: "visible"
+}
+
 export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
   
 	public render() {
+
+		var reconcileAccountButtonStyle = _.assign({}, ReconcileAccountButtonStyle);
+		if(this.props.showReconcileButton == false) {
+			reconcileAccountButtonStyle["visibility"] = "hidden"; 
+		}
+
     	return (
 			<div style={RegisterHeaderContainerStyle}>
 				<div style={RegisterHeaderStyle}>
@@ -54,6 +74,8 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
 					<PHeaderValue label="Uncleared Balance" value={this.props.unclearedBalance} />
 					<text style={SymbolStyle}>=</text>
 					<PHeaderValue label="Working Balance" value={this.props.workingBalance} />
+					<div style={BlankSpaceStyle} />
+					<button style={reconcileAccountButtonStyle}>Reconcile Account</button>
 				</div>
 			</div>
 		);
