@@ -9,11 +9,14 @@ import { Form, FormControl, FormGroup, Col, ControlLabel, Glyphicon, Overlay, Po
 var DatePicker:any = require('react-datepicker');
 
 import { DateWithoutTime } from '../../../utilities';
+import { TransactionFrequency } from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDateSelectorProps { 
 	selectedDate:DateWithoutTime;
+	selectedFrequency:string;
 	setSelectedDate:(date:DateWithoutTime)=>void;
+	setSelectedFrequency:(frequency:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
@@ -22,7 +25,7 @@ export interface PDateSelectorState {
 }
 
 const DateSelectorStyle = {
-	borderColor: '#009CC2',
+	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
 	borderLeftWidth: '2px',
@@ -33,9 +36,25 @@ const PopoverStyle = {
 	maxWidth: 'none'
 }
 
+const RepeatDivStyle = {
+	paddingTop:"5px"
+}
+
+const RepeatLabelStyle = {
+	fontSize:"12px", 
+	fontWeight:"bold"
+}
+
+const RepeatSelectStyle = {
+	fontSize:"12px", 
+	fontWeight:"normal",
+	height:"28px"
+}
+
 export class PDateSelector extends React.Component<PDateSelectorProps, PDateSelectorState> {
 
 	private dateInput:FormControl;
+	private frequencySelection:FormControl;
 
 	constructor(props: any) {
         super(props);
@@ -44,12 +63,18 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onDateSelectionChange = this.onDateSelectionChange.bind(this);
+		this.onFrequencyChange = this.onFrequencyChange.bind(this);
 		this.state = {showPopover:false};	
 	}
 
 	private onDateSelectionChange(date:moment.Moment):void {
 		var newDate = DateWithoutTime.createFromMoment(date);
 		this.props.setSelectedDate(newDate);
+	}
+
+	private onFrequencyChange(event:React.SyntheticEvent):void {
+		var frequencySelectionNode = (ReactDOM.findDOMNode(this.frequencySelection) as HTMLSelectElement);
+		this.props.setSelectedFrequency(frequencySelectionNode.value);
 	}
 
 	public showPopover():void {
@@ -134,6 +159,25 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
 							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} />
+							<div style={RepeatDivStyle}>
+								<label style={RepeatLabelStyle}>Repeat:</label>
+								<FormControl ref={(n) => this.frequencySelection = n } style={RepeatSelectStyle} 
+										componentClass="select" value={this.props.selectedFrequency} 
+										onChange={this.onFrequencyChange}>
+									<option>{TransactionFrequency.Never}</option>
+									<option>{TransactionFrequency.Daily}</option>
+									<option>{TransactionFrequency.Weekly}</option>
+									<option>{TransactionFrequency.EveryOtherWeek}</option>
+									<option>{TransactionFrequency.TwiceAMonth}</option>
+									<option>{TransactionFrequency.Every4Weeks}</option>
+									<option>{TransactionFrequency.Monthly}</option>
+									<option>{TransactionFrequency.EveryOtherMonth}</option>
+									<option>{TransactionFrequency.Every3Months}</option>
+									<option>{TransactionFrequency.Every4Months}</option>
+									<option>{TransactionFrequency.TwiceAYear}</option>
+									<option>{TransactionFrequency.Yearly}</option>
+								</FormControl>
+							</div>
 						</Popover>
 					</Overlay>
 				</Col>

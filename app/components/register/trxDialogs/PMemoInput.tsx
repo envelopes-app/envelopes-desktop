@@ -12,7 +12,7 @@ export interface PMemoInputProps {
 }
 
 const MemoInputStyle = {
-	borderColor: '#009CC2',
+	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
 	borderLeftWidth: '2px',

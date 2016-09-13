@@ -112,3 +112,27 @@
 	border-radius: 4px;
 	height: 30px;
 }
+
+/* Style for buttons on Transaction Dialog */
+.dialog-button {
+	color: #ffffff;
+	background-color: #2FA2B5;
+	border-color: #2FA2B5;	
+}
+
+.dialog-button:hover {
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+.dialog-cancel-button {
+	color: #2FA2B5;
+	background-color: #ffffff;	
+}
+
+.dialog-cancel-button:hover {
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}

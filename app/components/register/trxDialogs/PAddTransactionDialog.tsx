@@ -35,6 +35,7 @@ export interface PAddTransactionDialogState {
 	flag?: string;
 	accountId?: string;
 	payeeId?: string;
+	newPayeeName?: string;
 	date?: utilities.DateWithoutTime;
 	frequency?: string;
 	subCategoryId?: string;
@@ -65,6 +66,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
 		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
 		this.setSelectedDate = this.setSelectedDate.bind(this);
+		this.setSelectedFrequency = this.setSelectedFrequency.bind(this);
 		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
 		this.setMemo = this.setMemo.bind(this);
@@ -78,10 +80,6 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
         this.state = { showModal: false };
     }
-
-	private saveAndAddAnother():void {
-
-	}
 
 	public show(accountId:string = null):void {
 
@@ -108,7 +106,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 				accountId: accountId,
 				payeeId: null,
 				date: utilities.DateWithoutTime.createForToday(),
-				frequency: null,
+				frequency: constants.TransactionFrequency.Never,
 				subCategoryId: null,
 				memo: "",
 				amount: 0,
@@ -120,6 +118,10 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 			utilities.Logger.info("We cannot show the Add Transaction Dialog as there are no open accounts.");
 		}
 	};
+
+	private saveAndAddAnother():void {
+
+	}
 
 	private save():void {
 
@@ -133,9 +135,9 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	};
 
 	private onEntered():void {
-		var accountSelector = this.accountSelector;
+		var dateSelector = this.dateSelector;
 		setTimeout(function(){
-			accountSelector.showPopover();
+			dateSelector.showPopover();
 		}, 100);
 	}
 
@@ -148,6 +150,12 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	private setSelectedDate(date:utilities.DateWithoutTime):void {
 		var state = _.assign({}, this.state) as PAddTransactionDialogState;
 		state.date = date;
+		this.setState(state);
+	}
+
+	private setSelectedFrequency(frequency:string):void {
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.frequency = frequency;
 		this.setState(state);
 	}
 
@@ -229,8 +237,8 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 			this.memoInput.setFocus();
 		}
 		else {
-			// Set focus on memo input
-			// this.dateSelector.showPopover();
+			// Show the payee selector popover
+			this.payeeSelector.showPopover();
 		}
 	}
 
@@ -243,22 +251,28 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 			this.categorySelector.showPopover();
 		}
 		else {
-			// Set focus on memo input
-			// this.dateSelector.showPopover();
+			// Set focus on amount input
+			// If the selected category is of inflow type, then move the focus on to
+			// the inflow field. Otherwise move to the outflow field.
+			var imediateIncomeSubCategory = this.props.entitiesCollection.subCategories.getImmediateIncomeSubCategory();
+			if(this.state.subCategoryId && imediateIncomeSubCategory.entityId == this.state.subCategoryId)
+				this.amountInput.setFocusOnInflow();
+			else
+				this.amountInput.setFocusOnOutflow();
 		}
 	}
 
 	private handleTabPressedOnAmountInput(shiftKeyPressed:boolean):void {
 
 		// If shift key is not pressed then move the focus on to the save button. 
-		// Otherwise move the focus back to the memo input. 
+		// Otherwise move the focus back to the amount input. 
 		if(!shiftKeyPressed) {
 			// Set focus on the save button
 			// this.categorySelector.showPopover();
 		}
 		else {
-			// Set focus on memo input
-			// this.dateSelector.showPopover();
+			// Set focus on amount input
+			this.amountInput.setFocusOnInflow();
 		}
 	}
 
@@ -385,7 +399,8 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 							selectedAccountId={this.state.accountId} accountsList={this.accountsList} 
 							setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
 						<PDateSelector ref={(c) => this.dateSelector = c} 
-							selectedDate={this.state.date} setSelectedDate={this.setSelectedDate} handleTabPressed={this.handleTabPressedOnDateSelector} />
+							selectedDate={this.state.date} selectedFrequency={this.state.frequency} setSelectedDate={this.setSelectedDate} 
+							setSelectedFrequency={this.setSelectedFrequency} handleTabPressed={this.handleTabPressedOnDateSelector} />
 						<PPayeeSelector ref={(c) => this.payeeSelector = c} 
 							selectedPayeeId={this.state.payeeId} payeesList={this.payeesList} 
 							setSelectedPayeeId={this.setSelectedPayeeId} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
@@ -399,14 +414,14 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={this.close}>
-						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-					</Button>
-					<Button onClick={this.save}>
+					<Button onClick={this.save} className="dialog-button">
 						Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
-					<Button onClick={this.save}>
+					<Button onClick={this.save} className="dialog-button">
 						Save&nbsp;<Glyphicon glyph="ok-sign" />
+					</Button>
+					<Button onClick={this.close} className="dialog-cancel-button">
+						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 					</Button>
 				</Modal.Footer>
 			</Modal>
