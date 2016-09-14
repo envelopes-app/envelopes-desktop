@@ -19,15 +19,16 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import * as objects from '../../../interfaces/objects';
 import { IEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
 
-export interface PAddTransactionDialogProps { 
+export interface PTransactionDialogProps { 
 
+	dialogTitle:string;
 	// Entities collections from the global state 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatch methods
 	updateEntities:(entities:IEntitiesCollection)=>void;
 }
 
-export interface PAddTransactionDialogState {
+export interface PTransactionDialogState {
 	showModal: boolean;
 	// Properties to save the values for the different fields. We wont create an actual transaction 
 	// or scheduled transaction object until the user presses save.
@@ -45,7 +46,7 @@ export interface PAddTransactionDialogState {
 	cleared?: string;
 }
 
-export class PAddTransactionDialog extends React.Component<PAddTransactionDialogProps, PAddTransactionDialogState> {
+export class PTransactionDialog extends React.Component<PTransactionDialogProps, PTransactionDialogState> {
 
 	private accountSelector:PAccountSelector;
 	private dateSelector:PDateSelector;
@@ -118,7 +119,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		else {
 			// If no account was passed, and neither were we able to select a default one, then 
 			// that means there are no usable accounts in the budget.
-			utilities.Logger.info("We cannot show the Add Transaction Dialog as there are no open accounts.");
+			utilities.Logger.info("We cannot show the Transaction Dialog as there are no open accounts.");
 		}
 	};
 
@@ -145,31 +146,31 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	}
 
 	private setSelectedAccountId(accountId:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.accountId = accountId;
 		this.setState(state);
 	}
 
 	private setSelectedDate(date:utilities.DateWithoutTime):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.date = date;
 		this.setState(state);
 	}
 
 	private setSelectedFrequency(frequency:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.frequency = frequency;
 		this.setState(state);
 	}
 
 	private setSelectedPayeeId(payeeId:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.payeeId = payeeId;
 		this.setState(state);
 	}
 
 	private setManuallyEnteredPayeeName(payeeName:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.manuallyEnteredPayeeName = payeeName;
 		// When the user starts manually typing in a payeeName, clear the payeeId value
 		state.payeeId = null;
@@ -177,7 +178,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	}
 
 	private setSelectedCategoryId(subCategoryId:string, clearManuallyEnteredCategoryName:boolean = false):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.subCategoryId = subCategoryId;
 		if(clearManuallyEnteredCategoryName)
 			state.manuallyEnteredCategoryName = null;
@@ -185,7 +186,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	}
 
 	private setManuallyEnteredCategoryName(categoryName:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.manuallyEnteredCategoryName = categoryName;
 		// When the user starts manually typing in a categoryName, clear the categoryId value
 		state.subCategoryId = null;
@@ -193,13 +194,13 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	}
 
 	private setMemo(memo:string):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.memo = memo;
 		this.setState(state);
 	}
 
 	private setAmount(amount:number):void {
-		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.amount = amount;
 		this.setState(state);
 	}
@@ -392,6 +393,11 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		return categoriesList;
 	}
 
+	private validateTransaction():boolean {
+
+		return true;
+	}
+
 	public render() {
 
 		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
@@ -431,7 +437,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		return (
 			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 				<Modal.Header bsClass="modal-header">
-					<Modal.Title>Add Transaction</Modal.Title>
+					<Modal.Title>{this.props.dialogTitle}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form horizontal>

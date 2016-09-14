@@ -126,12 +126,24 @@
 	border-color: #005076;	
 }
 
+.dialog-button:focus {
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
 .dialog-cancel-button {
 	color: #2FA2B5;
 	background-color: #ffffff;	
 }
 
 .dialog-cancel-button:hover {
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+.dialog-cancel-button:focus {
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	

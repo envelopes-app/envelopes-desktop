@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { PRegisterHeader } from './PRegisterHeader';
 import { PRegisterToolbar } from './PRegisterToolbar';
 import { PRegisterDataGrid } from './PRegisterDataGrid';
-import { PAddTransactionDialog } from './trxDialogs/PAddTransactionDialog';
+import { PTransactionDialog } from './trxDialogs/PTransactionDialog';
 
 import './SRegister.css';
 
@@ -31,7 +31,7 @@ const RegisterContainerStyle = {
 
 export class PRegister extends React.Component<PRegisterProps, {}> {
 
-	private addTransactionDialog:PAddTransactionDialog;
+	private transactionDialog:PTransactionDialog;
 
 	constructor(props: any) {
         super(props);
@@ -57,7 +57,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 			accountId = account.entityId;
 		}
 
-		this.addTransactionDialog.show(accountId);
+		this.transactionDialog.show(accountId);
 	}
 
 	// *******************************************************************************************************
@@ -112,8 +112,8 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 				/>
 				<PRegisterDataGrid showAccountsColumn={isAllAccounts}/>
 
-				<PAddTransactionDialog 
-					ref={(d)=> this.addTransactionDialog = d }
+				<PTransactionDialog title="Add Transaction"
+					ref={(d)=> this.transactionDialog = d }
 					entitiesCollection={entitiesCollection}
 					updateEntities={this.updateEntities} 
 				/>
