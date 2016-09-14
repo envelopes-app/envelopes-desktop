@@ -4,4 +4,5 @@ export interface ICategoryObject {
 	name:string;
 	isMasterCategory:boolean;
 	isInflow:boolean;
+	masterCategoryId:string;
 }

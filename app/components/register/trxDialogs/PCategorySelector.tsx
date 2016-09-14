@@ -13,8 +13,10 @@ import { SimpleObjectMap } from '../../../utilities';
 
 export interface PCategorySelectorProps { 
 	selectedCategoryId:string;
-	categoriesList:Array<objects.IAccountObject>;
-	setSelectedCategoryId:(subCategoryId:string)=>void;
+	manuallyEnteredCategoryName:string;
+	categoriesList:Array<objects.ICategoryObject>;
+	setSelectedCategoryId:(subCategoryId:string, clearManuallyEnteredCategoryName?:boolean)=>void;
+	setManuallyEnteredCategoryName:(categoryName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
@@ -58,7 +60,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedCategoryId != subCategoryId) {
-			this.props.setSelectedCategoryId(subCategoryId);
+			this.props.setSelectedCategoryId(subCategoryId, true);
 		}
 
 		// Call handleTabPressed as we want to move the focus on to the next control
@@ -92,7 +94,12 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		this.hidePopover();
 	}
 
-	private onChange() { }
+	private onChange(event:React.SyntheticEvent) { 
+
+		// Get the entered value from the category input control and pass to the transaction dialog
+		var value = (event.target as any).value;
+		this.props.setManuallyEnteredCategoryName(value);
+	}
 
 	private onKeyDown(event:KeyboardEvent):void {
 
@@ -132,6 +139,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		}
 		// Tab Key
 		else if(event.keyCode == 9) {
+			
+			this.props.setSelectedCategoryId(this.props.selectedCategoryId, true);
 			// Prevent the default action from happening as we are manually handling it
 			event.preventDefault();
 			// Let the parent dialog know that tab was pressed
@@ -139,18 +148,16 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		}
 	}
 
-	public render() {
+	private getCategoriesDisplayList(categoriesList:Array<objects.ICategoryObject>, selectedCategoryId:string):JSX.Element {
 
 		var categoiresPopoverItem;
 		var categoiresPopoverItems = [];
-
+		
 		// Get the currently selected category so that we can highlight the corresponding item
-		var categories = this.props.categoriesList;
-		var selectedCategoryId = this.props.selectedCategoryId;
-		var selectedCategory = selectedCategoryId ? _.find(categories, {entityId: selectedCategoryId}) : null;
+		var selectedCategory = selectedCategoryId ? _.find(this.props.categoriesList, {entityId: selectedCategoryId}) : null;
 
-		// Create section items for master categories
-		_.forEach(categories, (category:objects.ICategoryObject)=>{
+		// Iterate through the passed categories and create list items for them
+		_.forEach(categoriesList, (category:objects.ICategoryObject)=>{
 
 			if(category.isMasterCategory) {
 				// Create the list item for the master category
@@ -168,19 +175,43 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		});
 
 		return (
+			<ul className="custom-dropdown-list" style={ScrollableContainerStyle}>
+				{categoiresPopoverItems}
+			</ul>
+		);
+	}
+
+	public render() {
+
+		// Get the currently selected category so that we can highlight the corresponding item
+		var selectedCategoryId = this.props.selectedCategoryId;
+		var selectedCategory = selectedCategoryId ? _.find(this.props.categoriesList, {entityId: selectedCategoryId}) : null;
+
+		// Do we have a manuallyEnteredCategoryName for the input box. If we have, then set that in the input box.
+		// If not, then check if we have a selected input. If so, then set the name of the selected category in the input box.
+		// If neither of the above is true, set it as blank.
+		var categoryValue = "";
+		if(this.props.manuallyEnteredCategoryName && this.props.manuallyEnteredCategoryName != "") {
+			// Show the manuallyEnteredCategoryName in the category input box
+			categoryValue = this.props.manuallyEnteredCategoryName;
+		}
+		else if(selectedCategory) {
+			categoryValue = selectedCategory.name;
+		}
+
+		var popoverContents = this.getCategoriesDisplayList(this.props.categoriesList, this.props.selectedCategoryId);
+
+		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Category
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={true} 
-						value={selectedCategory ? selectedCategory.name : ""} />
+						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={categoryValue} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
 						<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
-							<ul className="custom-dropdown-list" style={ScrollableContainerStyle}>
-								{categoiresPopoverItems}
-							</ul>
+							{popoverContents}
 						</Popover>
 					</Overlay>
 				</Col>

@@ -35,10 +35,11 @@ export interface PAddTransactionDialogState {
 	flag?: string;
 	accountId?: string;
 	payeeId?: string;
-	newPayeeName?: string;
+	manuallyEnteredPayeeName?: string;
 	date?: utilities.DateWithoutTime;
 	frequency?: string;
 	subCategoryId?: string;
+	manuallyEnteredCategoryName?: string;
 	memo?: string;
 	amount?: number;
 	cleared?: string;
@@ -68,8 +69,9 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.setSelectedDate = this.setSelectedDate.bind(this);
 		this.setSelectedFrequency = this.setSelectedFrequency.bind(this);
 		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
-		this.setNewPayeeName = this.setNewPayeeName.bind(this);
+		this.setManuallyEnteredPayeeName = this.setManuallyEnteredPayeeName.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
+		this.setManuallyEnteredCategoryName = this.setManuallyEnteredCategoryName.bind(this);
 		this.setMemo = this.setMemo.bind(this);
 		this.setAmount = this.setAmount.bind(this);
 		this.handleTabPressedOnAccountSelector = this.handleTabPressedOnAccountSelector.bind(this);
@@ -166,17 +168,27 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.setState(state);
 	}
 
-	private setNewPayeeName(payeeName:string):void {
+	private setManuallyEnteredPayeeName(payeeName:string):void {
 		var state = _.assign({}, this.state) as PAddTransactionDialogState;
-		state.newPayeeName = payeeName;
+		state.manuallyEnteredPayeeName = payeeName;
 		// When the user starts manually typing in a payeeName, clear the payeeId value
 		state.payeeId = null;
 		this.setState(state);
 	}
 
-	private setSelectedCategoryId(subCategoryId:string):void {
+	private setSelectedCategoryId(subCategoryId:string, clearManuallyEnteredCategoryName:boolean = false):void {
 		var state = _.assign({}, this.state) as PAddTransactionDialogState;
 		state.subCategoryId = subCategoryId;
+		if(clearManuallyEnteredCategoryName)
+			state.manuallyEnteredCategoryName = null;
+		this.setState(state);
+	}
+
+	private setManuallyEnteredCategoryName(categoryName:string):void {
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.manuallyEnteredCategoryName = categoryName;
+		// When the user starts manually typing in a categoryName, clear the categoryId value
+		state.subCategoryId = null;
 		this.setState(state);
 	}
 
@@ -334,13 +346,15 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 			entityId: internalMasterCategory.entityId,
 			name: "Inflow",
 			isMasterCategory: true,
-			isInflow: false
+			isInflow: false,
+			masterCategoryId: null
 		});
 		categoriesList.push({
 			entityId: immediateIncomeSubCategory.entityId,
 			name: "To be Budgeted",
 			isMasterCategory: false,
-			isInflow: true
+			isInflow: true,
+			masterCategoryId: internalMasterCategory.entityId
 		});
 
 		// Go through the master categories and build a list of non-tombstoned, non-internal master categories
@@ -357,7 +371,8 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 						entityId: masterCategory.entityId,
 						name: masterCategory.name,
 						isMasterCategory: true,
-						isInflow: false
+						isInflow: false,
+						masterCategoryId: null
 					});
 
 					// Add items for all the subCategories for this master category
@@ -366,7 +381,8 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 							entityId: subCategory.entityId,
 							name: subCategory.name,
 							isMasterCategory: false,
-						isInflow: false
+							isInflow: false,
+							masterCategoryId: masterCategory.entityId
 						});
 					});
 				}
@@ -383,6 +399,35 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 			payeeObj.accountId != this.state.accountId
 		});
 
+		var filteredCategoriesList = this.categoriesList;
+		if(this.state.manuallyEnteredCategoryName && this.state.manuallyEnteredCategoryName != "") {
+
+			// Filter the list of categoris by the manuallyEnteredCategoryName
+			var filteredCategoriesList = _.filter(this.categoriesList, (categoryObj:objects.ICategoryObject)=>{
+				return (categoryObj.isMasterCategory || categoryObj.name.includes(this.state.manuallyEnteredCategoryName));
+			});
+
+			// We also want to remove all those master catgories that do not have any subcategories below them
+			// after the applying the above filter. Iterate through the list and take count of subcategories 
+			// for each of the master category.
+			var categoriesCounter:utilities.SimpleObjectMap<number> = {};
+			_.forEach(filteredCategoriesList, (categoryObj)=>{
+
+				if(categoryObj.isMasterCategory == false) {
+					var counter = categoriesCounter[categoryObj.masterCategoryId] ? categoriesCounter[categoryObj.masterCategoryId] + 1 : 1;
+					categoriesCounter[categoryObj.masterCategoryId] = counter;
+				}
+			});
+
+			// Now filter out those master categories which do not have any subcategories below them
+			filteredCategoriesList = _.filter(filteredCategoriesList, (categoryObj)=>{
+				return (
+					categoryObj.isMasterCategory == false || 
+					(categoryObj.isMasterCategory && categoriesCounter[categoryObj.entityId])
+				);
+			});
+		}
+
 		return (
 			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 				<Modal.Header bsClass="modal-header">
@@ -396,13 +441,14 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 						<PDateSelector ref={(c) => this.dateSelector = c} 
 							selectedDate={this.state.date} selectedFrequency={this.state.frequency} setSelectedDate={this.setSelectedDate} 
 							setSelectedFrequency={this.setSelectedFrequency} handleTabPressed={this.handleTabPressedOnDateSelector} />
-						<PPayeeSelector ref={(c) => this.payeeSelector = c} selectedAccountId={this.state.accountId}
-							selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.newPayeeName} 
+						<PPayeeSelector ref={(c) => this.payeeSelector = c}
+							selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
 							payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
-							setManuallyEnteredPayeeName={this.setNewPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
+							setManuallyEnteredPayeeName={this.setManuallyEnteredPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
 						<PCategorySelector ref={(c) => this.categorySelector = c} 
-							selectedCategoryId={this.state.subCategoryId} categoriesList={this.categoriesList}
-							setSelectedCategoryId={this.setSelectedCategoryId} handleTabPressed={this.handleTabPressedOnCategorySelector} />
+							selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
+							categoriesList={filteredCategoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
+							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 						<PMemoInput ref={(c) => this.memoInput = c} 
 							memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />
 						<PAmountInput ref={(c) => this.amountInput = c} 

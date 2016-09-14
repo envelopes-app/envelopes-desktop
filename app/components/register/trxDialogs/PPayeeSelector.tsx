@@ -10,7 +10,6 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 
 export interface PPayeeSelectorProps {
-	selectedAccountId:string; 
 	selectedPayeeId:string;
 	manuallyEnteredPayeeName:string;
 	payeesList:Array<objects.IPayeeObject>;
@@ -34,6 +33,10 @@ const PayeeSelectorStyle = {
 const PopoverStyle = {
 	maxWidth: 'none', 
 	width:'240px'
+}
+
+const ScrollableContainerStyle = {
+	overflowY: "scroll",
 }
 
 const NewPayeeCreationMessageStyle = {
@@ -146,16 +149,15 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		var transferPayeesPopoverItems = [];
 		var nonTransferPayeesPopoverItems = [];
 
-		var payees = this.props.payeesList;
-		var selectedPayee = selectedPayeeId ? _.find(payees, {entityId: selectedPayeeId}) : null;
+		var selectedPayee = selectedPayeeId ? _.find(this.props.payeesList, {entityId: selectedPayeeId}) : null;
 
 		payeesPopoverItem = <li key="0" className="custom-dropdown-2list-section">Transfer to/from account:</li>;
 		transferPayeesPopoverItems.push(payeesPopoverItem);
 		payeesPopoverItem = <li key="1" className="custom-dropdown-2list-section">Memorized:</li>;
 		nonTransferPayeesPopoverItems.push(payeesPopoverItem);
 		
-		// Iterate through all the payees and create list items for them
-		_.forEach(this.props.payeesList, (payee)=>{
+		// Iterate through the passed payees and create list items for them
+		_.forEach(payeesList, (payee)=>{
 
 			if(selectedPayee && selectedPayee.entityId == payee.entityId)
 				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item-selected" id={payee.entityId}>{payee.name}</li>;
@@ -172,7 +174,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		payeesPopoverItems = transferPayeesPopoverItems.concat(nonTransferPayeesPopoverItems);
 
 		return (
-			<ul className="custom-dropdown-list">
+			<ul className="custom-dropdown-list" style={ScrollableContainerStyle}>
 				{payeesPopoverItems}
 			</ul>
 		);
@@ -197,7 +199,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 			payeeValue = this.props.manuallyEnteredPayeeName;
 			// Filter the list of payees by the manuallyEnteredPayeeName
 			var filteredPayeesList = _.filter(this.props.payeesList, (payeeObj:objects.IPayeeObject)=>{
-				payeeObj.name.includes(this.props.manuallyEnteredPayeeName);
+				return payeeObj.name.includes(this.props.manuallyEnteredPayeeName);
 			});
 
 			if(filteredPayeesList.length == 0) {
