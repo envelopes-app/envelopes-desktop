@@ -68,6 +68,7 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 		this.setSelectedDate = this.setSelectedDate.bind(this);
 		this.setSelectedFrequency = this.setSelectedFrequency.bind(this);
 		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
+		this.setNewPayeeName = this.setNewPayeeName.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
 		this.setMemo = this.setMemo.bind(this);
 		this.setAmount = this.setAmount.bind(this);
@@ -162,6 +163,14 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 	private setSelectedPayeeId(payeeId:string):void {
 		var state = _.assign({}, this.state) as PAddTransactionDialogState;
 		state.payeeId = payeeId;
+		this.setState(state);
+	}
+
+	private setNewPayeeName(payeeName:string):void {
+		var state = _.assign({}, this.state) as PAddTransactionDialogState;
+		state.newPayeeName = payeeName;
+		// When the user starts manually typing in a payeeName, clear the payeeId value
+		state.payeeId = null;
 		this.setState(state);
 	}
 
@@ -295,40 +304,21 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
 	private buildPayeesList():Array<objects.IPayeeObject> {
 
-		var transferPayeesList:Array<objects.IPayeeObject> = [{
-			entityId: "0",
-			name: "Transfer to/from account:",
-			isTransferPayee: false,
-			isSectionItem: true
-		}];
-		var nonTransferPayeesList:Array<objects.IPayeeObject> = [{
-			entityId: "1",
-			name: "Memorized:",
-			isTransferPayee: false,
-			isSectionItem: true
-		}];
+		var payeesList:Array<objects.IPayeeObject> = [];
 		// Go through the payee entities and build a list of non-tombstoned, non-internal payees
 		_.forEach(this.props.entitiesCollection.payees, (payee)=>{
 
-			if(payee.isTombstone == 0 && payee.accountId) {
-				transferPayeesList.push({
+			if(payee.isTombstone == 0 && !payee.internalName) {
+				payeesList.push({
 					entityId: payee.entityId,
 					name: payee.name,
-					isTransferPayee: true,
-					isSectionItem: false
-				});
-			}
-			else if(payee.isTombstone == 0 && !payee.accountId && !payee.internalName) {
-				nonTransferPayeesList.push({
-					entityId: payee.entityId,
-					name: payee.name,
-					isTransferPayee: false,
-					isSectionItem: false
+					accountId: payee.accountId,
+					isTransferPayee: payee.accountId ? true : false
 				});
 			}
 		}); 
 
-		return transferPayeesList.concat(nonTransferPayeesList);
+		return payeesList;
 	}
 
 	private buildCategoriesList():Array<objects.ICategoryObject> {
@@ -388,6 +378,11 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 
 	public render() {
 
+		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
+		var filteredPayeesList = _.filter(this.payeesList, (payeeObj:objects.IPayeeObject)=>{
+			payeeObj.accountId != this.state.accountId
+		});
+
 		return (
 			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 				<Modal.Header bsClass="modal-header">
@@ -401,9 +396,10 @@ export class PAddTransactionDialog extends React.Component<PAddTransactionDialog
 						<PDateSelector ref={(c) => this.dateSelector = c} 
 							selectedDate={this.state.date} selectedFrequency={this.state.frequency} setSelectedDate={this.setSelectedDate} 
 							setSelectedFrequency={this.setSelectedFrequency} handleTabPressed={this.handleTabPressedOnDateSelector} />
-						<PPayeeSelector ref={(c) => this.payeeSelector = c} 
-							selectedPayeeId={this.state.payeeId} payeesList={this.payeesList} 
-							setSelectedPayeeId={this.setSelectedPayeeId} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
+						<PPayeeSelector ref={(c) => this.payeeSelector = c} selectedAccountId={this.state.accountId}
+							selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.newPayeeName} 
+							payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
+							setManuallyEnteredPayeeName={this.setNewPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
 						<PCategorySelector ref={(c) => this.categorySelector = c} 
 							selectedCategoryId={this.state.subCategoryId} categoriesList={this.categoriesList}
 							setSelectedCategoryId={this.setSelectedCategoryId} handleTabPressed={this.handleTabPressedOnCategorySelector} />

@@ -9,10 +9,13 @@ import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 
-export interface PPayeeSelectorProps { 
+export interface PPayeeSelectorProps {
+	selectedAccountId:string; 
 	selectedPayeeId:string;
+	manuallyEnteredPayeeName:string;
 	payeesList:Array<objects.IPayeeObject>;
 	setSelectedPayeeId:(payeeId:string)=>void;
+	setManuallyEnteredPayeeName:(payeeName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
@@ -31,6 +34,11 @@ const PayeeSelectorStyle = {
 const PopoverStyle = {
 	maxWidth: 'none', 
 	width:'240px'
+}
+
+const NewPayeeCreationMessageStyle = {
+	color: "#588697",
+	fontSize: "12px"
 }
 
 export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeSelectorState> {
@@ -82,10 +90,15 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 
 	private onBlur() {
 		// If the popover is showing, hide it.
-		this.hidePopover();
+		//this.hidePopover();
 	}
 
-	private onChange() { }
+	private onChange(event:React.SyntheticEvent) {
+
+		// Get the entered value from the payee input control and pass to the transaction dialog
+		var value = (event.target as any).value;
+		this.props.setManuallyEnteredPayeeName(value);
+	}
 
 	private onKeyDown(event:KeyboardEvent):void {
 
@@ -126,31 +139,93 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		}
 	}
 
-	public render() {
+	private getPayeesDisplayList(payeesList:Array<objects.IPayeeObject>, selectedPayeeId:string):JSX.Element {
 
 		var payeesPopoverItem;
-		var payeesPopoverItems = [];
+		var payeesPopoverItems;
+		var transferPayeesPopoverItems = [];
+		var nonTransferPayeesPopoverItems = [];
+
+		var payees = this.props.payeesList;
+		var selectedPayee = selectedPayeeId ? _.find(payees, {entityId: selectedPayeeId}) : null;
+
+		payeesPopoverItem = <li key="0" className="custom-dropdown-2list-section">Transfer to/from account:</li>;
+		transferPayeesPopoverItems.push(payeesPopoverItem);
+		payeesPopoverItem = <li key="1" className="custom-dropdown-2list-section">Memorized:</li>;
+		nonTransferPayeesPopoverItems.push(payeesPopoverItem);
+		
+		// Iterate through all the payees and create list items for them
+		_.forEach(this.props.payeesList, (payee)=>{
+
+			if(selectedPayee && selectedPayee.entityId == payee.entityId)
+				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item-selected" id={payee.entityId}>{payee.name}</li>;
+			else
+				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item" id={payee.entityId} onClick={this.setSelectedPayeeId.bind(this, payee.entityId)}>{payee.name}</li>;
+
+			if(payee.isTransferPayee)
+				transferPayeesPopoverItems.push(payeesPopoverItem);
+			else
+				nonTransferPayeesPopoverItems.push(payeesPopoverItem);
+		});
+
+		// Concatenate the two arrays to get the single array of items
+		payeesPopoverItems = transferPayeesPopoverItems.concat(nonTransferPayeesPopoverItems);
+
+		return (
+			<ul className="custom-dropdown-list">
+				{payeesPopoverItems}
+			</ul>
+		);
+	}
+
+	public render() {
+
+		var popoverContents;
 
 		// Get the currently selected payee from state so that we can highlight the corresponding item
 		var payees = this.props.payeesList;
 		var selectedPayeeId = this.props.selectedPayeeId;
 		var selectedPayee = selectedPayeeId ? _.find(payees, {entityId: selectedPayeeId}) : null;
 
-		// Iterate through all the payees and create list items for them
-		_.forEach(this.props.payeesList, (payee)=>{
+		// Do we have a manuallyEnteredPayeeName for the input box. If we have, then set that in the input box.
+		// If not, then check if we have a selected input. If so, then set the name of the selected payee in the input box.
+		// If neither of the above is true, set it as blank.
+		var payeeValue = "";
+		if(this.props.manuallyEnteredPayeeName) {
 
-			if(payee.isSectionItem) {
-				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-section">{payee.name}</li>;
+			// Show the manuallyEnteredPayeeName in the payee input box
+			payeeValue = this.props.manuallyEnteredPayeeName;
+			// Filter the list of payees by the manuallyEnteredPayeeName
+			var filteredPayeesList = _.filter(this.props.payeesList, (payeeObj:objects.IPayeeObject)=>{
+				payeeObj.name.includes(this.props.manuallyEnteredPayeeName);
+			});
+
+			if(filteredPayeesList.length == 0) {
+
+				// There are no matches, and the filteredPayeesList is empty, so we will display a messaage at the
+				// top informing the user that a new payee will be created. 
+				var payeeCreationMessage = `"${this.props.manuallyEnteredPayeeName}" payee will be created`;
+				popoverContents = <label style={NewPayeeCreationMessageStyle}>{payeeCreationMessage}</label>;
 			}
-			else if(selectedPayee && selectedPayee.entityId == payee.entityId) {
-				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item-selected" id={payee.entityId}>{payee.name}</li>;
+			else if(filteredPayeesList.length == 1 && filteredPayeesList.length[0] == this.props.manuallyEnteredPayeeName) {
+
+				// We got back one item in the filteredPayeesList and it is an exact match. We will just display
+				// the payees list with that single item in it.
+				popoverContents = this.getPayeesDisplayList(filteredPayeesList, this.props.selectedPayeeId);
 			}
 			else {
-				payeesPopoverItem = <li key={payee.entityId} className="custom-dropdown-2list-item" id={payee.entityId} onClick={this.setSelectedPayeeId.bind(this, payee.entityId)}>{payee.name}</li>;
+				// We got back one or more items in the filteredPayeesList, then display the link at the top 
+				// offering to create a new payee by the entered name. Also display the list of filtered payees 
+				// below that.
+				popoverContents = this.getPayeesDisplayList(this.props.payeesList, this.props.selectedPayeeId);
 			}
+		}
+		else {
+			if(selectedPayee)
+				payeeValue = selectedPayee.name;
 
-			payeesPopoverItems.push(payeesPopoverItem);
-		});
+			popoverContents = this.getPayeesDisplayList(this.props.payeesList, this.props.selectedPayeeId);
+		}
 
 		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
@@ -159,13 +234,10 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.payeeInput = n } type="text" componentClass="input" style={PayeeSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false} 
-						value={selectedPayee ? selectedPayee.name : ""} />
+						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={payeeValue} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.payeeInput) }>
 						<Popover id="selectPayeePopover" style={PopoverStyle} title="Payees">
-							<ul className="custom-dropdown-list">
-								{payeesPopoverItems}
-							</ul>
+							{popoverContents}
 						</Popover>
 					</Overlay>
 				</Col>
