@@ -84,7 +84,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 
 	private onBlur() {
 		// If the popover is showing, hide it.
-		this.hidePopover();
+		//this.hidePopover();
 	}
 
 	private onChange() { }

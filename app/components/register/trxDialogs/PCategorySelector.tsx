@@ -34,7 +34,7 @@ const CategorySelectorStyle = {
 
 const PopoverStyle = {
 	maxWidth: 'none', 
-	width:'240px'
+	width:'260px'
 }
 
 const ScrollableContainerStyle = {
@@ -44,7 +44,7 @@ const ScrollableContainerStyle = {
 export class PCategorySelector extends React.Component<PCategorySelectorProps, PCategorySelectorState> {
 
 	private categoryInput:FormControl;
-	private categoryItemRefsMap:SimpleObjectMap<HTMLLIElement> = {};
+	private categoryItemRefsMap:SimpleObjectMap<HTMLElement> = {};
 
 	constructor(props: any) {
         super(props);
@@ -93,7 +93,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 
 	private onBlur() {
 		// If the popover is showing, hide it.
-		this.hidePopover();
+		//this.hidePopover();
 	}
 
 	private onChange(event:React.SyntheticEvent) { 
@@ -163,21 +163,41 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 
 			if(category.isMasterCategory) {
 				// Create the list item for the master category
-				categoiresPopoverItem = <li key={category.entityId} className="custom-dropdown-2list-section">{category.name}:</li>;
+				categoiresPopoverItem = <li key={category.entityId} className="categories-dropdown-list-section">{category.name}:</li>;
 				categoiresPopoverItems.push(categoiresPopoverItem);
 			}
 			else {
-				if(selectedCategory && selectedCategory.entityId == category.entityId)
-					categoiresPopoverItem = <li ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="custom-dropdown-2list-item-selected" id={category.entityId}>{category.name}</li>;
-				else
-					categoiresPopoverItem = <li ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="custom-dropdown-2list-item" id={category.entityId} onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>{category.name}</li>;
+				var availableAmountClassName = "categories-dropdown-list-positive-available-amount";
+				if(category.availableAmount == 0)
+					availableAmountClassName = "categories-dropdown-list-zero-available-amount";
+				else if(category.availableAmount < 0)
+					availableAmountClassName = "categories-dropdown-list-negative-available-amount";
+
+				if(selectedCategory && selectedCategory.entityId == category.entityId) {
+					categoiresPopoverItem = (
+						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item-selected" 
+							id={category.entityId}>
+							<label className="categories-dropdown-list-categoryname">{category.name}</label>
+							<label className={availableAmountClassName}>{category.availableAmount}</label>
+						</div>
+					);
+				}
+				else {
+					categoiresPopoverItem = (
+						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item" 
+							id={category.entityId} onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
+							<label className="categories-dropdown-list-categoryname">{category.name}</label>
+							<label className={availableAmountClassName}>{category.availableAmount}</label>
+						</div>
+					);
+				}
 
 				categoiresPopoverItems.push(categoiresPopoverItem);
 			}
 		});
 
 		return (
-			<ul className="custom-dropdown-list" style={ScrollableContainerStyle}>
+			<ul className="categories-dropdown-list" style={ScrollableContainerStyle}>
 				{categoiresPopoverItems}
 			</ul>
 		);

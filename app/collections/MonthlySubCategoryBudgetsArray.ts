@@ -23,6 +23,10 @@ export class MonthlySubCategoryBudgetsArray extends EntitiesArray<IMonthlySubCat
 	}
 
 	protected addEntity(monthlySubCategoryBudget:IMonthlySubCategoryBudget):void {
+
+		if(!this.multiDictionary)
+			this.multiDictionary = new MultiDictionary<string, IMonthlySubCategoryBudget>();
+
 		super.addEntity(monthlySubCategoryBudget);
 		this.multiDictionary.setValue(monthlySubCategoryBudget.month, monthlySubCategoryBudget);
 	}

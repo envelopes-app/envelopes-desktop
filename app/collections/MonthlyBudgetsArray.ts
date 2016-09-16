@@ -23,6 +23,10 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 	}
 
 	protected addEntity(monthlyBudget:IMonthlyBudget):void {
+
+		if(!this.monthlyMap)
+			this.monthlyMap = {};
+
 		super.addEntity(monthlyBudget);
 		this.monthlyMap[monthlyBudget.month] = monthlyBudget;
 	}
