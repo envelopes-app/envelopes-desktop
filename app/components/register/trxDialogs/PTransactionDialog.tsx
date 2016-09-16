@@ -550,7 +550,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
 		var filteredPayeesList = _.filter(this.payeesList, (payeeObj:objects.IPayeeObject)=>{
-			payeeObj.accountId != this.state.accountId
+			return (payeeObj.accountId != this.state.accountId);
 		});
 
 		var filteredCategoriesList = this.categoriesList;
