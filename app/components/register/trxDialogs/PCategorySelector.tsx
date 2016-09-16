@@ -93,7 +93,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 
 	private onBlur() {
 		// If the popover is showing, hide it.
-		//this.hidePopover();
+		this.hidePopover();
 	}
 
 	private onChange(event:React.SyntheticEvent) { 

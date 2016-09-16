@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as moment from 'moment';
-import { Form, FormControl, FormGroup, Col, ControlLabel, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { FormControl, FormGroup, Col, ControlLabel, Overlay, Popover } from 'react-bootstrap';
 
 var DatePicker:any = require('react-datepicker');
 
@@ -56,6 +56,9 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 	private dateInput:FormControl;
 	private frequencySelection:FormControl;
 
+	private minDate = new DateWithoutTime(2000, 0, 1);
+	private maxDate = DateWithoutTime.createForCurrentMonth().addYears(5);
+
 	constructor(props: any) {
         super(props);
 		this.onBlur = this.onBlur.bind(this);
@@ -106,7 +109,10 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 		this.hidePopover();
 	}
 
-	private onChange() { }
+	private onChange() {
+		// Since the date field is not editable, this is here just to get rid if the react warning that 
+		// an onChage handler needs to be provided, or the field should be set to read-only.
+	}
 
 	private onKeyDown(event:KeyboardEvent):void {
 
@@ -150,17 +156,18 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 
 	public render() {
 		return (
-			<FormGroup onKeyDown={this.onKeyDown}>
+			<FormGroup onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Date
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false} 
+						onChange={this.onChange} contentEditable={false} 
 						value={this.props.selectedDate.toISOString()} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
-							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} />
+							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} 
+								minDate={this.minDate.toUTCMoment()} maxDate={this.maxDate.toUTCMoment()}/>
 							<div style={RepeatDivStyle}>
 								<label style={RepeatLabelStyle}>Repeat:</label>
 								<FormControl ref={(n) => this.frequencySelection = n } style={RepeatSelectStyle} 

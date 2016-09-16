@@ -3,8 +3,8 @@
 import { connect } from 'react-redux';
 
 import * as budgetEntities from '../../interfaces/budgetEntities';
-import { IApplicationState } from '../../interfaces/state';
-import { SidebarActionsCreator } from '../../actionCreators';
+import { IApplicationState, ISimpleEntitiesCollection } from '../../interfaces/state';
+import { GlobalActionsCreator } from '../../actionCreators';
 
 import { PRegister } from './PRegister';
 
@@ -16,14 +16,9 @@ const mapStateToProps = (state:IApplicationState) => {
 
 const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
   	return {
-
-    	addTransaction: (transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>) => {
-      		//dispatch(SidebarActionsCreator.createNewAccount(account, currentBalance));
-    	},
-
-    	updateTransaction: (transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>) => {
-      		//dispatch(SidebarActionsCreator.updateExistingAccount(account, currentBalance));
-    	}
+		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
+      		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
+		}
 	}
 }
 

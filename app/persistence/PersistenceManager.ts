@@ -12,7 +12,7 @@ import * as catalogQueries from './queries/catalogQueries';
 import * as budgetueries from './queries/budgetQueries';
 import * as miscQueries from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence';
-import { IEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import { Logger } from '../utilities';
 
@@ -97,7 +97,7 @@ export class PersistenceManager {
 			});
 	}
 
-	public syncDataWithDatabase(entitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {
+	public syncDataWithDatabase(entitiesCollection:ISimpleEntitiesCollection):Promise<IEntitiesCollection> {
 
 		// Persist the passed entities into the database
 		return this.saveBudgetEntitiesToDatabase(entitiesCollection)
@@ -194,14 +194,14 @@ export class PersistenceManager {
 		return executeSqlQueries([query]);
 	}
 
-	private saveBudgetEntitiesToDatabase(entitiesCollection:IEntitiesCollection):Promise<boolean> {
+	private saveBudgetEntitiesToDatabase(entitiesCollection:ISimpleEntitiesCollection):Promise<boolean> {
 
 		// Iterate through the passed entities, and ensure that each of them has the budgetId set
 		// Also update the deviceKnowledge value on each entity 
 		var budgetId = this.activeBudget.entityId;
 		var budgetKnowledge = this.budgetKnowledge;
 
-		var updateEntities = (entitiesArray:Array<commonInterfaces.IBudgetEntity>)=>{
+		var setBudgetIdAndDeviceKnowledge = (entitiesArray:Array<commonInterfaces.IBudgetEntity>)=>{
 
 			if(entitiesArray && entitiesArray.length > 0) {
 				_.forEach(entitiesArray, (entity:commonInterfaces.IBudgetEntity)=>{
@@ -213,26 +213,38 @@ export class PersistenceManager {
 		};
 
 		// Call the updateEntities method on each type of entity array in the passed entities collection 
-		updateEntities(entitiesCollection.accounts);
-		updateEntities(entitiesCollection.accountMappings);
-		updateEntities(entitiesCollection.masterCategories);
-		updateEntities(entitiesCollection.monthlyBudgets);
-		updateEntities(entitiesCollection.monthlySubCategoryBudgets);
-		updateEntities(entitiesCollection.payees);
-		updateEntities(entitiesCollection.payeeLocations);
-		updateEntities(entitiesCollection.payeeRenameConditions);
-		updateEntities(entitiesCollection.scheduledSubTransactions);
-		updateEntities(entitiesCollection.scheduledTransactions);
-		updateEntities(entitiesCollection.settings);
-		updateEntities(entitiesCollection.subCategories);
-		updateEntities(entitiesCollection.subTransactions);
-		updateEntities(entitiesCollection.transactions);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.accounts);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.accountMappings);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.masterCategories);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.monthlyBudgets);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.monthlySubCategoryBudgets);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.payees);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.payeeLocations);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.payeeRenameConditions);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.scheduledSubTransactions);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.scheduledTransactions);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.settings);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.subCategories);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.subTransactions);
+		setBudgetIdAndDeviceKnowledge(entitiesCollection.transactions);
 
 		// Create queries to persist these entities
 		var queriesList:Array<IDatabaseQuery> = [];
 		queriesList = _.concat(
 			_.map(entitiesCollection.accounts, (entity)=>{ return budgetueries.AccountQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.accountMappings, (entity)=>{ return budgetueries.AccountMappingQueries.insertDatabaseObject(entity); })
+			_.map(entitiesCollection.accountMappings, (entity)=>{ return budgetueries.AccountMappingQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.masterCategories, (entity)=>{ return budgetueries.MasterCategoryQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.monthlyBudgets, (entity)=>{ return budgetueries.MonthlyBudgetQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.monthlySubCategoryBudgets, (entity)=>{ return budgetueries.MonthlySubCategoryBudgetQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.payees, (entity)=>{ return budgetueries.PayeeQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.payeeLocations, (entity)=>{ return budgetueries.PayeeLocationQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.payeeRenameConditions, (entity)=>{ return budgetueries.PayeeRenameConditionQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.scheduledSubTransactions, (entity)=>{ return budgetueries.ScheduledSubTransactionQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.scheduledTransactions, (entity)=>{ return budgetueries.ScheduledTransactionQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.settings, (entity)=>{ return budgetueries.SettingQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.subCategories, (entity)=>{ return budgetueries.SubCategoryQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.subTransactions, (entity)=>{ return budgetueries.SubTransactionQueries.insertDatabaseObject(entity); }),
+			_.map(entitiesCollection.transactions, (entity)=>{ return budgetueries.TransactionQueries.insertDatabaseObject(entity); })
 		)
 
 		if(queriesList.length > 0)

@@ -12,14 +12,13 @@ import { PTransactionDialog } from './trxDialogs/PTransactionDialog';
 import './SRegister.css';
 
 import * as budgetEntities from '../../interfaces/budgetEntities';
-import { IApplicationState, IEntitiesCollection, IRegisterState } from '../../interfaces/state';
+import { IApplicationState, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
 export interface PRegisterProps {
 	// State Variables
 	applicationState: IApplicationState;
 	// Dispatcher Functions
-	addTransaction:(transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>)=>void;	
-	updateTransaction:(transaction:budgetEntities.ITransaction, subTranactions:Array<budgetEntities.ISubTransaction>)=>void;
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const RegisterContainerStyle = {
@@ -62,11 +61,6 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 
 	// *******************************************************************************************************
 	// *******************************************************************************************************
-
-	private updateEntities(entities:IEntitiesCollection):void {
-
-	}
-
 	public render() {
 
 		var accountName:string;
@@ -115,7 +109,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
 					entitiesCollection={entitiesCollection}
-					updateEntities={this.updateEntities} 
+					updateEntities={this.props.updateEntities} 
 				/>
 			</div>
 		);

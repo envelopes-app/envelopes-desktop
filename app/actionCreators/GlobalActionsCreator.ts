@@ -1,6 +1,6 @@
 /// <reference path="../_includes.ts" />
 
-import { IApplicationState, IEntitiesCollection } from '../interfaces/state';
+import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -81,7 +81,7 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static syncBudgetDataWithDatabase(entitiesCollection:IEntitiesCollection) {
+	public static syncBudgetDataWithDatabase(entitiesCollection:ISimpleEntitiesCollection) {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 

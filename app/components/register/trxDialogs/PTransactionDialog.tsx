@@ -13,11 +13,12 @@ import { PCategorySelector } from './PCategorySelector';
 import { PMemoInput } from './PMemoInput';
 import { PAmountInput } from './PAmountInput';
 
-import * as constants from '../../../constants';
-import * as utilities from '../../../utilities';
-import * as budgetEntities from '../../../interfaces/budgetEntities';
 import * as objects from '../../../interfaces/objects';
-import { IEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
+import { TransactionFlag, TransactionFrequency } from '../../../constants';
+import { EntityFactory } from '../../../persistence';
+import { IEntitiesCollection, ISimpleEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
+import { DateWithoutTime, EntitiesLookupHelper, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
 
 export interface PTransactionDialogProps { 
 
@@ -25,7 +26,7 @@ export interface PTransactionDialogProps {
 	// Entities collections from the global state 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatch methods
-	updateEntities:(entities:IEntitiesCollection)=>void;
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 export interface PTransactionDialogState {
@@ -33,18 +34,16 @@ export interface PTransactionDialogState {
 	// Properties to save the values for the different fields. We wont create an actual transaction 
 	// or scheduled transaction object until the user presses save.
 	entityId?: string;
-	flag?: string;
 	accountId?: string;
 	payeeId?: string;
 	manuallyEnteredPayeeName?: string;
-	date?: utilities.DateWithoutTime;
+	date?: DateWithoutTime;
 	frequency?: string;
 	subCategoryId?: string;
 	manuallyEnteredCategoryName?: string;
 	memo?: string;
 	inflowAmount?: number;
 	outflowAmount?: number;
-	cleared?: string;
 }
 
 export class PTransactionDialog extends React.Component<PTransactionDialogProps, PTransactionDialogState> {
@@ -97,7 +96,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		// if this dialog is being shown from the "All Accounts", we would get a null accountId.
 		// In that case, we need to choose a default account that would be set initially in the accounts field.
 		if(!accountId) {
-			var account = utilities.EntitiesLookupHelper.getDefaultAccountForAddTransactionDialog(this.props.entitiesCollection);
+			var account = EntitiesLookupHelper.getDefaultAccountForAddTransactionDialog(this.props.entitiesCollection);
 			if(account)
 				accountId = account.entityId;
 		}
@@ -113,12 +112,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			// Also reset all the fields for storing the values for the new transaction 
 			this.setState({ 
 				showModal: true,
-				entityId: utilities.KeyGenerator.generateUUID(),
+				entityId: null,
 				accountId: accountId,
 				payeeId: null,
-				date: utilities.DateWithoutTime.createForToday(),
-				frequency: constants.TransactionFrequency.Never,
+				manuallyEnteredPayeeName: null,
+				date: DateWithoutTime.createForToday(),
+				frequency: TransactionFrequency.Never,
 				subCategoryId: null,
+				manuallyEnteredCategoryName: null,
 				memo: "",
 				inflowAmount: 0,
 				outflowAmount: 0
@@ -127,7 +128,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		else {
 			// If no account was passed, and neither were we able to select a default one, then 
 			// that means there are no usable accounts in the budget.
-			utilities.Logger.info("We cannot show the Transaction Dialog as there are no open accounts.");
+			Logger.info("We cannot show the Transaction Dialog as there are no open accounts.");
 		}
 	};
 
@@ -137,14 +138,88 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private save():void {
 
-		// Close the modal dialog
-		this.close();
+		if(this.validateTransaction()) {
+
+			var entitiesCollection:ISimpleEntitiesCollection = {};
+
+			if(this.state.frequency == TransactionFrequency.Never) {
+				// Create the transaction entity and add it to the entitiesCollection 
+				this.createNewTransaction(entitiesCollection);
+			}
+			else {
+				// Create the scheduled transaction entity and add it to the entitiesCollection 
+				this.createNewScheduledTransaction(entitiesCollection);
+			}
+
+			// Check if we need to create a new payee
+			if(!this.state.payeeId && this.state.manuallyEnteredPayeeName) {
+				// There is no selected pre-existing payee, but we do have a payee name manually
+				// entered by the user in the payee input box. 
+				// Create a new payee and save it in the entitiesCollection
+				this.createNewPayee(entitiesCollection);
+
+				var payee = entitiesCollection.payees[0];
+				// Update the transaction/scheduled-transaction to point to this new payee 
+				if(entitiesCollection.transactions && entitiesCollection.transactions.length > 0) {
+					entitiesCollection.transactions[0].payeeId = payee.entityId;
+				}
+				else if(entitiesCollection.scheduledTransactions && entitiesCollection.scheduledTransactions.length > 0) {
+					entitiesCollection.scheduledTransactions[0].payeeId = payee.entityId;
+				}
+			}
+
+			// Call the passed updateEntities method in the props to save the entities
+			this.props.updateEntities(entitiesCollection);
+			// Close the modal dialog
+			this.close();
+		}
+	}
+
+	private validateTransaction():boolean {
+
+		// TODO: Add any required validation logic here
+		return true;
 	}
 
 	private close():void {
 		// Hide the modal, and set the account in state to null
 		this.setState({ showModal: false });
 	};
+
+	private createNewTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
+
+		var transaction = EntityFactory.createNewTransaction();
+		// Set the values in this transaction from the state
+		transaction.accountId = this.state.accountId;
+		transaction.date = this.state.date.getUTCTime();
+		transaction.payeeId = this.state.payeeId;
+		transaction.subCategoryId = this.state.subCategoryId;
+		transaction.memo = this.state.memo;
+
+		if(this.state.inflowAmount > 0)
+			transaction.amount = this.state.inflowAmount;
+		else if(this.state.outflowAmount > 0)
+			transaction.amount = -this.state.outflowAmount;
+		else
+			transaction.amount = 0;
+
+		// Add this transaction to the entities collection
+		entitiesCollection.transactions = [transaction];
+	}
+
+	private createNewScheduledTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
+
+	}
+
+	private createNewPayee(entitiesCollection:ISimpleEntitiesCollection):void {
+
+		var payee = EntityFactory.createNewPayee();
+		// Set the values in the payee from the state
+		payee.name = this.state.manuallyEnteredPayeeName;
+		payee.autoFillSubCategoryId = this.state.subCategoryId;
+		// Add this payee to the entities collection
+		entitiesCollection.payees = [payee];
+	}
 
 	private onEntered():void {
 		var dateSelector = this.dateSelector;
@@ -159,7 +234,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setState(state);
 	}
 
-	private setSelectedDate(date:utilities.DateWithoutTime):void {
+	private setSelectedDate(date:DateWithoutTime):void {
 		var state = _.assign({}, this.state) as PTransactionDialogState;
 		state.date = date;
 		this.setState(state);
@@ -404,11 +479,11 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		var internalMasterCategory = masterCategories.getInternalMasterCategory();
 		var immediateIncomeSubCategory = subCategories.getImmediateIncomeSubCategory();
 		// Get the MonthlyBudget and MonthlySubCategoryBudgets for the current month.
-		var currentMonth = utilities.DateWithoutTime.createForCurrentMonth();
+		var currentMonth = DateWithoutTime.createForCurrentMonth();
 		var monthlyBudgetForCurrentMonth:budgetEntities.IMonthlyBudget = monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString()); 
 		var monthlySubCategoryBudgetsForCurrentMonth = monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString()); 
 		// Create a map of the montlySubCategoryBudgets by their subCategoryId
-		var monthlySubCategoryBudgetsMap:utilities.SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget> = {};
+		var monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget> = {};
 		_.forEach(monthlySubCategoryBudgetsForCurrentMonth, (monthlySubCategoryBudget)=>{
 			monthlySubCategoryBudgetsMap[monthlySubCategoryBudget.subCategoryId] = monthlySubCategoryBudget;
 		});
@@ -471,12 +546,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		return categoriesList;
 	}
 
-	private validateTransaction():boolean {
-
-
-		return true;
-	}
-
 	public render() {
 
 		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
@@ -495,7 +564,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			// We also want to remove all those master catgories that do not have any subcategories below them
 			// after the applying the above filter. Iterate through the list and take count of subcategories 
 			// for each of the master category.
-			var categoriesCounter:utilities.SimpleObjectMap<number> = {};
+			var categoriesCounter:SimpleObjectMap<number> = {};
 			_.forEach(filteredCategoriesList, (categoryObj)=>{
 
 				if(categoryObj.isMasterCategory == false) {

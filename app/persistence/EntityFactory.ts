@@ -1,7 +1,7 @@
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import { KeyGenerator } from '../utilities';
-import { AccountTypes } from '../constants';
+import { AccountTypes, ClearedFlag, TransactionFlag } from '../constants';
 
 export class EntityFactory {
 
@@ -32,6 +32,23 @@ export class EntityFactory {
 		return account;
 	}
 
+	public static createNewPayee(budgetId:string = null):budgetEntities.IPayee {
+
+		var payee:budgetEntities.IPayee = {
+			budgetId: budgetId,
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			accountId: null,
+			enabled: 1,
+			autoFillSubCategoryId: null,
+			name: null,
+			internalName: null,
+			deviceKnowledge: 0
+		}
+
+		return payee;
+	}
+
 	public static createNewTransaction(budgetId:string = null):budgetEntities.ITransaction {
 
 		var transaction:budgetEntities.ITransaction = {
@@ -45,9 +62,9 @@ export class EntityFactory {
 			dateEnteredFromSchedule: null,
 			amount: 0,
 			memo: null,
-			cleared: null,
+			cleared: ClearedFlag.Uncleared,
 			accepted: 1,
-			flag: null,
+			flag: TransactionFlag.None,
 			transferAccountId: null,
 			transferTransactionId: null,
 			transferSubTransactionId: null,
