@@ -1,4 +1,4 @@
-/// <reference path="../../_includes.ts" />
+/// <reference path="../../../_includes.ts" />
 
 import * as _ from 'lodash';
 import * as React from 'react';

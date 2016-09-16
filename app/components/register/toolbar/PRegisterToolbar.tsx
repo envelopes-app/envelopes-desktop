@@ -1,9 +1,9 @@
-/// <reference path="../../_includes.ts" />
+/// <reference path="../../../_includes.ts" />
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { PToolbarButton } from '../common/PToolbarButton';
+import { PToolbarButton } from '../../common/PToolbarButton';
 
 export interface PRegisterToolbarProps {
 	onAddTransactionSelected:()=>void;

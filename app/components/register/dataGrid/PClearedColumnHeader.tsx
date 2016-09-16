@@ -4,13 +4,13 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface SelectionColumnHeaderProps {
+export interface PClearedColumnHeaderProps {
 	height?: number;
 	width?: number;
 	columnKey?:string;
 }
 
-const SelectionColumnHeaderStyle = {
+const PClearedColumnHeaderStyle = {
 	display: 'block',
 	backgroundColor: 'white',
 	color: '#4C7079',
@@ -18,21 +18,20 @@ const SelectionColumnHeaderStyle = {
 	fontWeight: 'normal',
 	width: '100%',
 	height: '100%',
-	textAlign: 'left',
 	verticalAlign: 'middle',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-export class SelectionColumnHeader extends React.Component<SelectionColumnHeaderProps, {}> {
+export class PClearedColumnHeader extends React.Component<PClearedColumnHeaderProps, {}> {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, SelectionColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = _.assign({}, PClearedColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
     	return (
 			<div style={columnHeaderStyle}>
-				<input type='checkbox' />
+				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true"/>
 			</div>
 		);
   	}

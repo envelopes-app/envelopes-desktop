@@ -4,17 +4,17 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface ClearedColumnHeaderProps {
+export interface PFlagColumnHeaderProps {
 	height?: number;
 	width?: number;
 	columnKey?:string;
 }
 
-const ClearedColumnHeaderStyle = {
+const PFlagColumnHeaderStyle = {
 	display: 'block',
 	backgroundColor: 'white',
 	color: '#4C7079',
-	fontSize: '12px',
+	fontSize: '14px',
 	fontWeight: 'normal',
 	width: '100%',
 	height: '100%',
@@ -23,15 +23,15 @@ const ClearedColumnHeaderStyle = {
 	paddingRight: '5px'
 }
 
-export class ClearedColumnHeader extends React.Component<ClearedColumnHeaderProps, {}> {
+export class PFlagColumnHeader extends React.Component<PFlagColumnHeaderProps, {}> {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, ClearedColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = _.assign({}, PFlagColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
     	return (
 			<div style={columnHeaderStyle}>
-				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true"/>
+				<span className="glyphicon glyphicon-flag" aria-hidden="true"/>
 			</div>
 		);
   	}

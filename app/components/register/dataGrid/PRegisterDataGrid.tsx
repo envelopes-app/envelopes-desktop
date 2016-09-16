@@ -1,11 +1,14 @@
-/// <reference path="../../_includes.ts" />
+/// <reference path="../../../_includes.ts" />
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import '../../styles/fixed-data-table.css';
 import { Table, Column, Cell } from 'fixed-data-table';
-import * as dataGrid from './dataGrid';
+
+import { PClearedColumnHeader } from './PClearedColumnHeader';
+import { PColumnHeader } from './PColumnHeader';
+import { PFlagColumnHeader } from './PFlagColumnHeader';
+import { PSelectionColumnHeader } from './PSelectionColumnHeader';
 
 export interface PRegisterDataGridProps {
 	showAccountsColumn:boolean;
@@ -14,14 +17,6 @@ export interface PRegisterDataGridProps {
 const RegisterDataGridContainerStyle = {
 	flex: '1 1 auto',
 	backgroundColor: '#567890'
-}
-
-const DateHeaderStyle = {
-	backgroundColor: 'white',
-	color: '#4C7079',
-	fontSize: '10px',
-	fontWeight: 'normal',
-	verticalAlign: 'center'
 }
 
 export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {componentWidth:number, componentHeight:number}> {
@@ -63,53 +58,53 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 				<Column 
 					key="selectionColumn"
 					width={25}
-					header={<dataGrid.SelectionColumnHeader />}
+					header={<PSelectionColumnHeader />}
 				/>,
 				<Column 
 					key="flagColumn"
 					width={30}
-					header={<dataGrid.FlagColumnHeader />}
+					header={<PFlagColumnHeader />}
 				/>,
 				<Column 
 					key="accountColumn"
 					width={100}
-					header={<dataGrid.ColumnHeader label="ACCOUNT" showSortIcon={false} />}
+					header={<PColumnHeader label="ACCOUNT" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="dateColumn"
 					width={90}
-					header={<dataGrid.ColumnHeader label="DATE" showSortIcon={true} />}
+					header={<PColumnHeader label="DATE" showSortIcon={true} />}
 				/>,
 				<Column 
 					key="payeeColumn"
 					width={170}
-					header={<dataGrid.ColumnHeader label="PAYEE" showSortIcon={false} />}
+					header={<PColumnHeader label="PAYEE" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="categoryColumn"
 					width={300}
-					header={<dataGrid.ColumnHeader label="CATEGORY" showSortIcon={false} />}
+					header={<PColumnHeader label="CATEGORY" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="memoColumn"
 					width={170}
 					flexGrow={1}
-					header={<dataGrid.ColumnHeader label="MEMO" showSortIcon={false} />}
+					header={<PColumnHeader label="MEMO" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="outflowColumn"
 					width={100}
-					header={<dataGrid.ColumnHeader label="OUTFLOW" showSortIcon={false} />}
+					header={<PColumnHeader label="OUTFLOW" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="inflowColumn"
 					width={100}
-					header={<dataGrid.ColumnHeader label="INFLOW" showSortIcon={false} />}
+					header={<PColumnHeader label="INFLOW" showSortIcon={false} />}
 				/>,
 				<Column 
 					key="clearedColumn"
 					width={30}
-					header={<dataGrid.ClearedColumnHeader />}
+					header={<PClearedColumnHeader />}
 				/>
 			];
 

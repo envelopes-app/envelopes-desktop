@@ -1,4 +1,4 @@
-/// <reference path="../../_includes.ts" />
+/// <reference path="../../../_includes.ts" />
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';

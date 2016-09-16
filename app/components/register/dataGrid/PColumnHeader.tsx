@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface ColumnHeaderProps {
+export interface PColumnHeaderProps {
 	label: string;
 	showSortIcon?:boolean;
 	height?: number;
@@ -12,7 +12,7 @@ export interface ColumnHeaderProps {
 	columnKey?:string;
 }
 
-const ColumnHeaderStyle = {
+const PColumnHeaderStyle = {
 	display: 'block',
 	backgroundColor: 'white',
 	color: '#4C7079',
@@ -26,11 +26,11 @@ const ColumnHeaderStyle = {
 	paddingRight: '5px'
 }
 
-export class ColumnHeader extends React.Component<ColumnHeaderProps, {}> {
+export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, ColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = _.assign({}, PColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 		// If we are currently sorting by this column, then set the fontWeight to bold 
 		if(this.props.showSortIcon && this.props.showSortIcon == true)
 			columnHeaderStyle["fontWeight"] = "bold";

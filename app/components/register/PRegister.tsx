@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { PRegisterHeader } from './PRegisterHeader';
-import { PRegisterToolbar } from './PRegisterToolbar';
-import { PRegisterDataGrid } from './PRegisterDataGrid';
+import { PRegisterHeader } from './header/PRegisterHeader';
+import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
+import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import './SRegister.css';

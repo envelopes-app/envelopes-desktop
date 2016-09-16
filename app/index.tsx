@@ -10,6 +10,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import './styles/index.css';
 import './styles/react-datepicker.css';
+import './styles/fixed-data-table.css';
 
 // Components that are to be used in route map
 import { App } from './components/App';
