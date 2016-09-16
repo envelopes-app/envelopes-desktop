@@ -76,7 +76,9 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		}
 
 		// Set the focus on the input control
-		(ReactDOM.findDOMNode(this.payeeInput) as any).focus();
+		var domNode = ReactDOM.findDOMNode(this.payeeInput) as any;
+		domNode.focus();
+		domNode.select();
 	}
 
 	public hidePopover():void {

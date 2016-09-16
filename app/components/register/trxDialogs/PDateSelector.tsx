@@ -84,7 +84,9 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 		}
 
 		// Set the focus on the input control
-		(ReactDOM.findDOMNode(this.dateInput) as any).focus();
+		var domNode = ReactDOM.findDOMNode(this.dateInput) as any;
+		domNode.focus();
+		domNode.select();
 	}
 
 	public hidePopover():void {

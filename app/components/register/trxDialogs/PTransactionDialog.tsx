@@ -42,7 +42,8 @@ export interface PTransactionDialogState {
 	subCategoryId?: string;
 	manuallyEnteredCategoryName?: string;
 	memo?: string;
-	amount?: number;
+	inflowAmount?: number;
+	outflowAmount?: number;
 	cleared?: string;
 }
 
@@ -54,6 +55,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	private categorySelector:PCategorySelector;
 	private memoInput:PMemoInput;
 	private amountInput:PAmountInput;
+	private saveAndAddAnotherButton:Button;
+	private saveButton:Button;
+	private cancelButton:Button;
 
 	private accountsList:Array<objects.IAccountObject>;
 	private payeesList:Array<objects.IPayeeObject>;
@@ -81,6 +85,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
 		this.handleTabPressedOnMemoInput = this.handleTabPressedOnMemoInput.bind(this);
 		this.handleTabPressedOnAmountInput = this.handleTabPressedOnAmountInput.bind(this);
+		this.handleKeyPressedOnSaveAndAddAnotherButton = this.handleKeyPressedOnSaveAndAddAnotherButton.bind(this);
+		this.handleKeyPressedOnSaveButton = this.handleKeyPressedOnSaveButton.bind(this);
+		this.handleKeyPressedOnCancelButton = this.handleKeyPressedOnCancelButton.bind(this);
 
         this.state = { showModal: false };
     }
@@ -113,7 +120,8 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 				frequency: constants.TransactionFrequency.Never,
 				subCategoryId: null,
 				memo: "",
-				amount: 0,
+				inflowAmount: 0,
+				outflowAmount: 0
 			});
 		}
 		else {
@@ -199,9 +207,10 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setState(state);
 	}
 
-	private setAmount(amount:number):void {
+	private setAmount(inflowAmount:number, outflowAmount:number):void {
 		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.amount = amount;
+		state.inflowAmount = inflowAmount;
+		state.outflowAmount = outflowAmount;
 		this.setState(state);
 	}
 
@@ -213,6 +222,10 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			this.dateSelector.showPopover();
 			// Hide the account selector popover
 			this.accountSelector.hidePopover(); 
+		}
+		else {
+			// Set focus on the "cancel" button
+			(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
 		}
 	}
 
@@ -269,10 +282,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		// If shift key is not pressed then move the focus on to the amount input. 
 		// Otherwise move the focus back to the category selector. 
 		if(!shiftKeyPressed) {
-			// Show the category selector popover
-			this.categorySelector.showPopover();
-		}
-		else {
 			// Set focus on amount input
 			// If the selected category is of inflow type, then move the focus on to
 			// the inflow field. Otherwise move to the outflow field.
@@ -282,6 +291,10 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			else
 				this.amountInput.setFocusOnOutflow();
 		}
+		else {
+			// Show the category selector popover
+			this.categorySelector.showPopover();
+		}
 	}
 
 	private handleTabPressedOnAmountInput(shiftKeyPressed:boolean):void {
@@ -289,12 +302,58 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		// If shift key is not pressed then move the focus on to the save button. 
 		// Otherwise move the focus back to the amount input. 
 		if(!shiftKeyPressed) {
-			// Set focus on the save button
-			// this.categorySelector.showPopover();
+			// Set focus on the "save and add another" button
+			(ReactDOM.findDOMNode(this.saveAndAddAnotherButton) as any).focus();
+			event.preventDefault();
 		}
 		else {
-			// Set focus on amount input
-			this.amountInput.setFocusOnInflow();
+			// Move focus on to the memo input
+			this.memoInput.setFocus();
+		}
+	}
+
+	private handleKeyPressedOnSaveAndAddAnotherButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey) {
+				// Set focus on the "save" button
+				(ReactDOM.findDOMNode(this.saveButton) as any).focus();
+			}
+			else {
+				// Set the focus back on to the amount inflow control
+				this.amountInput.setFocusOnInflow();
+			}
+		}
+	}
+
+	private handleKeyPressedOnSaveButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey) {
+				// Set focus on the "cancel" button
+				(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
+			}
+			else {
+				// Set the focus back on to the "save and add another" button
+				(ReactDOM.findDOMNode(this.saveAndAddAnotherButton) as any).focus();
+			}
+		}
+	}
+
+	private handleKeyPressedOnCancelButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey) {
+				// Set focus on the account input
+				this.accountSelector.showPopover();
+			}
+			else {
+				// Set the focus back on to the "save" button
+				(ReactDOM.findDOMNode(this.saveButton) as any).focus();
+			}
 		}
 	}
 
@@ -458,17 +517,21 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 						<PMemoInput ref={(c) => this.memoInput = c} 
 							memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />
 						<PAmountInput ref={(c) => this.amountInput = c} 
-							amount={this.state.amount} setAmount={this.setAmount} handleTabPressed={this.handleTabPressedOnAmountInput} />
+							inflowAmount={this.state.inflowAmount} outflowAmount={this.state.outflowAmount} 
+							setAmount={this.setAmount} handleTabPressed={this.handleTabPressedOnAmountInput} />
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={this.save} className="dialog-button">
+					<Button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-button"
+						onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
 						Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
-					<Button onClick={this.save} className="dialog-button">
+					<Button ref={(c) => this.saveButton = c} className="dialog-button"
+						onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveButton}>
 						Save&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
-					<Button onClick={this.close} className="dialog-cancel-button">
+					<Button ref={(c) => this.cancelButton = c} className="dialog-cancel-button"
+						onClick={this.close} onKeyDown={this.handleKeyPressedOnCancelButton}>
 						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 					</Button>
 				</Modal.Footer>

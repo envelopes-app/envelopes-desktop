@@ -112,7 +112,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 				/>
 				<PRegisterDataGrid showAccountsColumn={isAllAccounts}/>
 
-				<PTransactionDialog title="Add Transaction"
+				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
 					entitiesCollection={entitiesCollection}
 					updateEntities={this.updateEntities} 

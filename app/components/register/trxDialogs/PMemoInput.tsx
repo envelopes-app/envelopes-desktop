@@ -26,19 +26,38 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 	constructor(props: any) {
         super(props);
 		this.onChange = this.onChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 	}
 
-	private onChange() { }
+	private onChange() { 
+		// Get the memo value from the control and send it to the parent dialog
+		var memo = (ReactDOM.findDOMNode(this.memoInput) as any).value;
+		this.props.setMemo(memo);
+	}
 
 	public setFocus():void {
 		// Set the focus on the input control
-		(ReactDOM.findDOMNode(this.memoInput) as any).focus();
+		var domNode = ReactDOM.findDOMNode(this.memoInput) as any;
+		domNode.focus();
+		domNode.select();
+	}
+
+	private onKeyDown(event:KeyboardEvent):void {
+
+		// Tab Key
+		if(event.keyCode == 9) {
+			
+			// Prevent the default action from happening as we are manually handling it
+			event.preventDefault();
+			// Let the parent dialog know that tab was pressed
+			this.props.handleTabPressed(event.shiftKey);
+		}
 	}
 
 	public render() {
 
 		return (
-			<FormGroup>
+			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Memo
 				</Col>

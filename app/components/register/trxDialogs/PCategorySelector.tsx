@@ -74,7 +74,9 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		}
 
 		// Set the focus on the input control
-		(ReactDOM.findDOMNode(this.categoryInput) as any).focus();
+		var domNode = ReactDOM.findDOMNode(this.categoryInput) as any;
+		domNode.focus();
+		domNode.select();
 	}
 
 	public hidePopover():void {

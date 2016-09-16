@@ -65,7 +65,9 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		}
 
 		// Set the focus on the input control
-		(ReactDOM.findDOMNode(this.accountInput) as any).focus();
+		var domNode = ReactDOM.findDOMNode(this.accountInput) as any;
+		domNode.focus();
+		domNode.select();
 	}
 
 	public hidePopover():void {
