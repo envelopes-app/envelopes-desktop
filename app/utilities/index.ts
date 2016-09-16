@@ -4,3 +4,4 @@ export { KeyGenerator } from './KeyGenerator';
 export { Logger, LogLevels } from './Logger';
 export { MathUtilities } from './MathUtilities';
 export { SimpleObjectMap } from './SimpleObjectMap';
+export { MultiDictionary } from './Collections';

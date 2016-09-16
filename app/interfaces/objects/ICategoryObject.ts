@@ -5,4 +5,5 @@ export interface ICategoryObject {
 	isMasterCategory:boolean;
 	isInflow:boolean;
 	masterCategoryId:string;
+	availableAmount:number;
 }

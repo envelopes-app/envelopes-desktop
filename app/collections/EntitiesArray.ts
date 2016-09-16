@@ -29,17 +29,22 @@ export class EntitiesArray<T extends IEntity> extends Array<T> {
 	}
 
 	protected addEntity(entity:T):void {
-
 		this.push(entity);
 		this.internalMap[entity.entityId] = entity;
 	}
 
-	protected removeEntityById(entityId:string):void {
+	protected removeEntityById(entityId:string):T {
+		var removedEntities:T[];
 		// Check if we have an entity with the passed entityId. If we do, then remove that.
 		if(this.internalMap[entityId]) {
 			var index = _.findIndex(this, {entityId: entityId});
-			this.splice(index, 1);
+			removedEntities = this.splice(index, 1);
 			this.internalMap[entityId] = null;
 		}
+
+		if(removedEntities && removedEntities.length > 0)
+			return removedEntities[0];
+		else
+			return null;
 	}
 } 

@@ -398,23 +398,37 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		var categoriesList:Array<objects.ICategoryObject> = [];
 		var masterCategories = this.props.entitiesCollection.masterCategories;
 		var subCategories = this.props.entitiesCollection.subCategories;
+		var monthlyBudgets = this.props.entitiesCollection.monthlyBudgets;
+		var monthlySubCategoryBudgets = this.props.entitiesCollection.monthlySubCategoryBudgets;
 
 		var internalMasterCategory = masterCategories.getInternalMasterCategory();
 		var immediateIncomeSubCategory = subCategories.getImmediateIncomeSubCategory();
+		// Get the MonthlyBudget and MonthlySubCategoryBudgets for the current month.
+		var currentMonth = utilities.DateWithoutTime.createForCurrentMonth();
+		var monthlyBudgetForCurrentMonth:budgetEntities.IMonthlyBudget = monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString()); 
+		var monthlySubCategoryBudgetsForCurrentMonth = monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString()); 
+		// Create a map of the montlySubCategoryBudgets by their subCategoryId
+		var monthlySubCategoryBudgetsMap:utilities.SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget> = {};
+		_.forEach(monthlySubCategoryBudgetsForCurrentMonth, (monthlySubCategoryBudget)=>{
+			monthlySubCategoryBudgetsMap[monthlySubCategoryBudget.subCategoryId] = monthlySubCategoryBudget;
+		});
+
 		// At the top of the list, we want entries for "Inflow" and "To be Budgeted"
 		categoriesList.push({
 			entityId: internalMasterCategory.entityId,
 			name: "Inflow",
 			isMasterCategory: true,
 			isInflow: false,
-			masterCategoryId: null
+			masterCategoryId: null,
+			availableAmount: 0
 		});
 		categoriesList.push({
 			entityId: immediateIncomeSubCategory.entityId,
 			name: "To be Budgeted",
 			isMasterCategory: false,
 			isInflow: true,
-			masterCategoryId: internalMasterCategory.entityId
+			masterCategoryId: internalMasterCategory.entityId,
+			availableAmount: monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.availableToBudget : 0
 		});
 
 		// Go through the master categories and build a list of non-tombstoned, non-internal master categories
@@ -432,17 +446,22 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 						name: masterCategory.name,
 						isMasterCategory: true,
 						isInflow: false,
-						masterCategoryId: null
+						masterCategoryId: null,
+						availableAmount: 0
 					});
 
 					// Add items for all the subCategories for this master category
 					_.forEach(filteredSubCategories, (subCategory)=>{
+
+						// Get the monthlySubCategoryBudget entity for this subCategory
+						var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
 						categoriesList.push({
 							entityId: subCategory.entityId,
 							name: subCategory.name,
 							isMasterCategory: false,
 							isInflow: false,
-							masterCategoryId: masterCategory.entityId
+							masterCategoryId: masterCategory.entityId,
+							availableAmount: monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0
 						});
 					});
 				}
@@ -453,6 +472,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	}
 
 	private validateTransaction():boolean {
+
 
 		return true;
 	}
