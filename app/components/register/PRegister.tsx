@@ -9,8 +9,6 @@ import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
-import './SRegister.css';
-
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { IApplicationState, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
@@ -104,7 +102,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 				<PRegisterToolbar 
 					onAddTransactionSelected={this.onAddTransactionSelected}
 				/>
-				<PRegisterDataGrid showAccountsColumn={isAllAccounts}/>
+				<PRegisterDataGrid isAllAccounts={isAllAccounts} entitiesCollection={this.props.applicationState.entitiesCollection}/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }

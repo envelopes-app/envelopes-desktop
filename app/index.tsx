@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import './styles/index.css';
+import './styles/register.css';
 import './styles/react-datepicker.css';
 import './styles/fixed-data-table.css';
 

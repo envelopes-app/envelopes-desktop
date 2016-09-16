@@ -10,8 +10,11 @@ import { PColumnHeader } from './PColumnHeader';
 import { PFlagColumnHeader } from './PFlagColumnHeader';
 import { PSelectionColumnHeader } from './PSelectionColumnHeader';
 
+import { IEntitiesCollection } from '../../../interfaces/state';
+
 export interface PRegisterDataGridProps {
-	showAccountsColumn:boolean;
+	isAllAccounts:boolean;
+	entitiesCollection:IEntitiesCollection;
 }
 
 const RegisterDataGridContainerStyle = {
@@ -108,7 +111,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 				/>
 			];
 
-			if(this.props.showAccountsColumn == false) {
+			if(this.props.isAllAccounts == false) {
 				// Remove the accounts column from the array we created above
 				tableColumns.splice(2, 1); // Start at index 2, remove 1 item
 			}
