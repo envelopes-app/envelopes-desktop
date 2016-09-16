@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { PRegisterHeader } from './PRegisterHeader';
 import { PRegisterToolbar } from './PRegisterToolbar';
 import { PRegisterDataGrid } from './PRegisterDataGrid';
-import { PTransactionDialog } from './trxDialogs/PTransactionDialog';
+import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import './SRegister.css';
 
