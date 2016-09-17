@@ -5,6 +5,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormGroup, FormControl, Col, ControlLabel, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
+import { TransactionFlag } from '../../../constants';
+
 export interface PFlagSelectorProps { 
 	selectedFlag?:string;
 	handleTabPressed:(shiftPressed:boolean)=>void;
@@ -24,24 +26,6 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 
 	private flagInput:HTMLDivElement;
 	private flagColors:Array<string> = ['None', 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple'];
-	private flagColorMapping:any = {
-		'None': '#E1E1E1',
-		'Red': '#D43D2E',
-		'Orange': '#FF7B00',
-		'Yellow': '#F8E136',
-		'Green': '#9AC234',
-		'Blue': '#0082CB',
-		'Purple': '#9384B7'
-	}
-	private flagTextColorMapping:any = {
-		'None': '#BEBEBE',
-		'Red': '#AA3125',
-		'Orange': '#CC6200',
-		'Yellow': '#C6B42B',
-		'Green': '#7B9B29',
-		'Blue': '#0068A2',
-		'Purple': '#756992'
-	}
 
 	constructor(props:any) {
         super(props);
@@ -147,8 +131,8 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 
 	private getListItem(flagColorName:string = 'None', selected:boolean = false) {
 
-		var flagColor = this.flagColorMapping[flagColorName];
-		var flagTextColor = this.flagTextColorMapping[flagColorName];
+		var flagColor = TransactionFlag.getFlagColor[flagColorName];
+		var flagTextColor = TransactionFlag.getFlagTextColor[flagColorName];
 		if(selected) {
 			return (
 				<div key={flagColorName} className="flag-dropdown-list-item-selected" style={{backgroundColor:flagColor}} onClick={this.setSelectedFlag.bind(this, flagColorName)}>
@@ -169,8 +153,8 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 	public render() {
 
 		var flagColorName = this.state.selectedFlag ? this.state.selectedFlag : 'None';
-		var flagItemColor = this.flagColorMapping[flagColorName];
-		var flagTextColor = this.flagTextColorMapping[flagColorName];
+		var flagColor = TransactionFlag.getFlagColor[flagColorName];
+		var flagTextColor = TransactionFlag.getFlagTextColor[flagColorName];
 
 		var flagPopoverItems = [
 			this.getListItem("None", !this.state.selectedFlag || this.state.selectedFlag === 'None'),
@@ -188,7 +172,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 					Flag
 				</Col>
 				<Col sm={9}>
-					<FormControl ref={(n) => this.flagInput = n } type="text" componentClass="input" style={{backgroundColor:flagItemColor}} 
+					<FormControl ref={(n) => this.flagInput = n } type="text" componentClass="input" style={{backgroundColor:flagColor}} 
 						contentEditable={false} readOnly={true} onClick={this.onClick} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.flagInput) }>
 						<Popover id="selectFlagPopover" style={PopoverStyle}>
