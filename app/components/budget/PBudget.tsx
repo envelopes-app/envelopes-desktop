@@ -3,6 +3,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import * as budgetEntities from '../../interfaces/budgetEntities';
+import { IApplicationState, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
+
 const PBudgetStyle = {
 	display: "flex",
 	height: "100%"
@@ -12,7 +15,12 @@ const PBudgetItemStyle = {
 	flex: "1 0 auto"
 }
 
-export interface PBudgetProps {}
+export interface PBudgetProps {
+	// State Variables
+	applicationState: IApplicationState;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+}
 
 export class PBudget extends React.Component<PBudgetProps, {}> {
   
