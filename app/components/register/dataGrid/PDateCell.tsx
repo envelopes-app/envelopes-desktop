@@ -2,15 +2,15 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { TransactionsArray } from '../../../collections';
 import { DateWithoutTime } from '../../../utilities';
+import { ITransaction } from '../../../interfaces/budgetEntities';
 
 export interface PDateCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { AccountsArray, TransactionsArray } from '../../../collections';
+import { AccountsArray } from '../../../collections';
+import { ITransaction } from '../../../interfaces/budgetEntities';
 
 export interface PAccountCellProps {
 	width?:number;
@@ -10,7 +11,7 @@ export interface PAccountCellProps {
 	rowIndex?:number;
 	columnKey?:string;
 	accounts:AccountsArray;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

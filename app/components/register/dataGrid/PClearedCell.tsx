@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { TransactionsArray } from '../../../collections';
+import { ITransaction } from '../../../interfaces/budgetEntities';
 import { ClearedFlag, TransactionFlag } from '../../../constants';
 
 export interface PClearedCellProps {
@@ -11,7 +11,7 @@ export interface PClearedCellProps {
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

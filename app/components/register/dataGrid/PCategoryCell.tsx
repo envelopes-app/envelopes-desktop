@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { MasterCategoriesArray, SubCategoriesArray, TransactionsArray } from '../../../collections';
+import { ITransaction } from '../../../interfaces/budgetEntities';
+import { MasterCategoriesArray, SubCategoriesArray } from '../../../collections';
 
 export interface PCategoryCellProps {
 	width?:number;
@@ -11,7 +12,7 @@ export interface PCategoryCellProps {
 	columnKey?:string;
 	subCategories:SubCategoriesArray;
 	masterCategories:MasterCategoriesArray;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

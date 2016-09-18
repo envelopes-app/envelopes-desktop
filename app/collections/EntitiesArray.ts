@@ -28,6 +28,10 @@ export class EntitiesArray<T extends IEntity> extends Array<T> {
 		return this.internalMap[entityId];
 	}
 
+	public getAllItems():Array<T> {
+		return this as Array<T>;
+	}
+
 	protected addEntity(entity:T):void {
 		this.push(entity);
 		this.internalMap[entity.entityId] = entity;

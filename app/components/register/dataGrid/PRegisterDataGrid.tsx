@@ -22,8 +22,10 @@ import { PInflowCell } from './PInflowCell';
 import { PClearedCell } from './PClearedCell';
 
 import { IEntitiesCollection } from '../../../interfaces/state';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PRegisterDataGridProps {
+	accountId:string;
 	isAllAccounts:boolean;
 	entitiesCollection:IEntitiesCollection;
 }
@@ -39,6 +41,10 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 
 	constructor(props: any) {
         super(props);
+		this.selectTransaction = this.selectTransaction.bind(this);
+		this.unselectTransaction = this.unselectTransaction.bind(this);
+		this.selectAllTransactions = this.selectAllTransactions.bind(this);
+		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.state = { componentWidth:0, componentHeight:0 };
 	}
@@ -63,23 +69,45 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 		this.setState({ componentWidth:width, componentHeight:height });
 	}
 
+	private selectTransaction(transactionId:string, unselectAllOthers:boolean):void {
+		debugger;
+	}
+
+	private unselectTransaction(transactionId:string):void {
+		debugger;
+	}
+
+	private selectAllTransactions():void {
+
+	}
+
+	private unselectAllTransactions():void {
+
+	}
+
 	public render() {
 
 		var showDataGrid:boolean = this.state.componentWidth > 0 && this.state.componentHeight > 0;
 		if(showDataGrid) {
 
-			var accounts = this.props.entitiesCollection.accounts;
-			var subCategories = this.props.entitiesCollection.subCategories;
-			var masterCategories = this.props.entitiesCollection.masterCategories;
-			var payees = this.props.entitiesCollection.payees;
-			var transactions = this.props.entitiesCollection.transactions;
+			var accountsArray = this.props.entitiesCollection.accounts;
+			var subCategoriesArray = this.props.entitiesCollection.subCategories;
+			var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+			var payeesArray = this.props.entitiesCollection.payees;
+			var transactionsArray = this.props.entitiesCollection.transactions;
+			var transactions = transactionsArray ? transactionsArray.getAllItems() : null;
+
+			// If this is not the "All Accounts" then we need to filter the transactions collection
+			if(transactions && !this.props.isAllAccounts && this.props.accountId) {
+				transactions = transactionsArray.getTransactionsByAccountId(this.props.accountId);
+			}
 
 			var tableColumns = [
 				<Column 
 					key="selectionColumn"
 					width={25}
-					header={<PSelectionColumnHeader />}
-					cell={<PSelectionCell transactions={transactions} />}
+					header={<PSelectionColumnHeader selectAllTransactions={this.selectAllTransactions} unselectAllTransactions={this.unselectAllTransactions} />}
+					cell={<PSelectionCell transactions={transactions} selectTransaction={this.selectTransaction} unselectTransaction={this.unselectTransaction} />}
 				/>,
 				<Column 
 					key="flagColumn"
@@ -91,7 +119,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 					key="accountColumn"
 					width={100}
 					header={<PColumnHeader label="ACCOUNT" showSortIcon={false} />}
-					cell={<PAccountCell accounts={accounts} transactions={transactions} />}
+					cell={<PAccountCell accounts={accountsArray} transactions={transactions} />}
 				/>,
 				<Column 
 					key="dateColumn"
@@ -103,13 +131,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 					key="payeeColumn"
 					width={170}
 					header={<PColumnHeader label="PAYEE" showSortIcon={false} />}
-					cell={<PPayeeCell payees={payees} transactions={transactions} />}
+					cell={<PPayeeCell payees={payeesArray} transactions={transactions} />}
 				/>,
 				<Column 
 					key="categoryColumn"
 					width={300}
 					header={<PColumnHeader label="CATEGORY" showSortIcon={false} />}
-					cell={<PCategoryCell masterCategories={masterCategories} subCategories={subCategories} transactions={transactions} />}
+					cell={<PCategoryCell masterCategories={masterCategoriesArray} subCategories={subCategoriesArray} transactions={transactions} />}
 				/>,
 				<Column 
 					key="memoColumn"

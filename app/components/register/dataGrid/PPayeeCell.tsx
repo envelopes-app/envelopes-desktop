@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { PayeesArray, TransactionsArray } from '../../../collections';
+import { PayeesArray } from '../../../collections';
+import { ITransaction } from '../../../interfaces/budgetEntities';
 
 export interface PPayeeCellProps {
 	width?:number;
@@ -10,7 +11,7 @@ export interface PPayeeCellProps {
 	rowIndex?:number;
 	columnKey?:string;
 	payees:PayeesArray;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

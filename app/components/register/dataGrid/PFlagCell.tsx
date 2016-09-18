@@ -3,15 +3,15 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { TransactionsArray } from '../../../collections';
 import { TransactionFlag } from '../../../constants';
+import { ITransaction } from '../../../interfaces/budgetEntities';
 
 export interface PFlagCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	transactions:TransactionsArray;
+	transactions:Array<ITransaction>;
 }
 
 const CellStyle = {

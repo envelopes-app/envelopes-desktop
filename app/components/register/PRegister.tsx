@@ -66,6 +66,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 		var unclearedBalance:number = 0;
 		var workingBalance:number = 0;
 		var isAllAccounts:boolean = true;
+		var currentAccountId:string = null;
 
 		var entitiesCollection = this.props.applicationState.entitiesCollection;
 
@@ -84,6 +85,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 			accountName = account.accountName;
 			accounts = [account];
 			isAllAccounts = false;
+			currentAccountId = account.entityId;
 		}
 
 		// Calculate the cleared and uncleared balance values for the displayed account/s
@@ -102,7 +104,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 				<PRegisterToolbar 
 					onAddTransactionSelected={this.onAddTransactionSelected}
 				/>
-				<PRegisterDataGrid isAllAccounts={isAllAccounts} entitiesCollection={this.props.applicationState.entitiesCollection}/>
+				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} entitiesCollection={this.props.applicationState.entitiesCollection}/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }

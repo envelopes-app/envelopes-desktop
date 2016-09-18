@@ -8,6 +8,8 @@ export interface PSelectionColumnHeaderProps {
 	height?: number;
 	width?: number;
 	columnKey?:string;
+	selectAllTransactions:()=>void;
+	unselectAllTransactions:()=>void;
 }
 
 const PSelectionColumnHeaderStyle = {
@@ -26,13 +28,26 @@ const PSelectionColumnHeaderStyle = {
 
 export class PSelectionColumnHeader extends React.Component<PSelectionColumnHeaderProps, {}> {
 
+	constructor(props: any) {
+        super(props);
+		this.onChange = this.onChange.bind(this);
+	}
+
+	private onChange(event:React.SyntheticEvent):void {
+		
+		var element = event.target as HTMLInputElement;
+		if(element.checked)
+			this.props.selectAllTransactions();
+		else
+			this.props.unselectAllTransactions();
+	}
+
 	public render() {
 
 		var columnHeaderStyle = _.assign({}, PSelectionColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
-
     	return (
 			<div style={columnHeaderStyle}>
-				<input type='checkbox' />
+				<input type='checkbox' onChange={this.onChange} />
 			</div>
 		);
   	}
