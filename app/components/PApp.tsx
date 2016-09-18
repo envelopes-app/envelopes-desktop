@@ -7,6 +7,9 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { MuiThemeProvider, lightBaseTheme } from 'material-ui/styles';
 
 import CSidebar from './sidebar/CSidebar';
+import CBudget from './budget/CBudget';
+import CRegister from './register/CRegister';
+import { IApplicationState } from '../interfaces/state';
 
 const AppStyle = {
   display: "flex",
@@ -25,11 +28,25 @@ const AppModuleContainerStyle = {
 	flex: "1 1 auto"
 }
 
-export interface AppProps {}
+export interface AppProps {
+	// State Variable
+	applicationState:IApplicationState;
+}
 
-export class App extends React.Component<AppProps, {}> {
+export class PApp extends React.Component<AppProps, {}> {
   
 	public render() {
+
+		var visibleModule;
+		// Get the selection from the sidebar state. Based on it, we are going to either be showing
+		// the budget screen, the reports, or the register.
+		var selectedTab = this.props.applicationState.sidebarState.selectedTab;
+		if(selectedTab == "Budget")
+			visibleModule = <CBudget />
+		else if(selectedTab == "Reports") {}
+		else
+			visibleModule = <CRegister />;
+		
     	return (
 			<MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
 				<div style={AppStyle}>
@@ -37,7 +54,7 @@ export class App extends React.Component<AppProps, {}> {
 						<CSidebar />
 					</div>
 					<div style={AppModuleContainerStyle}>
-						{this.props.children}
+						{visibleModule}
 					</div>
 				</div>
 			</MuiThemeProvider>

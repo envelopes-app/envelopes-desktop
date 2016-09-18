@@ -6,18 +6,13 @@ import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import './styles/index.css';
 import './styles/register.css';
 import './styles/react-datepicker.css';
 import './styles/fixed-data-table.css';
 
-// Components that are to be used in route map
-import { App } from './components/App';
-import { PBudget } from './components/budget/PBudget';
-import CRegister from './components/register/CRegister';
-
+import CApp from './components/CApp';
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
 
@@ -27,12 +22,8 @@ var refreshDatabase:boolean = (process.env.NODE_ENV === 'development') ? true : 
 store.dispatch(GlobalActionsCreator.initializeDatabase(false));
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path='/index.html' component={App}>
-	  	<IndexRoute component={CRegister} />
-      </Route>
-    </Router>
-  </Provider>,
-  document.getElementById('root')
+	<Provider store={store}>
+		<CApp />
+	</Provider>,
+  	document.getElementById('root')
 );
