@@ -8,6 +8,7 @@ import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { TransactionFlag } from '../../../constants';
 import { ITransaction } from '../../../interfaces/budgetEntities';
+import { SimpleObjectMap } from '../../../utilities';
 
 export interface PFlagCellProps {
 	width?:number;
@@ -15,6 +16,10 @@ export interface PFlagCellProps {
 	rowIndex?:number;
 	columnKey?:string;
 	transactions:Array<ITransaction>;
+	selectedTransactionsMap:SimpleObjectMap<boolean>;
+
+	editTransaction:(transactionId:string, focusOnField:string)=>void;
+	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
 	updateFlagForTransaction:(transaction:ITransaction, flag:string)=>void;
 }
 
@@ -24,6 +29,18 @@ export interface PFlagCellState {
 }
 
 const CellStyle = {
+	height: "100%",
+	width: "100%",
+	fontSize: "14px",
+	paddingTop: "4px",
+	paddingLeft: "4px"
+}
+
+const CellStyleSelected = {
+	height: "100%",
+	width: "100%",
+	color: "#FFFFFF",
+	backgroundColor: "#00596F",
 	fontSize: "14px",
 	paddingTop: "4px",
 	paddingLeft: "4px"
@@ -40,12 +57,28 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 
 	constructor(props: any) {
         super(props);
-		this.onHide = this.onHide.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onDoubleClick = this.onDoubleClick.bind(this);
+		this.onHide = this.onHide.bind(this);
+		this.onGlyphClick = this.onGlyphClick.bind(this);
 		this.state = {showPopover: false, transaction: null};
 	}
 
-	private onClick():void {
+	private onClick(event:MouseEvent):void {
+
+		if((event.target as any).localName == "div") {
+			var transaction = this.props.transactions[this.props.rowIndex];
+			this.props.selectTransaction(transaction.entityId, true);
+		}
+	}	
+
+	private onDoubleClick(event:MouseEvent):void {
+
+		var transaction = this.props.transactions[this.props.rowIndex];
+		this.props.editTransaction(transaction.entityId, null);
+	}
+
+	private onGlyphClick():void {
 
 		var transaction = this.props.transactions[this.props.rowIndex];
 		// Update the state to show the popover
@@ -97,10 +130,11 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 	public render() {
 
 		var flagColor = TransactionFlag.getFlagColor(TransactionFlag.None);
+		var selected:boolean = false;
 		var items = [
 			(
 				<span key="glyph" className="glyphicon glyphicon-flag" aria-hidden="true"
-					style={{cursor: 'pointer'}} onClick={this.onClick} 
+					style={{cursor: 'pointer'}} onClick={this.onGlyphClick} 
 					ref={(s)=> this.flagGlyph = s}/>
 			)
 		];
@@ -110,6 +144,10 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 			// Get the transaction for the current row
 			var transaction = this.props.transactions[this.props.rowIndex];
 			flagColor = TransactionFlag.getFlagColor(transaction.flag);
+			// Check whether this transaction is currently selected
+			var selectedValue = this.props.selectedTransactionsMap[transaction.entityId];
+			if(selectedValue && selectedValue == true)
+				selected = true;
 
 			if(this.state.showPopover) {
 
@@ -138,9 +176,14 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 			}
 		}
 
-		var cellStyle = _.assign({}, CellStyle, {color:flagColor});
+		var cellStyle:any;
+		if(selected)
+			cellStyle = _.assign({}, CellStyleSelected, {color:flagColor});
+		else 
+			cellStyle = _.assign({}, CellStyle, {color:flagColor});
+
 		return (
-			<div style={cellStyle}>
+			<div style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
 				{items}
 			</div>
 		);

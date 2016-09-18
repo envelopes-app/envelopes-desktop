@@ -14,7 +14,7 @@ const PClearedColumnHeaderStyle = {
 	display: 'block',
 	backgroundColor: 'white',
 	color: '#4C7079',
-	fontSize: '12px',
+	fontSize: '14px',
 	fontWeight: 'normal',
 	width: '100%',
 	height: '100%',

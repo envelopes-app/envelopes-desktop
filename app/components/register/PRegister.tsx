@@ -9,6 +9,7 @@ import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
+import { SimpleObjectMap } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { IApplicationState, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
@@ -19,6 +20,10 @@ export interface PRegisterProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
+export interface PRegisterState {
+	registersState: SimpleObjectMap<IRegisterState>;
+}
+
 const RegisterContainerStyle = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
@@ -26,14 +31,101 @@ const RegisterContainerStyle = {
 	width: '100%'
 }
 
-export class PRegister extends React.Component<PRegisterProps, {}> {
+export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private transactionDialog:PTransactionDialog;
 
 	constructor(props: any) {
         super(props);
+		this.selectTransaction = this.selectTransaction.bind(this);
+		this.unselectTransaction = this.unselectTransaction.bind(this);
+		this.selectAllTransactions = this.selectAllTransactions.bind(this);
+		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
+		this.state = {registersState:{}};
     }
+
+	private getActiveAccount():string {
+
+		var activeAccount:string;
+		// Determine which account we are showing from the sidebar state
+		var sidebarState = this.props.applicationState.sidebarState;
+		if(sidebarState.selectedTab == "All Accounts")
+			activeAccount = "All_Accounts";
+		else if(sidebarState.selectedTab == "Account")
+			activeAccount = sidebarState.selectedAccountId;
+
+		return activeAccount;
+	}
+
+	private getRegisterStateForAccount(accountId:string):IRegisterState {
+
+		// Check if we already have the register state object created for this account.
+		// If it is not already created, then create it now.
+		var registerState = this.state.registersState[accountId];
+		if(!registerState) {
+
+			registerState = {
+				selectedTransactions: [],
+				selectedTransactionsMap: {}
+			};
+		}
+
+		return registerState;
+	}
+
+	private updateRegisterStateForAccount(accountId:string, registerState:IRegisterState):void {
+
+		var state = _.assign({}, this.state) as PRegisterState;
+		state.registersState[accountId] = registerState;
+		this.setState(state);
+	}
+
+	// *******************************************************************************************************
+	// Methods that update the local register state
+	// *******************************************************************************************************
+	private selectTransaction(transactionId:string, unselectAllOthers:boolean):void {
+		
+		debugger;
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount();
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		if(unselectAllOthers) {
+			registerState.selectedTransactions = [];
+			registerState.selectedTransactionsMap = {};
+		}
+
+		// Mark the passed transaction id as selected
+		registerState.selectedTransactions.push(transactionId);
+		registerState.selectedTransactionsMap[transactionId] = true;
+		this.updateRegisterStateForAccount(activeAccount, registerState);
+	}
+
+	private unselectTransaction(transactionId:string):void {
+
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount();
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+
+		// Mark the passed transaction id as unselected
+		_.remove(registerState.selectedTransactions, (transaction:budgetEntities.ITransaction)=>{
+			return transaction.entityId == transactionId;
+		});
+		registerState.selectedTransactionsMap[transactionId] = false;
+		this.updateRegisterStateForAccount(activeAccount, registerState);
+	}
+
+	private editTrasaction(transactionId:string, focusOnField:string):void {
+
+	}
+
+	private selectAllTransactions():void {
+
+	}
+
+	private unselectAllTransactions():void {
+
+	}
 
 	// *******************************************************************************************************
 	// Action Handlers for commands in the Regsiter Toolbar
@@ -67,7 +159,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 		var workingBalance:number = 0;
 		var isAllAccounts:boolean = true;
 		var currentAccountId:string = null;
-
+		var registerState:IRegisterState = null;
 		var entitiesCollection = this.props.applicationState.entitiesCollection;
 
 		// Determine which account we are showing from the sidebar state
@@ -78,6 +170,8 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 			accountName = "All Accounts";
 			accounts = entitiesCollection.accounts;
 			isAllAccounts = true;
+			currentAccountId = null;
+			registerState = this.getRegisterStateForAccount("All_Accounts");
 		}
 		else if(sidebarState.selectedTab == "Account") {
 
@@ -86,6 +180,7 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 			accounts = [account];
 			isAllAccounts = false;
 			currentAccountId = account.entityId;
+			registerState = this.getRegisterStateForAccount(currentAccountId);
 		}
 
 		// Calculate the cleared and uncleared balance values for the displayed account/s
@@ -107,7 +202,12 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 
 				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} 
 					entitiesCollection={this.props.applicationState.entitiesCollection}
-					updateEntities={this.props.updateEntities}/>
+					updateEntities={this.props.updateEntities} registerState={registerState}
+					selectTransaction={this.selectTransaction}
+					unselectTransaction={this.unselectTransaction}
+					editTrasaction={this.editTrasaction}
+					selectAllTransactions={this.selectAllTransactions}
+					unselectAllTransactions={this.unselectAllTransactions} />
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
