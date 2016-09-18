@@ -12,6 +12,7 @@ export interface PClearedCellProps {
 	rowIndex?:number;
 	columnKey?:string;
 	transactions:Array<ITransaction>;
+	updateClearedForTransaction:(transaction:ITransaction)=>void;
 }
 
 const CellStyle = {
@@ -25,6 +26,17 @@ const ClearedColor = "#16A336";
 
 export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 	
+	constructor(props: any) {
+        super(props);
+		this.onClick = this.onClick.bind(this);
+	}
+
+	private onClick():void {
+
+		var transaction = this.props.transactions[this.props.rowIndex];
+		this.props.updateClearedForTransaction(transaction);
+	}
+
 	public render() {
 
 		var glyphColor = UnclearedColor;
@@ -33,13 +45,14 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 			// Get the transaction for the current row
 			var transaction = this.props.transactions[this.props.rowIndex];
 			if(transaction.cleared != ClearedFlag.Uncleared)
-				glyphColor = TransactionFlag.getFlagColor(transaction.flag);
+				glyphColor = ClearedColor;
 		}
 
 		var cellStyle = _.assign({}, CellStyle, {color:glyphColor});
 		return (
 			<div style={cellStyle}>
-				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true"/>
+				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true" 
+					style={{cursor: 'pointer'}} onClick={this.onClick} />
 			</div>
 		);
   	}

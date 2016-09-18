@@ -11,7 +11,7 @@ export class TransactionFlag {
 	private static flagColorMapping:any = {
 		"None": "#E1E1E1",
 		"Red": "#D43D2E",
-		"Orange": "FF7B00",
+		"Orange": "#FF7B00",
 		"Yellow": "#F8E136",
 		"Green": "#9AC234",
 		"Blue": "#0082CB",
@@ -21,7 +21,7 @@ export class TransactionFlag {
 	private static flagTextColorMapping:any = {
 		"None": "#BEBEBE",
 		"Red": "#AA3125",
-		"Orange": "CC6200",
+		"Orange": "#CC6200",
 		"Yellow": "#C6B42B",
 		"Green": "#7B9B29",
 		"Blue": "#0068A2",

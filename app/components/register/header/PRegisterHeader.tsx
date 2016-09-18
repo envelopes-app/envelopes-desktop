@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Tooltip } from 'react-bootstrap';
 
 import { PHeaderAccountName } from './PHeaderAccountName';
 import { PHeaderValue } from './PHeaderValue';

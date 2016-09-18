@@ -129,7 +129,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 		}
 	}
 
-	private getListItem(flagColorName:string = 'None', selected:boolean = false) {
+	private getListItem(flagColorName:string, selected:boolean = false) {
 
 		var flagColor = TransactionFlag.getFlagColor[flagColorName];
 		var flagTextColor = TransactionFlag.getFlagTextColor[flagColorName];

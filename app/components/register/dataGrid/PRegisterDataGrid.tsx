@@ -1,5 +1,5 @@
-/// <reference path="../../../_includes.ts" />
-
+/// <reference path="../../../_includes.ts" /> 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -21,13 +21,21 @@ import { POutflowCell } from './POutflowCell';
 import { PInflowCell } from './PInflowCell';
 import { PClearedCell } from './PClearedCell';
 
-import { IEntitiesCollection } from '../../../interfaces/state';
+import { ClearedFlag, TransactionFlag } from '../../../constants';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PRegisterDataGridProps {
 	accountId:string;
 	isAllAccounts:boolean;
 	entitiesCollection:IEntitiesCollection;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+}
+
+export interface PRegisterDataGridState {
+	componentWidth:number;
+	componentHeight:number;
 }
 
 const RegisterDataGridContainerStyle = {
@@ -35,7 +43,7 @@ const RegisterDataGridContainerStyle = {
 	backgroundColor: '#ffffff'
 }
 
-export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {componentWidth:number, componentHeight:number}> {
+export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, PRegisterDataGridState> {
   
 	private dataGridContainer:HTMLDivElement;
 
@@ -45,6 +53,8 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 		this.unselectTransaction = this.unselectTransaction.bind(this);
 		this.selectAllTransactions = this.selectAllTransactions.bind(this);
 		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
+		this.updateFlagForTransaction = this.updateFlagForTransaction.bind(this);
+		this.updateClearedForTransaction = this.updateClearedForTransaction.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.state = { componentWidth:0, componentHeight:0 };
 	}
@@ -63,18 +73,19 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 	}
 
 	private updateComponentDimensions() {
+		var state = _.assign({}, this.state) as PRegisterDataGridState;
 		var div = ReactDOM.findDOMNode(this.dataGridContainer);
-		var width = div.clientWidth;
-		var height = div.clientHeight;
-		this.setState({ componentWidth:width, componentHeight:height });
+		state.componentWidth = div.clientWidth;
+		state.componentHeight = div.clientHeight;
+		this.setState(state);
 	}
 
 	private selectTransaction(transactionId:string, unselectAllOthers:boolean):void {
-		debugger;
+
 	}
 
 	private unselectTransaction(transactionId:string):void {
-		debugger;
+
 	}
 
 	private selectAllTransactions():void {
@@ -83,6 +94,36 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 
 	private unselectAllTransactions():void {
 
+	}
+
+	private updateFlagForTransaction(transaction:budgetEntities.ITransaction, flag:string):void {
+
+		var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
+		updatedTransaction.flag = flag;
+		var changedEntities:ISimpleEntitiesCollection = {
+			transactions: [updatedTransaction]
+		};
+
+		this.props.updateEntities(changedEntities);
+	}
+
+	private updateClearedForTransaction(transaction:budgetEntities.ITransaction):void {
+
+		if(transaction.cleared != ClearedFlag.Reconciled) {
+
+			// Clear, or unclear the transaction, and send it for persistence
+			var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
+			if(updatedTransaction.cleared == ClearedFlag.Uncleared)
+				updatedTransaction.cleared = ClearedFlag.Cleared;
+			else if(updatedTransaction.cleared == ClearedFlag.Cleared)
+				updatedTransaction.cleared = ClearedFlag.Uncleared;
+
+			var changedEntities:ISimpleEntitiesCollection = {
+				transactions: [updatedTransaction]
+			};
+
+			this.props.updateEntities(changedEntities);
+		}
 	}
 
 	public render() {
@@ -113,7 +154,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 					key="flagColumn"
 					width={30}
 					header={<PFlagColumnHeader />}
-					cell={<PFlagCell transactions={transactions} />}
+					cell={<PFlagCell transactions={transactions} updateFlagForTransaction={this.updateFlagForTransaction} />}
 				/>,
 				<Column 
 					key="accountColumn"
@@ -162,7 +203,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, {
 					key="clearedColumn"
 					width={30}
 					header={<PClearedColumnHeader />}
-					cell={<PClearedCell transactions={transactions} />}
+					cell={<PClearedCell transactions={transactions} updateClearedForTransaction={this.updateClearedForTransaction} />}
 				/>
 			];
 

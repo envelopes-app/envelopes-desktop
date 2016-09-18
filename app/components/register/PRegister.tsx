@@ -101,16 +101,18 @@ export class PRegister extends React.Component<PRegisterProps, {}> {
 			<div style={RegisterContainerStyle}>
 				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} 
 					unclearedBalance={unclearedBalance} workingBalance={workingBalance} showReconcileButton={isAllAccounts == false} />
+
 				<PRegisterToolbar 
-					onAddTransactionSelected={this.onAddTransactionSelected}
-				/>
-				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} entitiesCollection={this.props.applicationState.entitiesCollection}/>
+					onAddTransactionSelected={this.onAddTransactionSelected} />
+
+				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					updateEntities={this.props.updateEntities}/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
 					entitiesCollection={entitiesCollection}
-					updateEntities={this.props.updateEntities} 
-				/>
+					updateEntities={this.props.updateEntities} />
 			</div>
 		);
   	}
