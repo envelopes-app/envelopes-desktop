@@ -6,6 +6,7 @@ import * as React from 'react';
 export interface PToolbarButtonProps {
 	text: string;
 	glyphName: string;
+	enabled?:boolean;
 	clickHandler?: (event:React.MouseEvent)=>void;
 }
 
@@ -32,9 +33,16 @@ export class PToolbarButton extends React.Component<PToolbarButtonProps, {hoverS
 
 	constructor(props: any) {
         super(props);
+		this.onClick = this.onClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.state = {hoverState:false};
+	}
+
+	private onClick(event:React.MouseEvent):void {
+
+		if(this.props.enabled == undefined || this.props.enabled == null || this.props.enabled == true)
+			this.props.clickHandler(event);
 	}
 
 	private handleMouseEnter() {
@@ -60,7 +68,7 @@ export class PToolbarButton extends React.Component<PToolbarButtonProps, {hoverS
 			style = _.assign({}, PToolbarButtonCommonStyle, PToolbarButtonDefaultStyle);
 
 		return (
-			<div style={style} onClick={this.props.clickHandler} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+			<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
 				<span className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
 				<text style={PToolbarButtonTextStyle}>&nbsp;{this.props.text}</text>
 			</div>

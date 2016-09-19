@@ -5,9 +5,23 @@ import * as ReactDOM from 'react-dom';
 
 import { PBudgetHeader } from './header/PBudgetHeader';
 import { PBudgetToolbar } from './toolbar/PBudgetToolbar';
+import { PMonthlyBudget } from './monthlyBudget/PMonthlyBudget';
+import { PInspectorContainer } from './inspectors/PInspectorContainer';
 
+import { DateWithoutTime } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { IApplicationState, ISimpleEntitiesCollection, IBudgetState } from '../../interfaces/state';
+
+export interface PBudgetProps {
+	// State Variables
+	applicationState: IApplicationState;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+}
+
+export interface PBudgetState {
+	selectedMonth:DateWithoutTime;
+}
 
 const BudgetContainerStyle = {
 	display: 'flex',
@@ -16,15 +30,12 @@ const BudgetContainerStyle = {
 	width: '100%'
 }
 
-const PBudgetItemStyle = {
-	flex: "1 0 auto"
-}
-
-export interface PBudgetProps {
-	// State Variables
-	applicationState: IApplicationState;
-	// Dispatcher Functions
-	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+const BudgetSubContainerStyle = {
+	display: 'flex',
+	flexFlow: 'row nowrap',
+	height: '100%',
+	width: '100%',
+	overflowX: "scroll"
 }
 
 export class PBudget extends React.Component<PBudgetProps, {}> {
@@ -49,11 +60,16 @@ export class PBudget extends React.Component<PBudgetProps, {}> {
 	// *******************************************************************************************************
 	// *******************************************************************************************************
 	public render() {
+
+		var currentMonth = DateWithoutTime.createForCurrentMonth();
     	return (
 			<div style={BudgetContainerStyle}>
 				<PBudgetHeader />
 				<PBudgetToolbar onAddTransactionSelected={this.onAddTransactionSelected} onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
-				<div style={PBudgetItemStyle}>Budget</div>
+				<div style={BudgetSubContainerStyle}>
+					<PMonthlyBudget currentMonth={currentMonth} entitiesCollection={this.props.applicationState.entitiesCollection} updateEntities={this.props.updateEntities} />
+					<PInspectorContainer />
+				</div>
 			</div>
 		);
   	}

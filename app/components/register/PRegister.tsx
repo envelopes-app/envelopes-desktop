@@ -86,7 +86,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// *******************************************************************************************************
 	private selectTransaction(transactionId:string, unselectAllOthers:boolean):void {
 		
-		debugger;
 		// Get the register state for the active account
 		var activeAccount = this.getActiveAccount();
 		var registerState = this.getRegisterStateForAccount(activeAccount);
@@ -108,9 +107,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var registerState = this.getRegisterStateForAccount(activeAccount);
 
 		// Mark the passed transaction id as unselected
-		_.remove(registerState.selectedTransactions, (transaction:budgetEntities.ITransaction)=>{
-			return transaction.entityId == transactionId;
-		});
+		var index = _.findIndex(registerState.selectedTransactions, {entityId: transactionId});
+		registerState.selectedTransactions.splice(index, 1);
 		registerState.selectedTransactionsMap[transactionId] = false;
 		this.updateRegisterStateForAccount(activeAccount, registerState);
 	}
@@ -198,6 +196,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					unclearedBalance={unclearedBalance} workingBalance={workingBalance} showReconcileButton={isAllAccounts == false} />
 
 				<PRegisterToolbar 
+					registerState={registerState}
 					onAddTransactionSelected={this.onAddTransactionSelected} />
 
 				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} 

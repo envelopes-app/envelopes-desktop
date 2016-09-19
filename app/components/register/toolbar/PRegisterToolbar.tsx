@@ -4,8 +4,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PToolbarButton } from '../../common/PToolbarButton';
+import { IRegisterState } from '../../../interfaces/state';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PRegisterToolbarProps {
+	registerState:IRegisterState;
 	onAddTransactionSelected:()=>void;
 }
 
@@ -29,12 +32,28 @@ const RegisterToolbarStyle = {
 
 export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}> {
   
+  	constructor(props: any) {
+        super(props);
+		this.showEditMenu = this.showEditMenu.bind(this);
+    }
+
+	private showEditMenu():void {
+
+	}
+
 	public render() {
+
+		var editButtonText:string = "Edit";
+		var selectedTransactionsCount = this.props.registerState.selectedTransactions.length;
+		if(selectedTransactionsCount > 0)
+			editButtonText += ` (${selectedTransactionsCount})`;
+
     	return (
 			<div style={RegisterToolbarContainerStyle}>
 				<div style={RegisterToolbarStyle}>
 					<PToolbarButton text="Add a transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
-					<PToolbarButton text="Edit" glyphName="glyphicon-edit" />
+					<PToolbarButton enabled={selectedTransactionsCount > 0} text={editButtonText} 
+						glyphName="glyphicon-edit" clickHandler={this.showEditMenu} />
 				</div>
 			</div>
 		);
