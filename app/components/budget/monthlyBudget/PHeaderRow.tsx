@@ -30,12 +30,14 @@ const SelectionColumnStyle = {
 
 const CategoryLabelContainerStyle = {
 	flex: "1 1 auto",
-	paddingLeft: "8px"
+	paddingLeft: "20px"
 }
 
 const LabelContainerStyle = {
 	flex: "0 0 auto",
-	width: "100px"
+	width: "100px",
+	textAlign: "right",
+	paddingRight: "8px"
 }
 
 const LableStyle = {

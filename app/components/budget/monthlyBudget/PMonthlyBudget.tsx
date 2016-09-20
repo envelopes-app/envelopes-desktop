@@ -6,7 +6,9 @@ import * as ReactDOM from 'react-dom';
 
 import { PHeaderRow } from './PHeaderRow';
 import { PMasterCategoryRow } from './PMasterCategoryRow';
+import { PSubCategoryRow } from './PSubCategoryRow';
 
+import { SubCategoriesArray } from '../../../collections';
 import { DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection, IBudgetState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -14,6 +16,11 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 export interface PMonthlyBudgetProps {
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	selectedSubCategories:Array<string>;
+	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
+	// Local UI state updation functions
+	selectSubCategory:(subCategoryId:string, unselectAllOthers:boolean)=>void;
+	unselectSubCategory:(subCategoryId:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -40,6 +47,46 @@ const MonthlyBudgetSubContainerStyle = {
 
 export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
+	private getBudgetRows(masterCategory:budgetEntities.IMasterCategory, 
+							subCategoriesArray:SubCategoriesArray,
+							monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>,
+							createSubCategoryRows:boolean = true):JSX.Element {
+
+		var masterCategoryRow:JSX.Element;
+		var subCategoryRows:Array<JSX.Element> = [];
+		var monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
+
+		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
+		_.forEach(subCategories, (subCategory)=>{
+
+			var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+			monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+
+			if(createSubCategoryRows) {
+
+				var subCategoryRow = (
+					<PSubCategoryRow key={subCategory.entityId} 
+						subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
+						selectedSubCategories={this.props.selectedSubCategories} 
+						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
+						selectSubCategory={this.props.selectSubCategory}
+						unselectSubCategory={this.props.unselectSubCategory} />
+				);
+				subCategoryRows.push(subCategoryRow);
+			}
+		});
+
+		masterCategoryRow = (
+				<PMasterCategoryRow
+					key={masterCategory.entityId} masterCategory={masterCategory} 
+					subCategories={subCategories} monthlySubCategoryBudgets={monthlySubCategoryBudgets}>
+					{subCategoryRows}
+				</PMasterCategoryRow>
+		);
+
+		return masterCategoryRow;
+	}
+
 	public render() {
 
 		var masterCategoryRow:JSX.Element; 
@@ -64,19 +111,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			var debtPaymentMasterCategory = masterCategoriesArray.getDebtPaymentMasterCategory();
 			var debtPaymentSubCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(debtPaymentMasterCategory.entityId);
 			if(debtPaymentSubCategories.length > 0) {
-
-				var debtPaymentMonthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
-				_.forEach(debtPaymentSubCategories, (subCategory)=>{
-					var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
-					debtPaymentMonthlySubCategoryBudgets.push(monthlySubCategoryBudget);
-				});
-
-				masterCategoryRow = (
-					<PMasterCategoryRow
-						key={debtPaymentMasterCategory.entityId} masterCategory={debtPaymentMasterCategory} 
-						subCategories={debtPaymentSubCategories} monthlySubCategoryBudgets={debtPaymentMonthlySubCategoryBudgets} />
-				);
-
+				masterCategoryRow = this.getBudgetRows(debtPaymentMasterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);
 				masterCategoryRows.push(masterCategoryRow);
 			}
 
@@ -85,21 +120,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				// Skip the Internal Master Categories
 				if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && !masterCategory.internalName) {
 
-					var masterCategorySubCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
-					var masterCategoryMonthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
-					_.forEach(masterCategorySubCategories, (subCategory)=>{
-						var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
-						masterCategoryMonthlySubCategoryBudgets.push(monthlySubCategoryBudget);
-					});
-
-					masterCategoryRow = (
-						<PMasterCategoryRow
-							key={masterCategory.entityId} masterCategory={masterCategory} 
-							subCategories={masterCategorySubCategories} monthlySubCategoryBudgets={masterCategoryMonthlySubCategoryBudgets} >
-						<label>Hello</label>
-					</PMasterCategoryRow>
-					);
-
+					masterCategoryRow = this.getBudgetRows(masterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);
 					masterCategoryRows.push(masterCategoryRow);
 				}
 			});
@@ -110,19 +131,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			if(hiddenSubCategories.length > 0) {
 
 				var hiddenMasterCategory = masterCategoriesArray.getHiddenMasterCategory();
-
-				var hiddenMonthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
-				_.forEach(hiddenSubCategories, (subCategory)=>{
-					var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
-					hiddenMonthlySubCategoryBudgets.push(monthlySubCategoryBudget);
-				});
-
-				masterCategoryRow = (
-					<PMasterCategoryRow
-						key={hiddenMasterCategory.entityId} masterCategory={hiddenMasterCategory} 
-						subCategories={hiddenSubCategories} monthlySubCategoryBudgets={hiddenMonthlySubCategoryBudgets}/>
-				);
-
+				masterCategoryRow = this.getBudgetRows(hiddenMasterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap, false);
 				masterCategoryRows.push(masterCategoryRow);
 			}
 		}

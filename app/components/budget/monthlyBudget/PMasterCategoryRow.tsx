@@ -18,7 +18,7 @@ export interface PMasterCategoryRowState {
 }
 
 const MasterCategoryRowContainerStyle = {
-	height: "25px",
+	height: "31px",
 	width: "100%",
 	display: "flex",
 	flexFlow: 'row nowrap',
@@ -29,7 +29,9 @@ const MasterCategoryRowContainerStyle = {
 	borderTopWidth: "0px",
 	borderBottomWidth: "1px",
 	borderRightWidth: "0px",
-	borderLeftWidth: "0px"
+	borderLeftWidth: "0px",
+	paddingTop: "3px",
+	paddingBottom: "3px"
 }
 
 const SelectionColumnStyle = {
@@ -38,14 +40,23 @@ const SelectionColumnStyle = {
 	paddingLeft: "8px"
 }
 
-const CategoryLabelContainerStyle = {
+const CategoryNameColumnStyle = {
 	flex: "1 1 auto",
 	paddingLeft: "8px"
 }
 
-const LabelContainerStyle = {
+const CategoryNameStyle = {
+	fontSize: "14px",
+	fontWeight: "bold",
+	color: "#003440",
+	marginBottom: "0px"
+}
+
+const ValueColumnStyle = {
 	flex: "0 0 auto",
-	width: "100px"
+	width: "100px",
+	textAlign: "right",
+	paddingRight: "8px"
 }
 
 const GlyphStyle = {
@@ -110,16 +121,16 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 						<input type="checkbox" />
 					</div>
 					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onGlyphClick}></span>
-					<div style={CategoryLabelContainerStyle}>
-						<label className="master-category-row-categoryname">{this.props.masterCategory.name}</label>
+					<div style={CategoryNameColumnStyle}>
+						<label style={CategoryNameStyle}>{this.props.masterCategory.name}</label>
 					</div>
-					<div style={LabelContainerStyle}>
+					<div style={ValueColumnStyle}>
 						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{budgeted}</label>
 					</div>
-					<div style={LabelContainerStyle}>
+					<div style={ValueColumnStyle}>
 						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{activity}</label>
 					</div>
-					<div style={LabelContainerStyle}>
+					<div style={ValueColumnStyle}>
 						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{balance}</label>
 					</div>
 				</div>
