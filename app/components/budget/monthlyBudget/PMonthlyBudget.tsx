@@ -95,12 +95,36 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					masterCategoryRow = (
 						<PMasterCategoryRow
 							key={masterCategory.entityId} masterCategory={masterCategory} 
-							subCategories={masterCategorySubCategories} monthlySubCategoryBudgets={masterCategoryMonthlySubCategoryBudgets} />
+							subCategories={masterCategorySubCategories} monthlySubCategoryBudgets={masterCategoryMonthlySubCategoryBudgets} >
+						<label>Hello</label>
+					</PMasterCategoryRow>
 					);
 
 					masterCategoryRows.push(masterCategoryRow);
 				}
 			});
+
+			// If there are hidden master categories or subcategories, then we are going to show a row
+			// for the HiddenMasterCategory as well
+			var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
+			if(hiddenSubCategories.length > 0) {
+
+				var hiddenMasterCategory = masterCategoriesArray.getHiddenMasterCategory();
+
+				var hiddenMonthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
+				_.forEach(hiddenSubCategories, (subCategory)=>{
+					var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+					hiddenMonthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				});
+
+				masterCategoryRow = (
+					<PMasterCategoryRow
+						key={hiddenMasterCategory.entityId} masterCategory={hiddenMasterCategory} 
+						subCategories={hiddenSubCategories} monthlySubCategoryBudgets={hiddenMonthlySubCategoryBudgets}/>
+				);
+
+				masterCategoryRows.push(masterCategoryRow);
+			}
 		}
 
     	return (

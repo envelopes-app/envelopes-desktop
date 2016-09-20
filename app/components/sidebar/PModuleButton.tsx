@@ -37,7 +37,7 @@ const ModuleButtonLabelStyle = {
 	color: 'rgb(255, 255, 255)'
 };
 
-export class PModuleButton extends React.Component<PModuleButtonProps, {}> {
+export class PModuleButton extends React.Component<PModuleButtonProps, {hoverState:boolean}> {
   
 	constructor(props: any) {
         super(props);

@@ -8,6 +8,7 @@ import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 
 import './styles/index.css';
+import './styles/budget.css';
 import './styles/register.css';
 import './styles/react-datepicker.css';
 import './styles/fixed-data-table.css';

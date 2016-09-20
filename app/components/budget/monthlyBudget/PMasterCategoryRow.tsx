@@ -12,6 +12,11 @@ export interface PMasterCategoryRowProps {
 	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
 }
 
+export interface PMasterCategoryRowState {
+	expanded:boolean;
+	hoverState:boolean;
+}
+
 const MasterCategoryRowContainerStyle = {
 	height: "25px",
 	width: "100%",
@@ -43,16 +48,43 @@ const LabelContainerStyle = {
 	width: "100px"
 }
 
-const LableStyle = {
+const GlyphStyle = {
 	fontSize: "12px",
-	fontWeight: "bold",
-	color: "#4D717A",
-	marginBottom: "0px"
+	cursor: 'pointer'
 }
 
-export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps, {}> {
+export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps, PMasterCategoryRowState> {
+
+	constructor(props: any) {
+        super(props);
+		this.onGlyphClick = this.onGlyphClick.bind(this);
+		this.handleMouseEnter = this.handleMouseEnter.bind(this);
+		this.handleMouseLeave = this.handleMouseLeave.bind(this);
+		this.state = {hoverState:false, expanded:true};
+	}
+
+	private handleMouseEnter() {
+		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		state.hoverState = true;
+		this.setState(state);
+	}
+
+	private handleMouseLeave() {
+		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		state.hoverState = false;
+		this.setState(state);
+	}
+
+	private onGlyphClick():void {
+		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		state.expanded = !state.expanded;
+		this.setState(state);
+	}
 
 	public render() {
+
+		var glyphiconClass, containerClass:string;
+		var collapseContainerIdentity = "subCategoriesContainer_" + this.props.masterCategory.entityId;
 
 		var budgeted = 0, activity = 0, balance = 0;
 		_.forEach(this.props.monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
@@ -62,25 +94,39 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			balance += monthlySubCategoryBudget.balance;
 		});
 
+		if(this.state.expanded == true) {
+			glyphiconClass = "glyphicon glyphicon-triangle-bottom";
+			containerClass = "collapse in";
+		}
+		else {
+			glyphiconClass = "glyphicon glyphicon-triangle-right";
+			containerClass = "collapse";
+		}
+
     	return (
-			<div style={MasterCategoryRowContainerStyle}>
-				<div style={SelectionColumnStyle}>
-					<input type="checkbox" />
+			<div>
+				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+					<div style={SelectionColumnStyle}>
+						<input type="checkbox" />
+					</div>
+					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onGlyphClick}></span>
+					<div style={CategoryLabelContainerStyle}>
+						<label className="master-category-row-categoryname">{this.props.masterCategory.name}</label>
+					</div>
+					<div style={LabelContainerStyle}>
+						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{budgeted}</label>
+					</div>
+					<div style={LabelContainerStyle}>
+						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{activity}</label>
+					</div>
+					<div style={LabelContainerStyle}>
+						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{balance}</label>
+					</div>
 				</div>
-				<div style={CategoryLabelContainerStyle}>
-					<label style={LableStyle}>{this.props.masterCategory.name}</label>
-				</div>
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>{budgeted}</label>
-				</div>
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>{activity}</label>
-				</div>
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>{balance}</label>
+				<div className={containerClass} id={collapseContainerIdentity}>
+					{this.props.children}
 				</div>
 			</div>
 		);
   	}
-
 }
