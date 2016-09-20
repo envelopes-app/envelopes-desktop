@@ -15,6 +15,9 @@ export interface PSubCategoryRowProps {
 
 	selectSubCategory:(subCategoryId:string, unselectAllOthers:boolean)=>void;
 	unselectSubCategory:(subCategoryId:string)=>void;
+	hideSubCategory:(subCategoryId:string)=>void;
+	deleteSubCategory:(subCategoryId:string)=>void;
+	showSubCategoryEditDialog:(subCategoryId:string)=>void;
 }
 
 export interface PSubCategoryRowState {
@@ -91,6 +94,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
+		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
 	}
 
@@ -130,6 +134,16 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.setState(state);
 	}
 
+	private onCategoryNameClick(event:React.MouseEvent):void {
+
+		var subCategory = this.props.subCategory;
+		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
+		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
+		if(isSelected) {
+			this.props.showSubCategoryEditDialog(this.props.subCategory.entityId);
+		}
+	}
+
 	public render() {
 
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
@@ -154,7 +168,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				<div style={CategoryNameColumnStyle}>
-					<label style={CategoryNameStyle}>{this.props.subCategory.name}</label>
+					<label style={CategoryNameStyle} onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
 				</div>
 				<div style={this.state.hoverState ? ValueColumnHoverStyle : ValueColumnStyle}>
 					<label style={ValueStyle}>{budgeted}</label>

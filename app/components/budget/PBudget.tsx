@@ -9,8 +9,9 @@ import { PBudgetToolbar } from './toolbar/PBudgetToolbar';
 import { PMonthlyBudget } from './monthlyBudget/PMonthlyBudget';
 import { PInspectorContainer } from './inspectors/PInspectorContainer';
 
-import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
+import * as dialogs from './dialogs';
 import * as budgetEntities from '../../interfaces/budgetEntities';
+import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
 import { IApplicationState, ISimpleEntitiesCollection, IBudgetState } from '../../interfaces/state';
 
 export interface PBudgetProps {
@@ -43,10 +44,22 @@ const BudgetSubContainerStyle = {
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
+	private subCategoryEditDialog:dialogs.PSubCategoryEditDialog;
+
 	constructor(props: any) {
         super(props);
+		this.hideSubCategory = this.hideSubCategory.bind(this);
+		this.deleteSubCategory = this.deleteSubCategory.bind(this);
 		this.selectSubCategory = this.selectSubCategory.bind(this);
 		this.unselectSubCategory = this.unselectSubCategory.bind(this);
+		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
+		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
+		this.showSubCategoryActivityDialog = this.showSubCategoryActivityDialog.bind(this);
+		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
+		this.showCoverOverspendingDialog = this.showCoverOverspendingDialog.bind(this);
+		this.showMoveMoneyDialog = this.showMoveMoneyDialog.bind(this);
+		this.showHiddenCategoriesDialog = this.showHiddenCategoriesDialog.bind(this);
+
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
@@ -57,6 +70,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		}
     }
 
+  	// *******************************************************************************************************
+	// Handlers for commands initiated from the budget rows
+	// *******************************************************************************************************
 	private selectSubCategory(subCategoryId:string, unselectAllOthers:boolean):void {
 
 		var state = _.assign({}, this.state) as PBudgetState;
@@ -81,6 +97,41 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
+	private hideSubCategory(subCategoryId:string):void {
+
+	}
+
+	private deleteSubCategory(subCategoryId:string):void {
+
+	}
+
+	private showSubCategoryEditDialog(subCategoryId:string):void {
+		this.subCategoryEditDialog.show(null);
+	}
+
+	private showMasterCategoryEditDialog(masterCategoryId:string):void {
+
+	}
+
+	private showSubCategoryActivityDialog(subCategoryId:string):void {
+
+	}
+
+	private showMasterCategoryActivityDialog(masterCategoryId:string):void {
+
+	}
+
+	private showCoverOverspendingDialog(subCategoryId:string):void {
+
+	}
+
+	private showMoveMoneyDialog(subCategoryId:string):void {
+
+	}
+
+	private showHiddenCategoriesDialog():void {
+		
+	}
   	// *******************************************************************************************************
 	// Action Handlers for commands in the Regsiter Toolbar
 	// *******************************************************************************************************
@@ -109,9 +160,14 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
 						selectSubCategory={this.selectSubCategory}
 						unselectSubCategory={this.unselectSubCategory}
+						hideSubCategory={this.hideSubCategory}
+						deleteSubCategory={this.deleteSubCategory}
+						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 					/>
 					<PInspectorContainer />
 				</div>
+
+				<dialogs.PSubCategoryEditDialog ref={(d)=> this.subCategoryEditDialog = d } />
 			</div>
 		);
   	}

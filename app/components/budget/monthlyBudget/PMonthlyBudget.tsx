@@ -21,6 +21,9 @@ export interface PMonthlyBudgetProps {
 	// Local UI state updation functions
 	selectSubCategory:(subCategoryId:string, unselectAllOthers:boolean)=>void;
 	unselectSubCategory:(subCategoryId:string)=>void;
+	hideSubCategory:(subCategoryId:string)=>void;
+	deleteSubCategory:(subCategoryId:string)=>void;
+	showSubCategoryEditDialog:(subCategoryId:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -70,7 +73,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						selectedSubCategories={this.props.selectedSubCategories} 
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
 						selectSubCategory={this.props.selectSubCategory}
-						unselectSubCategory={this.props.unselectSubCategory} />
+						unselectSubCategory={this.props.unselectSubCategory}
+						hideSubCategory={this.props.hideSubCategory}
+						deleteSubCategory={this.props.deleteSubCategory}
+						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog} />
 				);
 				subCategoryRows.push(subCategoryRow);
 			}
