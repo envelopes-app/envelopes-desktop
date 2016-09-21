@@ -41,7 +41,7 @@ export class PayeeLocationQueries {
 		var query:IDatabaseQuery = {
 
 			name: "payeeLocations",
-			query: "SELECT * FROM PayeeLocations WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			query: "SELECT * FROM PayeeLocations WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
 			arguments: [
 				budgetId,
 				deviceKnowledge

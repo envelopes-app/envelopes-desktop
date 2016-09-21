@@ -50,7 +50,7 @@ export class AccountMappingQueries {
 		var query:IDatabaseQuery = {
 
 			name: "accountMappings",
-			query: "SELECT * FROM AccountMappings WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			query: "SELECT * FROM AccountMappings WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
 			arguments: [
 				budgetId,
 				deviceKnowledge

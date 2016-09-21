@@ -611,15 +611,15 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-button"
+					<Button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-primary-button"
 						onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
 						Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
-					<Button ref={(c) => this.saveButton = c} className="dialog-button"
+					<Button ref={(c) => this.saveButton = c} className="dialog-primary-button"
 						onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveButton}>
 						Save&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
-					<Button ref={(c) => this.cancelButton = c} className="dialog-cancel-button"
+					<Button ref={(c) => this.cancelButton = c} className="dialog-secondary-button"
 						onClick={this.close} onKeyDown={this.handleKeyPressedOnCancelButton}>
 						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 					</Button>

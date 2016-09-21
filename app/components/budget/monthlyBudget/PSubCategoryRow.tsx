@@ -17,7 +17,7 @@ export interface PSubCategoryRowProps {
 	unselectSubCategory:(subCategoryId:string)=>void;
 	hideSubCategory:(subCategoryId:string)=>void;
 	deleteSubCategory:(subCategoryId:string)=>void;
-	showSubCategoryEditDialog:(subCategoryId:string)=>void;
+	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 }
 
 export interface PSubCategoryRowState {
@@ -88,6 +88,8 @@ const ValueStyle = {
 
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
+	private categoryNameLabel:HTMLLabelElement;
+
 	constructor(props: any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
@@ -140,7 +142,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 		if(isSelected) {
-			this.props.showSubCategoryEditDialog(this.props.subCategory.entityId);
+			this.props.showSubCategoryEditDialog(this.props.subCategory.entityId, this.categoryNameLabel);
 		}
 	}
 
@@ -154,6 +156,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		var subCategory = this.props.subCategory;
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
+		if(!isSelected)
+			isSelected = false;
 
 		var subCategoryRowContainerStyle = _.assign({}, SubCategoryRowContainerStyle);
 		if(isSelected) {
@@ -168,7 +172,9 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				<div style={CategoryNameColumnStyle}>
-					<label style={CategoryNameStyle} onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
+					<label style={CategoryNameStyle} 
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
 				</div>
 				<div style={this.state.hoverState ? ValueColumnHoverStyle : ValueColumnStyle}>
 					<label style={ValueStyle}>{budgeted}</label>

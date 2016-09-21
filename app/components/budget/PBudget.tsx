@@ -105,8 +105,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	}
 
-	private showSubCategoryEditDialog(subCategoryId:string):void {
-		this.subCategoryEditDialog.show(null);
+	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for editing the subcategory
+		this.subCategoryEditDialog.show(subCategoryId, element);
 	}
 
 	private showMasterCategoryEditDialog(masterCategoryId:string):void {
@@ -167,7 +168,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					<PInspectorContainer />
 				</div>
 
-				<dialogs.PSubCategoryEditDialog ref={(d)=> this.subCategoryEditDialog = d } />
+				<dialogs.PSubCategoryEditDialog 
+					ref={(d)=> this.subCategoryEditDialog = d} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
 			</div>
 		);
   	}

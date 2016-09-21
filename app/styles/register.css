@@ -192,36 +192,36 @@
 }
 
 /* Style for buttons on Transaction Dialog */
-.dialog-button {
+.dialog-primary-button {
 	color: #ffffff;
-	background-color: #2FA2B5;
-	border-color: #2FA2B5;	
+	background-color: #009cc2;
+	border-color: #009cc2;	
 }
 
-.dialog-button:hover {
-	color: #ffffff;
-	background-color: #005076;	
-	border-color: #005076;	
-}
-
-.dialog-button:focus {
+.dialog-primary-button:hover {
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	
 }
 
-.dialog-cancel-button {
-	color: #2FA2B5;
+.dialog-primary-button:focus {
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+.dialog-secondary-button {
+	color: #009cc2;
 	background-color: #ffffff;	
 }
 
-.dialog-cancel-button:hover {
+.dialog-secondary-button:hover {
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	
 }
 
-.dialog-cancel-button:focus {
+.dialog-secondary-button:focus {
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	

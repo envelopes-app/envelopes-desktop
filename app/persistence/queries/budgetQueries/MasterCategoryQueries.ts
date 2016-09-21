@@ -37,7 +37,7 @@ export class MasterCategoryQueries {
 		var query:IDatabaseQuery = {
 
 			name: "masterCategories",
-			query: "SELECT * FROM MasterCategories WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			query: "SELECT * FROM MasterCategories WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
 			arguments: [
 				budgetId,
 				deviceKnowledge

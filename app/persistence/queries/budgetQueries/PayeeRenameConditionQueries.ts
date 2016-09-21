@@ -41,7 +41,7 @@ export class PayeeRenameConditionQueries {
 		var query:IDatabaseQuery = {
 
 			name: "payeeRenameConditions",
-			query: "SELECT * FROM PayeeRenameConditions WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			query: "SELECT * FROM PayeeRenameConditions WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
 			arguments: [
 				budgetId,
 				deviceKnowledge

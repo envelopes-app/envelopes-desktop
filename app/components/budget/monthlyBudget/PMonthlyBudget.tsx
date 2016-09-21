@@ -23,7 +23,7 @@ export interface PMonthlyBudgetProps {
 	unselectSubCategory:(subCategoryId:string)=>void;
 	hideSubCategory:(subCategoryId:string)=>void;
 	deleteSubCategory:(subCategoryId:string)=>void;
-	showSubCategoryEditDialog:(subCategoryId:string)=>void;
+	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }

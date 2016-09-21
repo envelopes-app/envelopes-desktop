@@ -49,7 +49,7 @@ export class ScheduledSubTransactionQueries {
 		var query:IDatabaseQuery = {
 
 			name: "scheduledSubTransactions",
-			query: "SELECT * FROM ScheduledSubTransactions WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?) AND isTombstone = 0",
+			query: "SELECT * FROM ScheduledSubTransactions WHERE budgetId = ? AND (deviceKnowledge = 0 OR deviceKnowledge > ?)",
 			arguments: [
 				budgetId,
 				deviceKnowledge

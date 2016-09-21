@@ -79,7 +79,7 @@ export class MonthlyBudgetQueries {
 			name: "monthlyBudgets",
 			query: `SELECT * FROM MonthlyBudgets WHERE budgetId = ?1 AND 
 						(deviceKnowledge = 0 OR deviceKnowledge > ?2 OR deviceKnowledgeForCalculatedFields = 0 OR
-						deviceKnowledgeForCalculatedFields > ?3) AND isTombstone = 0`,
+						deviceKnowledgeForCalculatedFields > ?3)`,
 			arguments: [
 				budgetId,
 				deviceKnowledge,
