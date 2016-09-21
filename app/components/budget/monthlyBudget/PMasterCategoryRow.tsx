@@ -4,12 +4,18 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { SimpleObjectMap } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMasterCategoryRowProps {
 	masterCategory:budgetEntities.IMasterCategory;
 	subCategories:Array<budgetEntities.ISubCategory>;
 	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
+	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
+
+	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
+	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
+	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 }
 
 export interface PMasterCategoryRowState {
@@ -59,6 +65,13 @@ const ValueColumnStyle = {
 	paddingRight: "8px"
 }
 
+const ValueStyle = {
+	fontSize: "14px",
+	fontWeight: "normal",
+	color: "#4D717A",
+	marginBottom: "0px"
+}
+
 const GlyphStyle = {
 	fontSize: "12px",
 	cursor: 'pointer'
@@ -66,12 +79,43 @@ const GlyphStyle = {
 
 export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps, PMasterCategoryRowState> {
 
+	private categoryNameLabel:HTMLLabelElement;
+
 	constructor(props: any) {
         super(props);
 		this.onGlyphClick = this.onGlyphClick.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
+		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
+	}
+
+	private onClick(event:React.MouseEvent):void {
+
+		if((event.target as HTMLElement).localName == "div") {
+			var masterCategory = this.props.masterCategory;
+			var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
+			var isSelected = selectedMasterCategoriesMap[masterCategory.entityId];
+
+			if(isSelected)
+				this.props.unselectMasterCategory(masterCategory);
+			else
+				this.props.selectMasterCategory(masterCategory, true);
+		}
+	}
+
+	private onCheckBoxSelectionChange(event:React.SyntheticEvent):void {
+
+		var masterCategory = this.props.masterCategory;
+		var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
+		var isSelected = selectedMasterCategoriesMap[masterCategory.entityId];
+
+		if(isSelected)
+			this.props.unselectMasterCategory(masterCategory);
+		else
+			this.props.selectMasterCategory(masterCategory, false);
 	}
 
 	private handleMouseEnter() {
@@ -92,6 +136,12 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.setState(state);
 	}
 
+	private onCategoryNameClick(event:React.MouseEvent):void {
+
+		var masterCategory = this.props.masterCategory;
+		this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
+	}
+
 	public render() {
 
 		var glyphiconClass, containerClass:string;
@@ -105,6 +155,18 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			balance += monthlySubCategoryBudget.balance;
 		});
 
+		var masterCategory = this.props.masterCategory;
+		var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
+		var isSelected = selectedMasterCategoriesMap[masterCategory.entityId];
+		if(!isSelected)
+			isSelected = false;
+
+		var masterCategoryRowContainerStyle = _.assign({}, MasterCategoryRowContainerStyle);
+		if(isSelected) {
+			masterCategoryRowContainerStyle["color"] = "#FFFFFF";
+			masterCategoryRowContainerStyle["backgroundColor"] = "#005A6E";
+		}
+
 		if(this.state.expanded == true) {
 			glyphiconClass = "glyphicon glyphicon-triangle-bottom";
 			containerClass = "collapse in";
@@ -116,22 +178,25 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
     	return (
 			<div>
-				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}
+						onClick={this.onClick}>
 					<div style={SelectionColumnStyle}>
-						<input type="checkbox" />
+						<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 					</div>
 					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onGlyphClick}></span>
 					<div style={CategoryNameColumnStyle}>
-						<label style={CategoryNameStyle}>{this.props.masterCategory.name}</label>
+						<label className="budget-row-mastercategoryname"
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>{this.props.masterCategory.name}</label>
 					</div>
 					<div style={ValueColumnStyle}>
-						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{budgeted}</label>
+						<label style={ValueStyle}>{budgeted}</label>
 					</div>
 					<div style={ValueColumnStyle}>
-						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{activity}</label>
+						<label style={ValueStyle}>{activity}</label>
 					</div>
 					<div style={ValueColumnStyle}>
-						<label className={this.state.hoverState ? "master-category-row-value-hover" : "master-category-row-value"}>{balance}</label>
+						<label style={ValueStyle}>{balance}</label>
 					</div>
 				</div>
 				<div className={containerClass} id={collapseContainerIdentity}>

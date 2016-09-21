@@ -47,7 +47,7 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 
 	private onClick(event:MouseEvent):void {
 
-		if((event.target as any).localName == "div") {
+		if((event.target as HTMLElement).localName == "div") {
 			var transaction = this.props.transactions[this.props.rowIndex];
 			this.props.selectTransaction(transaction.entityId, true);
 		}

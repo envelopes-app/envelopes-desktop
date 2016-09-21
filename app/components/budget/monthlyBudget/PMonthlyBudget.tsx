@@ -18,12 +18,14 @@ export interface PMonthlyBudgetProps {
 	entitiesCollection:IEntitiesCollection;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
+	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	// Local UI state updation functions
-	selectSubCategory:(subCategoryId:string, unselectAllOthers:boolean)=>void;
-	unselectSubCategory:(subCategoryId:string)=>void;
-	hideSubCategory:(subCategoryId:string)=>void;
-	deleteSubCategory:(subCategoryId:string)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean)=>void;
+	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
+	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
+	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -74,8 +76,6 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
 						selectSubCategory={this.props.selectSubCategory}
 						unselectSubCategory={this.props.unselectSubCategory}
-						hideSubCategory={this.props.hideSubCategory}
-						deleteSubCategory={this.props.deleteSubCategory}
 						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog} />
 				);
 				subCategoryRows.push(subCategoryRow);
@@ -84,8 +84,14 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
 		masterCategoryRow = (
 				<PMasterCategoryRow
-					key={masterCategory.entityId} masterCategory={masterCategory} 
-					subCategories={subCategories} monthlySubCategoryBudgets={monthlySubCategoryBudgets}>
+					key={masterCategory.entityId} 
+					masterCategory={masterCategory} 
+					subCategories={subCategories} 
+					monthlySubCategoryBudgets={monthlySubCategoryBudgets}
+					selectedMasterCategoriesMap={this.props.selectedMasterCategoriesMap}
+					selectMasterCategory={this.props.selectMasterCategory}
+					unselectMasterCategory={this.props.unselectMasterCategory}
+					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}>
 					{subCategoryRows}
 				</PMasterCategoryRow>
 		);

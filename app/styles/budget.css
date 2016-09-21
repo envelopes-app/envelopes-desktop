@@ -1,20 +1,29 @@
-.master-category-row-categoryname {
+.budget-row-mastercategoryname {
 	font-size: 14px;
-	font-weight: normal;
+	font-weight: bold;
 	color: #003440;
 	margin-bottom: 0px;
 }
 
-.master-category-row-value {
+.budget-row-mastercategoryname:hover {
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration: underline;
+	color: #003440;
+	margin-bottom: 0px;
+	cursor: pointer;
+}
+
+.budget-row-subcategoryname {
 	font-size: 14px;
 	font-weight: normal;
-	color: #4D717A;
 	margin-bottom: 0px;
 }
 
-.master-category-row-value-hover {
+.budget-row-subcategoryname:hover {
 	font-size: 14px;
 	font-weight: normal;
-	color: #003440;
+	text-decoration: underline;
 	margin-bottom: 0px;
+	cursor: pointer;
 }

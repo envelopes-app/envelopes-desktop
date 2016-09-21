@@ -9,8 +9,8 @@ export interface PInspectorContainerProps {
 
 const InspectorContainerStyle = {
 	flex: '0 0 auto',
-	minWidth: "260px",
-	width: "260px",
+	minWidth: "340px",
+	width: "340px",
 	backgroundColor: "#E5F5F9",
 	borderColor: "#DFE4E9",
 	borderStyle: "solid",

@@ -196,10 +196,24 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 	}
 
 	private onCancelClick():void { 
+		// Hide the dialog
 		this.hide();
 	}
 
-	private onHideClick():void { }
+	private onHideClick():void { 
+
+		// Get the category entity that we are currently editing
+		var subCategory = this.state.subCategory;
+		var updatedSubCategory = _.assign({}, subCategory) as budgetEntities.ISubCategory;
+		// Set the hidden flag and update the entity
+		updatedSubCategory.isHidden = 1;
+		var updatedEntities:ISimpleEntitiesCollection = {
+			subCategories: [updatedSubCategory]
+		};
+		this.props.updateEntities(updatedEntities);
+		// Hide the dialog
+		this.hide();
+	}
 
 	private onDeleteClick():void {
 

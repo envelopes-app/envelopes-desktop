@@ -13,10 +13,8 @@ export interface PSubCategoryRowProps {
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 
-	selectSubCategory:(subCategoryId:string, unselectAllOthers:boolean)=>void;
-	unselectSubCategory:(subCategoryId:string)=>void;
-	hideSubCategory:(subCategoryId:string)=>void;
-	deleteSubCategory:(subCategoryId:string)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean)=>void;
+	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 }
 
@@ -52,12 +50,6 @@ const SelectionColumnStyle = {
 const CategoryNameColumnStyle = {
 	flex: "1 1 auto",
 	paddingLeft: "20px"
-}
-
-const CategoryNameStyle = {
-	fontSize: "14px",
-	fontWeight: "normal",
-	marginBottom: "0px"
 }
 
 const ValueColumnStyle = {
@@ -102,14 +94,16 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	private onClick(event:React.MouseEvent):void {
 
-		var subCategory = this.props.subCategory;
-		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
-		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
+		if((event.target as HTMLElement).localName == "div") {
+			var subCategory = this.props.subCategory;
+			var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
+			var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 
-		if(isSelected)
-			this.props.unselectSubCategory(subCategory.entityId);
-		else
-			this.props.selectSubCategory(subCategory.entityId, true);
+			if(isSelected)
+				this.props.unselectSubCategory(subCategory);
+			else
+				this.props.selectSubCategory(subCategory, true);
+		}
 	}
 
 	private onCheckBoxSelectionChange(event:React.SyntheticEvent):void {
@@ -119,9 +113,9 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 
 		if(isSelected)
-			this.props.unselectSubCategory(subCategory.entityId);
+			this.props.unselectSubCategory(subCategory);
 		else
-			this.props.selectSubCategory(subCategory.entityId, false);
+			this.props.selectSubCategory(subCategory, false);
 	}
 
 	private handleMouseEnter() {
@@ -142,7 +136,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 		if(isSelected) {
-			this.props.showSubCategoryEditDialog(this.props.subCategory.entityId, this.categoryNameLabel);
+			this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
 		}
 	}
 
@@ -172,7 +166,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				<div style={CategoryNameColumnStyle}>
-					<label style={CategoryNameStyle} 
+					<label className="budget-row-subcategoryname" 
 						ref={(l)=> this.categoryNameLabel = l}
 						onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
 				</div>
