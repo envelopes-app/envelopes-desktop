@@ -3,8 +3,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface PInspectorContainerProps {
+import { PDefaultInspector } from './PDefaultInspector';
 
+import { IEntitiesCollection } from '../../../interfaces/state';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
+
+export interface PInspectorContainerProps {
+	entitiesCollection:IEntitiesCollection;
+	selectedSubCategories:Array<string>;
 }
 
 const InspectorContainerStyle = {
@@ -24,10 +30,16 @@ const InspectorContainerStyle = {
 export class PInspectorContainer extends React.Component<PInspectorContainerProps, {}> {
 
 	public render() {
+
+		var inspector:JSX.Element;
+
+		if(this.props.selectedSubCategories.length == 0)
+			inspector = <PDefaultInspector />;
+
     	return (
 			<div style={InspectorContainerStyle}>
+				{inspector}
 			</div>
 		);
   	}
-
 }

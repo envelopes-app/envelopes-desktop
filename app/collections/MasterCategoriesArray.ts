@@ -37,4 +37,16 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 	public getHiddenMasterCategory():IMasterCategory {
 		return this.hiddenMasterCategory;
 	}
+
+	public getVisibleNonTombstonedMasterCategories():Array<IMasterCategory> {
+
+		var masterCategories:Array<IMasterCategory> = [];		
+
+		_.forEach(this, (masterCategory)=>{
+			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0)
+				masterCategories.push(masterCategory);
+		});
+
+		return masterCategories;
+	}
 }

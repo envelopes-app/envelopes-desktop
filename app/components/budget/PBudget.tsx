@@ -122,9 +122,14 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		return allSelected;
 	}
 
+	private shouldAllCategoriesBeSelected():boolean {
+
+		var allSelected:boolean = true;
+		return allSelected;
+	}
+
 	private selectMasterCategory(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean):void {
 
-		debugger;
 		var state = _.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
 			state.selectedSubCategories = [];
@@ -147,7 +152,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private unselectMasterCategory(masterCategory:budgetEntities.IMasterCategory):void {
 
-		debugger;
 		var state = _.assign({}, this.state) as PBudgetState;
 		// Get all the subcategories for this master category and set them as unselected
 		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
@@ -226,7 +230,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						unselectMasterCategory={this.unselectMasterCategory}
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}
 					/>
-					<PInspectorContainer />
+					<PInspectorContainer 
+						selectedSubCategories={this.state.selectedSubCategories}
+						entitiesCollection={this.props.applicationState.entitiesCollection} 
+					/>
 				</div>
 
 				<dialogs.PSubCategoryEditDialog 

@@ -137,7 +137,6 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 	}
 
 	private onCategoryNameClick(event:React.MouseEvent):void {
-
 		var masterCategory = this.props.masterCategory;
 		this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
 	}

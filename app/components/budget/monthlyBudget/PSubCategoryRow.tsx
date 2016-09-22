@@ -78,6 +78,13 @@ const ValueStyle = {
 	marginBottom: "0px"
 }
 
+const BudgetedValueStyle = {
+	fontSize: "14px",
+	fontWeight: "normal",
+	color: "#4D717A",
+	marginBottom: "0px"
+}
+
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
@@ -131,13 +138,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	}
 
 	private onCategoryNameClick(event:React.MouseEvent):void {
-
 		var subCategory = this.props.subCategory;
-		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
-		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
-		if(isSelected) {
-			this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
-		}
+		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
 	}
 
 	public render() {
@@ -153,10 +155,19 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		if(!isSelected)
 			isSelected = false;
 
+		var valueStyle = _.assign({}, ValueStyle);
+		var budgetedValueStyle = _.assign({}, BudgetedValueStyle);
 		var subCategoryRowContainerStyle = _.assign({}, SubCategoryRowContainerStyle);
+
 		if(isSelected) {
+			valueStyle["color"] = "#FFFFFF";
+
+			if(!this.state.hoverState)
+				budgetedValueStyle["color"] = "#FFFFFF";
+
 			subCategoryRowContainerStyle["color"] = "#FFFFFF";
 			subCategoryRowContainerStyle["backgroundColor"] = "#005A6E";
+
 		}
 
     	return (
@@ -171,13 +182,13 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 						onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
 				</div>
 				<div style={this.state.hoverState ? ValueColumnHoverStyle : ValueColumnStyle}>
-					<label style={ValueStyle}>{budgeted}</label>
+					<label style={budgetedValueStyle}>{budgeted}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<label style={ValueStyle}>{activity}</label>
+					<label style={valueStyle}>{activity}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<label style={ValueStyle}>{balance}</label>
+					<label style={valueStyle}>{balance}</label>
 				</div>
 			</div>
 		);
