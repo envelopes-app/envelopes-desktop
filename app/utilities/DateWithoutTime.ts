@@ -129,6 +129,13 @@ export class DateWithoutTime {
 		return this;
 	}
 
+	public getMonthFullName():string {
+		return this._internalUTCMoment.format("MMMM");
+	}
+
+	public getMonthShortName():string {
+		return this._internalUTCMoment.format("MMM");
+	}
 
 	public getDate():number {
 

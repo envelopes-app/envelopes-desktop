@@ -23,6 +23,7 @@ export interface PBudgetProps {
 
 export interface PBudgetState {
 	selectedMonth:DateWithoutTime;
+	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
@@ -54,6 +55,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.unselectSubCategory = this.unselectSubCategory.bind(this);
 		this.selectMasterCategory = this.selectMasterCategory.bind(this);
 		this.unselectMasterCategory = this.unselectMasterCategory.bind(this);
+		this.selectSubCategoryForEditing = this.selectSubCategoryForEditing.bind(this);
+		this.selectNextSubCategoryForEditing = this.selectNextSubCategoryForEditing.bind(this);
+		this.selectPreviousSubCategoryForEditing = this.selectPreviousSubCategoryForEditing.bind(this);
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
 		
@@ -68,23 +72,27 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		this.state = {
 			selectedMonth: DateWithoutTime.createForCurrentMonth(),
+			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
 			selectedMasterCategoriesMap: {}
 		}
     }
-
   	// *******************************************************************************************************
 	// Handlers for commands initiated from the budget rows
 	// *******************************************************************************************************
-	private selectSubCategory(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean):void {
+	private selectSubCategory(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean):void {
 
-		debugger;
 		var state = _.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
 			state.selectedSubCategories = [];
 			state.selectedSubCategoriesMap = {};
 			state.selectedMasterCategoriesMap = {};
+
+			if(setAsEditing)
+				state.editingSubCategory = subCategory.entityId;
+			else
+				state.editingSubCategory = null;
 		}
 
 		// Mark the passed subCategoryId as selected
@@ -100,6 +108,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var state = _.assign({}, this.state) as PBudgetState;
 		// Mark the passed subCategoryId as unselected
 		var index = _.findIndex(state.selectedSubCategories, subCategory.entityId);
+		state.editingSubCategory = null;
 		state.selectedSubCategories.splice(index, 1);
 		state.selectedSubCategoriesMap[subCategory.entityId] = false;
 		// Since we are unselecting the subcategory, it's master category, if selected, would also ne unselected
@@ -132,6 +141,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		var state = _.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
+			state.editingSubCategory = null;
 			state.selectedSubCategories = [];
 			state.selectedSubCategoriesMap = {};
 			state.selectedMasterCategoriesMap = {};
@@ -159,11 +169,81 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		// Mark all these subCategories as unselected
 		_.forEach(subCategories, (subCategory)=>{
 			var index = _.findIndex(state.selectedSubCategories, subCategory.entityId);
+			state.editingSubCategory = null;
 			state.selectedSubCategories.splice(index, 1);
 			state.selectedSubCategoriesMap[subCategory.entityId] = false;
 		});
 		// Mark the master category as unselected
 		state.selectedMasterCategoriesMap[masterCategory.entityId] = false;
+		this.setState(state);
+	}
+
+	private selectSubCategoryForEditing(subCategoryId:string):void {
+
+		var state = _.assign({}, this.state) as PBudgetState;
+		state.editingSubCategory = subCategoryId;
+		state.selectedSubCategories = [subCategoryId];
+		state.selectedSubCategoriesMap = {subCategoryId:true};
+		state.selectedMasterCategoriesMap = {};
+		this.setState(state);
+	}
+
+	private selectNextSubCategoryForEditing():void {
+
+		debugger;
+		var state = _.assign({}, this.state) as PBudgetState;
+		// Get the sorted list of subcategories
+		var subCategoryIds = this.getSortedCategoryIdsList();
+		// If we don't currently have a subcategory being edited, then set the first category
+		// from the list to be the one being edited
+		if(!state.editingSubCategory)
+			state.editingSubCategory = subCategoryIds[0];
+		else {
+			// Find the index of the subcategory currently being edited
+			var index = _.findIndex(subCategoryIds, state.editingSubCategory);
+			// if the index is for the last item in the list, then set it to zero.
+			// Otherwise increment it to point to next subcategory
+			if(index == subCategoryIds.length - 1)
+				index = 0;
+			else
+				index++;
+
+			var subCategoryId = subCategoryIds[index];
+			state.editingSubCategory = subCategoryId;
+			state.selectedSubCategories = [subCategoryId];
+			state.selectedSubCategoriesMap = {subCategoryId:true};
+			state.selectedMasterCategoriesMap = {};
+		}
+
+		this.setState(state);
+	}
+
+	private selectPreviousSubCategoryForEditing():void {
+
+		var state = _.assign({}, this.state) as PBudgetState;
+		// Get the sorted list of subcategories
+		var subCategoryIds = this.getSortedCategoryIdsList();
+		// If we don't currently have a subcategory being edited, then set the first category
+		// from the list to be the one being edited
+		if(!state.editingSubCategory)
+			state.editingSubCategory = subCategoryIds[0];
+		else {
+			// Find the index of the subcategory currently being edited
+			var index = _.findIndex(subCategoryIds, state.editingSubCategory);
+			// if the index is for the first item in the list, then set it to the last item.
+			// Otherwise decrement it to point to previous subcategory
+			if(index == 0)
+				index = subCategoryIds.length - 1;
+			else
+				index--;
+
+			var subCategoryId = subCategoryIds[index];
+			state.editingSubCategory = subCategoryId;
+			state.selectedSubCategories = [subCategoryId];
+			state.selectedSubCategoriesMap = {subCategoryId:true};
+			state.selectedMasterCategoriesMap = {};
+		}
+
 		this.setState(state);
 	}
 
@@ -196,6 +276,29 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private showHiddenCategoriesDialog():void {
 		
 	}
+
+	private getSortedCategoryIdsList():Array<string> {
+
+		var categoryIdsList:Array<string> = [];
+		var masterCategoriesArray = this.props.applicationState.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
+
+		var debtPaymentMasterCategory = masterCategoriesArray.getDebtPaymentMasterCategory();
+		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(debtPaymentMasterCategory.entityId);
+		_.forEach(subCategories, (subCategory)=>{
+			categoryIdsList.push(subCategory.entityId);
+		});
+
+		var masterCategories = masterCategoriesArray.getVisibleNonTombstonedMasterCategories();
+		_.forEach(masterCategories, (masterCategory)=>{
+			var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
+			_.forEach(subCategories, (subCategory)=>{
+				categoryIdsList.push(subCategory.entityId);
+			});
+		});
+
+		return categoryIdsList;
+	}
   	// *******************************************************************************************************
 	// Action Handlers for commands in the Regsiter Toolbar
 	// *******************************************************************************************************
@@ -212,7 +315,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	public render() {
 
     	return (
-			<div style={BudgetContainerStyle}>
+			<div style={BudgetContainerStyle} tabIndex={1}>
 				<PBudgetHeader />
 				<PBudgetToolbar onAddTransactionSelected={this.onAddTransactionSelected} onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
 				<div style={BudgetSubContainerStyle}>
@@ -220,14 +323,18 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						currentMonth={this.state.selectedMonth} 
 						entitiesCollection={this.props.applicationState.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 
+						editingSubCategory={this.state.editingSubCategory}
 						selectedSubCategories={this.state.selectedSubCategories}
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
 						selectedMasterCategoriesMap={this.state.selectedMasterCategoriesMap}
 						selectSubCategory={this.selectSubCategory}
 						unselectSubCategory={this.unselectSubCategory}
-						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 						selectMasterCategory={this.selectMasterCategory}
 						unselectMasterCategory={this.unselectMasterCategory}
+						selectSubCategoryForEditing={this.selectSubCategoryForEditing}
+						selectNextSubCategoryForEditing={this.selectNextSubCategoryForEditing}
+						selectPreviousSubCategoryForEditing={this.selectPreviousSubCategoryForEditing}
+						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}
 					/>
 					<PInspectorContainer 

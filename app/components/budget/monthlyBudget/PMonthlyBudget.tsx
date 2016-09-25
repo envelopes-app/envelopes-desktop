@@ -16,15 +16,19 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 export interface PMonthlyBudgetProps {
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	// Local UI state updation functions
-	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
-	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
+	selectSubCategoryForEditing:(subCategoryId:string)=>void;
+	selectNextSubCategoryForEditing:()=>void;
+	selectPreviousSubCategoryForEditing:()=>void;
+	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -52,6 +56,10 @@ const MonthlyBudgetSubContainerStyle = {
 
 export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
+	constructor(props: any) {
+        super(props);
+	}
+
 	private getBudgetRows(masterCategory:budgetEntities.IMasterCategory, 
 							subCategoriesArray:SubCategoriesArray,
 							monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>,
@@ -72,10 +80,14 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				var subCategoryRow = (
 					<PSubCategoryRow key={subCategory.entityId} 
 						subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
+						editingSubCategory={this.props.editingSubCategory}
 						selectedSubCategories={this.props.selectedSubCategories} 
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
 						selectSubCategory={this.props.selectSubCategory}
 						unselectSubCategory={this.props.unselectSubCategory}
+						selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
+						selectNextSubCategoryForEditing={this.props.selectNextSubCategoryForEditing}
+						selectPreviousSubCategoryForEditing={this.props.selectPreviousSubCategoryForEditing}
 						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog} />
 				);
 				subCategoryRows.push(subCategoryRow);
@@ -157,5 +169,4 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			</div>
 		);
   	}
-
 }

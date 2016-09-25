@@ -4,8 +4,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
-export interface PDefaultInspectorProps {
+import { IEntitiesCollection } from '../../../interfaces/state';
+import * as budgetEntities from '../../../interfaces/budgetEntities';
 
+export interface PDefaultInspectorProps {
+	entitiesCollection:IEntitiesCollection;
+	selectedSubCategories:Array<string>;
 }
 
 const DefaultInspectorContainerStyle = {

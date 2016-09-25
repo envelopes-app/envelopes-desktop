@@ -43,7 +43,7 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 		var masterCategories:Array<IMasterCategory> = [];		
 
 		_.forEach(this, (masterCategory)=>{
-			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0)
+			if(!masterCategory.internalName && masterCategory.isTombstone == 0 && masterCategory.isHidden == 0)
 				masterCategories.push(masterCategory);
 		});
 
