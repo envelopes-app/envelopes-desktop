@@ -1,7 +1,7 @@
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import { KeyGenerator } from '../utilities';
-import { AccountTypes, ClearedFlag, TransactionFlag } from '../constants';
+import { AccountTypes, ClearedFlag, TransactionFlag, SubCategoryType } from '../constants';
 
 export class EntityFactory {
 
@@ -30,6 +30,50 @@ export class EntityFactory {
 		};
 
 		return account;
+	}
+
+	public static createNewMasterCategory(budgetId:string = null):budgetEntities.IMasterCategory {
+
+		var mastetCategory:budgetEntities.IMasterCategory = {
+			budgetId: budgetId,
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			internalName: null,
+			deletable: 1,
+			sortableIndex: 0,
+			name: null,
+			note: null,
+			isHidden: 0,
+			deviceKnowledge: 0
+		}
+
+		return mastetCategory;
+	}
+
+	public static createNewSubCategory(budgetId:string = null):budgetEntities.ISubCategory {
+
+		var subCategory:budgetEntities.ISubCategory = {
+			budgetId: budgetId,
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			masterCategoryId: null,
+			accountId: null,
+			internalName: null,
+			sortableIndex: 0,
+			pinnedIndex: null,
+			name: null,
+			type: SubCategoryType.Default,
+			note: null,
+			isHidden: 0,
+			goalType: null,
+			goalCreationMonth: null,
+			targetBalance: null,
+			targetBalanceMonth: null,
+			monthlyFunding: null,
+			deviceKnowledge: 0
+		}
+
+		return subCategory;
 	}
 
 	public static createNewPayee(budgetId:string = null):budgetEntities.IPayee {

@@ -46,6 +46,7 @@ const BudgetSubContainerStyle = {
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
+	private createCategoryDialog:dialogs.PCreateCategoryDialog;
 	private subCategoryEditDialog:dialogs.PSubCategoryEditDialog;
 	private masterCategoryEditDialog:dialogs.PMasterCategoryEditDialog;
 
@@ -60,6 +61,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.selectPreviousSubCategoryForEditing = this.selectPreviousSubCategoryForEditing.bind(this);
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
+		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
 		
 		this.showSubCategoryActivityDialog = this.showSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
@@ -257,6 +259,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.masterCategoryEditDialog.show(masterCategoryId, element);
 	}
 
+	private showCreateCategoryDialog(masterCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for creating a category
+		this.createCategoryDialog.show(masterCategoryId, element);
+	}
+
 	private showSubCategoryActivityDialog(subCategoryId:string):void {
 
 	}
@@ -306,8 +313,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	}
 
-	private onAddCategoryGroupSelected():void {
-
+	private onAddCategoryGroupSelected(element:HTMLElement):void {
+		this.showCreateCategoryDialog(null, element);
 	}
 
 	// *******************************************************************************************************
@@ -342,6 +349,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						entitiesCollection={this.props.applicationState.entitiesCollection} 
 					/>
 				</div>
+
+				<dialogs.PCreateCategoryDialog 
+					ref={(d)=> this.createCategoryDialog = d} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
 
 				<dialogs.PSubCategoryEditDialog 
 					ref={(d)=> this.subCategoryEditDialog = d} 

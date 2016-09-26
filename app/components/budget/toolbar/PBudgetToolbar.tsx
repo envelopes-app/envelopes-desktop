@@ -7,7 +7,7 @@ import { PToolbarButton } from '../../common/PToolbarButton';
 
 export interface PBudgetToolbarProps {
 	onAddTransactionSelected:()=>void;
-	onAddCategoryGroupSelected:()=>void;
+	onAddCategoryGroupSelected:(element:HTMLElement)=>void;
 }
 
 const BudgetToolbarContainerStyle = {
@@ -30,12 +30,32 @@ const BudgetToolbarStyle = {
 
 export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
   
+	private addCategoryButton:PToolbarButton;
+	private addTransactionButton:PToolbarButton;
+
+	constructor(props: any) {
+        super(props);
+		this.onAddCategoryButtonClick = this.onAddCategoryButtonClick.bind(this);
+	}
+
+	private onAddCategoryButtonClick(event:React.MouseEvent):void {
+
+		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
+		this.props.onAddCategoryGroupSelected(element);
+	}
+
 	public render() {
     	return (
 			<div style={BudgetToolbarContainerStyle}>
 				<div style={BudgetToolbarStyle}>
-					<PToolbarButton text="Add Transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
-					<PToolbarButton text="Add Category Group" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddCategoryGroupSelected} />
+					<PToolbarButton 
+						ref={(c)=>{this.addTransactionButton = c;}}
+						text="Add Transaction" glyphName="glyphicon-plus-sign" 
+						clickHandler={this.props.onAddTransactionSelected} />
+					<PToolbarButton 
+						ref={(c)=>{this.addCategoryButton = c;}}
+						text="Add Category Group" glyphName="glyphicon-plus-sign" 
+						clickHandler={this.onAddCategoryButtonClick} />
 				</div>
 			</div>
 		);
