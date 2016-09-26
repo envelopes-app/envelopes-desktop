@@ -28,6 +28,7 @@ export interface PMonthlyBudgetProps {
 	selectSubCategoryForEditing:(subCategoryId:string)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
+	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
@@ -103,7 +104,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					selectedMasterCategoriesMap={this.props.selectedMasterCategoriesMap}
 					selectMasterCategory={this.props.selectMasterCategory}
 					unselectMasterCategory={this.props.unselectMasterCategory}
-					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}>
+					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
+					showCreateCategoryDialog={this.props.showCreateCategoryDialog}>
 					{subCategoryRows}
 				</PMasterCategoryRow>
 		);

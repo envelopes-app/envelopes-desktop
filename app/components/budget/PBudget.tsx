@@ -341,6 +341,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectSubCategoryForEditing={this.selectSubCategoryForEditing}
 						selectNextSubCategoryForEditing={this.selectNextSubCategoryForEditing}
 						selectPreviousSubCategoryForEditing={this.selectPreviousSubCategoryForEditing}
+						showCreateCategoryDialog={this.showCreateCategoryDialog}
 						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}
 					/>

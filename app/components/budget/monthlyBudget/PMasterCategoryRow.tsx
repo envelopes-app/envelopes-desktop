@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { SimpleObjectMap } from '../../../utilities';
+import { SimpleObjectMap, Logger } from '../../../utilities';
+import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMasterCategoryRowProps {
@@ -15,6 +16,7 @@ export interface PMasterCategoryRowProps {
 
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
+	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 }
 
@@ -48,6 +50,9 @@ const SelectionColumnStyle = {
 
 const CategoryNameColumnStyle = {
 	flex: "1 1 auto",
+	display: "flex",
+	flexFlow: 'row nowrap',
+	alignItems: "center",
 	paddingLeft: "8px"
 }
 
@@ -80,11 +85,13 @@ const GlyphStyle = {
 export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps, PMasterCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
+	private addCategoryButton:PButtonWithGlyph;
 
 	constructor(props: any) {
         super(props);
-		this.onGlyphClick = this.onGlyphClick.bind(this);
+		this.onExpandCollapseGlyphClick = this.onExpandCollapseGlyphClick.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onAddSubCategoryClick = this.onAddSubCategoryClick.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
@@ -104,6 +111,13 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			else
 				this.props.selectMasterCategory(masterCategory, true);
 		}
+	}
+
+	private onAddSubCategoryClick(event:React.MouseEvent):void {
+
+		var masterCategory = this.props.masterCategory;
+		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
+		this.props.showCreateCategoryDialog(masterCategory.entityId, element);
 	}
 
 	private onCheckBoxSelectionChange(event:React.SyntheticEvent):void {
@@ -130,7 +144,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.setState(state);
 	}
 
-	private onGlyphClick():void {
+	private onExpandCollapseGlyphClick():void {
 		var state = _.assign({}, this.state) as PMasterCategoryRowState;
 		state.expanded = !state.expanded;
 		this.setState(state);
@@ -149,9 +163,11 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		var budgeted = 0, activity = 0, balance = 0;
 		_.forEach(this.props.monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
 
-			budgeted += monthlySubCategoryBudget.budgeted;
-			activity += monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
-			balance += monthlySubCategoryBudget.balance;
+			if(monthlySubCategoryBudget) {
+				budgeted += monthlySubCategoryBudget.budgeted;
+				activity += monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
+				balance += monthlySubCategoryBudget.balance;
+			}
 		});
 
 		var masterCategory = this.props.masterCategory;
@@ -182,11 +198,14 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 					<div style={SelectionColumnStyle}>
 						<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 					</div>
-					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onGlyphClick}></span>
+					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onExpandCollapseGlyphClick}></span>
 					<div style={CategoryNameColumnStyle}>
 						<label className="budget-row-mastercategoryname"
 						ref={(l)=> this.categoryNameLabel = l}
-						onClick={this.onCategoryNameClick}>{this.props.masterCategory.name}</label>
+						onClick={this.onCategoryNameClick}>{this.props.masterCategory.name}&nbsp;</label>
+						<PButtonWithGlyph showGlyph={this.state.hoverState} 
+							ref={(b)=> this.addCategoryButton = b}
+							glyphName="glyphicon-plus-sign" clickHandler={this.onAddSubCategoryClick} />
 					</div>
 					<div style={ValueColumnStyle}>
 						<label style={ValueStyle}>{budgeted}</label>

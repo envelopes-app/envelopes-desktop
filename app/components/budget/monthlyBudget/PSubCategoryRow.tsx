@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormControl } from 'react-bootstrap';
 
-import { SimpleObjectMap } from '../../../utilities';
+import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PSubCategoryRowProps {
@@ -213,12 +213,15 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	public render() {
 
-		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
-		var budgeted = monthlySubCategoryBudget.budgeted;
-		var activity = monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
-		var balance = monthlySubCategoryBudget.balance;
-
 		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		if(!monthlySubCategoryBudget)
+			Logger.error(`PSubCategoryRow::MonthlySubCategoryBudget entity for ${subCategory.name} was not found.`);
+
+		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
+		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
+		var balance = monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0;
+
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 		var isEditing = (this.props.editingSubCategory && subCategory.entityId == this.props.editingSubCategory);

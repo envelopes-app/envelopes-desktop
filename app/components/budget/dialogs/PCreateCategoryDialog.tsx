@@ -126,6 +126,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 		state.show = true;
 		state.target = target;
 		state.placement = placement;
+		state.masterCategoryId = masterCategoryId;
 		state.placeholder = masterCategoryId ? "New Category" : "New Category Group";
 		state.validationState = null;
 		state.validationMessage = null;

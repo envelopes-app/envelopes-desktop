@@ -70,7 +70,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 	protected removeEntityById(entityId:string):ISubCategory {
 		var removedSubCategory = super.removeEntityById(entityId);
-		if(removedSubCategory.isHidden == 1) {
+		if(removedSubCategory && removedSubCategory.isHidden == 1) {
 
 			var index = _.findIndex(this.hiddenSubCategories, {entityId: entityId});
 			this.hiddenSubCategories.splice(index, 1);
