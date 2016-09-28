@@ -1,2 +1,3 @@
-﻿export { CalculationQueries } from './CalculationQueries';
+﻿export { BudgetDateQueries } from './BudgetDateQueries';
+export { CalculationQueries } from './CalculationQueries';
 export { KnowledgeValueQueries } from './KnowledgeValueQueries';

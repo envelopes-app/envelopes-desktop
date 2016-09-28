@@ -81,16 +81,21 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static syncBudgetDataWithDatabase(entitiesCollection:ISimpleEntitiesCollection) {
+	public static syncBudgetDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection) {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
+			// Get the existing in-memory entities collection from state. This is so that we can
+			// determine in the PersistenceManager which entities being saved are new, and which are
+			// being updated (and what fields are being updated). On the basis of this we will be 
+			// queueing the calculations to be run. 
+			var existingEntitiesCollection = getState().entitiesCollection;
 			var persistenceManager = PersistenceManager.getInstance();
-			return persistenceManager.syncDataWithDatabase(entitiesCollection)
-				.then((updatedEntities:IEntitiesCollection)=>{
+			return persistenceManager.syncDataWithDatabase(updatedEntitiesCollection, existingEntitiesCollection)
+				.then((updatedEntitiesFromStorage:IEntitiesCollection)=>{
 
 					// dispatch action sync data with database completed
-					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntities));
+					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
 				});
 		};
 	}

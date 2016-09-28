@@ -4,8 +4,20 @@ import { DateWithoutTime } from '../../../utilities';
 import { IDatabaseQuery } from '../../../interfaces/persistence';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { SubCategoryType } from '../../../constants';
+import { CalculationQueries } from '../miscQueries';
 
 export class AccountQueries {
+
+	public static getCalculationInvalidationQuery(updatedEntity:budgetEntities.IAccount, existingEntity:budgetEntities.IAccount):IDatabaseQuery {
+
+		// If this is a new account, or the onBudget property of an existing account changes, then
+		// invalidate the calculations for this account entity
+		if(!existingEntity || existingEntity.onBudget != updatedEntity.onBudget) {
+			return CalculationQueries.getQueueAccountCalculationQuery(updatedEntity.budgetId, updatedEntity.entityId);
+		}
+
+		return null;
+	}
 
 	public static insertDatabaseObject(dbObject:budgetEntities.IAccount):IDatabaseQuery {
 

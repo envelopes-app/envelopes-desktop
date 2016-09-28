@@ -93,6 +93,31 @@ export class EntityFactory {
 		return payee;
 	}
 
+	public static createNewSubTransaction(budgetId:string = null):budgetEntities.ISubTransaction {
+
+		var subTransaction:budgetEntities.ISubTransaction = {
+			budgetId: budgetId,
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			transactionId: null,
+			payeeId: null,
+			subCategoryId: null,
+			amount: 0,
+			memo: null,
+			transferAccountId: null,
+			transferTransactionId: null,
+			sortableIndex: 0,
+
+			cashAmount: 0,
+			creditAmount: 0,
+			subCategoryCreditAmountPreceding: 0,
+			deviceKnowledge: 0,
+			deviceKnowledgeForCalculatedFields: 0
+		};
+
+		return subTransaction;
+	}
+
 	public static createNewTransaction(budgetId:string = null):budgetEntities.ITransaction {
 
 		var transaction:budgetEntities.ITransaction = {
@@ -126,5 +151,4 @@ export class EntityFactory {
 
 		return transaction;
 	}
-
 }

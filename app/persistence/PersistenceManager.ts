@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
+import { CalculationsManager } from './CalculationsManager';
 import * as commonInterfaces from '../interfaces/common'; 
 import * as catalogEntities from '../interfaces/catalogEntities';
 import * as budgetEntities from '../interfaces/budgetEntities';
@@ -35,6 +36,7 @@ export class PersistenceManager {
 	private catalogKnowledge:CatalogKnowledge;
 	private budgetKnowledge:BudgetKnowledge;
 	private activeBudget:catalogEntities.IBudget;
+	private calculationsManager:CalculationsManager;
 
 	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
 
@@ -97,19 +99,21 @@ export class PersistenceManager {
 			});
 	}
 
-	public syncDataWithDatabase(entitiesCollection:ISimpleEntitiesCollection):Promise<IEntitiesCollection> {
+	public syncDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {
+
+		var budgetId = this.activeBudget.entityId;
+		var budgetKnowledge = this.budgetKnowledge;
 
 		// Persist the passed entities into the database
-		return this.saveBudgetEntitiesToDatabase(entitiesCollection)
+		return this.saveBudgetEntitiesToDatabase(updatedEntitiesCollection, existingEntitiesCollection)
 			.then((retVal:boolean)=>{
 
 				// Run pending calculations
-				return this.runQueuedCalculations();
+				return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
 			})
 			.then((retVal:boolean)=>{
 				
 				// Load updated data from the database
-				var budgetId = this.activeBudget.entityId;
 				var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 				var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
 				return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
@@ -194,7 +198,7 @@ export class PersistenceManager {
 		return executeSqlQueries([query]);
 	}
 
-	private saveBudgetEntitiesToDatabase(entitiesCollection:ISimpleEntitiesCollection):Promise<boolean> {
+	private saveBudgetEntitiesToDatabase(entitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<boolean> {
 
 		// Iterate through the passed entities, and ensure that each of them has the budgetId set
 		// Also update the deviceKnowledge value on each entity 
@@ -231,6 +235,7 @@ export class PersistenceManager {
 		// Create queries to persist these entities
 		var queriesList:Array<IDatabaseQuery> = [];
 		queriesList = _.concat(
+			// Get the Data Persistence Queries for saving these entities
 			_.map(entitiesCollection.accounts, (entity)=>{ return budgetueries.AccountQueries.insertDatabaseObject(entity); }),
 			_.map(entitiesCollection.accountMappings, (entity)=>{ return budgetueries.AccountMappingQueries.insertDatabaseObject(entity); }),
 			_.map(entitiesCollection.masterCategories, (entity)=>{ return budgetueries.MasterCategoryQueries.insertDatabaseObject(entity); }),
@@ -246,6 +251,16 @@ export class PersistenceManager {
 			_.map(entitiesCollection.subTransactions, (entity)=>{ return budgetueries.SubTransactionQueries.insertDatabaseObject(entity); }),
 			_.map(entitiesCollection.transactions, (entity)=>{ return budgetueries.TransactionQueries.insertDatabaseObject(entity); })
 		)
+
+		// Get the Calculation Invalidation Queries to queue calculations
+		if(entitiesCollection.accounts) {
+			_.forEach(entitiesCollection.accounts, (entity)=>{ 
+				var originalEntity = existingEntitiesCollection.accounts.getEntityById(entity.entityId);
+				var query = budgetueries.AccountQueries.getCalculationInvalidationQuery(entity, originalEntity); 
+				if(query)
+					queriesList.push(query);
+			});
+		}
 
 		if(queriesList.length > 0)
 			return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
@@ -284,10 +299,5 @@ export class PersistenceManager {
 				// resolve the promise with the result object
 				return Promise.resolve(result);
 			});
-	}
-
-	private runQueuedCalculations():Promise<boolean> {
-
-		return Promise.resolve(true);
 	}
 }

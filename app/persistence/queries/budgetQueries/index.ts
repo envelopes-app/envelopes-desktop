@@ -1,5 +1,6 @@
 ﻿export { AccountMappingQueries } from './AccountMappingQueries';
 export { AccountQueries } from './AccountQueries';
+export { CommonQueries } from './CommonQueries';
 export { MasterCategoryQueries } from './MasterCategoryQueries';
 export { MonthlyBudgetQueries } from './MonthlyBudgetQueries';
 export { MonthlySubCategoryBudgetQueries } from './MonthlySubCategoryBudgetQueries';

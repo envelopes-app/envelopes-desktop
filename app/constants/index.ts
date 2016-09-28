@@ -1,9 +1,12 @@
-export { AccountTypes, AccountTypeNames } from './AccountTypes';
+export { AccountTypes, AccountTypeNames, AccountTypeProperties } from './AccountTypes';
 export { ActionNames } from './ActionNames';
+export { BudgetEntityType } from './BudgetEntityType';
 export { CalculationQueueItemTypes } from './CalculationQueueItemTypes';
+export { CatalogEntityType } from './CatalogEntityType';
 export { ClearedFlag } from './ClearedFlag';
 export { InternalCategories, InternalCategoryNames } from './InternalCategories';
 export { InternalPayees } from './InternalPayees';
+export { SubCategoryGoalType } from './SubCategoryGoalType';
 export { SubCategoryType } from './SubCategoryType';
 export { TransactionFlag } from './TransactionFlag';
 export { TransactionFrequency } from './TransactionFrequency';
