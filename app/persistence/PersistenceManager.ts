@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 
-import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
+import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge, setDatabaseReference } from './QueryExecutionUtility';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import { CalculationsManager } from './CalculationsManager';
@@ -39,6 +39,22 @@ export class PersistenceManager {
 	private calculationsManager:CalculationsManager;
 
 	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
+
+		// ********************************************************************************************
+		// Testing Code
+		// ********************************************************************************************
+		// If we are running in the testing environment then we need to explicitly open a connection
+		// to the websql database, and set it's reference in the QueryExecutionUtility so that 
+		// everyone else can use it
+		if(process.env.NODE_ENV === 'test') {
+			var dbFileName:string = "ENAB";
+			var refDatabase = openDatabase(dbFileName, "1.0", "ENAB Test Database", 5 * 1024 * 1024);
+			setDatabaseReference(refDatabase);
+			// Explicitly set refreshDatabaseAtStartup to true to force a blank database
+			refreshDatabaseAtStartup = true;
+		} 
+		// ********************************************************************************************
+		// ********************************************************************************************
 
 		// Ensure that the database tables are created and all the migrations have been run
 		var databaseFactory = new DatabaseFactory();

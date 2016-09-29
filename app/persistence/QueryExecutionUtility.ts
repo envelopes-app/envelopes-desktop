@@ -2,10 +2,12 @@
 
 import { ipcRenderer } from 'electron';
 import * as uuid from 'node-uuid';
+import * as _ from 'lodash';
 
-import { IDatabaseQuery } from '../interfaces/persistence/IDatabaseQuery';
+import { Logger } from '../utilities';
 import { BudgetKnowledge } from './KnowledgeObjects';
 import { KnowledgeValueQueries } from './queries/miscQueries';
+import { IDatabaseQuery } from '../interfaces/persistence/IDatabaseQuery';
 
 export function executeSqlQueriesAndSaveKnowledge(queryList:Array<IDatabaseQuery>,
 											budgetId:string,
@@ -13,10 +15,25 @@ export function executeSqlQueriesAndSaveKnowledge(queryList:Array<IDatabaseQuery
 
 	// Append the query to persist the budgetKnowledge values to the list of queries
 	queryList.push( KnowledgeValueQueries.getSaveBudgetKnowledgeValueQuery(budgetId, budgetKnowledge) );
-	return this.executeSqlQueries(queryList);
+	return executeSqlQueries(queryList);
 }
 
 export function executeSqlQueries(queryList:Array<IDatabaseQuery>):Promise<any> {
+
+	if(process.env.NODE_ENV === 'test') 
+		return executeSqlQueriesInTestEnvironment(queryList);
+	else 
+		return executeSqlQueriesInProductionEnvironment(queryList);
+}
+
+// Reference to the websql database that is used in the testing environment
+var refDatabase:Database;
+
+export function setDatabaseReference(database):void {
+	refDatabase = database;
+}
+
+function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery>):Promise<any> {
 
 	return new Promise<any>((resolve, reject)=>{
 
@@ -41,4 +58,90 @@ export function executeSqlQueries(queryList:Array<IDatabaseQuery>):Promise<any> 
 		// Send the request to the main process
 		ipcRenderer.send("database-request", payload);
 	});
+}
+
+function executeSqlQueriesInTestEnvironment(queryList:Array<IDatabaseQuery>):Promise<any> {
+
+	return new Promise<any>((resolve, reject)=>{
+		var results:any = {};
+		var startTime = Date.now();
+
+		refDatabase.transaction(
+			(refTransaction:SQLTransaction)=>{
+
+				_.each(queryList, (queryObj)=>{
+					if(queryObj)
+						executeSqlQuery(refTransaction, queryObj, results);
+				});
+			},
+			(error:SQLError)=>{
+				// If the transaction fails, reject the promise
+				// Turn this into a readable standard error
+				var standardError : Error;
+				try{
+					standardError = new Error(`SQL Error ${error.code}: ${error.message}`);
+				}
+				catch(e){
+					standardError = new Error('Unknown SQL Error');
+				}
+				Logger.error(standardError.toString());
+				reject(standardError);
+			},
+			()=>{
+
+				var endTime = Date.now();
+				var duration = (endTime - startTime)/1000;
+				results.executionTime = duration;
+
+				// Transaction completed successfully so resolve the promise
+				resolve(results);
+			}
+		);
+	});
+}
+
+function executeSqlQuery(refTransaction:SQLTransaction, queryObj:IDatabaseQuery, results:any):void {
+
+	refTransaction.executeSql(queryObj.query, queryObj.arguments,
+		(transaction:SQLTransaction, resultSet:SQLResultSet):void => {
+
+			if(queryObj.name != undefined) {
+
+				var objects:Array<any> = [];
+				var rowsAffected = resultSet.rowsAffected;
+
+				if(resultSet.rows.length > 0) {
+
+					for(var i:number = 0; i < resultSet.rows.length; i++) {
+
+						var object:any = resultSet.rows.item(i);
+						objects.push(object);
+					}
+				}
+
+				// If there is already an object of the same name in the results object then append the
+				// contents of this array to the array in that object.
+				// Otherwise just store this array in the result object.
+				var existingObjects:Array<any> = results[queryObj.name];
+				if(existingObjects) {
+					objects = existingObjects.concat(objects);
+
+					var previousRowsAffected = results[queryObj.name + "_rows_affected"];
+					rowsAffected += previousRowsAffected;
+				}
+
+				results[ queryObj.name ] = objects;
+				results[ queryObj.name + "_rows_affected" ] = rowsAffected;
+			}
+		}
+		/*
+			,
+			function(transaction:SQLTransaction, error:SQLError):boolean {
+
+				debugger;
+				ynab.utilities.ConsoleUtilities.error(error.message);
+				return false;
+			}
+			*/
+	);
 }
