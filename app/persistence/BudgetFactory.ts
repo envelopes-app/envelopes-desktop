@@ -132,27 +132,6 @@ export class BudgetFactory {
 				return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
 			});
 	}
-	
-	protected getReferenceDataForEnsuringMonthlyDataExists(budgetId:string, month:DateWithoutTime):Promise<IReferenceDataForEnsuringMonthlyDataExists> {
-
-		var queriesList:Array<IDatabaseQuery> = [
-			budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetId),
-			budgetQueries.SubCategoryQueries.getAllSubCategories(budgetId),
-			budgetQueries.MonthlyBudgetQueries.findMonthlyBudgetByMonth(budgetId, month),
-			budgetQueries.MonthlySubCategoryBudgetQueries.findMonthlySubCategoryBudgetByMonth(budgetId, month)
-		];
-
-		return executeSqlQueries(queriesList)
-			.then((result:IReferenceDataForEnsuringMonthlyDataExists)=>{
-
-				// Build maps for the loaded entities
-				result.masterCategoriesMap = _.keyBy<budgetEntities.IMasterCategory>(result.masterCategories, 'entityId');
-				result.subCategoriesMap = _.keyBy<budgetEntities.ISubCategory>(result.subCategories, 'entityId');
-				result.monthlyBudgetsMap = _.keyBy<budgetEntities.IMonthlyBudget>(result.monthlyBudgets, 'entityId');
-				result.monthlySubCategoryBudgetsMap = _.keyBy<budgetEntities.IMonthlySubCategoryBudget>(result.monthlySubCategoryBudgets, 'entityId');
-				return result;
-			});
-	}
 
 	public cloneBudget(budgetIdOfOriginalBudget:string,
 						clonedBudgetName:string,
@@ -400,9 +379,30 @@ export class BudgetFactory {
 				return budgetId;
 			});
 	}
+	
+	private getReferenceDataForEnsuringMonthlyDataExists(budgetId:string, month:DateWithoutTime):Promise<IReferenceDataForEnsuringMonthlyDataExists> {
+
+		var queriesList:Array<IDatabaseQuery> = [
+			budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetId),
+			budgetQueries.SubCategoryQueries.getAllSubCategories(budgetId),
+			budgetQueries.MonthlyBudgetQueries.findMonthlyBudgetByMonth(budgetId, month),
+			budgetQueries.MonthlySubCategoryBudgetQueries.findMonthlySubCategoryBudgetByMonth(budgetId, month)
+		];
+
+		return executeSqlQueries(queriesList)
+			.then((result:IReferenceDataForEnsuringMonthlyDataExists)=>{
+
+				// Build maps for the loaded entities
+				result.masterCategoriesMap = _.keyBy<budgetEntities.IMasterCategory>(result.masterCategories, 'entityId');
+				result.subCategoriesMap = _.keyBy<budgetEntities.ISubCategory>(result.subCategories, 'entityId');
+				result.monthlyBudgetsMap = _.keyBy<budgetEntities.IMonthlyBudget>(result.monthlyBudgets, 'entityId');
+				result.monthlySubCategoryBudgetsMap = _.keyBy<budgetEntities.IMonthlySubCategoryBudget>(result.monthlySubCategoryBudgets, 'entityId');
+				return result;
+			});
+	}
 
 	// *************************************************************************************************************
-	// Internal Methods to create entities
+	// Internal Methods to create budget entities
 	// *************************************************************************************************************
 	private createSettings(budgetId:string, budgetKnowledge:BudgetKnowledge):Array<IDatabaseQuery> {
 

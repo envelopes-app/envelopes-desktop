@@ -10,7 +10,8 @@ import * as commonInterfaces from '../interfaces/common';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogQueries from './queries/catalogQueries';
-import * as budgetueries from './queries/budgetQueries';
+import * as budgetQueries from './queries/budgetQueries';
+import * as persistenceHelpers from './helpers';
 import * as miscQueries from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
@@ -38,15 +39,30 @@ export class PersistenceManager {
 	private activeBudget:catalogEntities.IBudget;
 	private calculationsManager:CalculationsManager;
 
+	private accountHelper = new persistenceHelpers.AccountHelper();
+	private accountMappingHelper = new persistenceHelpers.AccountMappingHelper();
+	private masterCategoryHelper = new persistenceHelpers.MasterCategoryHelper();
+	private monthlyBudgetHelper = new persistenceHelpers.MonthlyBudgetHelper();
+	private monthlySubCategoryBudgetHelper = new persistenceHelpers.MonthlySubCategoryBudgetHelper();
+	private payeeHelper = new persistenceHelpers.PayeeHelper();
+	private payeeLocationHelper = new persistenceHelpers.PayeeLocationHelper();
+	private payeeRenameConditionHelper = new persistenceHelpers.PayeeRenameConditionHelper();
+	private scheduledSubTransactionHelper = new persistenceHelpers.ScheduledSubTransactionHelper();
+	private scheduledTransactionHelper = new persistenceHelpers.ScheduledTransactionHelper();
+	private settingHelper = new persistenceHelpers.SettingHelper();
+	private subCategoryHelper = new persistenceHelpers.SubCategoryHelper();
+	private subTransactionHelper = new persistenceHelpers.SubTransactionHelper();
+	private transactionHelper = new persistenceHelpers.TransactionHelper();
+
 	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
 
 		// ********************************************************************************************
 		// Testing Code
 		// ********************************************************************************************
-		// If we are running in the testing environment then we need to explicitly open a connection
-		// to the websql database, and set it's reference in the QueryExecutionUtility so that 
-		// everyone else can use it
 		if(process.env.NODE_ENV === 'test') {
+			// If we are running in the testing environment then we need to explicitly open a connection
+			// to the websql database, and set it's reference in the QueryExecutionUtility so that 
+			// everyone else can use it.
 			var dbFileName:string = "ENAB";
 			var refDatabase = openDatabase(dbFileName, "1.0", "ENAB Test Database", 5 * 1024 * 1024);
 			setDatabaseReference(refDatabase);
@@ -115,6 +131,14 @@ export class PersistenceManager {
 			});
 	}
 
+	public loadBudgetData():Promise<IEntitiesCollection> {
+
+		var budgetId = this.activeBudget.entityId;
+		var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+		var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+		return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
+	}
+
 	public syncDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {
 
 		var budgetId = this.activeBudget.entityId;
@@ -136,12 +160,42 @@ export class PersistenceManager {
 			});
 	}
 
-	public loadBudgetData():Promise<IEntitiesCollection> {
+	public createNewBudget(budgetName:string):Promise<catalogEntities.IBudget> {
 
-		var budgetId = this.activeBudget.entityId;
-		var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
-		var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
-		return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
+		// Get all the budget entities from the database. We want to make sure that there are no 
+		// existing budgets with the same name.
+		var query = catalogQueries.BudgetQueries.getAllBudgets();
+		return executeSqlQueries([query])
+			.then((result:any)=>{
+
+				if(result.budgets && result.budgets.length > 0) {
+					
+					var budget = _.find(result.budgets, {name: budgetName, isTombstone: false});
+					if(budget)
+						Promise.reject(`There is already a budget named ${budgetName} in the database.`);
+				}
+
+				// Create a blank new budget.
+				var budgetFactory = new BudgetFactory();
+				return budgetFactory.createNewBudget(this.catalogKnowledge, budgetName, null, null);
+			})
+			.then((budget:catalogEntities.IBudget)=>{
+
+				// Set this as the currently active budget in persistence manager
+				this.activeBudget = budget;
+				// Load the budget knowledge values for this budget
+				return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId);
+			})
+			.then((budgetKnowledge:BudgetKnowledge)=>{
+
+				this.budgetKnowledge = budgetKnowledge;
+				return this.activeBudget;
+			})
+			.catch((error:Error)=>{
+
+				Logger.error(error.toString());
+				return null;
+			});
 	}
 
 	// ************************************************************************************************
@@ -216,67 +270,28 @@ export class PersistenceManager {
 
 	private saveBudgetEntitiesToDatabase(entitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<boolean> {
 
-		// Iterate through the passed entities, and ensure that each of them has the budgetId set
-		// Also update the deviceKnowledge value on each entity 
 		var budgetId = this.activeBudget.entityId;
 		var budgetKnowledge = this.budgetKnowledge;
-
-		var setBudgetIdAndDeviceKnowledge = (entitiesArray:Array<commonInterfaces.IBudgetEntity>)=>{
-
-			if(entitiesArray && entitiesArray.length > 0) {
-				_.forEach(entitiesArray, (entity:commonInterfaces.IBudgetEntity)=>{
-
-					entity.budgetId = budgetId;
-					entity.deviceKnowledge = budgetKnowledge.getNextValue();
-				});
-			}
-		};
-
-		// Call the updateEntities method on each type of entity array in the passed entities collection 
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.accounts);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.accountMappings);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.masterCategories);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.monthlyBudgets);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.monthlySubCategoryBudgets);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.payees);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.payeeLocations);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.payeeRenameConditions);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.scheduledSubTransactions);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.scheduledTransactions);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.settings);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.subCategories);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.subTransactions);
-		setBudgetIdAndDeviceKnowledge(entitiesCollection.transactions);
-
 		// Create queries to persist these entities
 		var queriesList:Array<IDatabaseQuery> = [];
 		queriesList = _.concat(
-			// Get the Data Persistence Queries for saving these entities
-			_.map(entitiesCollection.accounts, (entity)=>{ return budgetueries.AccountQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.accountMappings, (entity)=>{ return budgetueries.AccountMappingQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.masterCategories, (entity)=>{ return budgetueries.MasterCategoryQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.monthlyBudgets, (entity)=>{ return budgetueries.MonthlyBudgetQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.monthlySubCategoryBudgets, (entity)=>{ return budgetueries.MonthlySubCategoryBudgetQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.payees, (entity)=>{ return budgetueries.PayeeQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.payeeLocations, (entity)=>{ return budgetueries.PayeeLocationQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.payeeRenameConditions, (entity)=>{ return budgetueries.PayeeRenameConditionQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.scheduledSubTransactions, (entity)=>{ return budgetueries.ScheduledSubTransactionQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.scheduledTransactions, (entity)=>{ return budgetueries.ScheduledTransactionQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.settings, (entity)=>{ return budgetueries.SettingQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.subCategories, (entity)=>{ return budgetueries.SubCategoryQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.subTransactions, (entity)=>{ return budgetueries.SubTransactionQueries.insertDatabaseObject(entity); }),
-			_.map(entitiesCollection.transactions, (entity)=>{ return budgetueries.TransactionQueries.insertDatabaseObject(entity); })
-		)
 
-		// Get the Calculation Invalidation Queries to queue calculations
-		if(entitiesCollection.accounts) {
-			_.forEach(entitiesCollection.accounts, (entity)=>{ 
-				var originalEntity = existingEntitiesCollection.accounts.getEntityById(entity.entityId);
-				var query = budgetueries.AccountQueries.getCalculationInvalidationQuery(entity, originalEntity); 
-				if(query)
-					queriesList.push(query);
-			});
-		}
+			// Get the Data Persistence Queries for saving these entities
+			this.accountHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.accountMappingHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.masterCategoryHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.monthlyBudgetHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.monthlySubCategoryBudgetHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.payeeHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.payeeLocationHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.payeeRenameConditionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.scheduledSubTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.scheduledTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.settingHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.subCategoryHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.subTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
+			this.transactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge)
+		)
 
 		if(queriesList.length > 0)
 			return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
@@ -287,20 +302,20 @@ export class PersistenceManager {
 	private loadBudgetEntitiesFromDatabase(budgetId:string, deviceKnowlege:number, deviceKnowledgeForCalculations:number):Promise<IEntitiesCollection> {
 
 		var queryList = [
-			budgetueries.AccountQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
-			budgetueries.AccountMappingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.MasterCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.MonthlyBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
-			budgetueries.MonthlySubCategoryBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
-			budgetueries.PayeeQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.PayeeLocationQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.PayeeRenameConditionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.ScheduledSubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.ScheduledTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
-			budgetueries.SettingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.SubCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
-			budgetueries.SubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
-			budgetueries.TransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.AccountQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.AccountMappingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.MasterCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.MonthlyBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.MonthlySubCategoryBudgetQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.PayeeQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.PayeeLocationQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.PayeeRenameConditionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.ScheduledSubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.ScheduledTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.SettingQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.SubCategoryQueries.loadDatabaseObject(budgetId, deviceKnowlege),
+			budgetQueries.SubTransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
+			budgetQueries.TransactionQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),
 			// Also load the knowledge values that are in the database
 			miscQueries.KnowledgeValueQueries.getLoadBudgetKnowledgeValueQuery(budgetId),
 		];
