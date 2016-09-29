@@ -1,6 +1,5 @@
 /// <reference path='../_includes.ts' />
 
-import { ipcRenderer } from 'electron';
 import * as uuid from 'node-uuid';
 import * as _ from 'lodash';
 
@@ -37,6 +36,7 @@ function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery
 
 	return new Promise<any>((resolve, reject)=>{
 
+		var ipcRenderer=  require('electron').ipcRenderer;
 		// We have to send this request to the main process for execution. 
 		// Generate a new guid to uniquely identify this request. 
 		var requestId:string = uuid.v4();

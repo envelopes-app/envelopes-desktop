@@ -86,6 +86,8 @@
     "sqlite3": "3.1.4"
   },
   "bin": {
+	"tsc": "./node_modules/.bin/tsc",  
+	"mocha": "./node_modules/.bin/mocha",
     "check-module-updates": "./node_modules/.bin/ncu",
     "webpack": "./node_modules/.bin/webpack",
     "electron": "./node_modules/.bin/electron",
@@ -97,7 +99,10 @@
     "build": "node ./scripts/build.js",
     "build-electron": "webpack --config './config/webpack.config.electron.js'",
     "start-electron": "NODE_ENV=development electron -r babel-register -r babel-polyfill ./electron.js",
-    "rebuild-modules": "electron-rebuild --pre-gyp-fix"
+    "rebuild-modules": "electron-rebuild --pre-gyp-fix",
+
+	"pretest": "tsc --project './test'",
+	"test": "mocha './build/tests/test/TestsContainer.js'"
   },
   "eslintConfig": {
     "extends": "./config/eslint.js"
