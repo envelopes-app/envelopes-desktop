@@ -31,7 +31,7 @@ module.exports = {
     require.resolve('./polyfills'),
     'font-awesome-loader', 
     'bootstrap-loader',
-    path.join(paths.appFESrc, 'index')
+    path.join(paths.appSrc, 'index')
   ],
   output: {
     path: paths.appBuild,
@@ -51,24 +51,24 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'eslint!source-map',
-        include: paths.appFESrc
+        include: paths.appSrc
       }
     ],
     loaders: [
       {
         test: /\.js$/,
-        include: paths.appFESrc,
+        include: paths.appSrc,
         loader: 'babel',
         query: require('./babel.prod')
       },
       { 
         test: /\.(ts|tsx)?$/, 
-        include: paths.appFESrc,
+        include: paths.appSrc,
         loader: 'ts' 
       }, 
       {
         test: /\.css$/,
-        include: [paths.appFESrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.appNodeModules],
         // Disable autoprefixer in css-loader itself:
         // https://github.com/webpack/css-loader/issues/281
         // We already have it thanks to postcss.
@@ -76,7 +76,7 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        include: [paths.appFESrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.appNodeModules],
         loader: 'json'
       },
       {
@@ -110,7 +110,7 @@ module.exports = {
     ]
   },
   ts: {
-	configFileName: path.join(paths.appFESrc, 'tsconfig.json')
+	configFileName: path.join(paths.appSrc, 'tsconfig.json')
   },
   eslint: {
     // TODO: consider separate config for production,

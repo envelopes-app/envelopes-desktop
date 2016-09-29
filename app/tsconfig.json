@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-        "outDir": "./dist/",
+        "outDir": "./dist/app",
         "sourceMap": true,
         "module": "commonjs",
         "target": "es6",
@@ -8,6 +8,6 @@
 		"experimentalDecorators": true
     },
     "files": [
-        "./app/index.tsx"
+        "./index.tsx"
     ]
 }

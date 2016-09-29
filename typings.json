@@ -5,10 +5,12 @@
   },
   "globalDependencies": {
     "ag-grid": "registry:dt/ag-grid#2.1.2+20160317120654",
+    "chai": "registry:dt/chai#3.4.0+20160601211834",
     "fixed-data-table": "registry:dt/fixed-data-table#0.6.0+20160425160256",
     "github-electron": "registry:dt/github-electron#1.2.5+20160812193136",
     "isomorphic-fetch": "registry:dt/isomorphic-fetch#0.0.0+20160524142046",
     "material-ui": "registry:dt/material-ui#0.15.1+20160720000941",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "moment": "registry:dt/moment#2.8.0+20160316155526",
     "moment-node": "registry:dt/moment-node#2.11.1+20160511043338",
     "node": "registry:env/node#6.0.0+20160825160117",

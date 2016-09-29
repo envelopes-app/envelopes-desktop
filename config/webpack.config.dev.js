@@ -95,7 +95,10 @@ module.exports = {
     useEslintrc: false
   },
   postcss: function() {
-    return [autoprefixer];
+	return [autoprefixer];
+  },
+  ts: {
+	configFileName: "./tsconfig.json"
   },
   plugins: [
 	new webpack.IgnorePlugin(/vertx/),
