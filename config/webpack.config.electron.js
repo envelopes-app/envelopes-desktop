@@ -17,7 +17,7 @@ module.exports = {
 	devtool: 'source-map',
 	target: 'electron-main',
 	entry: [
-		path.join(paths.appSLSrc, '/../electron')
+		path.join(paths.appSrc, '/../electron.js')
 	],
 	output: {
 		path: paths.appBuild,
@@ -35,19 +35,19 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'eslint!source-map',
-				include: paths.appSLSrc
+				include: paths.appSrc
 			}
 		],
 		loaders: [
 			{
 				test: /\.js$/,
-				include: paths.appSLSrc,
+				include: paths.appSrc,
 				loader: 'babel',
 				query: require('./babel.dev')
 			},
 			{
 				test: /\.json$/,
-				include: [paths.appSLSrc, paths.appNodeModules],
+				include: [paths.appSrc, paths.appNodeModules],
 				loader: 'json'
 			},
 		]
