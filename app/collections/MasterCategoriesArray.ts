@@ -49,4 +49,8 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 
 		return masterCategories;
 	}
+
+	public getMasterCategoryByName(masterCategoryName:string):IMasterCategory {
+		return _.find(this, {name: masterCategoryName});
+	}
 }

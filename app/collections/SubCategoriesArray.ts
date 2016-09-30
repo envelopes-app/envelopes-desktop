@@ -58,6 +58,10 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		return subCategories;
 	}
 
+	public getSubCategoryByName(subCategoryName:string):ISubCategory {
+		return _.find(this, {name: subCategoryName});
+	}
+
 	protected addEntity(subCategory:ISubCategory):void {
 
 		if(!this.hiddenSubCategories)

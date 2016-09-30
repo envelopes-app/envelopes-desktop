@@ -1,24 +1,22 @@
-/// <reference path='../../_includes.ts' />
+/// <reference path='../../../_includes.ts' />
 
-module ynab.queries {
-    'use strict';
+import { IDatabaseQuery } from '../../../interfaces/persistence';
 
-    export class GlobalSettingQueries {
+export class GlobalSettingQueries {
 
-        public static getUpdateLastLoggedInUserQuery(userId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getUpdateLastLoggedInUserQuery(userId:string):IDatabaseQuery {
 
-            return {
-                query: `REPLACE INTO GlobalSettings (settingName, settingValue) VALUES ('lastLoggedInUser', ?);`,
-                arguments: [userId]
-            };
-        }
+		return {
+			query: `REPLACE INTO GlobalSettings (settingName, settingValue) VALUES ('lastLoggedInUser', ?);`,
+			arguments: [userId]
+		};
+	}
 
-        public static getUpdateLastOpenedBudgetVersionQuery(budgetVersionId:string):ynab.interfaces.adapters.IDatabaseQuery {
+	public static getUpdateLastOpenedBudgetQuery(budgetId:string):IDatabaseQuery {
 
-            return {
-                query: `REPLACE INTO GlobalSettings (settingName, settingValue) VALUES ('lastOpenedBudgetVersion', ?);`,
-                arguments: [budgetVersionId]
-            };
-        }
-    }
+		return {
+			query: `REPLACE INTO GlobalSettings (settingName, settingValue) VALUES ('lastOpenedBudget', ?);`,
+			arguments: [budgetId]
+		};
+	}
 }

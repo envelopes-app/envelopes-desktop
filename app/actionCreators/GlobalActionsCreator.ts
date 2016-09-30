@@ -18,7 +18,7 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static openBudgetCompleted(budget:catalogEntities.IBudget, entities:IEntitiesCollection):OpenBudgetCompletedAction {
+	public static openBudgetCompleted(budget:catalogEntities.IBudget, entities:ISimpleEntitiesCollection):OpenBudgetCompletedAction {
 		return {
 			type: ActionNames.GLOBAL_LOAD_BUDGET_COMPLETED,
 			budget: budget,
@@ -26,7 +26,7 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static SyncDataWithDatabaseCompleted(entities:IEntitiesCollection):SyncDataWithDatabaseCompletedAction {
+	public static SyncDataWithDatabaseCompleted(entities:ISimpleEntitiesCollection):SyncDataWithDatabaseCompletedAction {
 		return {
 			type: ActionNames.GLOBAL_SYNC_DATA_WITH_DATABASE_COMPLETED,
 			entities: entities
@@ -73,7 +73,7 @@ export class GlobalActionsCreator {
 
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.loadBudgetData()
-				.then((updatedEntities:IEntitiesCollection)=>{
+				.then((updatedEntities:ISimpleEntitiesCollection)=>{
 
 					// dispatch action open budget completed
 					dispatch(GlobalActionsCreator.openBudgetCompleted(budget, updatedEntities));
@@ -92,7 +92,7 @@ export class GlobalActionsCreator {
 			var existingEntitiesCollection = getState().entitiesCollection;
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.syncDataWithDatabase(updatedEntitiesCollection, existingEntitiesCollection)
-				.then((updatedEntitiesFromStorage:IEntitiesCollection)=>{
+				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
 
 					// dispatch action sync data with database completed
 					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));

@@ -6,4 +6,7 @@ import { IAccount } from '../interfaces/budgetEntities';
 
 export class AccountsArray extends EntitiesArray<IAccount> {
 
+	public getAccountByName(accountName:string):IAccount {
+		return _.find(this, {accountName: accountName});
+	}
 }

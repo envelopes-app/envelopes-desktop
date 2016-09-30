@@ -43,8 +43,9 @@ function initializeDatabase() {
 
 	return new Promise((resolve, reject)=>{
 
+		var databaseFolderName = (process.env.NODE_ENV === 'development') ? "ENAB-DEV" : "ENAB";  
 		// Ensure that the directory for storing the database file exists
-		var databaseDir = path.join(app.getPath('documents'), "ENAB");
+		var databaseDir = path.join(app.getPath('documents'), databaseFolderName);
 		if (!fs.existsSync(databaseDir))
 			fs.mkdirSync(databaseDir);
 

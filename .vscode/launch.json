@@ -25,6 +25,16 @@
             "port": 5858,
             "sourceMaps": false,
             "outDir": null
-        }
-    ]
+        },
+		{
+			"name": "Run Mocha Tests",
+			"type": "node",
+			"program": "${workspaceRoot}/node_modules/.bin/_mocha",
+			"stopOnEntry": false,
+			"args": ["${workspaceRoot}/build/tests/test/TestsContainer.js"],
+			"cwd": "${workspaceRoot}",
+			"runtimeExecutable": null,
+			"env": { "NODE_ENV": "test"}
+		}
+	]
 }
