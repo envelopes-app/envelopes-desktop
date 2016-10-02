@@ -22,6 +22,14 @@ export class MonthlySubCategoryBudgetsArray extends EntitiesArray<IMonthlySubCat
 		return this.multiDictionary.getValue(month);
 	}
 
+	public getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId:string, month:string):IMonthlySubCategoryBudget {
+		
+		// Get all the monthlySubCategoryBudget entities for the month
+		var monthlySubCategoryBudgets = this.getMonthlySubCategoryBudgetsByMonth(month);
+		// Find the one corresponding to the passed subCategoryId
+		return _.find(monthlySubCategoryBudgets, {subCategoryId:subCategoryId});
+	}
+
 	protected addEntity(monthlySubCategoryBudget:IMonthlySubCategoryBudget):void {
 
 		if(!this.multiDictionary)

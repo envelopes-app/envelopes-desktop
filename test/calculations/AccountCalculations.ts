@@ -6,7 +6,6 @@ import { DateWithoutTime } from '../../app/utilities';
 import { AccountTypes, ClearedFlag, TransactionSources } from '../../app/constants'; 
 import { SubCategoriesArray } from '../../app/collections';
 import * as budgetEntities from '../../app/interfaces/budgetEntities';
-import * as catalogEntities from '../../app/interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../app/interfaces/state';
 
 export class AccountCalculations {

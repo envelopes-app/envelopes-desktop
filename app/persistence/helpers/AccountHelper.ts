@@ -23,7 +23,6 @@ export class AccountHelper {
 
 		if(changedEntities.accounts) {
 
-			debugger;
 			_.forEach(changedEntities.accounts, (changedEntity:budgetEntities.IAccount)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity

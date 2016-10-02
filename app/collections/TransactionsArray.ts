@@ -22,6 +22,18 @@ export class TransactionsArray extends EntitiesArray<ITransaction> {
 		return this.multiDictionary.getValue(accountId);
 	}
 
+	public getTransactionsForAccountByPayeeId(accountId:string, payeeId:string):Array<ITransaction> {
+
+		var accountTransactions = this.getTransactionsByAccountId(accountId);
+		return _.filter(accountTransactions, {payeeId: payeeId});
+	}
+
+	public getTransactionsForAccountBySubCategoryId(accountId:string, subCategoryId:string):Array<ITransaction> {
+
+		var accountTransactions = this.getTransactionsByAccountId(accountId);
+		return _.filter(accountTransactions, {subCategoryId: subCategoryId});
+	}
+
 	protected addEntity(transaction:ITransaction):void {
 
 		if(!this.multiDictionary)

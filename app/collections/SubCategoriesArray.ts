@@ -62,6 +62,10 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		return _.find(this, {name: subCategoryName});
 	}
 
+	public getDebtSubCategoryForAccount(accountId:string):ISubCategory {
+		return _.find(this, {accountId: accountId});
+	}
+
 	protected addEntity(subCategory:ISubCategory):void {
 
 		if(!this.hiddenSubCategories)

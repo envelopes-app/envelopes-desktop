@@ -1,6 +1,7 @@
 /// <reference path="../_includes.ts" />
 
 import { AccountCalculations } from './AccountCalculations';
+import { SpendingCalculationForDebtAccounts } from './SpendingCalculationForDebtAccounts';
 
 export class _TestsContainer {
 
@@ -13,5 +14,6 @@ export class _TestsContainer {
 		});
 
 		describe("Account Calculations:", AccountCalculations.performTests);
+		describe("Spending Calculation for Debt Accounts:", SpendingCalculationForDebtAccounts.performTests);
 	}
 }

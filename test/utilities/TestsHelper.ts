@@ -97,13 +97,30 @@ export class TestsHelper {
 	}
 
 	// *******************************************************************************************************
+	// Utility Methods to perform business logic ops on different entity types
+	// *******************************************************************************************************
+	public budgetMoneyToSubCategory(subCategoryId:string, budgetedAmount:number, month:DateWithoutTime = DateWithoutTime.createForCurrentMonth()):Promise<boolean> {
+
+		// Get the monthly subcategory budget entity for this subcategory in the passed month
+		var monthlySubCategoryBudget = this.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
+		if(!monthlySubCategoryBudget)
+			Promise.reject(`MonthlySubCategoryBudget entity in ${month.toISOString()} for subcategory '${subCategoryId}' was not found.`);
+
+		monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+		monthlySubCategoryBudget.budgeted = budgetedAmount;
+		return this.syncEntitiesWithDatabase({
+			monthlySubCategoryBudgets: [monthlySubCategoryBudget]
+		});
+	}
+
+	// *******************************************************************************************************
 	// Utility Methods to create entities of different types
 	// *******************************************************************************************************
 	public createAccount(accountName:string, accountType:string = AccountTypes.Checking, onBudget:boolean = true):budgetEntities.IAccount {
 
 		var account = EntityFactory.createNewAccount();
 		account.accountName = accountName;
-		account.accountType = AccountTypes.Checking;
+		account.accountType = accountType;
 		account.onBudget = onBudget ? 1 : 0;
 		return account;
 	}
