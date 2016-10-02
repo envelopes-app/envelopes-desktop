@@ -12,6 +12,7 @@ export interface ITransaction extends IBudgetEntity {
 	cleared:string;
 	accepted:number;
 	flag:string;
+	source:string;
 	transferAccountId:string;
 	transferTransactionId:string;
 	transferSubTransactionId:string;

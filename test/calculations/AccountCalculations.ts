@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import { TestsHelper } from '../utilities/TestsHelper';
 import { DateWithoutTime } from '../../app/utilities';
-import { AccountTypes } from '../../app/constants'; 
+import { AccountTypes, ClearedFlag, TransactionSources } from '../../app/constants'; 
 import { SubCategoriesArray } from '../../app/collections';
 import * as budgetEntities from '../../app/interfaces/budgetEntities';
 import * as catalogEntities from '../../app/interfaces/catalogEntities';
@@ -16,6 +16,7 @@ export class AccountCalculations {
 		var expect = chai.expect;
 		var testsHelper:TestsHelper;
 		var accountName:string;
+		var transactionId:string;
 		var refSubCategory:budgetEntities.ISubCategory;
 
 		before(function() {
@@ -46,6 +47,8 @@ export class AccountCalculations {
 			// Create a new transaction in the account that we created
 			var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
 			var refTransaction = testsHelper.createTransaction(refAccount, null, -100);
+			// Save the transactionId for later access
+			transactionId = refTransaction.entityId;
 
 			return testsHelper.syncEntitiesWithDatabase({
 				transactions: [refTransaction]
@@ -59,78 +62,100 @@ export class AccountCalculations {
 				expect(refAccount.unclearedBalance).to.be.equal(-100);
 			});
 		});
-/*
+
 		it("Should recalculate when we change the account to be on-budget.", function() {
 
 			// Update the onBudget flag on the account
-			refAccount.setOnBudget(true);
+			var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+			refAccount = Object.assign({}, refAccount);
+			refAccount.onBudget = 1;
 
-			return testsHelper.syncBudgetData()
-				.then((retVal:boolean)=>{
+			return testsHelper.syncEntitiesWithDatabase({
+				accounts: [refAccount]
+			})
+			.then((retVal:boolean)=>{
 
-					// The warning count for the account should now be 1
-					expect(refAccountCalculation.getWarningCount()).to.be.equal(1);
-				});
+				// The warning count for the account should now be 1
+				refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+				expect(refAccount.warningCount).to.be.equal(1);
+			});
 		});
 
 		it("Should recalculate when we change the transaction amount.", function() {
 
-			// Update the transaction amount and persist it
-			refTransaction.setAmount(-200);
+			// Get the transaction that we created earlier, update the amount and persist it
+			var refTransaction = testsHelper.entitiesCollection.transactions.getEntityById(transactionId);
+			refTransaction = Object.assign({}, refTransaction);
+			refTransaction.amount = -200;
 
-			return testsHelper.syncBudgetData()
-				.then((retVal:boolean)=>{
+			return testsHelper.syncEntitiesWithDatabase({
+				transactions: [refTransaction]
+			})
+			.then((retVal:boolean)=>{
 
-					// The uncleared balance should be -200, equal to the amount of the updated transaction
-					expect(refAccountCalculation.getUnclearedBalance()).to.be.equal(-200);
-				});
+				// The uncleared balance should be -200, equal to the amount of the updated transaction
+				var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+				expect(refAccount.unclearedBalance).to.be.equal(-200);
+			});
 		});
 
 		it("Should recalculate when we change the transaction subcategory.", function() {
 
 			// Update the transaction subcategory
-			refTransaction.setSubCategoryId(refSubCategory.getEntityId());
+			var refTransaction = testsHelper.entitiesCollection.transactions.getEntityById(transactionId);
+			refTransaction = Object.assign({}, refTransaction);
+			refTransaction.subCategoryId = refSubCategory.entityId;
 
-			return testsHelper.syncBudgetData()
-				.then((retVal:boolean)=>{
+			return testsHelper.syncEntitiesWithDatabase({
+				transactions: [refTransaction]
+			})
+			.then((retVal:boolean)=>{
 
-					// The warning count should have gone to 0 as we have now assigned a subcategory to the transaction
-					expect(refAccountCalculation.getWarningCount()).to.be.equal(0);
-				});
+				// The warning count should have gone to 0 as we have now assigned a subcategory to the transaction
+				var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+				expect(refAccount.warningCount).to.be.equal(0);
+			});
 		});
 
 		it("Should recalculate when we change the transaction cleared flag.", function() {
 
 			// Update the cleared flag on the transaction
-			refTransaction.setCleared(ynab.constants.TransactionState.Cleared);
+			var refTransaction = testsHelper.entitiesCollection.transactions.getEntityById(transactionId);
+			refTransaction = Object.assign({}, refTransaction);
+			refTransaction.cleared = ClearedFlag.Cleared;
 
-			return testsHelper.syncBudgetData()
-				.then((retVal:boolean)=>{
+			return testsHelper.syncEntitiesWithDatabase({
+				transactions: [refTransaction]
+			})
+			.then((retVal:boolean)=>{
 
-					// The cleared and uncleared balances should have been updated
-					expect(refAccountCalculation.getUnclearedBalance()).to.be.equal(0);
-					expect(refAccountCalculation.getClearedBalance()).to.be.equal(-200);
-				});
+				// The cleared and uncleared balances should have been updated
+				var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+				expect(refAccount.unclearedBalance).to.be.equal(0);
+				expect(refAccount.clearedBalance).to.be.equal(-200);
+			});
 		});
 		
-		it("Should not include raw_import or matched_import transaction amounts.", function() {
+		it("Should not include 'Matched' transaction amounts.", function() {
 
-			var date = ynab.utilities.DateWithoutTime.createForToday();
+			var date = DateWithoutTime.createForToday();
 			// Create a new transaction in the account that we created
-			refTransaction = testUtilities.createTransaction(refAccountTransactionsViewModel, refAccount, null, -100, null);
-			refTransaction.setSource(ynab.constants.TransactionSource.RawImport);
+			var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+			var refTransaction = testsHelper.createTransaction(refAccount, null, -100);
+			refTransaction.source = TransactionSources.Matched;
+			refTransaction.matchedTransactionId = transactionId;
 			
-			var matchedImportTransaction = testUtilities.createTransaction(refAccountTransactionsViewModel, refAccount, null, -75, null);
-			matchedImportTransaction.setSource(ynab.constants.TransactionSource.MatchedImport);
+			return testsHelper.syncEntitiesWithDatabase({
+				transactions: [refTransaction]
+			})
+			.then((retVal:boolean)=>{
 
-			return testsHelper.syncBudgetData()
-				.then((retVal:boolean)=>{
-
-					// The warning count for the account should be 0
-					expect(refAccountCalculation.getWarningCount()).to.be.equal(0);
-					// The uncleared balance should be 0 b/c it should not import either import transaction amount.
-					expect(refAccountCalculation.getUnclearedBalance()).to.be.equal(0);
-				});
-		});*/
+				var refAccount = testsHelper.entitiesCollection.accounts.getAccountByName(accountName);
+				// The warning count for the account should be 0
+				expect(refAccount.warningCount).to.be.equal(0);
+				// The uncleared balance should be 0 b/c it should not consider the newly created matched transaction
+				expect(refAccount.unclearedBalance).to.be.equal(0);
+			});
+		});
 	}
 }

@@ -134,6 +134,7 @@ export class EntityFactory {
 			cleared: ClearedFlag.Uncleared,
 			accepted: 1,
 			flag: TransactionFlag.None,
+			source: null,
 			transferAccountId: null,
 			transferTransactionId: null,
 			transferSubTransactionId: null,

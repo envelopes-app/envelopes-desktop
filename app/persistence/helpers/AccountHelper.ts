@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 
-import { DateWithoutTime, KeyGenerator } from '../../utilities';
+import { DateWithoutTime, KeyGenerator, Logger } from '../../utilities';
 import { AccountTypes, ClearedFlag, SubCategoryType } from '../../constants';
 import { BudgetKnowledge } from '../KnowledgeObjects';
 import { IDatabaseQuery } from '../../interfaces/persistence'; 
@@ -23,6 +23,7 @@ export class AccountHelper {
 
 		if(changedEntities.accounts) {
 
+			debugger;
 			_.forEach(changedEntities.accounts, (changedEntity:budgetEntities.IAccount)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
@@ -139,6 +140,7 @@ export class AccountHelper {
 			cleared: ClearedFlag.Cleared,
 			accepted: 1,
 			flag: null,
+			source: null,
 			transferAccountId: null,
 			transferTransactionId: null,
 			transferSubTransactionId: null,
@@ -186,6 +188,7 @@ export class AccountHelper {
 		// If this is a new account, or the onBudget property of an existing account changes, then
 		// invalidate the calculations for this account entity
 		if(!originalEntity || originalEntity.onBudget != updatedEntity.onBudget) {
+			Logger.info(`Queued account calculation for ${updatedEntity.accountName}`);
 			return CalculationQueries.getQueueAccountCalculationQuery(budgetId, updatedEntity.entityId);
 		}
 

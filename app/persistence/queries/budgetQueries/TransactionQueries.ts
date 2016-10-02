@@ -7,7 +7,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export class TransactionQueries {
 
-	public static get TransactionSourcesINClause():string { return `'', '${TransactionSources.Scheduler}', '${TransactionSources.Matched}', '${TransactionSources.Imported}'`; }
+	public static get TransactionSourcesINClause():string { return `'', '${TransactionSources.Scheduler}', '${TransactionSources.Imported}'`; }
 	public static get TransactionLiabilityAccountTypesINClause():string { return `'${AccountTypes.CreditCard}', '${AccountTypes.LineOfCredit}', '${AccountTypes.Mortgage}', '${AccountTypes.OtherLiability}'`; }
 			
 	// *********************************************************************************************************
@@ -37,6 +37,7 @@ export class TransactionQueries {
 						cleared, 
 						accepted, 
 						flag, 
+						source,
 						transferAccountId, 
 						transferTransactionId, 
 						transferSubTransactionId, 
@@ -47,7 +48,7 @@ export class TransactionQueries {
 						importedDate, 
 						deviceKnowledge,
 						deviceKnowledgeForCalculatedFields
-					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			arguments: [
 				dbObject.budgetId,
 				dbObject.entityId,
@@ -65,6 +66,7 @@ export class TransactionQueries {
 				dbObject.cleared,
 				dbObject.accepted,
 				dbObject.flag ? dbObject.flag : null,
+				dbObject.source,
 				dbObject.transferAccountId ? dbObject.transferAccountId : null,
 				dbObject.transferTransactionId ? dbObject.transferTransactionId : null,
 				dbObject.transferSubTransactionId ? dbObject.transferSubTransactionId : null,
