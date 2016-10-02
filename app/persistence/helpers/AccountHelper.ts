@@ -9,6 +9,7 @@ import { IDatabaseQuery } from '../../interfaces/persistence';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as budgetQueries from '../queries/budgetQueries';
 import { CalculationQueries } from '../queries/miscQueries';
+import { EntityFactory } from '../EntityFactory';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export class AccountHelper {
@@ -74,19 +75,29 @@ export class AccountHelper {
 
 					// Create a "transfer" payee entity for the new account
 					queriesList.push(
-						this.getTransferPayeeCreationQuery(changedEntity, budgetKnowledge.getNextValue())
+						this.getTransferPayeeCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue())
 					);
 
-					// Create a "starting balance" transaction entity for the account
-					queriesList.push(
-						this.getStartingBalanceTransactionCreationQuery(changedEntity, budgetKnowledge.getNextValue(), originalEntities.payees.getStartingBalancePayee(), originalEntities.subCategories.getImmediateIncomeSubCategory())
-					);
+					// Check if we are being passed a starting balance transaction entity in the changed entities.
+					// If we are not being passed one, then create a "starting balance" transaction entity for this account.
+					var startingBalanceTransaction = null;
+					if(changedEntities.transactions && changedEntities.transactions.length > 0) {
+
+						var startingBalancePayeeId = originalEntities.payees.getStartingBalancePayee().entityId;
+						startingBalanceTransaction = _.find(changedEntities.transactions, { accountId: changedEntity.entityId, payeeId: startingBalancePayeeId });
+					} 
+
+					if(!startingBalanceTransaction) {
+						queriesList.push(
+							this.getStartingBalanceTransactionCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.payees.getStartingBalancePayee(), originalEntities.subCategories.getImmediateIncomeSubCategory())
+						);
+					}					
 
 					// If this account is onBudget and a liability account, then create a debt subcategory for it
 					var isAssetAccount:boolean = AccountTypes.isAssetAccount(changedEntity.accountType);
 					if (changedEntity.onBudget && !isAssetAccount) {
 						queriesList.push(
-							this.getDebtSubCategoryCreationQuery(changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
+							this.getDebtSubCategoryCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
 						);
 					}
 				}
@@ -96,89 +107,42 @@ export class AccountHelper {
 		return queriesList;
 	}
 
-	private getTransferPayeeCreationQuery(account:budgetEntities.IAccount, deviceKnowledge:number):IDatabaseQuery {
+	private getTransferPayeeCreationQuery(budgetId:string, account:budgetEntities.IAccount, deviceKnowledge:number):IDatabaseQuery {
 
-		var accountPayee:budgetEntities.IPayee = {
-
-			budgetId: account.budgetId,
-			entityId: KeyGenerator.generateUUID(),
-			isTombstone: 0,
-			accountId: account.entityId,
-			enabled: 1,
-			autoFillSubCategoryId: null,
-			name: "Transfer : " + account.accountName,
-			internalName: null,
-			deviceKnowledge: deviceKnowledge
-		};
-
+		var accountPayee = EntityFactory.createNewPayee(budgetId);
+		accountPayee.accountId = account.entityId;
+		accountPayee.name = "Transfer : " + account.accountName;
+		accountPayee.deviceKnowledge = deviceKnowledge;
 		return budgetQueries.PayeeQueries.insertDatabaseObject(accountPayee);
 	}
 
 	private getStartingBalanceTransactionCreationQuery(
+			budgetId:string,
 			account:budgetEntities.IAccount, 
 			deviceKnowledge:number, 
 			startingBalancePayee:budgetEntities.IPayee, 
 			immediateIncomeSubCategory:budgetEntities.ISubCategory
 		):IDatabaseQuery {
 
-		var accountTransaction:budgetEntities.ITransaction = {
-
-			budgetId: account.budgetId,
-			entityId: KeyGenerator.generateUUID(),
-			isTombstone: 0,
-			accountId: account.entityId,
-			payeeId: startingBalancePayee.entityId,
-			subCategoryId: immediateIncomeSubCategory.entityId,
-			date: DateWithoutTime.createForToday().getUTCTime(),
-			dateEnteredFromSchedule: null,
-			amount: 0,
-			cashAmount: 0,
-			creditAmount: 0,
-			subCategoryCreditAmountPreceding: 0,
-			memo: null,
-			cleared: ClearedFlag.Cleared,
-			accepted: 1,
-			flag: null,
-			source: null,
-			transferAccountId: null,
-			transferTransactionId: null,
-			transferSubTransactionId: null,
-			matchedTransactionId: null,
-			scheduledTransactionId: null,
-			importId: null,
-			importedPayee: null,
-			importedDate: null,
-			deviceKnowledge: deviceKnowledge,
-			deviceKnowledgeForCalculatedFields: deviceKnowledge
-		};
+		var accountTransaction = EntityFactory.createNewTransaction(budgetId);
+		accountTransaction.accountId = account.entityId;
+		accountTransaction.payeeId = startingBalancePayee.entityId;
+		accountTransaction.subCategoryId = immediateIncomeSubCategory.entityId;
+		accountTransaction.date = DateWithoutTime.createForToday().getUTCTime();
+		accountTransaction.deviceKnowledge = deviceKnowledge;
+		accountTransaction.deviceKnowledgeForCalculatedFields = deviceKnowledge;
 
 		return budgetQueries.TransactionQueries.insertDatabaseObject(accountTransaction);
 	}
 
-	private getDebtSubCategoryCreationQuery(account:budgetEntities.IAccount, deviceKnowledge:number, debtMasterCategory:budgetEntities.IMasterCategory):IDatabaseQuery {
+	private getDebtSubCategoryCreationQuery(budgetId:string, account:budgetEntities.IAccount, deviceKnowledge:number, debtMasterCategory:budgetEntities.IMasterCategory):IDatabaseQuery {
 
-		var accountSubCategory:budgetEntities.ISubCategory = {
-
-			budgetId: account.budgetId,
-			entityId: KeyGenerator.generateUUID(),
-			isTombstone: 0,
-			masterCategoryId: debtMasterCategory.entityId,
-			accountId: account.entityId,
-			internalName: null,
-			sortableIndex: 0,
-			pinnedIndex: null,
-			name: account.accountName,
-			type: SubCategoryType.Debt,
-			note: null,
-			isHidden: 0,
-			goalType: null,
-			goalCreationMonth: null,
-			targetBalance: null,
-			targetBalanceMonth: null,
-			monthlyFunding: null,
-			deviceKnowledge: deviceKnowledge
-		};
-
+		var accountSubCategory = EntityFactory.createNewSubCategory(budgetId);
+		accountSubCategory.masterCategoryId = debtMasterCategory.entityId;
+		accountSubCategory.accountId = account.entityId;
+		accountSubCategory.name = account.accountName;
+		accountSubCategory.type = SubCategoryType.Debt;
+		accountSubCategory.deviceKnowledge = deviceKnowledge;
 		return budgetQueries.SubCategoryQueries.insertDatabaseObject(accountSubCategory);
 	}
 

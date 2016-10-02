@@ -50,7 +50,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 
 	public render() {
 		return (
-			<Modal show={this.state.showModal} onHide={this.close} backdrop="static" keyboard={false} style={{width: '500px'}}>
+			<Modal show={this.state.showModal} animation={true} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-account-dialog">
 				<Modal.Header bsClass="modal-header">
 					<Modal.Title>Add a New Account</Modal.Title>
 				</Modal.Header>

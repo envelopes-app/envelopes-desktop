@@ -8,6 +8,7 @@ import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 
 import './styles/index.css';
+import './styles/sidebar.css';
 import './styles/budget.css';
 import './styles/register.css';
 import './styles/react-datepicker.css';
@@ -20,7 +21,7 @@ import combinedReducer from './reducers/CombinedReducer';
 injectTapEventPlugin();
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
 var refreshDatabase:boolean = (process.env.NODE_ENV === 'development') ? true : false;
-store.dispatch(GlobalActionsCreator.initializeDatabase(false));
+store.dispatch(GlobalActionsCreator.initializeDatabase(refreshDatabase));
 
 ReactDOM.render(
 	<Provider store={store}>
