@@ -9,7 +9,7 @@ import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from '../QueryEx
 
 export class AccountCalculations {
 
-	public performCalculations(budgetVersionId:string,
+	public performCalculations(budgetId:string,
 								budgetKnowledge:BudgetKnowledge,
 								referenceData:IReferenceDataForCalculations,
 								accountIds:string[],
@@ -19,12 +19,12 @@ export class AccountCalculations {
 		Logger.info(`AccountCalculations::Performing calculations (startMonth: ${startMonth.toISOString()}; endMonth: ${endMonth}; accountIds: ${accountIds})`);
 			
 		return executeSqlQueries([
-			this.performMonthlyAccountCalculations(budgetVersionId, budgetKnowledge, accountIds, startMonth, endMonth),
-			this.performAccountCalculations(budgetVersionId, budgetKnowledge, accountIds)
+			this.performMonthlyAccountCalculations(budgetId, budgetKnowledge, accountIds, startMonth, endMonth),
+			this.performAccountCalculations(budgetId, budgetKnowledge, accountIds)
 		]);
 	}
 			
-	private performMonthlyAccountCalculations(budgetVersionId:string, budgetKnowledge:BudgetKnowledge, 
+	private performMonthlyAccountCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, 
 				accountIds:string[], startMonth:DateWithoutTime, endMonth:DateWithoutTime):IDatabaseQuery {
 
 		var accountIdsWrappedInApostrophes:string[] = _.map(accountIds, function(s) {return `'${s}'`; });
@@ -47,25 +47,24 @@ SELECT m.month, m.month_epoch, a.entityId as accountId,
 	COALESCE(SUM(CASE WHEN t.isTransaction = 1 AND (t.isCleared = 0 AND t.isReconciled = 0) THEN amount ELSE 0 END), 0) as unclearedBalance,
 	COALESCE(SUM(CASE WHEN t.isTransaction = 1 AND t.isAccepted = 0 AND t.isReconciled = 0 THEN 1 ELSE 0 END), 0) as infoCount,
 	COALESCE(SUM(CASE WHEN t.affectsBudget = 1 AND t.amount <> 0 AND t.isUncategorized = 1 THEN 1 ELSE 0 END), 0) as warningCount,
-	COALESCE(SUM(CASE WHEN t.affectsBudget = 1 AND t.isUncategorized = 0 AND isTransferAccountOnBudget = 1 THEN 1 ELSE 0 END), 0) as errorCount,
-	COALESCE(SUM(CASE WHEN t.isTransaction = 1 THEN 1 ELSE 0 END), 0) as transactionCount
+	COALESCE(SUM(CASE WHEN t.affectsBudget = 1 AND t.isUncategorized = 0 AND isTransferAccountOnBudget = 1 THEN 1 ELSE 0 END), 0) as errorCount
 FROM ${monthsVirtualTable} m,
 	(SELECT entityId FROM Accounts WHERE entityId IN (${accountIdsINClause})) a
-	LEFT JOIN CalculationTransactions t ON t.accountId = a.entityId AND t.month_epoch = m.month_epoch
+	LEFT JOIN TransactionCalculations t ON t.accountId = a.entityId AND t.month_epoch = m.month_epoch
 GROUP BY m.month, a.entityId
 )
-REPLACE INTO AccountMonthlyCalculations(budgetVersionId, entityId, isTombstone, month, accountId, 
-clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, transactionCount, deviceKnowledge)
+REPLACE INTO AccountMonthlyCalculations(budgetId, entityId, isTombstone, month, accountId, 
+clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, deviceKnowledge)
 SELECT ?1,
 ('mac/' || strftime('%Y-%m', datetime(month_epoch, 'unixepoch')) || '/' || accountId) as entityId, 0, month, accountId,
-clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, transactionCount, ?2
+clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, ?2
 FROM e_accounts_monthly              
 			`,
-			arguments: [budgetVersionId, budgetKnowledge.getNextValueForCalculations()]
+			arguments: [budgetId, budgetKnowledge.getNextValueForCalculations()]
 		};
 	};
 	
-	private performAccountCalculations(budgetVersionId:string, budgetKnowledge:BudgetKnowledge, accountIds:string[]):IDatabaseQuery {
+	private performAccountCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, accountIds:string[]):IDatabaseQuery {
 
 		var accountIdsWrappedInApostrophes:string[] = _.map(accountIds, function(s) {return `'${s}'`; });
 		var accountIdsINClause = accountIdsWrappedInApostrophes.join(", ");
@@ -79,22 +78,21 @@ SELECT ac.accountId,
 	SUM(ac.unclearedBalance) as unclearedBalance,
 	SUM(ac.infoCount) as infoCount,
 	SUM(ac.warningCount) as warningCount,
-	SUM(ac.errorCount) as errorCount,
-	SUM(ac.transactionCount) as transactionCount
+	SUM(ac.errorCount) as errorCount
 FROM AccountMonthlyCalculations ac 
 WHERE ac.accountId IN (${accountIdsINClause})
 GROUP BY ac.accountId
 )
-REPLACE INTO Accounts(budgetVersionId, entityId, isTombstone, accountType, accountName, 
-lastEnteredCheckNumber, lastReconciledDate, lastReconciledBalance, hidden, sortableIndex, onBudget, note,
-clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, transactionCount, deviceKnowledge, directConnectEnabled, deviceKnowledgeForCalculatedFields)
+REPLACE INTO Accounts(budgetId, entityId, isTombstone, accountType, accountName, 
+lastEnteredCheckNumber, lastReconciledDate, lastReconciledBalance, closed, sortableIndex, onBudget, note,
+clearedBalance, unclearedBalance, infoCount, warningCount, errorCount, deviceKnowledge, deviceKnowledgeForCalculatedFields)
 SELECT ?1, m.accountId, 0, a.accountType, a.accountName, 
-a.lastEnteredCheckNumber, a.lastReconciledDate, a.lastReconciledBalance, a.hidden, a.sortableIndex, a.onBudget, a.note,
-m.clearedBalance, m.unclearedBalance, m.infoCount, m.warningCount, m.errorCount, m.transactionCount, a.deviceKnowledge, a.directConnectEnabled, ?2
+a.lastEnteredCheckNumber, a.lastReconciledDate, a.lastReconciledBalance, a.closed, a.sortableIndex, a.onBudget, a.note,
+m.clearedBalance, m.unclearedBalance, m.infoCount, m.warningCount, m.errorCount, a.deviceKnowledge, ?2
 FROM e_accounts_monthly_agg m
 INNER JOIN Accounts a ON m.accountId = a.entityId
 			`,
-			arguments: [budgetVersionId, budgetKnowledge.getNextValueForCalculations()]
+			arguments: [budgetId, budgetKnowledge.getNextValueForCalculations()]
 		};
 	};
 }

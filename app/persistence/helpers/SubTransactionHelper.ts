@@ -22,7 +22,7 @@ export class SubTransactionHelper {
 
 		if(changedEntities.subTransactions) {
 
-			_.forEach(changedEntities.subTransactions, function(changedEntity:budgetEntities.ISubTransaction) {
+			_.forEach(changedEntities.subTransactions, (changedEntity:budgetEntities.ISubTransaction)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

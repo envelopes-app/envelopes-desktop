@@ -138,7 +138,7 @@ export class CommonQueries {
 		return {
 			name: "referenceIds",
 			query: `
-SELECT splitSubCategoryId, uncategorizedSubCategoryId, immediateIncomeSubCategoryId, deferredIncomeSubCategoryId, startingBalancePayeeId FROM
+SELECT splitSubCategoryId, uncategorizedSubCategoryId, immediateIncomeSubCategoryId, startingBalancePayeeId FROM
 (SELECT entityId as splitSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.SplitSubCategory}'),
 (SELECT entityId as uncategorizedSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.UncategorizedSubCategory}'),
 (SELECT entityId as immediateIncomeSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.ImmediateIncomeSubCategory}'),

@@ -114,7 +114,7 @@ WITH e_months_categories AS (
         s.isTombstone
     FROM ${monthsVirtualTable} m, 
         Subcategories s
-        LEFT JOIN CalculationTransactions t ON t.subcategoryId = s.entityId AND t.month_epoch = m.month_epoch 	 
+        LEFT JOIN TransactionCalculations t ON t.subcategoryId = s.entityId AND t.month_epoch = m.month_epoch 	 
     WHERE (?1 = 1 OR s.entityId IN (${subCategoryIdsINClause}))
         AND s.isTombstone = 0
         AND COALESCE(s.type,'') != '${SubCategoryType.Debt}'
@@ -123,10 +123,10 @@ WITH e_months_categories AS (
     GROUP BY m.month_epoch, s.entityId
 )
 SELECT mc.*,
-    COALESCE(sc.budgeted,0) as budgeted, sc.overspendingHandling, sc.note, 
+    COALESCE(sc.budgeted,0) as budgeted, sc.note, 
     sc.upcomingTransactions, sc.upcomingTransactionsCount, sc.deviceKnowledge,
     -- The following fields are used as a base from previous month
-    sc.balance, sc.overspendingAffectsBuffer, sc.goalOverallFunded, sc.goalTarget
+    sc.balance, sc.goalOverallFunded, sc.goalTarget
 FROM e_months_categories mc
 	LEFT JOIN MonthlySubCategoryBudgets sc ON sc.entityId = mc.entityId
 ORDER BY mc.subCategoryId, mc.month
@@ -165,7 +165,7 @@ WITH e_liability_accounts AS (
         ${paymentCategoryAccountIdsVALUESClause}        
         -- List of payment categories to include because transations exist in other subCategories that were queued 
         SELECT DISTINCT t.accountId AS ""
-        FROM CalculationTransactions t	
+        FROM TransactionCalculations t	
         WHERE t.subCategoryId IN (${queuedSubCategoryIdsINClause})
             AND t.month_epoch >= ${startMonth.getUTCTimeSeconds()}
             AND t.onBudget = 1
@@ -205,15 +205,15 @@ WITH e_liability_accounts AS (
             END
         )
          as allSpendingSinceLastPayment
-    FROM CalculationTransactions t
+    FROM TransactionCalculations t
     INNER JOIN MonthlySubCategoryBudgets c 
         ON c.entityId = ('mcb/' || strftime('%Y-%m', datetime(t.month_epoch, 'unixepoch')) || '/' || t.subCategoryId)
-    LEFT JOIN CalculationTransactions tt ON t.transferTransactionId = tt.transactionId
-    LEFT JOIN CalculationTransactions tst ON t.transferSubTransactionId  = tst.subtransactionId
+    LEFT JOIN TransactionCalculations tt ON t.transferTransactionId = tt.transactionId
+    LEFT JOIN TransactionCalculations tst ON t.transferSubTransactionId  = tst.subtransactionId
     LEFT JOIN (
             -- Last payments by liability account
             SELECT accountId, month_epoch, MAX(rowid) as lastPayment_rowid
-            FROM CalculationTransactions
+            FROM TransactionCalculations
             WHERE accountId IN (SELECT accountId FROM e_liability_accounts)
                 AND amount > 0 
                 AND transferAccountId IS NOT NULL
@@ -237,12 +237,12 @@ WITH e_liability_accounts AS (
 )
 SELECT mc.entityId, mc.month, mc.subCategoryId,
     (-(lac.budgetedCreditOutflows) + lac.paymentActivity) as cashOutflows, 0 as creditOutflows,
-    COALESCE(sc.budgeted,0) as budgeted, sc.overspendingHandling, sc.note, sc.goalTarget,
+    COALESCE(sc.budgeted,0) as budgeted, sc.note, sc.goalTarget,
     lac.budgetedCreditOutflows as budgetedSpending, 
     -(lac.positiveCashOutflows) as positiveCashOutflows,
     lac.allSpending, lac.additionalToBeBudgeted, lac.allSpendingSinceLastPayment,
     -- The following fields are used as a base from previous month
-    sc.balance, sc.overspendingAffectsBuffer, sc.goalOverallFunded, sc.deviceKnowledge, mc.isTombstone
+    sc.balance, sc.goalOverallFunded, sc.deviceKnowledge, mc.isTombstone
 FROM e_months_debt_categories mc
 	LEFT JOIN e_liability_account_activity lac ON lac.accountId = mc.accountId AND lac.month_epoch = mc.month_epoch
     LEFT JOIN MonthlySubCategoryBudgets sc ON sc.entityId = mc.entityId        
@@ -261,14 +261,15 @@ ORDER BY mc.subCategoryId, mc.month_epoch
 			name: "",
 			query: `
 			WITH e_min_max_activity_months AS (
-	SELECT subCategoryId, 
-		MIN(month) minMonthActivity,
-		MAX(CASE WHEN subCategoryType = 'DBT' AND allSpendingSinceLastPayment != 0 THEN month ElSE NULL END) as maxMonthPayment
-	FROM MonthlySubCategoryBudgets
-	WHERE budgetId = ?1
-        AND subCategoryId IN (${subCategoryIdsINClause})
-		AND (budgeted != 0 OR cashOutflows !=0 OR creditOutflows !=0)
-	GROUP BY subCategoryId
+	SELECT m.subCategoryId, 
+		MIN(m.month) minMonthActivity,
+		MAX(CASE WHEN s.type = 'DBT' AND m.allSpendingSinceLastPayment != 0 THEN m.month ElSE NULL END) as maxMonthPayment
+	FROM MonthlySubCategoryBudgets m 
+	INNER JOIN SubCategories s ON m.subCategoryId = s.entityId
+	WHERE m.budgetId = ?1
+        AND m.subCategoryId IN (${subCategoryIdsINClause})
+		AND (m.budgeted != 0 OR m.cashOutflows !=0 OR m.creditOutflows !=0)
+	GROUP BY m.subCategoryId
 ), e_categories_prior_months AS (
 	SELECT m.entityId,
 		CAST(ROUND(AVG(COALESCE(mp.budgeted,0))) as int) as budgetedAverage,
@@ -276,11 +277,12 @@ ORDER BY mc.subCategoryId, mc.month_epoch
 		CAST(ROUND(AVG(COALESCE(mp.cashOutflows,0) + COALESCE(mp.budgetedSpending,0))) as int) as paymentAverage,
 		(
 			-- Take all_spending_since_last_payment from last payment month
-			COALESCE(SUM(CASE WHEN m.subCategoryType = 'DBT' AND mp.month = mm.maxMonthPayment THEN COALESCE(mp.allSpendingSinceLastPayment,0) ELSE 0 END),0)
+			COALESCE(SUM(CASE WHEN s.type = 'DBT' AND mp.month = mm.maxMonthPayment THEN COALESCE(mp.allSpendingSinceLastPayment,0) ELSE 0 END),0)
 			-- Add all_spending in subsequent months
-		  + COALESCE(SUM(CASE WHEN m.subCategoryType = 'DBT' AND (mm.maxMonthPayment IS NULL OR mp.month > mm.maxMonthPayment) THEN COALESCE(mp.allSpending,0) ELSE 0 END),0)
+		  + COALESCE(SUM(CASE WHEN s.type = 'DBT' AND (mm.maxMonthPayment IS NULL OR mp.month > mm.maxMonthPayment) THEN COALESCE(mp.allSpending,0) ELSE 0 END),0)
         ) as allSpendingSinceLastPaymentPreviousMonths
 	FROM MonthlySubCategoryBudgets m
+	INNER JOIN SubCategories s ON m.subCategoryId = s.entityId
 	INNER JOIN MonthlySubCategoryBudgets mp ON mp.subCategoryId = m.subCategoryId AND mp.month < m.month
 	LEFT JOIN e_min_max_activity_months mm ON mm.subCategoryId = m.subCategoryId
 	WHERE m.budgetId = ?1
@@ -291,17 +293,15 @@ ORDER BY mc.subCategoryId, mc.month_epoch
 	GROUP BY m.entityId
 )
 REPLACE INTO MonthlySubCategoryBudgets (
-    budgetId, entityId, isTombstone, monthlyBudgetId, month, subCategoryId, budgeted, overspendingHandling,
-    note, cashOutflows, creditOutflows, balance, overspendingAffectsBuffer, budgetedCashOutflows, budgetedCreditOutflows,
+    budgetId, entityId, isTombstone, monthlyBudgetId, month, subCategoryId, budgeted,
+    note, cashOutflows, creditOutflows, balance, budgetedCashOutflows, budgetedCreditOutflows,
     unBudgetedCashOutflows, unBudgetedCreditOutflows, budgetedPreviousMonth, spentPreviousMonth, paymentPreviousMonth, 
     balancePreviousMonth, budgetedAverage, spentAverage, paymentAverage, budgetedSpending, upcomingTransactions, goalTarget,
-    subCategoryInternalName, subCategorySortableIndex, subCategoryPinnedIndex, subCategoryType, subCategoryName, subCategoryNote,
-    masterCategoryId, masterCategoryName, masterCategoryInternalName, masterCategorySortableIndex, deviceKnowledge,
-    allSpendingSinceLastPayment, goalOverallFunded, goalUnderFunded, goalOverallLeft, goalExpectedCompletion,
+    deviceKnowledge, allSpendingSinceLastPayment, goalOverallFunded, goalUnderFunded, goalOverallLeft, goalExpectedCompletion,
     allSpending, positiveCashOutflows, additionalToBeBudgeted, upcomingTransactionsCount, deviceKnowledgeForCalculatedFields
 )
 SELECT budgetId, m.entityId, isTombstone, monthlyBudgetId, month, subCategoryId, budgeted,
-    overspendingHandling, note, cashOutflows, creditOutflows, balance, overspendingAffectsBuffer,
+    note, cashOutflows, creditOutflows, balance,
     budgetedCashOutflows, budgetedCreditOutflows, unBudgetedCashOutflows, unBudgetedCreditOutflows,
     budgetedPreviousMonth, spentPreviousMonth, paymentPreviousMonth, balancePreviousMonth, 
     
@@ -309,9 +309,7 @@ SELECT budgetId, m.entityId, isTombstone, monthlyBudgetId, month, subCategoryId,
 	COALESCE(a.spentAverage,0) as spentAverage,
 	COALESCE(a.paymentAverage,0) as paymentAverage,
     
-    budgetedSpending, upcomingTransactions, goalTarget, subCategoryInternalName,
-    subCategorySortableIndex, subCategoryPinnedIndex, subCategoryType, subCategoryName, subCategoryNote,
-    masterCategoryId, masterCategoryName, masterCategoryInternalName, masterCategorySortableIndex, deviceKnowledge,
+    budgetedSpending, upcomingTransactions, goalTarget, deviceKnowledge,
     
     -- If there was no spending or payment in the payment category month, c.allSpendingSinceLastPayment will be NULL. -- So, we will pull spending since last payment in previous months (allSpendingSinceLastPaymentPreviousMonths)
     -- and add current month spending to it to come up with allSpendingSinceLastPayment
@@ -465,7 +463,7 @@ WHERE m.subCategoryId IN (${subCategoryIdsINClause})
 				}
 				
 				/* The following fields are being retrieved in the data query and will therefore be saved back as is:
-					- budgeted, overspendingHandling, note, upcomingTransactions, upcomingTransactionsCount 
+					- budgeted, note, upcomingTransactions, upcomingTransactionsCount 
 					- isTombstone (pulls SubCategories.isTombstone)
 				*/
 				

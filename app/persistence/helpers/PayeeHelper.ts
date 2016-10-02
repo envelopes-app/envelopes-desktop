@@ -19,7 +19,7 @@ export class PayeeHelper {
 
 		if(changedEntities.payees) {
 
-			_.forEach(changedEntities.payees, function(changedEntity:budgetEntities.IPayee) {
+			_.forEach(changedEntities.payees, (changedEntity:budgetEntities.IPayee)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

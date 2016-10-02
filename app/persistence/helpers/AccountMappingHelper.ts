@@ -19,7 +19,7 @@ export class AccountMappingHelper {
 
 		if(changedEntities.accountMappings) {
 
-			_.forEach(changedEntities.accountMappings, function(changedEntity:budgetEntities.IAccountMapping) {
+			_.forEach(changedEntities.accountMappings, (changedEntity:budgetEntities.IAccountMapping)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

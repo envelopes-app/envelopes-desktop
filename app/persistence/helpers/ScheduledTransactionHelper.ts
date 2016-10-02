@@ -21,7 +21,7 @@ export class ScheduledTransactionHelper {
 
 		if(changedEntities.scheduledTransactions) {
 
-			_.forEach(changedEntities.scheduledTransactions, function(changedEntity:budgetEntities.IScheduledTransaction) {
+			_.forEach(changedEntities.scheduledTransactions, (changedEntity:budgetEntities.IScheduledTransaction)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

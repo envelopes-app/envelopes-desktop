@@ -193,7 +193,6 @@ export class CalculationsManager {
 				result.splitSubCategoryId = referenceIdsForCalculations.splitSubCategoryId;
 				result.uncategorizedSubCategoryId = referenceIdsForCalculations.uncategorizedSubCategoryId;
 				result.immediateIncomeSubCategoryId = referenceIdsForCalculations.immediateIncomeSubCategoryId;;
-				result.deferredIncomeSubCategoryId = referenceIdsForCalculations.deferredIncomeSubCategoryId;;
 				result.startingBalancePayeeId = referenceIdsForCalculations.startingBalancePayeeId;
 				
 				if (calculationQueueSummary) {

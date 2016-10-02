@@ -21,7 +21,7 @@ export class SubCategoryHelper {
 
 		if(changedEntities.subCategories) {
 
-			_.forEach(changedEntities.subCategories, function(changedEntity:budgetEntities.ISubCategory) {
+			_.forEach(changedEntities.subCategories, (changedEntity:budgetEntities.ISubCategory)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;
@@ -43,7 +43,7 @@ export class SubCategoryHelper {
 		return queriesList;
 	}
 
-	private static getCalculationInvalidationQuery(budgetId:string, originalEntity:budgetEntities.ISubCategory, updatedEntity:budgetEntities.ISubCategory):IDatabaseQuery {
+	private getCalculationInvalidationQuery(budgetId:string, originalEntity:budgetEntities.ISubCategory, updatedEntity:budgetEntities.ISubCategory):IDatabaseQuery {
 
 		if(!originalEntity || updatedEntity.masterCategoryId != originalEntity.masterCategoryId ||
 			updatedEntity.goalType != originalEntity.goalType ||

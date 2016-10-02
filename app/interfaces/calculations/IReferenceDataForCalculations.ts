@@ -24,7 +24,6 @@ export interface IReferenceDataForCalculations {
 	splitSubCategoryId:string;
 	uncategorizedSubCategoryId:string;
 	immediateIncomeSubCategoryId:string;
-	deferredIncomeSubCategoryId:string;
 	startingBalancePayeeId:string;
 	
 	queuedTransactionCalculationsStartMonth:DateWithoutTime;

@@ -6,7 +6,7 @@ import { TransactionQueries } from '../budgetQueries';
 
 export class BudgetDateQueries {
 
-	public static getFirstAndLastBudgetMonthQuery(budgetVersionId:string):IDatabaseQuery {
+	public static getFirstAndLastBudgetMonthQuery(budgetId:string):IDatabaseQuery {
 		
 		return {
 			name:"firstLastBudgetMonth",
@@ -14,13 +14,13 @@ export class BudgetDateQueries {
 WITH e_first_last_budgeted_month AS (
 SELECT MIN(month) as first_month_budgeted, MAX(month) as last_month_budgeted 
 FROM MonthlySubCategoryBudgets
-WHERE budgetVersionId = ?1
+WHERE budgetId = ?1
 	AND isTombstone = 0
 	AND budgeted != 0
 ), e_first_transaction_month AS (
 SELECT  strftime('%Y-%m-%d', datetime(MIN(date) * 0.001, 'unixepoch', 'start of month'))  as min_transaction_month
 FROM Transactions 
-WHERE budgetVersionId = ?1
+WHERE budgetId = ?1
 	AND isTombstone = 0
 	AND COALESCE(source,'') IN (${TransactionQueries.TransactionSourcesINClause})
 )
@@ -31,7 +31,7 @@ FROM (SELECT current_month FROM (SELECT (VALUES(date('now','start of month'))) a
 LEFT JOIN e_first_last_budgeted_month b
 LEFT JOIN e_first_transaction_month t
 			`,
-			arguments: [budgetVersionId]
+			arguments: [budgetId]
 		};
 	}
 }

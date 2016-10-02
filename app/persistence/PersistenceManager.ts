@@ -30,14 +30,14 @@ export class PersistenceManager {
 		if(!PersistenceManager.instance)
 			PersistenceManager.instance =  new PersistenceManager();
 
-		return PersistenceManager.instance 
+		return PersistenceManager.instance;
 	};
 	// ************************************************************************************************
 
 	private catalogKnowledge:CatalogKnowledge;
 	private budgetKnowledge:BudgetKnowledge;
 	private activeBudget:catalogEntities.IBudget;
-	private calculationsManager:CalculationsManager;
+	private calculationsManager:CalculationsManager = new CalculationsManager();
 
 	private accountHelper = new persistenceHelpers.AccountHelper();
 	private accountMappingHelper = new persistenceHelpers.AccountMappingHelper();
@@ -56,32 +56,23 @@ export class PersistenceManager {
 
 	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
 
-		// ********************************************************************************************
-		// Testing Code
-		// ********************************************************************************************
 		if(process.env.NODE_ENV === 'test') {
-			// If we are running in the testing environment then we need to explicitly open a connection
-			// to the websql database, and set it's reference in the QueryExecutionUtility so that 
-			// everyone else can use it.
-			var dbFileName:string = "ENAB";
-			var refDatabase = openDatabase(dbFileName, "1.0", "ENAB Test Database", 5 * 1024 * 1024);
+
+			// Open a connection to the database.
+			var refDatabase = openDatabase("ENAB", "1.0", "ENAB Test Database", 5 * 1024 * 1024);
+			// Set the reference of the database in the QueryExecutionUtility
 			setDatabaseReference(refDatabase);
 			// Explicitly set refreshDatabaseAtStartup to true to force a blank database
 			refreshDatabaseAtStartup = true;
-		} 
-		// ********************************************************************************************
-		// ********************************************************************************************
-
+		}
 		// Ensure that the database tables are created and all the migrations have been run
 		var databaseFactory = new DatabaseFactory();
 		return databaseFactory.createDatabase(refreshDatabaseAtStartup)
 			.then((retVal:boolean)=>{
-
 				// Load the catalog knowledge values from the database
 				return this.loadCatalogKnowledgeValuesFromDatabase();
 			})
 			.then((catalogKnowledge:CatalogKnowledge)=>{
-
 				this.catalogKnowledge = catalogKnowledge;
 				return true;
 			});
@@ -131,7 +122,7 @@ export class PersistenceManager {
 			});
 	}
 
-	public loadBudgetData():Promise<IEntitiesCollection> {
+	public loadBudgetData():Promise<ISimpleEntitiesCollection> {
 
 		var budgetId = this.activeBudget.entityId;
 		var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
@@ -139,7 +130,7 @@ export class PersistenceManager {
 		return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
 	}
 
-	public syncDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<IEntitiesCollection> {
+	public syncDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
 
 		var budgetId = this.activeBudget.entityId;
 		var budgetKnowledge = this.budgetKnowledge;
@@ -299,7 +290,7 @@ export class PersistenceManager {
 			return Promise.resolve(true);
 	}
 
-	private loadBudgetEntitiesFromDatabase(budgetId:string, deviceKnowlege:number, deviceKnowledgeForCalculations:number):Promise<IEntitiesCollection> {
+	private loadBudgetEntitiesFromDatabase(budgetId:string, deviceKnowlege:number, deviceKnowledgeForCalculations:number):Promise<ISimpleEntitiesCollection> {
 
 		var queryList = [
 			budgetQueries.AccountQueries.loadDatabaseObject(budgetId, deviceKnowlege, deviceKnowledgeForCalculations),

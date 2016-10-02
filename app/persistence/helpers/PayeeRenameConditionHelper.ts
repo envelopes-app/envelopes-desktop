@@ -19,7 +19,7 @@ export class PayeeRenameConditionHelper {
 
 		if(changedEntities.payeeRenameConditions) {
 
-			_.forEach(changedEntities.payeeRenameConditions, function(changedEntity:budgetEntities.IPayeeRenameCondition) {
+			_.forEach(changedEntities.payeeRenameConditions, (changedEntity:budgetEntities.IPayeeRenameCondition)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

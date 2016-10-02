@@ -25,18 +25,11 @@ export function executeSqlQueries(queryList:Array<IDatabaseQuery>):Promise<any> 
 		return executeSqlQueriesInProductionEnvironment(queryList);
 }
 
-// Reference to the websql database that is used in the testing environment
-var refDatabase:Database;
-
-export function setDatabaseReference(database):void {
-	refDatabase = database;
-}
-
 function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery>):Promise<any> {
 
 	return new Promise<any>((resolve, reject)=>{
 
-		var ipcRenderer=  require('electron').ipcRenderer;
+		var { ipcRenderer } = require('electron');
 		// We have to send this request to the main process for execution. 
 		// Generate a new guid to uniquely identify this request. 
 		var requestId:string = uuid.v4();
@@ -60,8 +53,20 @@ function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery
 	});
 }
 
+// ******************************************************************************************************************
+// Following code is for accessing the database when running in a test environment, since there, we do not have 
+// access to the ipcRenderer object. These methods directly use the sqlite3 module to access the database.
+// ******************************************************************************************************************
+// Reference to the websql database that is used in the testing environment. This is set by the PersistenceManager.
+var _refDatabase;
+
+export function setDatabaseReference(database):void {
+	_refDatabase = database;
+}
+
 function executeSqlQueriesInTestEnvironment(queryList:Array<IDatabaseQuery>):Promise<any> {
 
+	var refDatabase = _refDatabase;
 	return new Promise<any>((resolve, reject)=>{
 		var results:any = {};
 		var startTime = Date.now();
@@ -86,6 +91,7 @@ function executeSqlQueriesInTestEnvironment(queryList:Array<IDatabaseQuery>):Pro
 				}
 				Logger.error(standardError.toString());
 				reject(standardError);
+
 			},
 			()=>{
 
@@ -134,14 +140,12 @@ function executeSqlQuery(refTransaction:SQLTransaction, queryObj:IDatabaseQuery,
 				results[ queryObj.name + "_rows_affected" ] = rowsAffected;
 			}
 		}
-		/*
-			,
-			function(transaction:SQLTransaction, error:SQLError):boolean {
+		,
+		function(transaction:SQLTransaction, error:SQLError):boolean {
 
-				debugger;
-				ynab.utilities.ConsoleUtilities.error(error.message);
-				return false;
-			}
-			*/
+			debugger;
+			Logger.error(error.message);
+			return false;
+		}
 	);
 }

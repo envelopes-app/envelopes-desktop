@@ -2,9 +2,10 @@
 	"compilerOptions": {
 		"outDir": "../build/tests",
 		"target": "ES6",
-		"sourceMap": false,
+		"sourceMap": true,
 		"watch": false,
-		"module": "commonjs"
+		"module": "commonjs",
+		"removeComments": true
 	},
     "files": [
         "./TestsContainer.ts"

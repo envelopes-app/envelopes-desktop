@@ -19,7 +19,7 @@ export class SettingHelper {
 
 		if(changedEntities.settings) {
 
-			_.forEach(changedEntities.settings, function(changedEntity:budgetEntities.ISetting) {
+			_.forEach(changedEntities.settings, (changedEntity:budgetEntities.ISetting)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

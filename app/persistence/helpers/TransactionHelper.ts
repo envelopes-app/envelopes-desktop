@@ -21,7 +21,7 @@ export class TransactionHelper {
 
 		if(changedEntities.transactions) {
 
-			_.forEach(changedEntities.transactions, function(changedEntity:budgetEntities.ITransaction) {
+			_.forEach(changedEntities.transactions, (changedEntity:budgetEntities.ITransaction)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

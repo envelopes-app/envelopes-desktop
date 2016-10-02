@@ -49,8 +49,8 @@ export class TransactionCalculations {
 		startMonth:DateWithoutTime, endMonth:DateWithoutTime):Promise<boolean> {
 
 		return executeSqlQueries([
-			this.clearCalculationTransactionsTable(budgetId),
-			this.populateCalculationTransactionsTable(budgetId, startMonth, referenceData.splitSubCategoryId, referenceData.uncategorizedSubCategoryId, referenceData.startingBalancePayeeId, referenceData.immediateIncomeSubCategoryId)
+			this.clearTransactionCalculationsTable(budgetId),
+			this.populateTransactionCalculationsTable(budgetId, startMonth, referenceData.splitSubCategoryId, referenceData.uncategorizedSubCategoryId, referenceData.startingBalancePayeeId, referenceData.immediateIncomeSubCategoryId)
 		]);
 	}
 	        
@@ -122,19 +122,19 @@ export class TransactionCalculations {
 		};
 	}
         
-	private clearCalculationTransactionsTable(budgetId:string):IDatabaseQuery {
+	private clearTransactionCalculationsTable(budgetId:string):IDatabaseQuery {
 		return {
-			name: "DeleteFromCalculationTransactions",
-			query: "DELETE FROM CalculationTransactions WHERE budgetId = ?1",
+			name: "DeleteFromTransactionCalculations",
+			query: "DELETE FROM TransactionCalculations WHERE budgetId = ?1",
 			arguments: [budgetId]
 		};
 	}
 	
-	private populateCalculationTransactionsTable(budgetId:string, startMonth:DateWithoutTime,
+	private populateTransactionCalculationsTable(budgetId:string, startMonth:DateWithoutTime,
 		splitSubCategoryId:string, uncategorizedSubCategoryId:string, startingBalancePayeeId:string, immediateIncomeSubCategoryId:string):IDatabaseQuery {
 
 		return {
-			name: "CalculationTransactions",
+			name: "TransactionCalculations",
 			query: `
 WITH e_transactions AS (
  SELECT t.entityId as transactionId, NULL as subTransactionId, 1 as isTransaction, 0 as isSubTransaction,
@@ -149,7 +149,7 @@ WITH e_transactions AS (
 	AND t.isTombstone = 0
     AND COALESCE(T.source,'') IN (${TransactionQueries.TransactionSourcesINClause})
 )
-INSERT INTO CalculationTransactions
+INSERT INTO TransactionCalculations
 SELECT ?1 as budgetId, ts.transactionId, ts.subTransactionId, ts.isTransaction, ts.isSubTransaction, 
     ts.date, CAST(strftime('%s', date(datetime(ts.date * 0.001, 'unixepoch'),'start of month')) as NUMERIC) as month_epoch,
     ts.amount, ts.cashAmount, ts.creditAmount, ts.subCategoryCreditAmountPreceding, ts.accountId, ts.subCategoryId, ts.payeeId, 

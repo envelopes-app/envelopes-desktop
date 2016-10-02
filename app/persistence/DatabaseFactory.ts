@@ -261,7 +261,6 @@ export class DatabaseFactory {
 						'infoCount' NUMERIC NOT NULL DEFAULT 0,
 						'warningCount' NUMERIC NOT NULL DEFAULT 0,
 						'errorCount' NUMERIC NOT NULL DEFAULT 0,
-						'transactionCount' NUMERIC NOT NULL DEFAULT 0,
 						'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
 			},
@@ -502,6 +501,7 @@ export class DatabaseFactory {
 						'cleared' VARCHAR NOT NULL,
 						'accepted' BOOL NOT NULL,
 						'flag' VARCHAR,
+						'source' VARCHAR,
 						'transferAccountId' VARCHAR,
 						'transferTransactionId' VARCHAR,
 						'transferSubTransactionId' VARCHAR,
@@ -514,6 +514,39 @@ export class DatabaseFactory {
 						'deviceKnowledgeForCalculatedFields' NUMERIC NOT NULL)`,
 				arguments: []
 			},
+			{
+				query: `CREATE TABLE IF NOT EXISTS TransactionCalculations(
+							'budgetId' VARCHAR NOT NULL,
+							'transactionId' VARCHAR,
+							'subTransactionId' VARCHAR,
+							'isTransaction' BOOLEAN,
+							'isSubTransaction' BOOLEAN,
+							'date' DATETIME,
+							'month_epoch' NUMERIC,
+							'amount' NUMERIC,
+							'cashAmount' NUMERIC,
+							'creditAmount' NUMERIC,
+							'subCategoryCreditAmountPreceding' NUMERIC,
+							'accountId' VARCHAR,
+							'subCategoryId' VARCHAR,
+							'payeeId' VARCHAR,
+							'isCleared' BOOLEAN,
+							'isAccepted' BOOLEAN,
+							'isSplit' BOOLEAN,
+							'isUncategorized' BOOLEAN,
+							'isPayeeStartingBalance' BOOLEAN,
+							'isImmediateIncomeSubCategory' BOOLEAN,
+							'onBudget' BOOLEAN,
+							'transferAccountId' VARCHAR,
+							'affectsBudget' BOOLEAN,
+							'isTransferAccountOnBudget' BOOLEAN,
+							'isTransferAccountAsset' BOOLEAN,
+							'isLiabilityAccount' BOOLEAN,
+							'transferTransactionId' VARCHAR,
+							'transferSubTransactionId' VARCHAR,
+							'isReconciled' BOOLEAN);`,
+				arguments: []
+			},
 
 			// ********************************************************************************************
 			// Create the indexes
@@ -522,6 +555,8 @@ export class DatabaseFactory {
 			{query: "CREATE INDEX IF NOT EXISTS 'SubTransactions_index_01' ON SubTransactions (budgetId, isTombstone, subCategoryId, transactionId, transferAccountId)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'MasterCategories_index_01' ON MasterCategories (budgetId, isTombstone)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'SubCategories_index_01' ON SubCategories (budgetId, isTombstone)", arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_1' ON TransactionCalculations (subCategoryId, month_epoch);`, arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_2' ON TransactionCalculations (accountId, month_epoch);`, arguments: []},
 
 			// ********************************************************************************************
 			// Insert the required data
@@ -564,7 +599,7 @@ export class DatabaseFactory {
 			{query: "DROP TABLE IF EXISTS 'SubCategories'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'SubTransactions'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'Transactions'", arguments: []},
-			{query: "DROP TABLE IF EXISTS 'CalculationTransactions'", arguments: []}
+			{query: "DROP TABLE IF EXISTS 'TransactionCalculations'", arguments: []}
 		];
 
 		return queryList;

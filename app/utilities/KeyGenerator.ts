@@ -21,15 +21,15 @@ export class KeyGenerator {
 		return key;
 	}
 
-	public static getMonthlyBudgetIdentity(budgetVersionId:string, month:DateWithoutTime):string {
+	public static getMonthlyBudgetIdentity(budgetId:string, month:DateWithoutTime):string {
 
-		var key:string = "mb/" + KeyGenerator.getYearMonthFromDate(month) + "/" + budgetVersionId;
+		var key:string = "mb/" + KeyGenerator.getYearMonthFromDate(month) + "/" + budgetId;
 		return key;
 	}
 
-	public static getMonthlyBudgetCalculationIdentity(budgetVersionId:string, month:DateWithoutTime):string {
+	public static getMonthlyBudgetCalculationIdentity(budgetId:string, month:DateWithoutTime):string {
 
-		var key:string = "mbc/" + KeyGenerator.getYearMonthFromDate(month) + "/" + budgetVersionId;
+		var key:string = "mbc/" + KeyGenerator.getYearMonthFromDate(month) + "/" + budgetId;
 		return key;
 	}
 
@@ -45,9 +45,9 @@ export class KeyGenerator {
 		return key;
 	}
 
-	public static getSettingIdentity(budgetVersionId:string, settingName:string):string {
+	public static getSettingIdentity(budgetId:string, settingName:string):string {
 
-		var key:string = budgetVersionId + "/" + settingName;
+		var key:string = budgetId + "/" + settingName;
 		return key;
 	}
 

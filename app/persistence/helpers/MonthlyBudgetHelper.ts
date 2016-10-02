@@ -19,7 +19,7 @@ export class MonthlyBudgetHelper {
 
 		if(changedEntities.monthlyBudgets) {
 
-			_.forEach(changedEntities.monthlyBudgets, function(changedEntity:budgetEntities.IMonthlyBudget) {
+			_.forEach(changedEntities.monthlyBudgets, (changedEntity:budgetEntities.IMonthlyBudget)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

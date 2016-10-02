@@ -22,7 +22,7 @@ export class MonthlySubCategoryBudgetHelper {
 
 		if(changedEntities.monthlySubCategoryBudgets) {
 
-			_.forEach(changedEntities.monthlySubCategoryBudgets, function(changedEntity:budgetEntities.IMonthlySubCategoryBudget) {
+			_.forEach(changedEntities.monthlySubCategoryBudgets, (changedEntity:budgetEntities.IMonthlySubCategoryBudget)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

@@ -19,7 +19,7 @@ export class ScheduledSubTransactionHelper {
 
 		if(changedEntities.scheduledSubTransactions) {
 
-			_.forEach(changedEntities.scheduledSubTransactions, function(changedEntity:budgetEntities.IScheduledSubTransaction) {
+			_.forEach(changedEntities.scheduledSubTransactions, (changedEntity:budgetEntities.IScheduledSubTransaction)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;

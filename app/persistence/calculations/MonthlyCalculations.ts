@@ -58,23 +58,24 @@ export class MonthlyCalculations {
 			name: "monthlySubCategoryBudgetsAggregated",
 			query: `
 SELECT m.month, m.note, m.deviceKnowledge,
-    SUM(CASE WHEN (subCategoryType IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as cashOutflows,
-    SUM(CASE WHEN (subCategoryType IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.creditOutflows,0) ELSE 0 END) as creditOutflows, 
-    SUM(CASE WHEN (subCategoryType IN (?4, ?5)) THEN COALESCE(s.budgeted,0) ELSE 0 END) as budgeted,
-    SUM(CASE WHEN (subCategoryType IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.balance,0) ELSE 0 END) as balance,
+    SUM(CASE WHEN (sc.type IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as cashOutflows,
+    SUM(CASE WHEN (sc.type IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.creditOutflows,0) ELSE 0 END) as creditOutflows, 
+    SUM(CASE WHEN (sc.type IN (?4, ?5)) THEN COALESCE(s.budgeted,0) ELSE 0 END) as budgeted,
+    SUM(CASE WHEN (sc.type IN (?4, ?5) OR subCategoryId = ?6) THEN COALESCE(s.balance,0) ELSE 0 END) as balance,
     SUM(CASE WHEN subCategoryId = ?7 THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as immediateIncome,
-    SUM(CASE WHEN subCategoryId = ?8 THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as deferredIncome,
     SUM(CASE WHEN subCategoryId = ?6 THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as uncategorizedCashOutflows,
     SUM(CASE WHEN subCategoryId = ?6 THEN COALESCE(s.creditOutflows,0) ELSE 0 END) as uncategorizedCreditOutflows,
     SUM(CASE WHEN subCategoryId = ?6 THEN COALESCE(s.balance,0) ELSE 0 END) as uncategorizedBalance,
-    SUM(CASE WHEN masterCategoryInternalName = ?9 THEN COALESCE(s.budgeted,0) ELSE 0 END) as hiddenBudgeted,
-    SUM(CASE WHEN masterCategoryInternalName = ?9 THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as hiddenCashOutflows,
-    SUM(CASE WHEN masterCategoryInternalName = ?9 THEN COALESCE(s.creditOutflows,0) ELSE 0 END) as hiddenCreditOutflows,
-    SUM(CASE WHEN masterCategoryInternalName = ?9 THEN COALESCE(s.balance,0) ELSE 0 END) as hiddenBalance,
+    SUM(CASE WHEN mc.internalName = ?8 THEN COALESCE(s.budgeted,0) ELSE 0 END) as hiddenBudgeted,
+    SUM(CASE WHEN mc.internalName = ?8 THEN COALESCE(s.cashOutflows,0) ELSE 0 END) as hiddenCashOutflows,
+    SUM(CASE WHEN mc.internalName = ?8 THEN COALESCE(s.creditOutflows,0) ELSE 0 END) as hiddenCreditOutflows,
+    SUM(CASE WHEN mc.internalName = ?8 THEN COALESCE(s.balance,0) ELSE 0 END) as hiddenBalance,
     SUM(COALESCE(s.additionalToBeBudgeted,0)) as additionalToBeBudgeted,
     
-    SUM(CASE WHEN ((subCategoryType IN (?4, ?5) OR subCategoryId = ?6) AND COALESCE(overspendingAffectsBuffer = 1,1) AND COALESCE(s.balance,0) < 0) THEN (COALESCE(s.balance,0) - COALESCE(s.unbudgetedCreditOutflows,0)) ELSE 0 END) as overSpent
+    SUM(CASE WHEN ((sc.type IN (?4, ?5) OR subCategoryId = ?6) AND COALESCE(s.balance,0) < 0) THEN (COALESCE(s.balance,0) - COALESCE(s.unbudgetedCreditOutflows,0)) ELSE 0 END) as overSpent
 FROM MonthlySubCategoryBudgets s
+	INNER JOIN SubCategories sc ON s.subCategoryId = sc.entityId
+	INNER JOIN MasterCategories mc ON sc.masterCategoryId = mc.entityId
     INNER JOIN MonthlyBudgets m ON m.entityId = s.monthlyBudgetId
 WHERE s.budgetId = ?1	
     AND s.month >= ?2 AND s.month <= ?3
@@ -82,7 +83,7 @@ WHERE s.budgetId = ?1
 GROUP BY s.month
 ORDER BY m.month
 			`,
-			arguments: [budgetId, startMonth.toISOString(), endMonth.toISOString(), SubCategoryType.Default, SubCategoryType.Debt, referenceData.uncategorizedSubCategoryId, referenceData.immediateIncomeSubCategoryId, referenceData.deferredIncomeSubCategoryId, InternalCategories.HiddenMasterCategory]
+			arguments: [budgetId, startMonth.toISOString(), endMonth.toISOString(), SubCategoryType.Default, SubCategoryType.Debt, referenceData.uncategorizedSubCategoryId, referenceData.immediateIncomeSubCategoryId, InternalCategories.HiddenMasterCategory]
 		};
 	}   
 	

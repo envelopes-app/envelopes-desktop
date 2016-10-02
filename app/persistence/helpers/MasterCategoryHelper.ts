@@ -19,7 +19,7 @@ export class MasterCategoryHelper {
 
 		if(changedEntities.masterCategories) {
 
-			_.forEach(changedEntities.masterCategories, function(changedEntity:budgetEntities.IMasterCategory) {
+			_.forEach(changedEntities.masterCategories, (changedEntity:budgetEntities.IMasterCategory)=> {
 
 				// Set the budgetId and update the deviceKnowledge value on the entity
 				changedEntity.budgetId = budgetId;
