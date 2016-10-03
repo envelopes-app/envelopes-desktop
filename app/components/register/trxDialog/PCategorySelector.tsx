@@ -27,10 +27,7 @@ export interface PCategorySelectorState {
 
 const CategorySelectorStyle = {
 	borderColor: '#2FA2B5',
-	borderTopWidth: '2px',
-	borderBottomWidth: '2px',
-	borderLeftWidth: '2px',
-	borderRightWidth: '2px',
+	borderWidth: '2px'
 }
 
 const PopoverStyle = {

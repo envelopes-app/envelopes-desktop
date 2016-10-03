@@ -33,7 +33,7 @@ const PopoverStyle = {
 }
 
 const FormControlStyle = {
-	borderColor: "#88979D",
+	borderColor: "#2FA2B5",
 	borderWidth: "2px",
 	borderRadius: "3px"
 }
