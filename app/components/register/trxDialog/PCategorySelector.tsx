@@ -13,6 +13,7 @@ import { SimpleObjectMap } from '../../../utilities';
 
 export interface PCategorySelectorProps { 
 	selectorLabel:string;
+	selectorLabelPosition?:string;
 	selectedCategoryId:string;
 	manuallyEnteredCategoryName:string;
 	categoriesList:Array<objects.ICategoryObject>;
@@ -256,12 +257,28 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		var filteredCategoriesList = this.getFilteredCategories();
 		var popoverContents = this.getCategoriesDisplayList(filteredCategoriesList, this.props.selectedCategoryId);
 
-		return (
-			<FormGroup onKeyDown={this.onKeyDown}>
-				<Col componentClass={ControlLabel} sm={3}>
-					{this.props.selectorLabel}
-				</Col>
-				<Col sm={9}>
+		if(!this.props.selectorLabelPosition || this.props.selectorLabelPosition == "left") {
+			return (
+				<FormGroup onKeyDown={this.onKeyDown}>
+					<Col componentClass={ControlLabel} sm={3}>
+						{this.props.selectorLabel}
+					</Col>
+					<Col sm={9}>
+						<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
+							onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={categoryValue} />
+						<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
+							<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
+								{popoverContents}
+							</Popover>
+						</Overlay>
+					</Col>
+				</FormGroup>
+			);
+		}
+		else { // this.props.selectorLabelPosition == "top"
+			return (
+				<FormGroup onKeyDown={this.onKeyDown}>
+					<ControlLabel>{this.props.selectorLabel}</ControlLabel>
 					<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
 						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={categoryValue} />
 					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
@@ -269,8 +286,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 							{popoverContents}
 						</Popover>
 					</Overlay>
-				</Col>
-			</FormGroup>
-		);
+				</FormGroup>
+			);
+		}
 	}
 }

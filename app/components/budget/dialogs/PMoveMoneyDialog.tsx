@@ -23,8 +23,8 @@ export interface PMoveMoneyDialogState {
 	fromSubCategoryId:string;
 	currentMonth:DateWithoutTime;
 	amountToMove:number;
-	toSubCategoryId?: string;
-	manuallyEnteredCategoryName?: string;
+	toSubCategoryId:string;
+	manuallyEnteredCategoryName:string;
 }
 
 const PopoverStyle = {
@@ -114,7 +114,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		var toSubCategoryId = this.state.toSubCategoryId;
 		var entitiesCollection = this.props.entitiesCollection;
 
-		if(amountToMove != 0 && toSubCategoryId != null) {
+		if(amountToMove != 0 && toSubCategoryId != null && fromSubCategoryId != toSubCategoryId) {
 
 			// Get the subcategory entities for both the "to" and "from" subcategories
 			var fromSubCategory = entitiesCollection.subCategories.getEntityById(fromSubCategoryId);
