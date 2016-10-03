@@ -8,13 +8,17 @@ import { PDefaultCategoryInspector } from './PDefaultCategoryInspector';
 import { PDebtCategoryInspector } from './PDebtCategoryInspector';
 import { PMultiCategoryInspector } from './PMultiCategoryInspector';
 
-import { IEntitiesCollection } from '../../../interfaces/state';
+import {DateWithoutTime } from '../../../utilities';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { SubCategoryType } from '../../../constants';
 
 export interface PInspectorContainerProps {
-	entitiesCollection:IEntitiesCollection;
+	currentMonth:DateWithoutTime;
 	selectedSubCategories:Array<string>;
+	entitiesCollection:IEntitiesCollection;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const InspectorContainerStyle = {
@@ -44,10 +48,20 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 			// Get the selected category to find out if it is a debt category or a default category
 			var subCategoryId:string = this.props.selectedSubCategories[0];
 			var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-			if(subCategory.type == SubCategoryType.Default)
-				inspector = <PDefaultCategoryInspector entitiesCollection={this.props.entitiesCollection} subCategory={subCategory} />;
+			var monthlySubCategory
+			if(subCategory.type == SubCategoryType.Default) {
+				inspector = <PDefaultCategoryInspector 
+								entitiesCollection={this.props.entitiesCollection} 
+								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
+								updateEntities={this.props.updateEntities}
+							/>;
+			}
 			else if(subCategory.type == SubCategoryType.Debt)
-				inspector = <PDebtCategoryInspector entitiesCollection={this.props.entitiesCollection} subCategory={subCategory} />;
+				inspector = <PDebtCategoryInspector 
+								entitiesCollection={this.props.entitiesCollection} 
+								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
+								updateEntities={this.props.updateEntities}	
+							/>;
 		}
 		else if(this.props.selectedSubCategories.length > 1) {
 			inspector = <PMultiCategoryInspector />;

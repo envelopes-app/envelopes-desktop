@@ -6,12 +6,15 @@ import * as ReactDOM from 'react-dom';
 import { Button, Glyphicon } from 'react-bootstrap';
 
 import { DateWithoutTime } from '../../../utilities';
-import { IEntitiesCollection } from '../../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDefaultCategoryInspectorProps {
+	subCategoryId:string;
+	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
-	subCategory:budgetEntities.ISubCategory;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const DefaultCategoryInspectorContainerStyle = {
@@ -101,26 +104,108 @@ const ListItemStyle = {
 
 export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryInspectorProps, {}> {
 
+	constructor(props: any) {
+        super(props);
+		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);
+		this.setBudgetedToSpentLastMonth = this.setBudgetedToSpentLastMonth.bind(this);
+		this.setBudgetedToAverageBudgeted = this.setBudgetedToAverageBudgeted.bind(this);
+		this.setBudgetedToAverageSpent = this.setBudgetedToAverageSpent.bind(this);
+	}
+
+	private setBudgetedToBudgetedLastMonth():void {
+
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+
+		// Get the monthlySubCategoryBudget entity for the current month
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+		// If the current budgeted value is different from what was budgeted last month, update it
+		var budgetedPreviousMonth = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
+		if(budgetedPreviousMonth != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, budgetedPreviousMonth);
+	}
+
+	private setBudgetedToSpentLastMonth():void {
+
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+
+		// Get the monthlySubCategoryBudget entity for the current month
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+		// If the current budgeted value is different from what was spent last month, update it
+		var spentPreviousMonth = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
+		if(spentPreviousMonth != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, spentPreviousMonth);
+	}
+
+	private setBudgetedToAverageBudgeted():void {
+
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+
+		// Get the monthlySubCategoryBudget entity for the current month
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+		// If the current budgeted value is different from budgeted average, update it
+		var budgetedAverage = monthlySubCategoryBudget.budgetedAverage ? monthlySubCategoryBudget.budgetedAverage : 0;
+		if(budgetedAverage != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, budgetedAverage);
+	}
+
+	private setBudgetedToAverageSpent():void {
+
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+
+		// Get the monthlySubCategoryBudget entity for the current month
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+		// If the current budgeted value is different from spent average, update it
+		var spentAverage = monthlySubCategoryBudget.spentAverage ? monthlySubCategoryBudget.spentAverage : 0;
+		if(spentAverage != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, spentAverage);
+	}
+
+	private setBudgetedValue(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget, value:number):void {
+
+		var updatedMonthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+		updatedMonthlySubCategoryBudget.budgeted = value;
+		this.props.updateEntities({
+			monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
+		});
+	}
+	
 	public render() {
 
-		var prevMonth = DateWithoutTime.createForCurrentMonth().subtractMonths(1);
+		var entitiesCollection = this.props.entitiesCollection;
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		// Get the subCategory and monthlySubCategoryBudget entity from the entitiesCollection
+		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+
+		var prevMonth = currentMonth.clone().subtractMonths(1);
 		var prevMonthName = prevMonth.getMonthFullName();
 
-		var cashLeftOver = 0;
-		var budgetedThisMonth = 0;
-		var cashSpending = 0;
-		var creditSpending = 0;
-		var available = 0;
+		// Get the summary values
+		var cashLeftOver = monthlySubCategoryBudget.balancePreviousMonth ? monthlySubCategoryBudget.balancePreviousMonth : 0;
+		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
+		var cashSpending = monthlySubCategoryBudget.cashOutflows;
+		var creditSpending = monthlySubCategoryBudget.creditOutflows;
+		var available = monthlySubCategoryBudget.balance;
 
-		var budgetedLastMonthValue:number = 0;
-		var spentLastMonthValue:number = 0;
-		var averageBudgetedValue:number = 0;
-		var averageSpentValue:number = 0;
+		// Get the quick budget values
+		var budgetedLastMonthValue:number = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
+		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
+		var averageBudgetedValue:number = monthlySubCategoryBudget.budgetedAverage;
+		var averageSpentValue:number = monthlySubCategoryBudget.spentAverage;
 
 		return (
 			<div style={DefaultCategoryInspectorContainerStyle}>
 				<div style={RowStyle}>
-					<label style={CategoryNameStyle}>{this.props.subCategory.name}</label>
+					<label style={CategoryNameStyle}>{subCategory.name}</label>
 					<div style={SpacerStyle}/>
 					<label style={CategoryMenuStyle}><Glyphicon glyph="triangle-bottom" />&nbsp;Edit</label>
 				</div>
@@ -160,22 +245,22 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				</div>
 				<ul style={ListStyle}>
 					<li style={ListItemStyle}>
-						<Button className="quick-budget-button">
+						<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 							Budgeted Last Month: {budgetedLastMonthValue}
 						</Button>
 					</li>
 					<li style={ListItemStyle}>
-						<Button className="quick-budget-button">
+						<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
 							Spent Last Month: {spentLastMonthValue}
 						</Button>
 					</li>
 					<li style={ListItemStyle}>
-						<Button className="quick-budget-button">
+						<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
 							Average Budgeted: {averageBudgetedValue}
 						</Button>
 					</li>
 					<li style={ListItemStyle}>
-						<Button className="quick-budget-button">
+						<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
 							Average Spent: {averageSpentValue}
 						</Button>
 					</li>
@@ -192,7 +277,6 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 						NOTES
 					</div>
 				</div>
-				
 			</div>
 		);
 	}

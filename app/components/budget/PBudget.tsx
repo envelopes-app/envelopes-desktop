@@ -352,8 +352,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showMoveMoneyDialog={this.showMoveMoneyDialog}
 					/>
 					<PInspectorContainer 
+						currentMonth={this.state.selectedMonth}
 						selectedSubCategories={this.state.selectedSubCategories}
 						entitiesCollection={this.props.applicationState.entitiesCollection} 
+						updateEntities={this.props.updateEntities}
 					/>
 				</div>
 

@@ -4,12 +4,16 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
-import { IEntitiesCollection } from '../../../interfaces/state';
+import { DateWithoutTime } from '../../../utilities';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDebtCategoryInspectorProps {
+	subCategoryId:string;
+	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
-	subCategory:budgetEntities.ISubCategory;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const DebtCategoryInspectorContainerStyle = {
