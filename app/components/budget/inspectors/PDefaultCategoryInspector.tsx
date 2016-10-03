@@ -61,23 +61,35 @@ const CategoryMenuStyle = {
 	color: "#009CC2",
 }
 
-const CategoryPropertyNameStyle = _.assign({}, RowItemStyle, {
+const CategoryPropertyNameStyle = Object.assign({}, RowItemStyle, {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#003440"
 });
 
-const CategoryPropertyValueStyle = _.assign({}, RowItemStyle, {
+const CategoryPropertyValueStyle = Object.assign({}, RowItemStyle, {
+	fontSize: "14px",
+	fontWeight: "normal",
+	color: "#003440"
+});
+
+const CategoryAvailableStyle = Object.assign({}, CategoryPropertyNameStyle, {
 	fontSize: "14px",
 	fontWeight: "bold",
 	color: "#003440"
 });
 
-const PillHeaderRowStyle = _.assign({}, RowStyle, {
+const CategoryAvailableValueStyle = Object.assign({}, CategoryPropertyValueStyle, {
+	fontSize: "14px",
+	fontWeight: "bold",
+	color: "#003440"
+});
+
+const PillHeaderRowStyle = Object.assign({}, RowStyle, {
 	paddingTop: "10px"
 });
 
-const PillHeaderStyle = _.assign({}, RowItemStyle, {
+const PillHeaderStyle = Object.assign({}, RowItemStyle, {
 	width: "100%",
 	backgroundColor: "#FFFFFF",
 	color: "#003440",
@@ -194,6 +206,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
 		var cashSpending = monthlySubCategoryBudget.cashOutflows;
 		var creditSpending = monthlySubCategoryBudget.creditOutflows;
+		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
 		var available = monthlySubCategoryBudget.balance;
 
 		// Get the quick budget values
@@ -201,6 +214,25 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
 		var averageBudgetedValue:number = monthlySubCategoryBudget.budgetedAverage;
 		var averageSpentValue:number = monthlySubCategoryBudget.spentAverage;
+
+		// Set the color value on the styles for the category available
+		var categoryAvailableStyle = CategoryAvailableStyle;
+		var categoryAvailableValueStyle = CategoryAvailableValueStyle;
+		if(available < 0) { // Red
+			categoryAvailableStyle = Object.assign({}, CategoryAvailableStyle, {color:"#B43326"});
+			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#B43326"});
+		}
+		else if(available - upcomingTransactions < 0) { // Orange
+			categoryAvailableStyle = Object.assign({}, CategoryAvailableStyle, {color:"#C37B00"});
+			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#C37B00"});
+		}
+		else if(available == 0 && upcomingTransactions == 0) { // Grey
+			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#CFD5D8"});
+		}
+		else  { // if(balance - upcomingTransactions > 0) - Green
+			categoryAvailableStyle = Object.assign({}, CategoryAvailableStyle, {color:"#138B2E"});
+			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#138B2E"});
+		}
 
 		return (
 			<div style={DefaultCategoryInspectorContainerStyle}>
@@ -233,9 +265,9 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				</div>
 				<hr style={HRStyle}/>
 				<div style={RowStyle}>
-					<label style={CategoryPropertyNameStyle}>Available</label>
+					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{available}</label>
+					<label style={categoryAvailableValueStyle}>{available}</label>
 				</div>
 
 				<div style={PillHeaderRowStyle}>
