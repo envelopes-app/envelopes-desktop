@@ -1,4 +1,5 @@
 export { DateWithoutTime } from './DateWithoutTime';
+export { DialogUtilities } from './DialogUtilities';
 export { EntitiesLookupHelper } from './EntitiesLookupHelper';
 export { KeyGenerator } from './KeyGenerator';
 export { Logger, LogLevels } from './Logger';

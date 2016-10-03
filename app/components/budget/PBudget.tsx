@@ -49,6 +49,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private createCategoryDialog:dialogs.PCreateCategoryDialog;
 	private subCategoryEditDialog:dialogs.PSubCategoryEditDialog;
 	private masterCategoryEditDialog:dialogs.PMasterCategoryEditDialog;
+	private moveMoneyDialog:dialogs.PMoveMoneyDialog;
+	private coverOverspendingDialog:dialogs.PCoverOverspendingDialog;
 
 	constructor(props: any) {
         super(props);
@@ -62,11 +64,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
 		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
+		this.showCoverOverspendingDialog = this.showCoverOverspendingDialog.bind(this);
+		this.showMoveMoneyDialog = this.showMoveMoneyDialog.bind(this);
 		
 		this.showSubCategoryActivityDialog = this.showSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
-		this.showCoverOverspendingDialog = this.showCoverOverspendingDialog.bind(this);
-		this.showMoveMoneyDialog = this.showMoveMoneyDialog.bind(this);
 		this.showHiddenCategoriesDialog = this.showHiddenCategoriesDialog.bind(this);
 
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
@@ -264,20 +266,22 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.createCategoryDialog.show(masterCategoryId, element);
 	}
 
-	private showSubCategoryActivityDialog(subCategoryId:string):void {
+	private showSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
 
 	}
 
-	private showMasterCategoryActivityDialog(masterCategoryId:string):void {
+	private showMasterCategoryActivityDialog(masterCategoryId:string, element:HTMLElement):void {
 
 	}
 
-	private showCoverOverspendingDialog(subCategoryId:string):void {
-
+	private showCoverOverspendingDialog(subCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for creating a category
+		this.coverOverspendingDialog.show(subCategoryId, this.state.selectedMonth, element);
 	}
 
-	private showMoveMoneyDialog(subCategoryId:string):void {
-
+	private showMoveMoneyDialog(subCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for creating a category
+		this.moveMoneyDialog.show(subCategoryId, this.state.selectedMonth, element);
 	}
 
 	private showHiddenCategoriesDialog():void {
@@ -344,6 +348,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showCreateCategoryDialog={this.showCreateCategoryDialog}
 						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}
+						showCoverOverspendingDialog={this.showCoverOverspendingDialog}
+						showMoveMoneyDialog={this.showMoveMoneyDialog}
 					/>
 					<PInspectorContainer 
 						selectedSubCategories={this.state.selectedSubCategories}
@@ -365,6 +371,18 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<dialogs.PMasterCategoryEditDialog 
 					ref={(d)=> this.masterCategoryEditDialog = d} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<dialogs.PMoveMoneyDialog 
+					ref={(d)=> this.moveMoneyDialog = d} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<dialogs.PCoverOverspendingDialog 
+					ref={(d)=> this.coverOverspendingDialog = d} 
 					entitiesCollection={this.props.applicationState.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>

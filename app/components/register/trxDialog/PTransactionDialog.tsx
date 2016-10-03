@@ -18,7 +18,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { TransactionFlag, TransactionFrequency } from '../../../constants';
 import { EntityFactory } from '../../../persistence';
 import { IEntitiesCollection, ISimpleEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
-import { DateWithoutTime, EntitiesLookupHelper, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
+import { DialogUtilities, DateWithoutTime, EntitiesLookupHelper, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
 
 export interface PTransactionDialogProps { 
 
@@ -104,9 +104,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		if(accountId) {
 			// Before updating the state, refresh the lists of accounts, payees and categories 
 			// for showing in the popovers of the transaction dialog.
-			this.accountsList = this.buildAccountsList();
-			this.payeesList = this.buildPayeesList();
-			this.categoriesList = this.buildCategoriesList();
+			this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
+			this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
+			this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
 
 			// Update the state of this dialog to make it visible. 
 			// Also reset all the fields for storing the values for the new transaction 
@@ -432,120 +432,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		}
 	}
 
-	private buildAccountsList():Array<objects.IAccountObject> {
-
-		var accountsList:Array<objects.IAccountObject> = [];
-		// Go through the account entities and build a list of open, non-tombstoned accounts
-		_.forEach(this.props.entitiesCollection.accounts, (account)=>{
-
-			if(account.isTombstone == 0 && account.closed == 0) {
-				accountsList.push({
-					entityId: account.entityId,
-					name: account.accountName
-				});
-			}
-		});
-
-		return accountsList; 
-	}
-
-	private buildPayeesList():Array<objects.IPayeeObject> {
-
-		var payeesList:Array<objects.IPayeeObject> = [];
-		// Go through the payee entities and build a list of non-tombstoned, non-internal payees
-		_.forEach(this.props.entitiesCollection.payees, (payee)=>{
-
-			if(payee.isTombstone == 0 && !payee.internalName) {
-				payeesList.push({
-					entityId: payee.entityId,
-					name: payee.name,
-					accountId: payee.accountId,
-					isTransferPayee: payee.accountId ? true : false
-				});
-			}
-		}); 
-
-		return payeesList;
-	}
-
-	private buildCategoriesList():Array<objects.ICategoryObject> {
-
-		var categoriesList:Array<objects.ICategoryObject> = [];
-		var masterCategories = this.props.entitiesCollection.masterCategories;
-		var subCategories = this.props.entitiesCollection.subCategories;
-		var monthlyBudgets = this.props.entitiesCollection.monthlyBudgets;
-		var monthlySubCategoryBudgets = this.props.entitiesCollection.monthlySubCategoryBudgets;
-
-		var internalMasterCategory = masterCategories.getInternalMasterCategory();
-		var immediateIncomeSubCategory = subCategories.getImmediateIncomeSubCategory();
-		// Get the MonthlyBudget and MonthlySubCategoryBudgets for the current month.
-		var currentMonth = DateWithoutTime.createForCurrentMonth();
-		var monthlyBudgetForCurrentMonth:budgetEntities.IMonthlyBudget = monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString()); 
-		var monthlySubCategoryBudgetsForCurrentMonth = monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString()); 
-		// Create a map of the montlySubCategoryBudgets by their subCategoryId
-		var monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget> = {};
-		_.forEach(monthlySubCategoryBudgetsForCurrentMonth, (monthlySubCategoryBudget)=>{
-			monthlySubCategoryBudgetsMap[monthlySubCategoryBudget.subCategoryId] = monthlySubCategoryBudget;
-		});
-
-		// At the top of the list, we want entries for "Inflow" and "To be Budgeted"
-		categoriesList.push({
-			entityId: internalMasterCategory.entityId,
-			name: "Inflow",
-			isMasterCategory: true,
-			isInflow: false,
-			masterCategoryId: null,
-			availableAmount: 0
-		});
-		categoriesList.push({
-			entityId: immediateIncomeSubCategory.entityId,
-			name: "To be Budgeted",
-			isMasterCategory: false,
-			isInflow: true,
-			masterCategoryId: internalMasterCategory.entityId,
-			availableAmount: monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.availableToBudget : 0
-		});
-
-		// Go through the master categories and build a list of non-tombstoned, non-internal master categories
-		_.forEach(masterCategories, (masterCategory)=>{
-
-			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && !masterCategory.internalName) {
-
-				// Get all the subcategories for this master category 
-				var filteredSubCategories = subCategories.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
-				// If there are no subcategories for this master category, skip adding it to the list
-				if(filteredSubCategories.length > 0) {
-
-					categoriesList.push({
-						entityId: masterCategory.entityId,
-						name: masterCategory.name,
-						isMasterCategory: true,
-						isInflow: false,
-						masterCategoryId: null,
-						availableAmount: 0
-					});
-
-					// Add items for all the subCategories for this master category
-					_.forEach(filteredSubCategories, (subCategory)=>{
-
-						// Get the monthlySubCategoryBudget entity for this subCategory
-						var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
-						categoriesList.push({
-							entityId: subCategory.entityId,
-							name: subCategory.name,
-							isMasterCategory: false,
-							isInflow: false,
-							masterCategoryId: masterCategory.entityId,
-							availableAmount: monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0
-						});
-					});
-				}
-			}
-		});
-
-		return categoriesList;
-	}
-
 	public render() {
 
 		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
@@ -553,34 +439,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			return (payeeObj.accountId != this.state.accountId);
 		});
 
-		var filteredCategoriesList = this.categoriesList;
-		if(this.state.manuallyEnteredCategoryName && this.state.manuallyEnteredCategoryName != "") {
-
-			// Filter the list of categoris by the manuallyEnteredCategoryName
-			var filteredCategoriesList = _.filter(this.categoriesList, (categoryObj:objects.ICategoryObject)=>{
-				return (categoryObj.isMasterCategory || categoryObj.name.includes(this.state.manuallyEnteredCategoryName));
-			});
-
-			// We also want to remove all those master catgories that do not have any subcategories below them
-			// after the applying the above filter. Iterate through the list and take count of subcategories 
-			// for each of the master category.
-			var categoriesCounter:SimpleObjectMap<number> = {};
-			_.forEach(filteredCategoriesList, (categoryObj)=>{
-
-				if(categoryObj.isMasterCategory == false) {
-					var counter = categoriesCounter[categoryObj.masterCategoryId] ? categoriesCounter[categoryObj.masterCategoryId] + 1 : 1;
-					categoriesCounter[categoryObj.masterCategoryId] = counter;
-				}
-			});
-
-			// Now filter out those master categories which do not have any subcategories below them
-			filteredCategoriesList = _.filter(filteredCategoriesList, (categoryObj)=>{
-				return (
-					categoryObj.isMasterCategory == false || 
-					(categoryObj.isMasterCategory && categoriesCounter[categoryObj.entityId])
-				);
-			});
-		}
+		var categoriesList = this.categoriesList;
 
 		return (
 			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
@@ -599,9 +458,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 							selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
 							payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
 							setManuallyEnteredPayeeName={this.setManuallyEnteredPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
-						<PCategorySelector ref={(c) => this.categorySelector = c} 
+						<PCategorySelector ref={(c) => this.categorySelector = c} selectorLabel="Category"
 							selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
-							categoriesList={filteredCategoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
+							categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 						<PMemoInput ref={(c) => this.memoInput = c} 
 							memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />

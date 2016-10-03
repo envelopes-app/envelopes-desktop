@@ -12,6 +12,7 @@ import { IEntitiesCollection } from '../../../interfaces/state';
 import { SimpleObjectMap } from '../../../utilities';
 
 export interface PCategorySelectorProps { 
+	selectorLabel:string;
 	selectedCategoryId:string;
 	manuallyEnteredCategoryName:string;
 	categoriesList:Array<objects.ICategoryObject>;
@@ -150,6 +151,40 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		}
 	}
 
+	private getFilteredCategories():Array<objects.ICategoryObject> {
+
+		var filteredCategoriesList = this.props.categoriesList;
+		if(this.props.manuallyEnteredCategoryName && this.props.manuallyEnteredCategoryName != "") {
+
+			// Filter the list of categoris by the manuallyEnteredCategoryName
+			var filteredCategoriesList = _.filter(filteredCategoriesList, (categoryObj:objects.ICategoryObject)=>{
+				return (categoryObj.isMasterCategory || categoryObj.name.includes(this.props.manuallyEnteredCategoryName));
+			});
+
+			// We also want to remove all those master catgories that do not have any subcategories below them
+			// after the applying the above filter. Iterate through the list and take count of subcategories 
+			// for each of the master category.
+			var categoriesCounter:SimpleObjectMap<number> = {};
+			_.forEach(filteredCategoriesList, (categoryObj)=>{
+
+				if(categoryObj.isMasterCategory == false) {
+					var counter = categoriesCounter[categoryObj.masterCategoryId] ? categoriesCounter[categoryObj.masterCategoryId] + 1 : 1;
+					categoriesCounter[categoryObj.masterCategoryId] = counter;
+				}
+			});
+
+			// Now filter out those master categories which do not have any subcategories below them
+			filteredCategoriesList = _.filter(filteredCategoriesList, (categoryObj)=>{
+				return (
+					categoryObj.isMasterCategory == false || 
+					(categoryObj.isMasterCategory && categoriesCounter[categoryObj.entityId])
+				);
+			});
+		}
+
+		return filteredCategoriesList;
+	}
+
 	private getCategoriesDisplayList(categoriesList:Array<objects.ICategoryObject>, selectedCategoryId:string):JSX.Element {
 
 		var categoiresPopoverItem;
@@ -221,12 +256,13 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 			categoryValue = selectedCategory.name;
 		}
 
-		var popoverContents = this.getCategoriesDisplayList(this.props.categoriesList, this.props.selectedCategoryId);
+		var filteredCategoriesList = this.getFilteredCategories();
+		var popoverContents = this.getCategoriesDisplayList(filteredCategoriesList, this.props.selectedCategoryId);
 
 		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
-					Category
+					{this.props.selectorLabel}
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 

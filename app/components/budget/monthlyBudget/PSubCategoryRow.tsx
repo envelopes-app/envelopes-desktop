@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormControl } from 'react-bootstrap';
 
+import { PBalanceValue } from './PBalanceValue';
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -22,6 +23,8 @@ export interface PSubCategoryRowProps {
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, element:HTMLElement)=>void;
 
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -75,7 +78,7 @@ const ValueStyle = {
 	marginBottom: "0px"
 }
 
-const ValueColumnHoverStyle = _.assign({}, ValueColumnStyle, {
+const ValueColumnHoverStyle = Object.assign({}, ValueColumnStyle, {
 	borderStyle: "solid",
 	borderWidth: "2px",
 	borderRadius: "4px",
@@ -115,6 +118,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	private categoryNameLabel:HTMLLabelElement;
 	private budgetedValueInput:HTMLInputElement;
+	private balanceValue:PBalanceValue;
 
 	constructor(props:any) {
         super(props);
@@ -125,6 +129,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
+		this.onBalanceValueClick = this.onBalanceValueClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
 	}
 
@@ -161,6 +166,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		// Get the value from the budget value input		
 		var budgetedValueInputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
 		var budgetedValue = budgetedValueInputNode.value;
+		
 		// Update the monthlySubCategoryBudget entity with this new value
 		var monthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
 		monthlySubCategoryBudget.budgeted = budgetedValue;
@@ -217,6 +223,21 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
 	}
 
+	private onBalanceValueClick(event:React.MouseEvent):void {
+
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+
+		var balance = monthlySubCategoryBudget.balance ? monthlySubCategoryBudget.balance : 0;
+		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
+		
+		// If we have a positive value, we are going to show the move money dialog.
+		if(balance > 0)
+			this.props.showMoveMoneyDialog(subCategory.entityId, this.balanceValue as any);
+		else if(balance < 0)
+			this.props.showCoverOverspendingDialog(subCategory.entityId, this.balanceValue as any);
+	}
+
 	public render() {
 
 		var subCategory = this.props.subCategory;
@@ -227,6 +248,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
 		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
 		var balance = monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0;
+		var upcomingTransactions = monthlySubCategoryBudget ? monthlySubCategoryBudget.upcomingTransactions : 0;
 
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
@@ -279,7 +301,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<label style={valueStyle}>{activity}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<label style={valueStyle}>{balance}</label>
+					<PBalanceValue balance={balance} upcomingTransactions={upcomingTransactions}
+						ref={(b)=> this.balanceValue = b} onClick={this.onBalanceValueClick} />
 				</div>
 			</div>
 		);

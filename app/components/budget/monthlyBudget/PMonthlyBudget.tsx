@@ -31,6 +31,8 @@ export interface PMonthlyBudgetProps {
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -90,6 +92,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						selectNextSubCategoryForEditing={this.props.selectNextSubCategoryForEditing}
 						selectPreviousSubCategoryForEditing={this.props.selectPreviousSubCategoryForEditing}
 						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
+						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
+						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 						updateEntities={this.props.updateEntities} />
 				);
 				subCategoryRows.push(subCategoryRow);
