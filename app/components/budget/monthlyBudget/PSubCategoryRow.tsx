@@ -7,6 +7,7 @@ import { FormControl } from 'react-bootstrap';
 
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
+import { ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PSubCategoryRowProps {
 	subCategory:budgetEntities.ISubCategory;
@@ -21,6 +22,9 @@ export interface PSubCategoryRowProps {
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
+
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 export interface PSubCategoryRowState {
@@ -110,13 +114,12 @@ const BudgetedValueHoverStyle = _.assign({}, BudgetedValueStyle, {
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
-	private budgetValueInput:HTMLInputElement;
+	private budgetedValueInput:HTMLInputElement;
 
 	constructor(props:any) {
         super(props);
-		this.onChange = this.onChange.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onBudgetValueBlur = this.onBudgetValueBlur.bind(this);
+		this.onBudgetValueChange = this.onBudgetValueChange.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -135,7 +138,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 			if(!isSelected) {
 				this.props.selectSubCategory(subCategory, true, targetNodeName == "input");
-				var inputNode:any = ReactDOM.findDOMNode(this.budgetValueInput);
+				var inputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
 				inputNode.select();
 			}
 		}
@@ -153,7 +156,18 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			this.props.selectSubCategory(subCategory, false, false);
 	}
 
-	private onChange():void {}
+	private onBudgetValueChange():void {
+
+		// Get the value from the budget value input		
+		var budgetedValueInputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
+		var budgetedValue = budgetedValueInputNode.value;
+		// Update the monthlySubCategoryBudget entity with this new value
+		var monthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
+		monthlySubCategoryBudget.budgeted = budgetedValue;
+		this.props.updateEntities({
+			monthlySubCategoryBudgets: [monthlySubCategoryBudget]
+		});
+	}
 
 	private onKeyDown(event:KeyboardEvent):void {
 
@@ -184,14 +198,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			this.props.selectSubCategoryForEditing(null);
 			event.stopPropagation();
 		}
-	}
-
-	private onBudgetValueBlur():void {
-
-		// Get the value from the budget value input		
-		var budgetValueInputNode:any = ReactDOM.findDOMNode(this.budgetValueInput);
-		var budgetValue = budgetValueInputNode.value();
-		debugger;
 	}
 
 	private handleMouseEnter() {
@@ -266,8 +272,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 				</div>
 				<div style={valueColumnStyle}>
 					<input type="text" style={budgetedValueStyle} value={budgeted} 
-						ref={(i)=> this.budgetValueInput = i}
-						onClick={this.onClick} onBlur={this.onBudgetValueBlur} />
+						ref={(i)=> this.budgetedValueInput = i}
+						onClick={this.onClick} onChange={this.onBudgetValueChange} />
 				</div>
 				<div style={ValueColumnStyle}>
 					<label style={valueStyle}>{activity}</label>

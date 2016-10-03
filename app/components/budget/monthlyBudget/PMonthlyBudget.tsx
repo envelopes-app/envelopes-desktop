@@ -89,7 +89,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
 						selectNextSubCategoryForEditing={this.props.selectNextSubCategoryForEditing}
 						selectPreviousSubCategoryForEditing={this.props.selectPreviousSubCategoryForEditing}
-						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog} />
+						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
+						updateEntities={this.props.updateEntities} />
 				);
 				subCategoryRows.push(subCategoryRow);
 			}
