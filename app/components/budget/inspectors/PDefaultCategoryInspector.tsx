@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Glyphicon } from 'react-bootstrap';
 
+import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -219,22 +220,22 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		var upcomingTransactions:number = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
 
 		var quickBudgetItems:Array<JSX.Element> = [
-			<li style={ListItemStyle}>
+			<li key="qbBudgetLastMonth" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 					Budgeted Last Month: {budgetedLastMonthValue}
 				</Button>
 			</li>,
-			<li style={ListItemStyle}>
+			<li key="qbSpentLastMonth" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
 					Spent Last Month: {spentLastMonthValue}
 				</Button>
 			</li>,
-			<li style={ListItemStyle}>
+			<li key="qbAverageBudgeted" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
 					Average Budgeted: {averageBudgetedValue}
 				</Button>
 			</li>,
-			<li style={ListItemStyle}>
+			<li key="qbAverageSpent" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
 					Average Spent: {averageSpentValue}
 				</Button>
@@ -243,7 +244,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 
 		if(upcomingTransactions != 0) {
 			quickBudgetItems.unshift(
-				<li style={ListItemStyle}>
+				<li key="qbUpcoming" style={ListItemStyle}>
 					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
 						Budget for Upcoming: {upcomingTransactions}
 					</Button>
@@ -329,7 +330,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<label style={categoryAvailableValueStyle}>{available}</label>
+					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget} />
 				</div>
 
 				<div style={PillHeaderRowStyle}>

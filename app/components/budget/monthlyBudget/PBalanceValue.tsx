@@ -8,7 +8,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PBalanceValueProps {
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	onClick:(event:React.MouseEvent)=>void;
+	onClick?:(event:React.MouseEvent)=>void;
 }
 
 const BalanceValueStyle = {
@@ -74,6 +74,9 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 					balanceValueStyle = BalanceValueGreenStyle;
 			}
 		}
+
+		if(!this.props.onClick)
+			balanceValueStyle = Object.assign({}, balanceValueStyle, {cursor:"default"});
 
     	return (
 			<Badge style={balanceValueStyle} onClick={this.props.onClick}>{balance}</Badge>
