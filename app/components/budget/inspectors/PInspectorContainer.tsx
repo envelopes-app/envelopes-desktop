@@ -42,7 +42,7 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 		var inspector:JSX.Element;
 
 		if(this.props.selectedSubCategories.length == 0)
-			inspector = <PDefaultInspector entitiesCollection={this.props.entitiesCollection} selectedSubCategories={this.props.selectedSubCategories} />;
+			inspector = <PDefaultInspector entitiesCollection={this.props.entitiesCollection} currentMonth={this.props.currentMonth} />;
 		else if(this.props.selectedSubCategories.length == 1) {
 			
 			// Get the selected category to find out if it is a debt category or a default category
