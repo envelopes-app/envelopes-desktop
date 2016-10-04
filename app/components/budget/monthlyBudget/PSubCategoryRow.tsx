@@ -247,8 +247,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
 		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
-		var balance = monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0;
-		var upcomingTransactions = monthlySubCategoryBudget ? monthlySubCategoryBudget.upcomingTransactions : 0;
 
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
@@ -301,7 +299,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<label style={valueStyle}>{activity}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<PBalanceValue balance={balance} upcomingTransactions={upcomingTransactions}
+					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget}
 						ref={(b)=> this.balanceValue = b} onClick={this.onBalanceValueClick} />
 				</div>
 			</div>
