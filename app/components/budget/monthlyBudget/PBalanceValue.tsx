@@ -42,7 +42,7 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 		var cashOutflows = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows : 0;
 		var creditOutflows = monthlySubCategoryBudget ? monthlySubCategoryBudget.creditOutflows : 0;
 		var balance = monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0;
-		var upcomingTransactions = monthlySubCategoryBudget ? monthlySubCategoryBudget.upcomingTransactions : 0;
+		var upcomingTransactions = (monthlySubCategoryBudget && monthlySubCategoryBudget.upcomingTransactions) ? monthlySubCategoryBudget.upcomingTransactions : 0;
 		var balanceAfterUpcoming = balance - upcomingTransactions;
 
 		var absBalance = Math.abs(balance);
