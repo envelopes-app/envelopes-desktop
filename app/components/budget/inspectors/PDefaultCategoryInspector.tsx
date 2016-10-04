@@ -9,6 +9,12 @@ import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
+// TODO: Warning/Error Messages under Top Summary
+// TODO: Category Name Edit dialog
+// TODO: Goals
+// TODO: Notes
+// TODO: Dialog for viewing Upcoming Transactions
+
 export interface PDefaultCategoryInspectorProps {
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
@@ -180,6 +186,20 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 			this.setBudgetedValue(monthlySubCategoryBudget, spentAverage);
 	}
 
+	private setBudgetedToUpcomingTransactions():void {
+
+		var subCategoryId = this.props.subCategoryId;
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+
+		// Get the monthlySubCategoryBudget entity for the current month
+		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
+		// If the current budgeted value is different from upcomingTransactions, update it
+		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
+		if(upcomingTransactions != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, upcomingTransactions);
+	}
+
 	private setBudgetedValue(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget, value:number):void {
 
 		var updatedMonthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
@@ -189,6 +209,51 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		});
 	}
 	
+	private getQuickBudgetItems(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget):Array<JSX.Element> {
+
+		// Get the quick budget values
+		var budgetedLastMonthValue:number = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
+		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
+		var averageBudgetedValue:number = monthlySubCategoryBudget.budgetedAverage;
+		var averageSpentValue:number = monthlySubCategoryBudget.spentAverage;
+		var upcomingTransactions:number = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
+
+		var quickBudgetItems:Array<JSX.Element> = [
+			<li style={ListItemStyle}>
+				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
+					Budgeted Last Month: {budgetedLastMonthValue}
+				</Button>
+			</li>,
+			<li style={ListItemStyle}>
+				<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
+					Spent Last Month: {spentLastMonthValue}
+				</Button>
+			</li>,
+			<li style={ListItemStyle}>
+				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
+					Average Budgeted: {averageBudgetedValue}
+				</Button>
+			</li>,
+			<li style={ListItemStyle}>
+				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
+					Average Spent: {averageSpentValue}
+				</Button>
+			</li>
+		];
+
+		if(upcomingTransactions != 0) {
+			quickBudgetItems.unshift(
+				<li style={ListItemStyle}>
+					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
+						Budget for Upcoming: {upcomingTransactions}
+					</Button>
+				</li>
+			);
+		}
+
+		return quickBudgetItems;
+	}
+
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
@@ -209,12 +274,6 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
 		var available = monthlySubCategoryBudget.balance;
 
-		// Get the quick budget values
-		var budgetedLastMonthValue:number = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
-		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
-		var averageBudgetedValue:number = monthlySubCategoryBudget.budgetedAverage;
-		var averageSpentValue:number = monthlySubCategoryBudget.spentAverage;
-
 		// Set the color value on the styles for the category available
 		var categoryAvailableStyle = CategoryAvailableStyle;
 		var categoryAvailableValueStyle = CategoryAvailableValueStyle;
@@ -233,6 +292,9 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 			categoryAvailableStyle = Object.assign({}, CategoryAvailableStyle, {color:"#138B2E"});
 			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#138B2E"});
 		}
+
+		// Get the Quick Budet items
+		var quickBudgetItems = this.getQuickBudgetItems(monthlySubCategoryBudget);
 
 		return (
 			<div style={DefaultCategoryInspectorContainerStyle}>
@@ -276,26 +338,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 					</div>
 				</div>
 				<ul style={ListStyle}>
-					<li style={ListItemStyle}>
-						<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
-							Budgeted Last Month: {budgetedLastMonthValue}
-						</Button>
-					</li>
-					<li style={ListItemStyle}>
-						<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
-							Spent Last Month: {spentLastMonthValue}
-						</Button>
-					</li>
-					<li style={ListItemStyle}>
-						<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
-							Average Budgeted: {averageBudgetedValue}
-						</Button>
-					</li>
-					<li style={ListItemStyle}>
-						<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
-							Average Spent: {averageSpentValue}
-						</Button>
-					</li>
+					{quickBudgetItems}
 				</ul>
 
 				<div style={PillHeaderRowStyle}>
