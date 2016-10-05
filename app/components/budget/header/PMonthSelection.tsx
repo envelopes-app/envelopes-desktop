@@ -22,7 +22,7 @@ export interface PMonthSelectionState {
 
 const MonthSelectionContainerStyle = {
 	flex: '0 0 auto',
-	backgroundColor: '#003540',
+	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }

@@ -5,6 +5,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PMonthSelection } from './PMonthSelection';
+import { PMonthSummary } from './PMonthSummary';
+import { PMonthAOM } from './PMonthAOM';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -29,7 +31,7 @@ const BudgetHeaderContainerStyle = {
 const BudgetHeaderStyle = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
-	justifyContent: 'flex-start',
+	justifyContent: 'space-between',
 	alignItems: 'center',
 	height: '100%',
 	width: '100%',
@@ -68,11 +70,18 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
     	return (
 			<div style={BudgetHeaderContainerStyle}>
 				<div style={BudgetHeaderStyle}>
-					<PMonthSelection currentMonth={this.props.currentMonth} 
+					<PMonthSelection 
+						currentMonth={this.props.currentMonth} 
 						minMonth={minMonth} maxMonth={maxMonth} 
 						setSelectedMonth={this.props.setSelectedMonth} 
 					/>
-					<div style={BlankSpaceStyle} />
+
+					<PMonthSummary 
+						currentMonth={this.props.currentMonth} 
+						entitiesCollection={this.props.entitiesCollection}
+					/>
+
+					<PMonthAOM />
 				</div>
 			</div>
 		);
