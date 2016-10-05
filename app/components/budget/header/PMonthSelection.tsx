@@ -140,7 +140,7 @@ export class PMonthSelection extends React.Component<PMonthSelectionProps, PMont
 
 		if(this.props.currentMonth.equalsByMonth(this.props.maxMonth)) {
 			// Disable the forward button
-			forwardButton = <button style={MonthNavigationButtonDisabledStyle} onClick={this.handleNavigateForward}><Glyphicon glyph="circle-arrow-right" /></button>;
+			forwardButton = <button style={MonthNavigationButtonDisabledStyle}><Glyphicon glyph="circle-arrow-right" /></button>;
 		}
 
     	return (
