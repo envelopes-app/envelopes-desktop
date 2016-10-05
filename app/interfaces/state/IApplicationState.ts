@@ -2,18 +2,20 @@ import { IEntitiesCollection } from './IEntitiesCollection';
 import { ISidebarState } from './ISidebarState';
 import { IRegisterState } from './IRegisterState';
 import { IBudgetState } from './IBudgetState';
-import { SimpleObjectMap } from '../../utilities';
+import { DateWithoutTime } from '../../utilities';
 
 export interface IApplicationState {
 
 	// ****************************************************************************************************
-	// Data
+	// Shared Global Data
 	// ****************************************************************************************************
 	entitiesCollection:IEntitiesCollection;
 	
 	// ****************************************************************************************************
 	// UI State
 	// ****************************************************************************************************
+	selectedBudgetMonth:DateWithoutTime;
+
 	sidebarState:ISidebarState;
 	budgetState:IBudgetState;
 }

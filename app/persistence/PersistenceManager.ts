@@ -2,7 +2,6 @@
 
 import * as _ from 'lodash';
 
-import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge, setDatabaseReference } from './QueryExecutionUtility';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import { CalculationsManager } from './CalculationsManager';
@@ -14,9 +13,10 @@ import * as budgetQueries from './queries/budgetQueries';
 import * as persistenceHelpers from './helpers';
 import * as miscQueries from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence';
-import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
+import { DateWithoutTime, Logger } from '../utilities';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
-import { Logger } from '../utilities';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
+import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge, setDatabaseReference } from './QueryExecutionUtility';
 
 export class PersistenceManager {
 
@@ -189,6 +189,35 @@ export class PersistenceManager {
 			});
 	}
 
+	public ensureMonthlyDataExistsForMonth(month:DateWithoutTime, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
+
+		var budgetId = this.activeBudget.entityId;
+		var budgetKnowledge = this.budgetKnowledge;
+
+		// Check if we already have data available for this month
+		var monthlySubCategoryBudgetsArray = existingEntitiesCollection.monthlySubCategoryBudgets;
+		var monthlySubCategoryBudgetsForMonth = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(month.toISOString());
+		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0)
+			return Promise.resolve({});
+		else {
+
+			// We did not find monthlySubCategoryBudget entities for this month, so we need to create them
+			var budgetFactory = new BudgetFactory();
+			return budgetFactory.createMonthlyBudgetDataForMonth(budgetId, month, true, budgetKnowledge)
+				.then((retVal:any)=>{
+
+					// Run pending calculations
+					return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
+				})
+				.then((retVal:boolean)=>{
+					
+					// Load updated data from the database
+					var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+					var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+					return this.loadBudgetEntitiesFromDatabase(budgetId, deviceKnowledge, deviceKnowledgeForCalculations);
+				});
+		}
+	}
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************

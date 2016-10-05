@@ -1,10 +1,16 @@
 /// <reference path="../_includes.ts" />
 
-import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state';
+import { DateWithoutTime } from '../utilities';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
 import * as catalogEntities from '../interfaces/catalogEntities';
-import { CreateBudgetCompletedAction, OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction } from '../interfaces/actions';
+import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state';
+import { 
+	CreateBudgetCompletedAction, 
+	OpenBudgetCompletedAction, 
+	SyncDataWithDatabaseCompletedAction,
+	EnsureBudgetEntitiesForMonthCompletedAction 
+} from '../interfaces/actions';
 
 export class GlobalActionsCreator {
 
@@ -30,6 +36,13 @@ export class GlobalActionsCreator {
 		return {
 			type: ActionNames.GLOBAL_SYNC_DATA_WITH_DATABASE_COMPLETED,
 			entities: entities
+		};
+	}
+
+	public static EnsureBudgetEntitiesForMonthCompleted(month:DateWithoutTime):EnsureBudgetEntitiesForMonthCompletedAction {
+		return {
+			type: ActionNames.GLOBAL_ENSURE_BUDGET_ENTITIES_FOR_MONTH_COMPLETED,
+			month: month
 		};
 	}
 
@@ -93,9 +106,26 @@ export class GlobalActionsCreator {
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.syncDataWithDatabase(updatedEntitiesCollection, existingEntitiesCollection)
 				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
-
 					// dispatch action sync data with database completed
 					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
+				});
+		};
+	}
+
+	public static ensureBudgetEntitiesForMonth(month:DateWithoutTime) {
+
+		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			// Get the existing in-memory entities collection from state. This is so that we can
+			// determine in the PersistenceManager if the data for the month already exists or not. 
+			var existingEntitiesCollection = getState().entitiesCollection;
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.ensureMonthlyDataExistsForMonth(month, existingEntitiesCollection)
+				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
+					// dispatch action sync data with database completed
+					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
+					// dispatch action ensure budget entities for month completed
+					dispatch(GlobalActionsCreator.EnsureBudgetEntitiesForMonthCompleted(month));
 				});
 		};
 	}

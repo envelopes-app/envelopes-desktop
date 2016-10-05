@@ -5,9 +5,30 @@ import * as common from '../interfaces/common';
 import * as budgetEntities from '../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../interfaces/state';
 import { ActionNames } from '../constants';
-import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction } from '../interfaces/actions';
+import { DateWithoutTime } from '../utilities';
+
+import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
 
 export class GlobalReducers {
+
+	public static selectedBudgetMonth(previousValue:DateWithoutTime, action:Redux.Action):DateWithoutTime {
+
+		var newValue:DateWithoutTime;
+		if(!previousValue)
+			newValue = DateWithoutTime.createForCurrentMonth();
+		else
+			newValue = previousValue.clone();
+
+		switch(action.type) {
+
+			case ActionNames.GLOBAL_ENSURE_BUDGET_ENTITIES_FOR_MONTH_COMPLETED:
+				var createBudgetEntitiesForMonthAction = action as EnsureBudgetEntitiesForMonthCompletedAction;
+				newValue = createBudgetEntitiesForMonthAction.month.clone();
+				break;
+		}
+
+		return newValue;
+	}
 
 	public static entitiesCollection(previousValue:IEntitiesCollection, action:Redux.Action):IEntitiesCollection {
 
@@ -15,7 +36,7 @@ export class GlobalReducers {
 		if(!previousValue)
 			newValue = {};
 		else
-			newValue = _.assign({}, previousValue);
+			newValue = Object.assign({}, previousValue);
 
 		switch(action.type) {
 

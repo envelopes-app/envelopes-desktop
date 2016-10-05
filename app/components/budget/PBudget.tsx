@@ -12,17 +12,18 @@ import { PInspectorContainer } from './inspectors/PInspectorContainer';
 import * as dialogs from './dialogs';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
-import { IApplicationState, ISimpleEntitiesCollection, IBudgetState } from '../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection, IBudgetState } from '../../interfaces/state';
 
 export interface PBudgetProps {
 	// State Variables
-	applicationState: IApplicationState;
+	selectedBudgetMonth:DateWithoutTime;
+	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+	setSelectedBudgetMonth:(month:DateWithoutTime)=>void;
 }
 
 export interface PBudgetState {
-	selectedMonth:DateWithoutTime;
 	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
@@ -76,7 +77,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
 		this.state = {
-			selectedMonth: DateWithoutTime.createForCurrentMonth(),
 			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
@@ -86,10 +86,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private setSelectedMonth(month:DateWithoutTime):void {
 
-		if(this.state.selectedMonth.equalsByMonth(month) == false) {
-			var state = Object.assign({}, this.state);
-			state.selectedMonth = month.clone();
-			this.setState(state);
+		var selectedMonth = this.props.selectedBudgetMonth;
+		if(selectedMonth.equalsByMonth(month) == false) {
+			// Call the dispatcher function to set the selected month
+			this.props.setSelectedBudgetMonth(month);
 		}
 	}
   	// *******************************************************************************************************
@@ -134,7 +134,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		var allSelected:boolean = true;
 		// Get all the subcategories for this master category and check if they are all selected
-		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategoryId);
 		// Check if all these subCategories are selected
 		_.forEach(subCategories, (subCategory)=>{
@@ -162,7 +162,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		}
 
 		// Get all the subcategories for this master category and set them as selected
-		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
 		// Mark all these subCategories as selected
 		_.forEach(subCategories, (subCategory)=>{
@@ -178,7 +178,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		var state = _.assign({}, this.state) as PBudgetState;
 		// Get all the subcategories for this master category and set them as unselected
-		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
 		// Mark all these subCategories as unselected
 		_.forEach(subCategories, (subCategory)=>{
@@ -204,7 +204,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectNextSubCategoryForEditing():void {
 
-		debugger;
 		var state = _.assign({}, this.state) as PBudgetState;
 		// Get the sorted list of subcategories
 		var subCategoryIds = this.getSortedCategoryIdsList();
@@ -286,12 +285,14 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private showCoverOverspendingDialog(subCategoryId:string, element:HTMLElement):void {
 		// Show the dialog for creating a category
-		this.coverOverspendingDialog.show(subCategoryId, this.state.selectedMonth, element);
+		var selectedMonth = this.props.selectedBudgetMonth;
+		this.coverOverspendingDialog.show(subCategoryId, selectedMonth, element);
 	}
 
 	private showMoveMoneyDialog(subCategoryId:string, element:HTMLElement):void {
 		// Show the dialog for creating a category
-		this.moveMoneyDialog.show(subCategoryId, this.state.selectedMonth, element);
+		var selectedMonth = this.props.selectedBudgetMonth;
+		this.moveMoneyDialog.show(subCategoryId, selectedMonth, element);
 	}
 
 	private showHiddenCategoriesDialog():void {
@@ -301,8 +302,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private getSortedCategoryIdsList():Array<string> {
 
 		var categoryIdsList:Array<string> = [];
-		var masterCategoriesArray = this.props.applicationState.entitiesCollection.masterCategories;
-		var subCategoriesArray = this.props.applicationState.entitiesCollection.subCategories;
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 
 		var debtPaymentMasterCategory = masterCategoriesArray.getDebtPaymentMasterCategory();
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(debtPaymentMasterCategory.entityId);
@@ -335,10 +336,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	// *******************************************************************************************************
 	public render() {
 
+		var selectedMonth = this.props.selectedBudgetMonth;
+
     	return (
 			<div style={BudgetContainerStyle} tabIndex={1}>
-				<PBudgetHeader currentMonth={this.state.selectedMonth} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+				<PBudgetHeader currentMonth={selectedMonth} 
+					entitiesCollection={this.props.entitiesCollection}
 					setSelectedMonth={this.setSelectedMonth}
 					updateEntities={this.props.updateEntities} />
 
@@ -346,8 +349,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
-						currentMonth={this.state.selectedMonth} 
-						entitiesCollection={this.props.applicationState.entitiesCollection} 
+						currentMonth={selectedMonth} 
+						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 
 						editingSubCategory={this.state.editingSubCategory}
 						selectedSubCategories={this.state.selectedSubCategories}
@@ -367,40 +370,40 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showMoveMoneyDialog={this.showMoveMoneyDialog}
 					/>
 					<PInspectorContainer 
-						currentMonth={this.state.selectedMonth}
+						currentMonth={selectedMonth}
 						selectedSubCategories={this.state.selectedSubCategories}
-						entitiesCollection={this.props.applicationState.entitiesCollection} 
+						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities}
 					/>
 				</div>
 
 				<dialogs.PCreateCategoryDialog 
 					ref={(d)=> this.createCategoryDialog = d} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
 				<dialogs.PSubCategoryEditDialog 
 					ref={(d)=> this.subCategoryEditDialog = d} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
 				<dialogs.PMasterCategoryEditDialog 
 					ref={(d)=> this.masterCategoryEditDialog = d} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
 				<dialogs.PMoveMoneyDialog 
 					ref={(d)=> this.moveMoneyDialog = d} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
 				<dialogs.PCoverOverspendingDialog 
 					ref={(d)=> this.coverOverspendingDialog = d} 
-					entitiesCollection={this.props.applicationState.entitiesCollection}
+					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 			</div>

@@ -7,6 +7,7 @@ import { BudgetReducers } from './BudgetReducers';
 
 const combinedReducer = combineReducers({
 
+	selectedBudgetMonth: GlobalReducers.selectedBudgetMonth,
 	entitiesCollection: GlobalReducers.entitiesCollection,
 	sidebarState: SidebarReducers.sidebarState,
 	budgetState: BudgetReducers.budgetState,

@@ -1,7 +1,8 @@
 /// <reference path="../../_includes.ts" />
 
-import { ISimpleEntitiesCollection } from '../state/IEntitiesCollection';
+import { DateWithoutTime } from '../../utilities';
 import * as catalogEntities from '../catalogEntities';
+import { ISimpleEntitiesCollection } from '../state/IEntitiesCollection';
 
 export interface CreateBudgetCompletedAction extends Redux.Action { 
 	// budgetId of the newly created budget 
@@ -18,4 +19,8 @@ export interface OpenBudgetCompletedAction extends Redux.Action {
 export interface SyncDataWithDatabaseCompletedAction extends Redux.Action { 
 	// Collection that contains updated entities that have been loaded from the database 
 	entities:ISimpleEntitiesCollection;
+}
+
+export interface EnsureBudgetEntitiesForMonthCompletedAction extends Redux.Action { 
+	month:DateWithoutTime;
 }

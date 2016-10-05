@@ -23,8 +23,7 @@ export class BudgetFactory {
 		var queriesList:Array<IDatabaseQuery> = [];
 		var budgetKnowledge = new BudgetKnowledge();
 		var budgetId = KeyGenerator.generateUUID();
-		var firstMonth = DateWithoutTime.createForCurrentMonth();
-		var lastMonth = DateWithoutTime.createForCurrentMonth().addMonths(1);
+		var currentMonth = DateWithoutTime.createForCurrentMonth();
 
 		// Create the budget entity
 		var budget:catalogEntities.IBudget = {
@@ -33,8 +32,8 @@ export class BudgetFactory {
 			dateFormat: dateFormat,
 			currencyFormat: currencyFormat,
 			lastAccessedOn: null,
-			firstMonth: firstMonth.toISOString(),
-			lastMonth: lastMonth.toISOString(),
+			firstMonth: currentMonth.toISOString(),
+			lastMonth: currentMonth.toISOString(),
 			isTombstone: 0,
 			deviceKnowledge: catalogKnowledge.getNextValue()
 		};
@@ -59,8 +58,8 @@ export class BudgetFactory {
 		// Create the hidden master category
 		queriesList = queriesList.concat( this.createHiddenMasterCategory(budgetId, 80000, budgetKnowledge) );
 
-		// Create the monthly budgets and the monthly subcategory budgets for current and next 2 months.
-		var month = DateWithoutTime.createForCurrentMonth();
+		// Create the monthly budgets and the monthly subcategory budgets for previous,current and next month.
+		var month = DateWithoutTime.createForCurrentMonth().subtractMonths(1);
 		for(var i:number = 0; i < 2; i++) {
 
 			var query = this.createMonthlyBudgetForMonth(budgetId, month, null, budgetKnowledge);
@@ -88,7 +87,7 @@ export class BudgetFactory {
 			});
 	}
 
-	public ensureDataForMonthExists(budgetId:string, 
+	public createMonthlyBudgetDataForMonth(budgetId:string, 
 										month:DateWithoutTime,
 										queueCalculations:boolean,
 										budgetKnowledge:BudgetKnowledge):Promise<any> {
