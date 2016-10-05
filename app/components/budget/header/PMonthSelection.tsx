@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Glyphicon } from 'react-bootstrap';
 
+import { PMonthSelectionDialog } from '../dialogs/PMonthSelectionDialog';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -77,6 +78,9 @@ const BlankSpaceStyle = {
 
 export class PMonthSelection extends React.Component<PMonthSelectionProps, PMonthSelectionState> {
 
+	private monthNameButton:HTMLButtonElement;
+	private monthSelectionDialog:PMonthSelectionDialog;
+
 	constructor(props: any) {
         super(props);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -112,7 +116,7 @@ export class PMonthSelection extends React.Component<PMonthSelectionProps, PMont
 	}
 
 	private handleShowMonthSelectionDropDown():void {
-
+		this.monthSelectionDialog.show(this.monthNameButton);
 	}
 	
 	public render() {
@@ -147,12 +151,19 @@ export class PMonthSelection extends React.Component<PMonthSelectionProps, PMont
 			<div style={MonthSelectionContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
 				<div style={MonthSelectionStyle}>
 					{backButton}
-					<button style={MonthNavigationMonthNameStyle}>
+					<button style={MonthNavigationMonthNameStyle} ref={(b)=> this.monthNameButton = b} onClick={this.handleShowMonthSelectionDropDown} >
 						{currentMonthName}&nbsp;
 						<Glyphicon glyph="triangle-bottom" style={monthNavigationDropDownGlyphStyle} />
 					</button>
 					{forwardButton}
 				</div>
+
+				<PMonthSelectionDialog ref={(d)=> this.monthSelectionDialog = d} 
+					currentMonth={this.props.currentMonth}
+					minMonth={this.props.minMonth}
+					maxMonth={this.props.maxMonth}
+					setSelectedMonth={this.props.setSelectedMonth}
+				/>
 			</div>
 		);
   	}
