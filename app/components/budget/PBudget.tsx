@@ -54,6 +54,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	constructor(props: any) {
         super(props);
+		this.setSelectedMonth = this.setSelectedMonth.bind(this); 
 		this.selectSubCategory = this.selectSubCategory.bind(this);
 		this.unselectSubCategory = this.unselectSubCategory.bind(this);
 		this.selectMasterCategory = this.selectMasterCategory.bind(this);
@@ -82,6 +83,15 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			selectedMasterCategoriesMap: {}
 		}
     }
+
+	private setSelectedMonth(month:DateWithoutTime):void {
+
+		if(this.state.selectedMonth.equalsByMonth(month) == false) {
+			var state = Object.assign({}, this.state);
+			state.selectedMonth = month.clone();
+			this.setState(state);
+		}
+	}
   	// *******************************************************************************************************
 	// Handlers for commands initiated from the budget rows
 	// *******************************************************************************************************
@@ -311,7 +321,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		return categoryIdsList;
 	}
   	// *******************************************************************************************************
-	// Action Handlers for commands in the Regsiter Toolbar
+	// Action Handlers for commands in the Budget Toolbar
 	// *******************************************************************************************************
 	private onAddTransactionSelected():void {
 
@@ -327,8 +337,13 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
     	return (
 			<div style={BudgetContainerStyle} tabIndex={1}>
-				<PBudgetHeader />
+				<PBudgetHeader currentMonth={this.state.selectedMonth} 
+					entitiesCollection={this.props.applicationState.entitiesCollection}
+					setSelectedMonth={this.setSelectedMonth}
+					updateEntities={this.props.updateEntities} />
+
 				<PBudgetToolbar onAddTransactionSelected={this.onAddTransactionSelected} onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
+
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
 						currentMonth={this.state.selectedMonth} 
