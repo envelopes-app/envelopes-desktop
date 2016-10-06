@@ -283,16 +283,16 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	}
 
-	private showCoverOverspendingDialog(subCategoryId:string, element:HTMLElement):void {
+	private showCoverOverspendingDialog(subCategoryId:string, amountToCover:number, element:HTMLElement, placement:string = "left"):void {
 		// Show the dialog for creating a category
 		var selectedMonth = this.props.selectedBudgetMonth;
-		this.coverOverspendingDialog.show(subCategoryId, selectedMonth, element);
+		this.coverOverspendingDialog.show(subCategoryId, selectedMonth, amountToCover, element, placement);
 	}
 
-	private showMoveMoneyDialog(subCategoryId:string, element:HTMLElement):void {
+	private showMoveMoneyDialog(subCategoryId:string, amountToMove:number, element:HTMLElement, placement:string = "left"):void {
 		// Show the dialog for creating a category
 		var selectedMonth = this.props.selectedBudgetMonth;
-		this.moveMoneyDialog.show(subCategoryId, selectedMonth, element);
+		this.moveMoneyDialog.show(subCategoryId, selectedMonth, amountToMove, element, placement);
 	}
 
 	private showHiddenCategoriesDialog():void {
@@ -343,6 +343,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				<PBudgetHeader currentMonth={selectedMonth} 
 					entitiesCollection={this.props.entitiesCollection}
 					setSelectedMonth={this.setSelectedMonth}
+					showCoverOverspendingDialog={this.showCoverOverspendingDialog}
+					showMoveMoneyDialog={this.showMoveMoneyDialog}
 					updateEntities={this.props.updateEntities} />
 
 				<PBudgetToolbar onAddTransactionSelected={this.onAddTransactionSelected} onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />

@@ -39,7 +39,7 @@ const MonthNavigationButtonStyle = {
 	color: "#23B2CE",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
-	fontSize: "22px",
+	fontSize: "26px",
 	paddingLeft: "6px",
 	paddingRight: "6px",
 	outline: "none"
@@ -49,7 +49,7 @@ const MonthNavigationButtonDisabledStyle = {
 	color: "#598797",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
-	fontSize: "22px",
+	fontSize: "26px",
 	paddingLeft: "6px",
 	paddingRight: "6px",
 	outline: "none",
@@ -60,7 +60,7 @@ const MonthNavigationMonthNameStyle = {
 	color: "#FFFFFF",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
-	fontSize: "22px",
+	fontSize: "26px",
 	paddingLeft: "6px",
 	paddingRight: "6px",
 	outline: "none"
@@ -69,7 +69,7 @@ const MonthNavigationMonthNameStyle = {
 const MonthNavigationDropDownGlyphStyle = {
 	color: "#23B2CE",
 	backgroundColor: "transparent",
-	fontSize: "12px"
+	fontSize: "16px"
 }
 
 const BlankSpaceStyle = {

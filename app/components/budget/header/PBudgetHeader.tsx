@@ -15,6 +15,8 @@ export interface PBudgetHeaderProps {
 	entitiesCollection:IEntitiesCollection;
 
 	setSelectedMonth:(month:DateWithoutTime)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -79,9 +81,14 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 					<PMonthSummary 
 						currentMonth={this.props.currentMonth} 
 						entitiesCollection={this.props.entitiesCollection}
+						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
+						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 					/>
 
-					<PMonthAOM />
+					<PMonthAOM 
+						currentMonth={this.props.currentMonth} 
+						entitiesCollection={this.props.entitiesCollection}
+					/>
 				</div>
 			</div>
 		);

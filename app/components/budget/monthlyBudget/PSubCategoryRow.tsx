@@ -23,8 +23,8 @@ export interface PSubCategoryRowProps {
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
-	showCoverOverspendingDialog:(subCategoryId:string, element:HTMLElement)=>void;
-	showMoveMoneyDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -233,9 +233,9 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		
 		// If we have a positive value, we are going to show the move money dialog.
 		if(balance > 0)
-			this.props.showMoveMoneyDialog(subCategory.entityId, this.balanceValue as any);
+			this.props.showMoveMoneyDialog(subCategory.entityId, balance, this.balanceValue as any);
 		else if(balance < 0)
-			this.props.showCoverOverspendingDialog(subCategory.entityId, this.balanceValue as any);
+			this.props.showCoverOverspendingDialog(subCategory.entityId, balance, this.balanceValue as any);
 	}
 
 	public render() {

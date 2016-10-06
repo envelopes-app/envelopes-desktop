@@ -31,8 +31,8 @@ export interface PMonthlyBudgetProps {
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
-	showCoverOverspendingDialog:(subCategoryId:string, element:HTMLElement)=>void;
-	showMoveMoneyDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }

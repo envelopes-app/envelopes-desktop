@@ -136,7 +136,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 		this.hide();
 	}
 	
-	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "left"):void {
+	public show(subCategoryId:string, month:DateWithoutTime, amountToCover:number, target:HTMLElement, placement:string = "left"):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
@@ -153,7 +153,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 			state.toSubCategoryId = subCategoryId;
 			state.currentMonth = month;
 			// This would be a negative value, so switching signs on it
-			state.amountToCover = -(monthlySubCategoryBudget.balance); 
+			state.amountToCover = -amountToCover; 
 			state.fromSubCategoryId = null;
 			state.manuallyEnteredCategoryName = null; 
 			this.setState(state);

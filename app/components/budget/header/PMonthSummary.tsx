@@ -10,6 +10,9 @@ import { IEntitiesCollection } from '../../../interfaces/state';
 export interface PMonthSummaryProps {
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+
+	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 }
 
 export interface PMonthSummaryState { }
@@ -41,7 +44,9 @@ const ATBNumberStyle = {
 	color: '#ffffff',
 	fontSize: '28px',
 	fontWeight: 'normal',
-	margin: '0px'
+	border: 'none',
+	backgroundColor: 'transparent',
+	outline: 'none'
 }
 
 const ATBLabelStyle = {
@@ -82,13 +87,37 @@ const SummaryLabelStyle = {
 
 export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSummaryState> {
 
+	private atbContainer:HTMLDivElement;
+
+	constructor(props: any) {
+        super(props);
+		this.handleAvailableToBudgetClick = this.handleAvailableToBudgetClick.bind(this);
+	}
+
+	private handleAvailableToBudgetClick():void {
+
+		var currentMonth = this.props.currentMonth;
+		var entitiesCollection = this.props.entitiesCollection;
+		// Get the immediate income category
+		var immediateIncomeSubCategory = entitiesCollection.subCategories.getImmediateIncomeSubCategory();
+		// Get the availableToBudget value from the monthlyBudget entity
+		var monthlyBudget = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString());
+		var availableToBudget = monthlyBudget.availableToBudget;
+		// If the ATB value is negative, we will show the cover overspending dialog. Otherwise show the
+		// move money dialog.
+		if(availableToBudget < 0)
+			this.props.showCoverOverspendingDialog(immediateIncomeSubCategory.entityId, availableToBudget, this.atbContainer, "bottom");
+		else 
+			this.props.showMoveMoneyDialog(immediateIncomeSubCategory.entityId, availableToBudget, this.atbContainer, "bottom");
+	}
+
 	public render() {
 
 		var availableToBudget = 0;
+		var currentMonth = this.props.currentMonth;
 		var entitiesCollection = this.props.entitiesCollection;
 		if(entitiesCollection && entitiesCollection.monthlyBudgets) {
 
-			var currentMonth = this.props.currentMonth;
 			var monthlyBudget = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString());
 			availableToBudget = monthlyBudget.availableToBudget;
 		}
@@ -101,8 +130,8 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 		return (
 			<div style={MonthSummaryContainerStyle}>
 				<div style={MonthSummaryInnerStyle}>
-					<div style={atbContainerStyle}>
-						<label style={ATBNumberStyle}>{availableToBudget}</label>
+					<div style={atbContainerStyle} ref={(d)=> this.atbContainer = d}>
+						<button style={ATBNumberStyle} onClick={this.handleAvailableToBudgetClick}>{availableToBudget}</button>
 						<label style={ATBLabelStyle}>To be Budgeted</label>
 					</div>
 					<div style={SummaryNumbersContainerStyle}>

@@ -156,7 +156,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		this.hide();
 	}
 	
-	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "left"):void {
+	public show(subCategoryId:string, month:DateWithoutTime, amountToMove:number, target:HTMLElement, placement:string = "left"):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
@@ -172,7 +172,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 			state.placement = placement;
 			state.fromSubCategoryId = subCategoryId;
 			state.currentMonth = month;
-			state.amountToMove = monthlySubCategoryBudget.balance;
+			state.amountToMove = amountToMove;
 			state.toSubCategoryId = null;
 			state.manuallyEnteredCategoryName = null; 
 			this.setState(state);
