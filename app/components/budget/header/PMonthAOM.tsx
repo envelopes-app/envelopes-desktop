@@ -12,9 +12,7 @@ export interface PMonthAOMProps {
 	entitiesCollection:IEntitiesCollection;
 }
 
-export interface PMonthAOMState {
-
-}
+export interface PMonthAOMState { }
 
 const MonthAOMContainerStyle = {
 	flex: '0 0 auto',
@@ -49,13 +47,24 @@ const AOMLabelStyle = {
 export class PMonthAOM extends React.Component<PMonthAOMProps, PMonthAOMState> {
 
 	public render() {
-		return (
-			<div style={MonthAOMContainerStyle}>
-				<div style={MonthAOMInnerContainerStyle}>
-					<label style={AOMNumberStyle}>???</label>
-					<label style={AOMLabelStyle}>Age of Money</label>
+
+		var entitiesCollection = this.props.entitiesCollection;
+		if(entitiesCollection && entitiesCollection.monthlyBudgets) {
+
+			var currentMonth = this.props.currentMonth;
+			var monthlyBudget = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString());
+			var aomValue = monthlyBudget.ageOfMoney ? '' + monthlyBudget.ageOfMoney : "???";
+
+			return (
+				<div style={MonthAOMContainerStyle}>
+					<div style={MonthAOMInnerContainerStyle}>
+						<label style={AOMNumberStyle}>{aomValue}</label>
+						<label style={AOMLabelStyle}>Age of Money</label>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		}
+		else
+			return <div/>;
 	}
 }
