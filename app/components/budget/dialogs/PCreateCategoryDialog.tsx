@@ -157,6 +157,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 				// Set the master category id and category name and send it for saving
 				subCategory.masterCategoryId = this.state.masterCategoryId;
 				subCategory.name = categoryName;
+				subCategory.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(this.state.masterCategoryId);
 				var updatedEntities:ISimpleEntitiesCollection = {
 					subCategories: [subCategory]
 				};
@@ -183,6 +184,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 				var masterCategory = EntityFactory.createNewMasterCategory();
 				// Set the category name and send it for saving
 				masterCategory.name = categoryName;
+				masterCategory.sortableIndex = this.props.entitiesCollection.masterCategories.getSortableIndexForNewMasterCategoryInsertion();
 				var updatedEntities:ISimpleEntitiesCollection = {
 					masterCategories: [masterCategory]
 				};

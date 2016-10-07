@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { IEntity } from '../interfaces/common';
 import { SimpleObjectMap } from '../utilities'; 
 
+// TODO: Add sorting support
 export class EntitiesArray<T extends IEntity> extends Array<T> {
 
 	private internalMap:SimpleObjectMap<T> = {};

@@ -94,6 +94,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
 						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
 						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+						entitiesCollection={this.props.entitiesCollection}
 						updateEntities={this.props.updateEntities} />
 				);
 				subCategoryRows.push(subCategoryRow);
@@ -110,7 +111,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					selectMasterCategory={this.props.selectMasterCategory}
 					unselectMasterCategory={this.props.unselectMasterCategory}
 					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
-					showCreateCategoryDialog={this.props.showCreateCategoryDialog}>
+					showCreateCategoryDialog={this.props.showCreateCategoryDialog}
+					entitiesCollection={this.props.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+					>
 					{subCategoryRows}
 				</PMasterCategoryRow>
 		);
@@ -147,13 +151,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			}
 
 			// Iterate through the rest of the master categories and create rows for them
-			_.forEach(masterCategoriesArray, (masterCategory)=>{
-				// Skip the Internal Master Categories
-				if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && !masterCategory.internalName) {
-
-					masterCategoryRow = this.getBudgetRows(masterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);
-					masterCategoryRows.push(masterCategoryRow);
-				}
+			var masterCategories = masterCategoriesArray.getVisibleNonTombstonedMasterCategories();
+			_.forEach(masterCategories, (masterCategory)=>{
+				masterCategoryRow = this.getBudgetRows(masterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);
+				masterCategoryRows.push(masterCategoryRow);
 			});
 
 			// If there are hidden master categories or subcategories, then we are going to show a row

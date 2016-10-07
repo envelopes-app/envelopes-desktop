@@ -38,6 +38,19 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 		return this.hiddenMasterCategory;
 	}
 
+	public getAllMasterCategories():Array<IMasterCategory> {
+
+		var masterCategories:Array<IMasterCategory> = [];		
+
+		_.forEach(this, (masterCategory)=>{
+			if(!masterCategory.internalName)
+				masterCategories.push(masterCategory);
+		});
+
+		masterCategories = _.sortBy(masterCategories, 'sortableIndex');
+		return masterCategories;
+	}
+
 	public getVisibleNonTombstonedMasterCategories():Array<IMasterCategory> {
 
 		var masterCategories:Array<IMasterCategory> = [];		
@@ -47,10 +60,60 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 				masterCategories.push(masterCategory);
 		});
 
+		masterCategories = _.sortBy(masterCategories, 'sortableIndex');
 		return masterCategories;
 	}
 
 	public getMasterCategoryByName(masterCategoryName:string):IMasterCategory {
 		return _.find(this, {name: masterCategoryName});
+	}
+
+	public getSortableIndexForNewMasterCategoryInsertion():number {
+
+		var sortableIndex = 0;
+		_.forEach(this, (masterCategory)=>{
+			if(masterCategory.sortableIndex > sortableIndex)
+				sortableIndex = masterCategory.sortableIndex;
+		});
+
+		// Increment the sortableIndex by 10000
+		sortableIndex += 10000;
+		return sortableIndex;
+	}
+
+	public getMasterCategoryAbove(masterCategoryId:string):IMasterCategory {
+
+		var referenceMasterCategory = this.getEntityById(masterCategoryId);
+		var referenceSortableIndex = referenceMasterCategory.sortableIndex; 
+		var masterCategoryAbove:IMasterCategory = null;
+
+		// We want to find the master category with highest sortableIndex below the referenceMasterCategory
+		_.forEach(this, (masterCategory)=>{
+			if(!masterCategory.internalName && masterCategory.entityId != masterCategoryId && masterCategory.sortableIndex < referenceSortableIndex) {
+
+				if(!masterCategoryAbove || masterCategoryAbove.sortableIndex < masterCategory.sortableIndex)
+					masterCategoryAbove = masterCategory;
+			}
+		});
+
+		return masterCategoryAbove;		
+	}
+
+	public getMasterCategoryBelow(masterCategoryId:string):IMasterCategory {
+
+		var referenceMasterCategory = this.getEntityById(masterCategoryId);
+		var referenceSortableIndex = referenceMasterCategory.sortableIndex; 
+		var masterCategoryBelow:IMasterCategory = null;
+
+		// We want to find the master category with lowest sortableIndex above the referenceMasterCategory
+		_.forEach(this, (masterCategory)=>{
+			if(!masterCategory.internalName && masterCategory.entityId != masterCategoryId && masterCategory.sortableIndex > referenceSortableIndex) {
+
+				if(!masterCategoryBelow || masterCategoryBelow.sortableIndex > masterCategory.sortableIndex)
+					masterCategoryBelow = masterCategory;
+			}
+		});
+
+		return masterCategoryBelow;		
 	}
 }

@@ -46,6 +46,19 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		return this.hiddenSubCategories;
 	}
 
+	public getAllSubCategoriesForMasterCategory(masterCategoryId:string):Array<ISubCategory> {
+
+		var subCategories:Array<ISubCategory> = [];		
+
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId)
+				subCategories.push(subCategory);
+		});
+
+		subCategories = _.sortBy(subCategories, 'sortableIndex');
+		return subCategories;
+	}
+
 	public getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategoryId:string):Array<ISubCategory> {
 
 		var subCategories:Array<ISubCategory> = [];		
@@ -55,6 +68,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 				subCategories.push(subCategory);
 		});
 
+		subCategories = _.sortBy(subCategories, 'sortableIndex');
 		return subCategories;
 	}
 
@@ -66,6 +80,77 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		return _.find(this, {accountId: accountId});
 	}
 
+	public getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryId:string):number {
+
+		var sortableIndex = 0;
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId) {
+
+				if(subCategory.sortableIndex > sortableIndex)
+					sortableIndex = subCategory.sortableIndex;
+			}
+		});
+
+		// Increment the sortableIndex by 10000
+		sortableIndex += 10000;
+		return sortableIndex;
+	}
+
+	public getSortableIndexForNewSubCategoryInsertionAtTop(masterCategoryId:string):number {
+
+		var sortableIndex = 0;
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId) {
+
+				if(subCategory.sortableIndex < sortableIndex)
+					sortableIndex = subCategory.sortableIndex;
+			}
+		});
+
+		// Decrement the sortableIndex by 10000
+		sortableIndex -= 10000;
+		return sortableIndex;
+	}
+
+	public getSubCategoryAbove(masterCategoryId:string, subCategoryId:string):ISubCategory {
+
+		var referenceSubCategory = this.getEntityById(subCategoryId);
+		var referenceSortableIndex = referenceSubCategory.sortableIndex; 
+		var subCategoryAbove:ISubCategory = null;
+
+		// We want to find the subcategory with highest sortableIndex below the referenceSubCategory
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId && subCategory.entityId != subCategoryId && subCategory.sortableIndex < referenceSortableIndex) {
+
+				if(!subCategoryAbove || subCategoryAbove.sortableIndex < subCategory.sortableIndex)
+					subCategoryAbove = subCategory;
+			}
+		});
+
+		return subCategoryAbove;		
+	}
+
+	public getSubCategoryBelow(masterCategoryId:string, subCategoryId:string):ISubCategory {
+
+		var referenceSubCategory = this.getEntityById(subCategoryId);
+		var referenceSortableIndex = referenceSubCategory.sortableIndex; 
+		var subCategoryBelow:ISubCategory = null;
+
+		// We want to find the subCategory with lowest sortableIndex above the referenceSubCategory
+		_.forEach(this, (subCategory)=>{
+			if(subCategory.masterCategoryId == masterCategoryId && subCategory.entityId != subCategoryId && subCategory.sortableIndex > referenceSortableIndex) {
+
+				if(!subCategoryBelow || subCategoryBelow.sortableIndex > subCategory.sortableIndex)
+					subCategoryBelow = subCategory;
+			}
+		});
+
+		return subCategoryBelow;		
+	}
+
+	// ***********************************************************************************************
+	// Base class method overrides 
+	// ***********************************************************************************************
 	protected addEntity(subCategory:ISubCategory):void {
 
 		if(!this.hiddenSubCategories)

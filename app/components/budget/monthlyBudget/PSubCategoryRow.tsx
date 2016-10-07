@@ -5,10 +5,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormControl } from 'react-bootstrap';
 
+import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { PBalanceValue } from './PBalanceValue';
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { ISimpleEntitiesCollection } from '../../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PSubCategoryRowProps {
 	subCategory:budgetEntities.ISubCategory;
@@ -26,6 +27,7 @@ export interface PSubCategoryRowProps {
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
 	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 
+	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -119,11 +121,15 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	private categoryNameLabel:HTMLLabelElement;
 	private budgetedValueInput:HTMLInputElement;
 	private balanceValue:PBalanceValue;
+	private moveCategoryUpButton:PButtonWithGlyph;
+	private moveCategoryDownButton:PButtonWithGlyph;
 
 	constructor(props:any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onBudgetValueChange = this.onBudgetValueChange.bind(this);
+		this.onMoveCategoryUpClick = this.onMoveCategoryUpClick.bind(this);
+		this.onMoveCategoryDownClick = this.onMoveCategoryDownClick.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -146,6 +152,80 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 				var inputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
 				inputNode.select();
 			}
+		}
+	}
+
+	private onMoveCategoryUpClick(event:React.MouseEvent):void {
+
+		// Get the subcategory that is above the subcategory we are displaying
+		var subCategory = this.props.subCategory;
+		var subCategoryAbove = this.props.entitiesCollection.subCategories.getSubCategoryAbove(subCategory.masterCategoryId, subCategory.entityId);
+		if(subCategoryAbove) {
+
+			// We are going to swap the sortableIndices of these subCategories
+			var subCategoryClone = Object.assign({}, subCategory);
+			var subCategoryAboveClone = Object.assign({}, subCategoryAbove);
+			// Swap the sortableIndices in the clone objects
+			subCategoryClone.sortableIndex = subCategoryAbove.sortableIndex;
+			subCategoryAboveClone.sortableIndex = subCategory.sortableIndex;
+			// Send these subCategories for persistence
+			this.props.updateEntities({
+				subCategories: [subCategoryClone, subCategoryAboveClone]
+			});
+		}
+		else {
+			// This subCategory is already at the top under it's master category, so it can be moved
+			// further up under this master category.
+			// We are going to check if we have another master category above this subcategory's parent
+			// master category. If we do, we will move this subcategory to the bottom of that master category.
+			var masterCategoryAbove = this.props.entitiesCollection.masterCategories.getMasterCategoryAbove(subCategory.masterCategoryId);
+			if(masterCategoryAbove) {
+
+				var subCategoryClone = Object.assign({}, subCategory);
+				subCategoryClone.masterCategoryId = masterCategoryAbove.entityId;
+				subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryAbove.entityId);
+				// Send this subCategory for persistence
+				this.props.updateEntities({
+					subCategories: [subCategoryClone]
+				});
+			}			
+		}
+	}
+
+	private onMoveCategoryDownClick(event:React.MouseEvent):void {
+
+		// Get the subcategory that is below the subcategory we are displaying
+		var subCategory = this.props.subCategory;
+		var subCategoryBelow = this.props.entitiesCollection.subCategories.getSubCategoryBelow(subCategory.masterCategoryId, subCategory.entityId);
+		if(subCategoryBelow) {
+
+			// We are going to swap the sortableIndices of these subCategories
+			var subCategoryClone = Object.assign({}, subCategory);
+			var subCategoryBelowClone = Object.assign({}, subCategoryBelow);
+			// Swap the sortableIndices in the clone objects
+			subCategoryClone.sortableIndex = subCategoryBelow.sortableIndex;
+			subCategoryBelowClone.sortableIndex = subCategory.sortableIndex;
+			// Send these subCategories for persistence
+			this.props.updateEntities({
+				subCategories: [subCategoryClone, subCategoryBelowClone]
+			});
+		}
+		else {
+			// This subCategory is already at the bottom under it's master category, so it can be moved
+			// further down under this master category.
+			// We are going to check if we have another master category below this subcategory's parent
+			// master category. If we do, we will move this subcategory to the top of that master category.
+			var masterCategoryBelow = this.props.entitiesCollection.masterCategories.getMasterCategoryBelow(subCategory.masterCategoryId);
+			if(masterCategoryBelow) {
+
+				var subCategoryClone = Object.assign({}, subCategory);
+				subCategoryClone.masterCategoryId = masterCategoryBelow.entityId;
+				subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtTop(masterCategoryBelow.entityId);
+				// Send this subCategory for persistence
+				this.props.updateEntities({
+					subCategories: [subCategoryClone]
+				});
+			}			
 		}
 	}
 
@@ -289,6 +369,12 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<label className="budget-row-subcategoryname" 
 						ref={(l)=> this.categoryNameLabel = l}
 						onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryUpButton = b}
+						glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryDownButton = b}
+						glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
 				</div>
 				<div style={valueColumnStyle}>
 					<input type="text" style={budgetedValueStyle} value={budgeted} 
