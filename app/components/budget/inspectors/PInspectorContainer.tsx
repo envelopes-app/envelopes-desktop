@@ -6,9 +6,11 @@ import * as ReactDOM from 'react-dom';
 import { PDefaultInspector } from './PDefaultInspector';
 import { PDefaultCategoryInspector } from './PDefaultCategoryInspector';
 import { PDebtCategoryInspector } from './PDebtCategoryInspector';
+import { PUncategorizedInspector } from './PUncategorizedInspector';
 import { PMultiCategoryInspector } from './PMultiCategoryInspector';
 
-import {DateWithoutTime } from '../../../utilities';
+import { DateWithoutTime } from '../../../utilities';
+import { InternalCategories } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { SubCategoryType } from '../../../constants';
@@ -48,8 +50,15 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 			// Get the selected category to find out if it is a debt category or a default category
 			var subCategoryId:string = this.props.selectedSubCategories[0];
 			var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-			var monthlySubCategory
-			if(subCategory.type == SubCategoryType.Default) {
+
+			if(subCategory.internalName == InternalCategories.UncategorizedSubCategory) {
+				inspector = <PUncategorizedInspector 
+								entitiesCollection={this.props.entitiesCollection} 
+								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
+								updateEntities={this.props.updateEntities}
+							/>;
+			}
+			else if(subCategory.type == SubCategoryType.Default) {
 				inspector = <PDefaultCategoryInspector 
 								entitiesCollection={this.props.entitiesCollection} 
 								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 

@@ -7,6 +7,7 @@ import { FormControl } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { PBalanceValue } from './PBalanceValue';
+import { InternalCategories } from '../../../constants';
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -42,6 +43,7 @@ const SubCategoryRowContainerStyle = {
 	width: "100%",
 	display: "flex",
 	flexFlow: 'row nowrap',
+	flex: "0 0 auto",
 	alignItems: "center",
 	color: "#003440",
 	backgroundColor: "#FFFFFF",
@@ -318,16 +320,70 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			this.props.showCoverOverspendingDialog(subCategory.entityId, balance, this.balanceValue as any);
 	}
 
+	// Returns the JSX for category name in the row
+	private getCategoryNameNode(subCategory:budgetEntities.ISubCategory, isUncategorizedCategory:boolean):JSX.Element {
+
+		if(isUncategorizedCategory) {
+			return (
+				<div style={CategoryNameColumnStyle}>
+					<label className="budget-row-uncategorized-subcategoryname" 
+						ref={(l)=> this.categoryNameLabel = l} >Uncategorized Transactions</label>
+				</div>
+			);
+		}
+		else {
+			return (
+				<div style={CategoryNameColumnStyle}>
+					<label className="budget-row-subcategoryname" 
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>{subCategory.name}</label>
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryUpButton = b}
+						glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryDownButton = b}
+						glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
+				</div>
+			);
+		}
+	}
+
+	private getCategoryBudgetValueNode(subCategory:budgetEntities.ISubCategory, 
+				isUncategorizedCategory:boolean, 
+				monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget,
+				valueColumnStyle:any,
+				budgetedValueStyle:any
+			):JSX.Element {
+
+		if(isUncategorizedCategory) {
+			return (
+				<div style={valueColumnStyle}>
+					<input type="text" style={budgetedValueStyle} value="-" 
+						ref={(i)=> this.budgetedValueInput = i} readOnly={true} />
+				</div>
+			);
+		}
+		else {
+			var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
+			return (
+				<div style={valueColumnStyle}>
+					<input type="text" style={budgetedValueStyle} value={budgeted} 
+						ref={(i)=> this.budgetedValueInput = i}
+						onClick={this.onClick} onChange={this.onBudgetValueChange} />
+				</div>
+			);
+		}
+	}
+
 	public render() {
 
 		var subCategory = this.props.subCategory;
+		var isUncategorizedCategory = (subCategory.internalName == InternalCategories.UncategorizedSubCategory); 
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		if(!monthlySubCategoryBudget)
 			Logger.error(`PSubCategoryRow::MonthlySubCategoryBudget entity for ${subCategory.name} was not found.`);
 
-		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
-		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
-
+		// Determine the styles for the row based on the state 
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
 		var isEditing = (this.props.editingSubCategory && subCategory.entityId == this.props.editingSubCategory);
@@ -359,28 +415,22 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			}
 		}
 
+		// Get the JSX for category name 
+		var categoryNameNode = this.getCategoryNameNode(subCategory, isUncategorizedCategory);
+		// Get the JSX for the budgeted value
+		var budgetedValueNode = this.getCategoryBudgetValueNode(subCategory, isUncategorizedCategory, monthlySubCategoryBudget, valueColumnStyle, budgetedValueStyle);
+
+		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
+
+
     	return (
 			<div style={subCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
 					onClick={this.onClick}>
 				<div style={SelectionColumnStyle}>
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
-				<div style={CategoryNameColumnStyle}>
-					<label className="budget-row-subcategoryname" 
-						ref={(l)=> this.categoryNameLabel = l}
-						onClick={this.onCategoryNameClick}>{this.props.subCategory.name}</label>
-					<PButtonWithGlyph showGlyph={this.state.hoverState} 
-						ref={(b)=> this.moveCategoryUpButton = b}
-						glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
-					<PButtonWithGlyph showGlyph={this.state.hoverState} 
-						ref={(b)=> this.moveCategoryDownButton = b}
-						glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
-				</div>
-				<div style={valueColumnStyle}>
-					<input type="text" style={budgetedValueStyle} value={budgeted} 
-						ref={(i)=> this.budgetedValueInput = i}
-						onClick={this.onClick} onChange={this.onBudgetValueChange} />
-				</div>
+				{categoryNameNode}
+				{budgetedValueNode}
 				<div style={ValueColumnStyle}>
 					<label style={valueStyle}>{activity}</label>
 				</div>

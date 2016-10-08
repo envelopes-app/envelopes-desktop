@@ -28,6 +28,12 @@
 	cursor: pointer;
 }
 
+.budget-row-uncategorized-subcategoryname {
+	font-size: 14px;
+	font-weight: normal;
+	margin-bottom: 0px;
+}
+
 .quick-budget-button {
 	width: 100%;
 	height: 100%;

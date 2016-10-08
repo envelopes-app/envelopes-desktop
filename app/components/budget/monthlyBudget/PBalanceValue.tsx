@@ -39,23 +39,23 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 	public render() {
 
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var fromPreviousMonth = monthlySubCategoryBudget && monthlySubCategoryBudget.balancePreviousMonth ? monthlySubCategoryBudget.balancePreviousMonth : 0;
+		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
 		var cashOutflows = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows : 0;
 		var creditOutflows = monthlySubCategoryBudget ? monthlySubCategoryBudget.creditOutflows : 0;
 		var balance = monthlySubCategoryBudget ? monthlySubCategoryBudget.balance : 0;
 		var upcomingTransactions = (monthlySubCategoryBudget && monthlySubCategoryBudget.upcomingTransactions) ? monthlySubCategoryBudget.upcomingTransactions : 0;
 		var balanceAfterUpcoming = balance - upcomingTransactions;
-
-		var absBalance = Math.abs(balance);
-		var absCashOutflow = Math.abs(cashOutflows);
+		var balanceBeforeOutflows = fromPreviousMonth + budgeted;
 
 		var balanceValueStyle;
 		if(balance < 0) {
 			// if we have overspent with cash, then this would be red. If we have overspent
 			// just by credit, this would be orange.
-			if(balance + absCashOutflow >= 0) 
-				balanceValueStyle = BalanceValueOrangeStyle;
-			else
+			if(balanceBeforeOutflows + cashOutflows < 0) 
 				balanceValueStyle = BalanceValueRedStyle;
+			else
+				balanceValueStyle = BalanceValueOrangeStyle;
 		}
 		else {
 			// Balance is 0 or greater

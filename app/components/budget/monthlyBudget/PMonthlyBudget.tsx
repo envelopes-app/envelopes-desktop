@@ -122,6 +122,33 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 		return masterCategoryRow;
 	}
 
+	private getUncategorizedRow():JSX.Element {
+
+		var monthString = this.props.currentMonth.toISOString();
+		// Get the uncategorized subcategory
+		var uncategorizedSubCategory = this.props.entitiesCollection.subCategories.getUncategorizedSubCategory();
+		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(uncategorizedSubCategory.entityId, monthString);
+		var uncategorizedRow = (
+			<PSubCategoryRow key={uncategorizedSubCategory.entityId} 
+				subCategory={uncategorizedSubCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
+				editingSubCategory={this.props.editingSubCategory}
+				selectedSubCategories={this.props.selectedSubCategories} 
+				selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
+				selectSubCategory={this.props.selectSubCategory}
+				unselectSubCategory={this.props.unselectSubCategory}
+				selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
+				selectNextSubCategoryForEditing={this.props.selectNextSubCategoryForEditing}
+				selectPreviousSubCategoryForEditing={this.props.selectPreviousSubCategoryForEditing}
+				showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
+				showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
+				showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+				entitiesCollection={this.props.entitiesCollection}
+				updateEntities={this.props.updateEntities} />
+		);
+
+		return uncategorizedRow;
+	}
+
 	public render() {
 
 		var masterCategoryRow:JSX.Element; 
@@ -142,7 +169,15 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				monthlySubCategoryBudgetsMap[monthlySubCategoryBudget.subCategoryId] = monthlySubCategoryBudget;
 			});
 
-			// Add the Debt Payment master category row at the top, provided we have any debt categories
+			// Add the Uncategorized Subcategory row at the top if we have uncategorized values in this month
+			var monthlyBudget = this.props.entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(monthString);
+			if(monthlyBudget && (monthlyBudget.uncategorizedBalance != 0 || 
+				monthlyBudget.uncategorizedCashOutflows != 0 || monthlyBudget.uncategorizedCreditOutflows != 0)) {
+
+				masterCategoryRows.push( this.getUncategorizedRow() );
+			}
+
+			// Add the Debt Payment master category row, provided we have any debt categories
 			var debtPaymentMasterCategory = masterCategoriesArray.getDebtPaymentMasterCategory();
 			var debtPaymentSubCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(debtPaymentMasterCategory.entityId);
 			if(debtPaymentSubCategories.length > 0) {
