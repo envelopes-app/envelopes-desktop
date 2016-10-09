@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
+import { InternalCategories } from '../../../constants';
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -51,6 +52,11 @@ const SelectionColumnStyle = {
 	flex: "0 0 auto",
 	width: "25px",
 	paddingLeft: "8px"
+}
+
+const ExpandCollapseColumnStyle = {
+	flex: "0 0 auto",
+	width: "12px"
 }
 
 const CategoryNameColumnStyle = {
@@ -204,6 +210,50 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
 	}
 
+	// Returns the JSX for category name in the row
+	private getCategoryNameNodes(masterCategory:budgetEntities.IMasterCategory, isHiddenMasterCategory:boolean, isSelected:boolean, glyphiconClass:string):Array<JSX.Element> {
+
+		var nameKey = `${masterCategory.entityId}-category-name`;
+		var selectionKey = `${masterCategory.entityId}-selected`;
+		var expandedKey = `${masterCategory.entityId}-expanded`;
+		if(isHiddenMasterCategory) {
+			return ([
+				<div key={selectionKey} style={SelectionColumnStyle} />,
+				<div key={expandedKey} style={ExpandCollapseColumnStyle} />,
+				<div key={nameKey} style={CategoryNameColumnStyle}>
+					<label className="budget-row-hidden-mastercategoryname"
+						ref={(l)=> this.categoryNameLabel = l}>
+						{masterCategory.name}
+					</label>
+				</div>
+			]);
+		}
+		else {
+			return ([
+				<div key={selectionKey} style={SelectionColumnStyle}>
+					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
+				</div>,
+				<div key={expandedKey} style={ExpandCollapseColumnStyle}>
+					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onExpandCollapseGlyphClick}></span>
+				</div>,
+				<div key={nameKey} style={CategoryNameColumnStyle}>
+					<label className="budget-row-mastercategoryname"
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>{masterCategory.name}&nbsp;</label>
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.addCategoryButton = b}
+						glyphName="glyphicon-plus-sign" clickHandler={this.onAddSubCategoryClick} />
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryUpButton = b}
+						glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
+					<PButtonWithGlyph showGlyph={this.state.hoverState} 
+						ref={(b)=> this.moveCategoryDownButton = b}
+						glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
+				</div>
+			]);
+		}
+	}
+
 	public render() {
 
 		var glyphiconClass, containerClass:string;
@@ -220,6 +270,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		});
 
 		var masterCategory = this.props.masterCategory;
+		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
 		var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
 		var isSelected = selectedMasterCategoriesMap[masterCategory.entityId];
 		if(!isSelected)
@@ -240,28 +291,16 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			containerClass = "collapse";
 		}
 
+		// Get the JSX for selection colun, expand/collapse column and the category name column 
+		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isHiddenMasterCategory, isSelected, glyphiconClass);
+
     	return (
 			<div>
 				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}
 						onClick={this.onClick}>
-					<div style={SelectionColumnStyle}>
-						<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
-					</div>
-					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onExpandCollapseGlyphClick}></span>
-					<div style={CategoryNameColumnStyle}>
-						<label className="budget-row-mastercategoryname"
-						ref={(l)=> this.categoryNameLabel = l}
-						onClick={this.onCategoryNameClick}>{this.props.masterCategory.name}&nbsp;</label>
-						<PButtonWithGlyph showGlyph={this.state.hoverState} 
-							ref={(b)=> this.addCategoryButton = b}
-							glyphName="glyphicon-plus-sign" clickHandler={this.onAddSubCategoryClick} />
-						<PButtonWithGlyph showGlyph={this.state.hoverState} 
-							ref={(b)=> this.moveCategoryUpButton = b}
-							glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
-						<PButtonWithGlyph showGlyph={this.state.hoverState} 
-							ref={(b)=> this.moveCategoryDownButton = b}
-							glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
-					</div>
+
+					{categoryNameNodes}
+
 					<div style={ValueColumnStyle}>
 						<label style={ValueStyle}>{budgeted}</label>
 					</div>

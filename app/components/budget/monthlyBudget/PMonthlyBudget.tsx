@@ -8,6 +8,7 @@ import { PHeaderRow } from './PHeaderRow';
 import { PMasterCategoryRow } from './PMasterCategoryRow';
 import { PSubCategoryRow } from './PSubCategoryRow';
 
+import { InternalCategories } from '../../../constants'; 
 import { SubCategoriesArray } from '../../../collections';
 import { DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection, IBudgetState } from '../../../interfaces/state';
@@ -64,13 +65,14 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 	}
 
 	private getBudgetRows(masterCategory:budgetEntities.IMasterCategory, 
-							subCategoriesArray:SubCategoriesArray,
-							monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>,
-							createSubCategoryRows:boolean = true):JSX.Element {
+					subCategoriesArray:SubCategoriesArray,
+					monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>):JSX.Element {
 
 		var masterCategoryRow:JSX.Element;
 		var subCategoryRows:Array<JSX.Element> = [];
 		var monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
+		// If this is the hidden master category, then we won't be creating subcategory rows for it
+		var createSubCategoryRows = (masterCategory.internalName != InternalCategories.HiddenMasterCategory);
 
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
 		_.forEach(subCategories, (subCategory)=>{
@@ -198,7 +200,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			if(hiddenSubCategories.length > 0) {
 
 				var hiddenMasterCategory = masterCategoriesArray.getHiddenMasterCategory();
-				masterCategoryRow = this.getBudgetRows(hiddenMasterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap, false);
+				masterCategoryRow = this.getBudgetRows(hiddenMasterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);
 				masterCategoryRows.push(masterCategoryRow);
 			}
 		}
