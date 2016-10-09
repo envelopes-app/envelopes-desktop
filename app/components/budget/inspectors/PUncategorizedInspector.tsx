@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { PNotes } from './PNotes';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
 import { POverspentMessage } from './POverspentMessage';
 import { DateWithoutTime } from '../../../utilities';
@@ -184,6 +185,7 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 						NOTES
 					</div>
 				</div>
+				<PNotes subCategoryId={subCategoryId} entitiesCollection={this.props.entitiesCollection} updateEntities={this.props.updateEntities} />
 			</div>
 		);
 	}

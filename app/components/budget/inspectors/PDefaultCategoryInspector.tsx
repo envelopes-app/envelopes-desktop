@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Glyphicon } from 'react-bootstrap';
 
+import { PNotes } from './PNotes';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -353,6 +354,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 						NOTES
 					</div>
 				</div>
+				<PNotes subCategoryId={subCategoryId} entitiesCollection={this.props.entitiesCollection} updateEntities={this.props.updateEntities} />
 			</div>
 		);
 	}
