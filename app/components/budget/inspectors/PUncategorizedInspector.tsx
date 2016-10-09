@@ -5,8 +5,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PNotes } from './PNotes';
+import { PMessage } from './PMessage';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
-import { POverspentMessage } from './POverspentMessage';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -106,14 +106,6 @@ const PillHeaderStyle = Object.assign({}, RowItemStyle, {
 
 export class PUncategorizedInspector extends React.Component<PUncategorizedInspectorProps, {}> {
 
-	private getOverspentMessage(available:number):JSX.Element {
-
-		if(available < 0)
-			return <POverspentMessage amountOverspent={available} isUncategorized={true} />;
-		else
-			return <div />;
-	}
-
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
@@ -147,7 +139,6 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 			categoryAvailableStyle = Object.assign({}, CategoryAvailableStyle, {color:"#138B2E"});
 		}
 
-		var overspentMessageNode = this.getOverspentMessage(available);
 		return (
 			<div style={UncategorizedInspectorContainerStyle}>
 				<div style={RowStyle}>
@@ -178,7 +169,7 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget} />
 				</div>
 
-				{overspentMessageNode}
+				<PMessage subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget} />
 
 				<div style={PillHeaderRowStyle}>
 					<div style={PillHeaderStyle}>

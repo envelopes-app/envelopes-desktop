@@ -6,15 +6,14 @@ import * as ReactDOM from 'react-dom';
 import { Button, Glyphicon } from 'react-bootstrap';
 
 import { PNotes } from './PNotes';
+import { PMessage } from './PMessage';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-// TODO: Warning/Error Messages under Top Summary
 // TODO: Category Name Edit dialog
 // TODO: Goals
-// TODO: Notes
 // TODO: Dialog for viewing Upcoming Transactions
 
 export interface PDefaultCategoryInspectorProps {
@@ -333,6 +332,8 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 					<span style={SpacerStyle}/>
 					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget} />
 				</div>
+
+				<PMessage subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget} />
 
 				<div style={PillHeaderRowStyle}>
 					<div style={PillHeaderStyle}>
