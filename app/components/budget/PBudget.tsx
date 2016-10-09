@@ -52,6 +52,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private masterCategoryEditDialog:dialogs.PMasterCategoryEditDialog;
 	private moveMoneyDialog:dialogs.PMoveMoneyDialog;
 	private coverOverspendingDialog:dialogs.PCoverOverspendingDialog;
+	private hiddenCategoriesDialog:dialogs.PHiddenCategoriesDialog;
 
 	constructor(props: any) {
         super(props);
@@ -68,10 +69,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
 		this.showCoverOverspendingDialog = this.showCoverOverspendingDialog.bind(this);
 		this.showMoveMoneyDialog = this.showMoveMoneyDialog.bind(this);
+		this.showHiddenCategoriesDialog = this.showHiddenCategoriesDialog.bind(this);
 		
 		this.showSubCategoryActivityDialog = this.showSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
-		this.showHiddenCategoriesDialog = this.showHiddenCategoriesDialog.bind(this);
 
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
@@ -295,8 +296,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.moveMoneyDialog.show(subCategoryId, selectedMonth, amountToMove, element, placement);
 	}
 
-	private showHiddenCategoriesDialog():void {
-		
+	private showHiddenCategoriesDialog(element:HTMLElement, placement:string = "top"):void {
+		// Show the dialog for unhiding any hidden categories
+		this.hiddenCategoriesDialog.show(element, placement);
 	}
 
 	private getSortedCategoryIdsList():Array<string> {
@@ -370,6 +372,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}
 						showCoverOverspendingDialog={this.showCoverOverspendingDialog}
 						showMoveMoneyDialog={this.showMoveMoneyDialog}
+						showHiddenCategoriesDialog={this.showHiddenCategoriesDialog}
 					/>
 					<PInspectorContainer 
 						currentMonth={selectedMonth}
@@ -405,6 +408,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<dialogs.PCoverOverspendingDialog 
 					ref={(d)=> this.coverOverspendingDialog = d} 
+					entitiesCollection={this.props.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<dialogs.PHiddenCategoriesDialog 
+					ref={(d)=> this.hiddenCategoriesDialog = d} 
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>

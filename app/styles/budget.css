@@ -19,6 +19,7 @@
 	font-weight: bold;
 	color: #003440;
 	margin-bottom: 0px;
+	cursor: pointer;
 }
 
 .budget-row-subcategoryname {
@@ -131,4 +132,61 @@
 	color: #FFFFFF;
 	background-color: #009CC2;
 	cursor: default;
+}
+
+/* Styles for the Hidden Categories Dialog */
+.hidden-categories-list {
+	width: 100%;
+	max-height: 250px;
+	border-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+	padding-bottom: 10px;
+}
+
+.hidden-categories-master-category {
+	width: 100%;
+	color: black;
+	background-color: white;
+	padding-left: 3px;
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+.hidden-categories-master-category-selectable {
+	width: 100%;
+	color: #009cc2;
+	background-color: white;
+	padding-left: 3px;
+	font-weight: bold;
+	margin-bottom: 3px;
+	cursor: pointer;
+}
+
+.hidden-categories-master-category-selectable:hover {
+	width: 100%;
+	color: #00333E;
+	background-color: white;
+	padding-left: 3px;
+	font-weight: bold;
+	margin-bottom: 3px;
+	cursor: pointer;
+}
+
+.hidden-categories-subcategory {
+	width: 100%;
+	color: #009cc2;
+	background-color: white;
+	padding-left: 9px;
+	margin-bottom: 3px;
+	cursor: pointer;
+}
+
+.hidden-categories-subcategory:hover {
+	width: 100%;
+	color: #00333E;
+	background-color: white;
+	padding-left: 9px;
+	margin-bottom: 3px;
+	cursor: pointer;
 }

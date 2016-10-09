@@ -34,6 +34,7 @@ export interface PMonthlyBudgetProps {
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
 	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
+	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -114,6 +115,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					unselectMasterCategory={this.props.unselectMasterCategory}
 					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
 					showCreateCategoryDialog={this.props.showCreateCategoryDialog}
+					showHiddenCategoriesDialog={this.props.showHiddenCategoriesDialog}
+
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 					>
@@ -196,8 +199,20 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
 			// If there are hidden master categories or subcategories, then we are going to show a row
 			// for the HiddenMasterCategory as well
+			var hasHiddenMasterCategories:boolean = false;
+			var hasHiddenSubCategories:boolean = false;
+			_.forEach(masterCategoriesArray, (masterCategory)=>{
+				if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 1) {
+					hasHiddenMasterCategories = true;
+					return false;
+				}
+			});
+
 			var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
-			if(hiddenSubCategories.length > 0) {
+			if(hiddenSubCategories.length > 0)
+				hasHiddenSubCategories = true;
+
+			if(hasHiddenMasterCategories || hasHiddenSubCategories) {
 
 				var hiddenMasterCategory = masterCategoriesArray.getHiddenMasterCategory();
 				masterCategoryRow = this.getBudgetRows(hiddenMasterCategory, subCategoriesArray, monthlySubCategoryBudgetsMap);

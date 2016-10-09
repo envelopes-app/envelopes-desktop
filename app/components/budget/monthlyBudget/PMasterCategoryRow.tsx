@@ -20,6 +20,7 @@ export interface PMasterCategoryRowProps {
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
+	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
@@ -207,7 +208,11 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 	private onCategoryNameClick(event:React.MouseEvent):void {
 		var masterCategory = this.props.masterCategory;
-		this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
+		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
+		if(isHiddenMasterCategory)
+			this.props.showHiddenCategoriesDialog(this.categoryNameLabel);
+		else
+			this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
 	}
 
 	// Returns the JSX for category name in the row
@@ -222,7 +227,8 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 				<div key={expandedKey} style={ExpandCollapseColumnStyle} />,
 				<div key={nameKey} style={CategoryNameColumnStyle}>
 					<label className="budget-row-hidden-mastercategoryname"
-						ref={(l)=> this.categoryNameLabel = l}>
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>
 						{masterCategory.name}
 					</label>
 				</div>

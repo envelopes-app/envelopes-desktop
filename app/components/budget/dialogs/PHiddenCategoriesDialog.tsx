@@ -1,5 +1,6 @@
 /// <reference path="../../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
@@ -22,7 +23,7 @@ export interface PHiddenCategoriesDialogState {
 
 const PopoverStyle = {
 	maxWidth: 'none',
-	width:'300px'
+	width:'260px'
 }
 
 const ButtonsContainerStyle = {
@@ -32,24 +33,18 @@ const ButtonsContainerStyle = {
 	justifyContent: "flex-end"
 }
 
-const CancelButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px"
-}
-
-const OkButtonStyle = {
-	flex: "0 0 auto",
+const ShowAllButtonStyle = {
+	flex: "1 1 auto",
 	fontSize:"14px",
-	marginLeft: "10px"
 }
 
 export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDialogProps, PHiddenCategoriesDialogState> {
 
 	constructor(props: any) {
         super(props);
-		this.onChange = this.onChange.bind(this);
-		this.onOkClick = this.onOkClick.bind(this);
-		this.onCancelClick = this.onCancelClick.bind(this);
+		this.onUnhideSubCategory = this.onUnhideSubCategory.bind(this);
+		this.onUnhideMasterCategory = this.onUnhideMasterCategory.bind(this);
+		this.onUnhideAllClick = this.onUnhideAllClick.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
@@ -61,12 +56,99 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		return this.state.show;
 	}
 
-	private onChange(event:React.SyntheticEvent):void { 
+	private onUnhideSubCategory(subCategoryId:string):void {
 
+		var changedEntities:ISimpleEntitiesCollection = {
+			subCategories: [],
+			masterCategories: []
+		}
+
+		// Unhide the passed subcategory. If it's parent master category is hidden, unhide that as well.
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var subCategory = subCategoriesArray.getEntityById(subCategoryId);
+		var masterCategory = masterCategoriesArray.getEntityById(subCategory.masterCategoryId);
+
+		if(masterCategory.isHidden == 1) {
+			masterCategory = Object.assign({}, masterCategory);
+			masterCategory.isHidden = 0;
+			changedEntities.masterCategories.push(masterCategory);
+		}
+
+		subCategory = Object.assign({}, subCategory);
+		subCategory.isHidden = 0;
+		changedEntities.subCategories.push(subCategory);
+
+		// Persist the updated entities
+		this.props.updateEntities(changedEntities);
+		this.hide();
 	}
 
-	private onOkClick():void { 
+	private onUnhideMasterCategory(masterCategoryId:string):void {
 
+		var changedEntities:ISimpleEntitiesCollection = {
+			subCategories: [],
+			masterCategories: []
+		}
+
+		// Unhide the passed master category
+		// Also iterate through all it's subcategories and unhide all that are hidden
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
+
+		var masterCategory = masterCategoriesArray.getEntityById(masterCategoryId);
+		masterCategory = Object.assign({}, masterCategory);
+		masterCategory.isHidden = 0;
+		changedEntities.masterCategories.push(masterCategory);
+
+		_.forEach(hiddenSubCategories, (subCategory)=>{
+
+			if(subCategory.masterCategoryId == masterCategoryId && subCategory.isHidden == 1) {
+				subCategory = Object.assign({}, subCategory);
+				subCategory.isHidden = 0;
+				changedEntities.subCategories.push(subCategory);
+			}
+		});
+
+		// Persist the updated entities
+		this.props.updateEntities(changedEntities);
+		this.hide();
+	}
+
+	private onUnhideAllClick():void { 
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			subCategories: [],
+			masterCategories: []
+		}
+
+		// Iterate through all the master and subcategories and unhide all that are hidden
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
+
+		_.forEach(masterCategoriesArray, (masterCategory)=>{
+
+			if(masterCategory.isHidden == 1) {
+				masterCategory = Object.assign({}, masterCategory);
+				masterCategory.isHidden = 0;
+				changedEntities.masterCategories.push(masterCategory);
+			}
+		});
+
+		_.forEach(hiddenSubCategories, (subCategory)=>{
+
+			if(subCategory.isHidden == 1) {
+				subCategory = Object.assign({}, subCategory);
+				subCategory.isHidden = 0;
+				changedEntities.subCategories.push(subCategory);
+			}
+		});
+
+		// Persist the updated entities
+		this.props.updateEntities(changedEntities);
+		this.hide();
 	}
 
 	private onCancelClick():void { 
@@ -74,19 +156,14 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		this.hide();
 	}
 	
-	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "left"):void {
+	public show(target:HTMLElement, placement:string = "left"):void {
 
 		// Get the subCategory for the passed subCategoryId
-		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
-		if(subCategory && monthlySubCategoryBudget) {
-
-			var state = Object.assign({}, this.state) as PHiddenCategoriesDialogState;
-			state.show = true;
-			state.target = target;
-			state.placement = placement;
-			this.setState(state);
-		}
+		var state = Object.assign({}, this.state) as PHiddenCategoriesDialogState;
+		state.show = true;
+		state.target = target;
+		state.placement = placement;
+		this.setState(state);
 	}
 
 	public hide():void {
@@ -95,18 +172,60 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		this.setState(state);
 	}
 
+	private getHiddenCategoryItems():Array<JSX.Element> {
+
+		var categoryItems:Array<JSX.Element> = [];
+		if(!this.props.entitiesCollection.masterCategories)
+			return categoryItems;
+
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
+
+		// Iterate through all the master categories 
+		_.forEach(masterCategoriesArray, (masterCategory)=>{
+
+			if(masterCategory.isHidden == 1) {
+				// Add an item for this master category, and all it's subcategories
+				categoryItems.push(<ul key={masterCategory.entityId} className="hidden-categories-master-category-selectable" onClick={this.onUnhideMasterCategory.bind(this, masterCategory.entityId)}>{masterCategory.name}</ul>);
+				var subCategories = subCategoriesArray.getAllSubCategoriesForMasterCategory(masterCategory.entityId);
+				_.forEach(subCategories, (subCategory)=>{
+					categoryItems.push(<ul key={subCategory.entityId} className="hidden-categories-subcategory" onClick={this.onUnhideSubCategory.bind(this, subCategory.entityId)}>{subCategory.name}</ul>);
+				});
+			}
+			else {
+				// Check if there are any hidden subcategories that were under this master category
+				var hiddenSubCategoriesForMasterCategory = _.filter(hiddenSubCategories, (subCategory)=>{
+					return subCategory.masterCategoryId == masterCategory.entityId;
+				});
+
+				if(hiddenSubCategoriesForMasterCategory.length > 0) {
+
+					categoryItems.push(<ul key={masterCategory.entityId} className="hidden-categories-master-category">{masterCategory.name}</ul>);
+					_.forEach(hiddenSubCategoriesForMasterCategory, (subCategory)=>{
+						categoryItems.push(<ul key={subCategory.entityId} className="hidden-categories-subcategory" onClick={this.onUnhideSubCategory.bind(this, subCategory.entityId)}>{subCategory.name}</ul>);
+					});
+				}
+			}
+		});
+
+		return categoryItems;
+	}
+
 	public render() {
+
+		var categoryItems = this.getHiddenCategoryItems();
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
 				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="hiddenCategoriesDialog" style={PopoverStyle}>
+				<Popover id="hiddenCategoriesDialog" style={PopoverStyle} title="Click to unhide a category">
+					<li className="hidden-categories-list">
+						{categoryItems}
+					</li>
 					<div style={ButtonsContainerStyle}>
-						<Button className="dialog-secondary-button" style={CancelButtonStyle} onClick={this.onCancelClick}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-							OK&nbsp;<Glyphicon glyph="ok-circle"/>
+						<Button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
+							Show all hidden categories
 						</Button>
 					</div>
 				</Popover>
