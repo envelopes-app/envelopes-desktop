@@ -1,16 +1,20 @@
 /// <reference path="../../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
+import { InternalCategories } from '../../../constants';
 import { DateWithoutTime } from '../../../utilities';
-import { IEntitiesCollection } from '../../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDefaultInspectorProps {
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const DefaultInspectorContainerStyle = {
@@ -62,28 +66,221 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 
 	constructor(props: any) {
         super(props);
+		this.setBudgetedToUnderFunded = this.setBudgetedToUnderFunded.bind(this);
 		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);
 		this.setBudgetedToSpentLastMonth = this.setBudgetedToSpentLastMonth.bind(this);
 		this.setBudgetedToAverageBudgeted = this.setBudgetedToAverageBudgeted.bind(this);
 		this.setBudgetedToAverageSpent = this.setBudgetedToAverageSpent.bind(this);
 	}
 
+	private setBudgetedToUnderFunded():void {
+
+		var currentMonth = this.props.currentMonth;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = this.props.entitiesCollection.monthlySubCategoryBudgets;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			monthlySubCategoryBudgets: []
+		};
+
+		// Get the monthlySubCategoryBudget entities for current month
+		var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+		// Build a map of the monthlySubCategoryBudgets by subCategoryId
+		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+		// Iterate through all the subcategories and update the budgeted values for overspent categories
+		_.forEach(subCategoriesArray, (subCategory)=>{
+			// Skip the hidden and internal categories
+			if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+				// Get the corresponding monthlySubCategoryBudget
+				var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+				if(monthlySubCategoryBudget.balance < 0) {
+
+					monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+					monthlySubCategoryBudget.budgeted += (-monthlySubCategoryBudget.balance);
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				}
+			}
+		});
+
+		this.props.updateEntities(changedEntities);
+	}
+
 	private setBudgetedToBudgetedLastMonth():void {
 
+		var currentMonth = this.props.currentMonth;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = this.props.entitiesCollection.monthlySubCategoryBudgets;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			monthlySubCategoryBudgets: []
+		};
+
+		// Get the monthlySubCategoryBudget entities for current month
+		var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+		// Build a map of the monthlySubCategoryBudgets by subCategoryId
+		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+		// Iterate through all the subcategories and update the budgeted values for categories
+		_.forEach(subCategoriesArray, (subCategory)=>{
+			// Skip the hidden and internal categories
+			if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+				// Get the corresponding monthlySubCategoryBudget
+				var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+				if(monthlySubCategoryBudget.budgeted != monthlySubCategoryBudget.budgetedPreviousMonth) {
+
+					monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+					monthlySubCategoryBudget.budgeted = monthlySubCategoryBudget.budgetedPreviousMonth;
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				}
+			}
+		});
+
+		this.props.updateEntities(changedEntities);
 	}
 
 	private setBudgetedToSpentLastMonth():void {
 
+		var currentMonth = this.props.currentMonth;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = this.props.entitiesCollection.monthlySubCategoryBudgets;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			monthlySubCategoryBudgets: []
+		};
+
+		// Get the monthlySubCategoryBudget entities for current month
+		var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+		// Build a map of the monthlySubCategoryBudgets by subCategoryId
+		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+		// Iterate through all the subcategories and update the budgeted values for categories
+		_.forEach(subCategoriesArray, (subCategory)=>{
+			// Skip the hidden and internal categories
+			if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+				// Get the corresponding monthlySubCategoryBudget
+				var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+				if(monthlySubCategoryBudget.budgeted != (-monthlySubCategoryBudget.spentPreviousMonth)) {
+
+					monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+					monthlySubCategoryBudget.budgeted = (-monthlySubCategoryBudget.spentPreviousMonth);
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				}
+			}
+		});
+
+		this.props.updateEntities(changedEntities);
 	}
 
 	private setBudgetedToAverageBudgeted():void {
 
+		var currentMonth = this.props.currentMonth;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = this.props.entitiesCollection.monthlySubCategoryBudgets;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			monthlySubCategoryBudgets: []
+		};
+
+		// Get the monthlySubCategoryBudget entities for current month
+		var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+		// Build a map of the monthlySubCategoryBudgets by subCategoryId
+		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+		// Iterate through all the subcategories and update the budgeted values for categories
+		_.forEach(subCategoriesArray, (subCategory)=>{
+			// Skip the hidden and internal categories
+			if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+				// Get the corresponding monthlySubCategoryBudget
+				var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+				if(monthlySubCategoryBudget.budgeted != monthlySubCategoryBudget.budgetedAverage) {
+
+					monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+					monthlySubCategoryBudget.budgeted = monthlySubCategoryBudget.budgetedAverage;
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				}
+			}
+		});
+
+		this.props.updateEntities(changedEntities);
 	}
 
 	private setBudgetedToAverageSpent():void {
 
+		var currentMonth = this.props.currentMonth;
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = this.props.entitiesCollection.monthlySubCategoryBudgets;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			monthlySubCategoryBudgets: []
+		};
+
+		// Get the monthlySubCategoryBudget entities for current month
+		var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+		// Build a map of the monthlySubCategoryBudgets by subCategoryId
+		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+		// Iterate through all the subcategories and update the budgeted values for categories
+		_.forEach(subCategoriesArray, (subCategory)=>{
+			// Skip the hidden and internal categories
+			if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+				// Get the corresponding monthlySubCategoryBudget
+				var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+				if(monthlySubCategoryBudget.budgeted != (-monthlySubCategoryBudget.spentAverage)) {
+
+					monthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+					monthlySubCategoryBudget.budgeted = (-monthlySubCategoryBudget.spentAverage);
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				}
+			}
+		});
+
+		this.props.updateEntities(changedEntities);
 	}
 	
+	private getAverageBudgetedAndSpentForLastMonth():{averageBudgeted:number, averageSpent:number} {
+
+		var retVal = {averageBudgeted:0, averageSpent:0};
+		var entitiesCollection = this.props.entitiesCollection;
+		var subCategoriesArray = entitiesCollection.subCategories;
+		var monthlySubCategoryBudgetsArray = entitiesCollection.monthlySubCategoryBudgets;
+		if(subCategoriesArray && monthlySubCategoryBudgetsArray) {
+
+			var currentMonth = this.props.currentMonth;
+			var prevMonth = currentMonth.clone().subtractMonths(1);
+
+			// Get the monthlySubCategoryBudget entities for current month
+			var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(currentMonth.toISOString());
+
+			// Build a map of the monthlySubCategoryBudgets by subCategoryId
+			var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
+
+			// Iterate through all the subcategories, and calculate the average budgeted and spent values
+			_.forEach(subCategoriesArray, (subCategory)=>{
+				// Skip the hidden and internal categories
+				if(subCategory.isHidden == 0 && !subCategory.internalName) {
+
+					// Get the corresponding monthlySubCategoryBudget and sum up the budgeted/spent values
+					var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
+					retVal.averageBudgeted += monthlySubCategoryBudget.budgetedAverage;
+					retVal.averageSpent += monthlySubCategoryBudget.spentAverage;
+				}
+			});
+		}
+
+		return retVal;
+	}
+
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
@@ -107,8 +304,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var underfundedValue:number = monthlyBudget ? monthlyBudget.overSpent : 0;
 		var budgetedLastMonth:number = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.budgeted : 0;
 		var spentLastMonth:number = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.cashOutflows + monthlyBudgetForPrevMonth.creditOutflows : 0;
-		var averageBudgeted:number = 0;
-		var averageSpent:number = 0;
+		var averageBudgetedAndSpent = this.getAverageBudgetedAndSpentForLastMonth();
 
     	return (
 			<div style={DefaultInspectorContainerStyle}>
@@ -137,28 +333,28 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 					<label style={LabelStyle}>QUICK BUDGET</label>
 					<ul style={ListStyle}>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button">
+							<Button className="quick-budget-button" onClick={this.setBudgetedToUnderFunded}>
 								Underfunded: {underfundedValue}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button">
+							<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 								Budgeted Last Month: {budgetedLastMonth}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button">
-								Spent Last Month: {spentLastMonth}
+							<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
+								Spent Last Month: {-spentLastMonth}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button">
-								Average Budgeted: {averageBudgeted}
+							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
+								Average Budgeted: {averageBudgetedAndSpent.averageBudgeted}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button">
-								Average Spent: {averageSpent}
+							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
+								Average Spent: {-averageBudgetedAndSpent.averageSpent}
 							</Button>
 						</li>
 					</ul>

@@ -50,6 +50,7 @@
 	color: #009cc2;
 	font-size: 14px;
 	margin-bottom: 2px;
+	outline: none;
 }
 
 .quick-budget-button:focus {
@@ -60,6 +61,7 @@
 	color: #009cc2;
 	font-size: 14px;
 	margin-bottom: 2px;
+	outline: none;
 }
 
 .quick-budget-button:hover {
@@ -70,6 +72,7 @@
 	color: #FFFFFF;
 	font-size: 14px;
 	margin-bottom: 2px;
+	outline: none;
 }
 
 /* Styles for Buttons in the Month Selection dialog */
