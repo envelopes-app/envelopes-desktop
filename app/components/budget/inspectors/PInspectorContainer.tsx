@@ -58,27 +58,35 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 
 			if(subCategory.internalName == InternalCategories.UncategorizedSubCategory) {
 				inspector = <PUncategorizedInspector 
+								subCategoryId={subCategoryId} 
+								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
-								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
 								updateEntities={this.props.updateEntities}
 							/>;
 			}
 			else if(subCategory.type == SubCategoryType.Default) {
 				inspector = <PDefaultCategoryInspector 
+								subCategoryId={subCategoryId} 
+								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
-								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
 								updateEntities={this.props.updateEntities}
 							/>;
 			}
 			else if(subCategory.type == SubCategoryType.Debt)
 				inspector = <PDebtCategoryInspector 
+								subCategoryId={subCategoryId} 
+								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
-								subCategoryId={subCategoryId} currentMonth={this.props.currentMonth} 
 								updateEntities={this.props.updateEntities}	
 							/>;
 		}
 		else if(this.props.selectedSubCategories.length > 1) {
-			inspector = <PMultiCategoryInspector />;
+			inspector = <PMultiCategoryInspector 
+							currentMonth={this.props.currentMonth} 
+							selectedSubCategories={this.props.selectedSubCategories} 
+							entitiesCollection={this.props.entitiesCollection} 
+							updateEntities={this.props.updateEntities}	
+						/>;
 		}
 
     	return (
