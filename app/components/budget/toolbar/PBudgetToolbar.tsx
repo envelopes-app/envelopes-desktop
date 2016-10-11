@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { PToolbarButton } from '../../common/PToolbarButton';
+import { PLinkButton } from '../../common/PLinkButton';
 
 export interface PBudgetToolbarProps {
 	onAddTransactionSelected:()=>void;
@@ -30,8 +30,8 @@ const BudgetToolbarStyle = {
 
 export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
   
-	private addCategoryButton:PToolbarButton;
-	private addTransactionButton:PToolbarButton;
+	private addCategoryButton:PLinkButton;
+	private addTransactionButton:PLinkButton;
 
 	constructor(props: any) {
         super(props);
@@ -48,11 +48,11 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
     	return (
 			<div style={BudgetToolbarContainerStyle}>
 				<div style={BudgetToolbarStyle}>
-					<PToolbarButton 
+					<PLinkButton 
 						ref={(c)=>{this.addTransactionButton = c;}}
 						text="Add Transaction" glyphName="glyphicon-plus-sign" 
 						clickHandler={this.props.onAddTransactionSelected} />
-					<PToolbarButton 
+					<PLinkButton 
 						ref={(c)=>{this.addCategoryButton = c;}}
 						text="Add Category Group" glyphName="glyphicon-plus-sign" 
 						clickHandler={this.onAddCategoryButtonClick} />

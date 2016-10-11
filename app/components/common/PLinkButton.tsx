@@ -3,33 +3,33 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 
-export interface PToolbarButtonProps {
+export interface PLinkButtonProps {
 	text: string;
-	glyphName: string;
+	glyphName?: string;
 	enabled?:boolean;
 	clickHandler?: (event:React.MouseEvent)=>void;
 }
 
-const PToolbarButtonCommonStyle = {
+const PLinkButtonCommonStyle = {
 	cursor: 'pointer',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-const PToolbarButtonDefaultStyle = {
+const PLinkButtonDefaultStyle = {
 	color: '#009cc2'
 }
 
-const PToolbarButtonHoverStyle = {
+const PLinkButtonHoverStyle = {
 	color: '#005076'
 }
 
-const PToolbarButtonTextStyle = {
+const PLinkButtonTextStyle = {
 	fontSize: '13px',
 	fontWeight: 'normal'
 }
 
-export class PToolbarButton extends React.Component<PToolbarButtonProps, {hoverState:boolean}> {
+export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:boolean}> {
 
 	constructor(props: any) {
         super(props);
@@ -63,15 +63,24 @@ export class PToolbarButton extends React.Component<PToolbarButtonProps, {hoverS
 
 		var style:any;
 		if(this.state.hoverState) 
-			style = _.assign({}, PToolbarButtonCommonStyle, PToolbarButtonHoverStyle);
+			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonHoverStyle);
 		else
-			style = _.assign({}, PToolbarButtonCommonStyle, PToolbarButtonDefaultStyle);
+			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDefaultStyle);
 
-		return (
-			<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-				<span className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
-				<text style={PToolbarButtonTextStyle}>&nbsp;{this.props.text}</text>
-			</div>
-		);
+		if(this.props.glyphName) {
+			return (
+				<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+					<span className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
+					<text style={PLinkButtonTextStyle}>&nbsp;{this.props.text}</text>
+				</div>
+			);
+		}
+		else {
+			return (
+				<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+					<text style={PLinkButtonTextStyle}>&nbsp;{this.props.text}</text>
+				</div>
+			);
+		}
   	}
 }

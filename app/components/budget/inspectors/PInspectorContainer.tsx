@@ -27,13 +27,14 @@ const InspectorContainerStyle = {
 	flex: '0 0 auto',
 	minWidth: "340px",
 	width: "340px",
-	backgroundColor: "#E5F5F9",
+	height: "100%",
 	borderColor: "#DFE4E9",
 	borderStyle: "solid",
 	borderTopWidth: "1px",
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
+	backgroundColor: "#E5F5F9",
 	overflowY: "scroll"
 }
 

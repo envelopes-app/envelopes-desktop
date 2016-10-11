@@ -7,7 +7,9 @@ import { Button, Glyphicon } from 'react-bootstrap';
 
 import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
+import { PLinkButton } from '../../common/PLinkButton';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
+import { PDefaultCategoryGoals } from './PDefaultCategoryGoals';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -36,7 +38,7 @@ const HRStyle = {
 	width: "100%",
 	marginTop: "0px",
 	marginBottom: "10px",
-	borderTop: "1px dashed #588697"
+	borderTop: "1px dotted #588697"
 }
 
 const RowStyle = {
@@ -109,6 +111,12 @@ const PillHeaderStyle = Object.assign({}, RowItemStyle, {
 	paddingRight: "10px",
 });
 
+const GoalPillHeaderStyle = Object.assign({}, PillHeaderStyle, {
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "space-between"
+});
+
 const ListStyle = {
 	paddingTop: "10px",
 	paddingLeft: "20px",
@@ -123,12 +131,15 @@ const ListItemStyle = {
 
 export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryInspectorProps, {}> {
 
-	constructor(props: any) {
+	private defaultCategoryGoals:PDefaultCategoryGoals;
+
+	constructor(props:any) {
         super(props);
 		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);
 		this.setBudgetedToSpentLastMonth = this.setBudgetedToSpentLastMonth.bind(this);
 		this.setBudgetedToAverageBudgeted = this.setBudgetedToAverageBudgeted.bind(this);
 		this.setBudgetedToAverageSpent = this.setBudgetedToAverageSpent.bind(this);
+		this.handleGoalEditClicked = this.handleGoalEditClicked.bind(this);
 	}
 
 	private setBudgetedToBudgetedLastMonth():void {
@@ -210,6 +221,10 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		});
 	}
 	
+	private handleGoalEditClicked(event:React.MouseEvent):void {
+		this.defaultCategoryGoals.showEditor();
+	}
+
 	private getQuickBudgetItems(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget):Array<JSX.Element> {
 
 		// Get the quick budget values
@@ -297,6 +312,24 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 		// Get the Quick Budet items
 		var quickBudgetItems = this.getQuickBudgetItems(monthlySubCategoryBudget);
 
+		// Get the goals pill header. It would contain an "Edit" link if we have a goal defined.
+		var goalsPillHeader:JSX.Element;
+		if(subCategory.goalType) {
+			goalsPillHeader = (
+				<div style={GoalPillHeaderStyle}>
+					<span>GOALS</span>
+					<PLinkButton text="Edit" clickHandler={this.handleGoalEditClicked} />
+				</div>
+			);
+		}
+		else {
+			goalsPillHeader = (
+				<div style={GoalPillHeaderStyle}>
+					GOALS
+				</div>
+			);
+		}
+
 		return (
 			<div style={DefaultCategoryInspectorContainerStyle}>
 				<div style={RowStyle}>
@@ -345,10 +378,15 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				</ul>
 
 				<div style={PillHeaderRowStyle}>
-					<div style={PillHeaderStyle}>
-						GOALS
-					</div>
+					{goalsPillHeader}
 				</div>
+				<PDefaultCategoryGoals 
+					ref={(c)=>{this.defaultCategoryGoals = c;}}
+					subCategoryId={this.props.subCategoryId}
+					currentMonth={this.props.currentMonth}
+					entitiesCollection={this.props.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
 
 				<div style={PillHeaderRowStyle}>
 					<div style={PillHeaderStyle}>

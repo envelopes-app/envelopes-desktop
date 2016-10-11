@@ -226,3 +226,15 @@
 	background-color: #005076;	
 	border-color: #005076;	
 }
+
+.dialog-borderless-button {
+	color: #009cc2;
+	background-color: transparent;
+	border-color: transparent;	
+}
+
+.dialog-borderless-button:hover {
+	color: #005076;
+	background-color: transparent;
+	border-color: transparent;	
+}

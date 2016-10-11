@@ -48,7 +48,8 @@ const MonthlyBudgetContainerStyle = {
 	borderTopWidth: "1px",
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
-	borderLeftWidth: "0px"
+	borderLeftWidth: "0px",
+	overflowY: "scroll"
 }
 
 const MonthlyBudgetSubContainerStyle = {
@@ -56,7 +57,6 @@ const MonthlyBudgetSubContainerStyle = {
 	height: "100%",
 	display: "flex",
 	flexFlow: 'column nowrap',
-	overflowY: "scroll"
 }
 
 export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {

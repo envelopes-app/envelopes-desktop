@@ -12,7 +12,6 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 // TODO: Warning/Error Messages under Top Summary
-// TODO: Notes
 // TODO: Dialog for viewing Upcoming Transactions
 
 export interface PUncategorizedInspectorProps {

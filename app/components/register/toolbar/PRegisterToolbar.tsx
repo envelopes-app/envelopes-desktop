@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { PToolbarButton } from '../../common/PToolbarButton';
+import { PLinkButton } from '../../common/PLinkButton';
 import { IRegisterState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
@@ -51,8 +51,8 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
     	return (
 			<div style={RegisterToolbarContainerStyle}>
 				<div style={RegisterToolbarStyle}>
-					<PToolbarButton text="Add a transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
-					<PToolbarButton enabled={selectedTransactionsCount > 0} text={editButtonText} 
+					<PLinkButton text="Add a transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
+					<PLinkButton enabled={selectedTransactionsCount > 0} text={editButtonText} 
 						glyphName="glyphicon-edit" clickHandler={this.showEditMenu} />
 				</div>
 			</div>

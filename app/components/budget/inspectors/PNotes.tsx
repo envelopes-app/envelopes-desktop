@@ -17,6 +17,7 @@ export interface PNotesProps {
 
 const NotesContainerStyle = {
 	width: "100%",
+	minHeight: "100px",
 	paddingTop: "10px",
 	paddingLeft: "10px",
 	paddingRight: "10px"
