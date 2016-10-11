@@ -41,20 +41,14 @@ const GoalsContainerStyle = {
 const GoalTypeSelectionContainerStyle = {
 	flex: "0 0 auto",
 	paddingLeft: "10px",
-	paddingRight: "10px"
+	paddingRight: "10px",
+	paddingBottom: "10px"
 }
 
 const GoalTypeSelectionRadioStyle = {
 	marginTop: "5px",
 	marginBottom: "5px",
 	color: "#588697"
-}
-
-const HRStyle = {
-	width: "100%",
-	marginTop: "10px",
-	marginBottom: "10px",
-	borderTop: "1px dotted #588697"
 }
 
 const FormControlStyle = {
@@ -101,7 +95,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	constructor(props:any) {
         super(props);
 		this.handleCreateGoalClicked = this.handleCreateGoalClicked.bind(this);
-		this.handleGoalTypeSelectionChange = this.handleGoalTypeSelectionChange.bind(this);
+		this.onGoalTypeSelectionChange = this.onGoalTypeSelectionChange.bind(this);
 		this.onTargetBalanceChange = this.onTargetBalanceChange.bind(this);
 		this.onTargetBalanceMonthChange = this.onTargetBalanceMonthChange.bind(this);
 		this.onTargetBalanceYearChange = this.onTargetBalanceYearChange.bind(this);
@@ -145,7 +139,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		this.showEditor();
 	}
 
-	private handleGoalTypeSelectionChange(goalType:string):void {
+	private onGoalTypeSelectionChange(goalType:string):void {
 
 		// Update the selectedGoalType value in the state
 		var state = Object.assign({}, this.state);
@@ -214,17 +208,21 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var subCategoryId = this.props.subCategoryId;
 		var entitiesCollection = this.props.entitiesCollection;
 		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
-		// We are going to nul out all the goal related values from the subcategory
-		var subCategoryClone = Object.assign({}, subCategory);
-		subCategoryClone.goalType = null;
-		subCategoryClone.goalCreationMonth = null;
-		subCategoryClone.monthlyFunding = null;
-		subCategoryClone.targetBalance = null;
-		subCategoryClone.targetBalanceMonth = null;
-		
-		this.props.updateEntities({
-			subCategories: [subCategoryClone]
-		});
+
+		// We are going to nul out all the goal related values from the subcategory if they exist
+		if(subCategory.goalType) {
+
+			var subCategoryClone = Object.assign({}, subCategory);
+			subCategoryClone.goalType = null;
+			subCategoryClone.goalCreationMonth = null;
+			subCategoryClone.monthlyFunding = null;
+			subCategoryClone.targetBalance = null;
+			subCategoryClone.targetBalanceMonth = null;
+			
+			this.props.updateEntities({
+				subCategories: [subCategoryClone]
+			});
+		}
 	}
 
 	private handleCancelClicked(event:React.MouseEvent):void {
@@ -355,6 +353,31 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		);
 	}
 
+	private getGoalsHeader(subCategory:budgetEntities.ISubCategory):JSX.Element {
+
+		var goalsHeader:JSX.Element;
+
+		// Only show the edit link in the header if we have a goal defined, and we are 
+		// not currently showing the editor.
+		if(subCategory.goalType && this.state.showEditor == false) {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					<span>GOALS</span>
+					<PLinkButton text="Edit" />
+				</div>
+			);
+		}
+		else {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					GOALS
+				</div>
+			);
+		}
+
+		return goalsHeader;
+	}
+
 	public render() {
 
 		// Get the subcategory entity
@@ -362,6 +385,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var subCategoryId = this.props.subCategoryId;
 		var entitiesCollection = this.props.entitiesCollection;
 		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var header = this.getGoalsHeader(subCategory);
 
 		if(this.state.showEditor == false) {
 
@@ -369,6 +393,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 			if(!subCategory.goalType) {
 				return (
 					<div style={GoalsContainerStyle}>
+						{header}
 						<PLinkButton 
 							text="Create a goal" glyphName="glyphicon-plus-sign" 
 							clickHandler={this.handleCreateGoalClicked} 
@@ -384,6 +409,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 				var percentageCompleted = Math.round(completed / target * 100); 
 				return (
 					<div style={GoalsContainerStyle}>
+						{header}
 						<ProgressBar now={percentageCompleted} />
 					</div>
 				);
@@ -401,14 +427,15 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 			return (
 				<div style={GoalsContainerStyle}>
+					{header}
 					<div style={GoalTypeSelectionContainerStyle}>
-						<Radio checked={this.state.goalType == SubCategoryGoalType.TargetBalance} onChange={this.handleGoalTypeSelectionChange.bind(this, "TB")} style={GoalTypeSelectionRadioStyle}>Target Category Balance</Radio>
-						<Radio checked={this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate} onChange={this.handleGoalTypeSelectionChange.bind(this, "TBD")} style={GoalTypeSelectionRadioStyle}>Target Category Balance by Date</Radio>
-						<Radio checked={this.state.goalType == SubCategoryGoalType.MonthlyFunding} onChange={this.handleGoalTypeSelectionChange.bind(this, "MF")} style={GoalTypeSelectionRadioStyle}>Monthly Funding Goal</Radio>
+						<Radio checked={this.state.goalType == SubCategoryGoalType.TargetBalance} onChange={this.onGoalTypeSelectionChange.bind(this, "TB")} style={GoalTypeSelectionRadioStyle}>Target Category Balance</Radio>
+						<Radio checked={this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate} onChange={this.onGoalTypeSelectionChange.bind(this, "TBD")} style={GoalTypeSelectionRadioStyle}>Target Category Balance by Date</Radio>
+						<Radio checked={this.state.goalType == SubCategoryGoalType.MonthlyFunding} onChange={this.onGoalTypeSelectionChange.bind(this, "MF")} style={GoalTypeSelectionRadioStyle}>Monthly Funding Goal</Radio>
 					</div>
-					<hr style={HRStyle} />
+					<hr className="inspector-horizontal-rule" />
 					{editor}
-					<hr style={HRStyle} />
+					<hr className="inspector-horizontal-rule" />
 					<div style={ButtonsContainerStyle}>
 						<PLinkButton text="Delete" clickHandler={this.handleDeleteClicked} />
 						<PLinkButton text="Cancel" clickHandler={this.handleCancelClicked} />

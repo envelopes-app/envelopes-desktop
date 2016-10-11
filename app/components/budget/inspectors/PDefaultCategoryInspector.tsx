@@ -9,13 +9,13 @@ import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
 import { PLinkButton } from '../../common/PLinkButton';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
+import { PDefaultCategoryQuickBudget } from './PDefaultCategoryQuickBudget';
 import { PDefaultCategoryGoals } from './PDefaultCategoryGoals';
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 // TODO: Category Name Edit dialog
-// TODO: Goals
 // TODO: Dialog for viewing Upcoming Transactions
 
 export interface PDefaultCategoryInspectorProps {
@@ -32,13 +32,6 @@ const DefaultCategoryInspectorContainerStyle = {
 	alignItems: "center",
 	justifyContent: "flex-start",
 	color: "#588697",
-}
-
-const HRStyle = {
-	width: "100%",
-	marginTop: "0px",
-	marginBottom: "10px",
-	borderTop: "1px dotted #588697"
 }
 
 const RowStyle = {
@@ -94,187 +87,13 @@ const CategoryAvailableValueStyle = Object.assign({}, CategoryPropertyValueStyle
 	color: "#003440"
 });
 
-const PillHeaderRowStyle = Object.assign({}, RowStyle, {
-	paddingTop: "10px"
-});
-
-const PillHeaderStyle = Object.assign({}, RowItemStyle, {
-	width: "100%",
-	backgroundColor: "#FFFFFF",
-	color: "#003440",
-	fontWeight: "bold",
-	fontSize: "14px",
-	borderRadius: "1000px",
-	paddingTop: "5px",
-	paddingBottom: "5px",
-	paddingLeft: "10px",
-	paddingRight: "10px",
-});
-
-const GoalPillHeaderStyle = Object.assign({}, PillHeaderStyle, {
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "space-between"
-});
-
-const ListStyle = {
-	paddingTop: "10px",
-	paddingLeft: "20px",
-	paddingRight: "20px",
-	listStyleType: "none",
-	width: "100%"
-}
-
-const ListItemStyle = {
-	width: "100%"
-}
-
 export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryInspectorProps, {}> {
-
-	private defaultCategoryGoals:PDefaultCategoryGoals;
-
-	constructor(props:any) {
-        super(props);
-		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);
-		this.setBudgetedToSpentLastMonth = this.setBudgetedToSpentLastMonth.bind(this);
-		this.setBudgetedToAverageBudgeted = this.setBudgetedToAverageBudgeted.bind(this);
-		this.setBudgetedToAverageSpent = this.setBudgetedToAverageSpent.bind(this);
-		this.handleGoalEditClicked = this.handleGoalEditClicked.bind(this);
-	}
-
-	private setBudgetedToBudgetedLastMonth():void {
-
-		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
-		var entitiesCollection = this.props.entitiesCollection;
-
-		// Get the monthlySubCategoryBudget entity for the current month
-		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
-		// If the current budgeted value is different from what was budgeted last month, update it
-		var budgetedPreviousMonth = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
-		if(budgetedPreviousMonth != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, budgetedPreviousMonth);
-	}
-
-	private setBudgetedToSpentLastMonth():void {
-
-		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
-		var entitiesCollection = this.props.entitiesCollection;
-
-		// Get the monthlySubCategoryBudget entity for the current month
-		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
-		// If the current budgeted value is different from what was spent last month, update it
-		var spentPreviousMonth = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
-		if(spentPreviousMonth != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, spentPreviousMonth);
-	}
-
-	private setBudgetedToAverageBudgeted():void {
-
-		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
-		var entitiesCollection = this.props.entitiesCollection;
-
-		// Get the monthlySubCategoryBudget entity for the current month
-		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
-		// If the current budgeted value is different from budgeted average, update it
-		var budgetedAverage = monthlySubCategoryBudget.budgetedAverage ? monthlySubCategoryBudget.budgetedAverage : 0;
-		if(budgetedAverage != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, budgetedAverage);
-	}
-
-	private setBudgetedToAverageSpent():void {
-
-		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
-		var entitiesCollection = this.props.entitiesCollection;
-
-		// Get the monthlySubCategoryBudget entity for the current month
-		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
-		// If the current budgeted value is different from spent average, update it
-		var spentAverage = monthlySubCategoryBudget.spentAverage ? monthlySubCategoryBudget.spentAverage : 0;
-		if(spentAverage != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, spentAverage);
-	}
-
-	private setBudgetedToUpcomingTransactions():void {
-
-		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
-		var entitiesCollection = this.props.entitiesCollection;
-
-		// Get the monthlySubCategoryBudget entity for the current month
-		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
-		// If the current budgeted value is different from upcomingTransactions, update it
-		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
-		if(upcomingTransactions != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, upcomingTransactions);
-	}
-
-	private setBudgetedValue(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget, value:number):void {
-
-		var updatedMonthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
-		updatedMonthlySubCategoryBudget.budgeted = value;
-		this.props.updateEntities({
-			monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
-		});
-	}
-	
-	private handleGoalEditClicked(event:React.MouseEvent):void {
-		this.defaultCategoryGoals.showEditor();
-	}
-
-	private getQuickBudgetItems(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget):Array<JSX.Element> {
-
-		// Get the quick budget values
-		var budgetedLastMonthValue:number = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
-		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
-		var averageBudgetedValue:number = monthlySubCategoryBudget.budgetedAverage;
-		var averageSpentValue:number = monthlySubCategoryBudget.spentAverage;
-		var upcomingTransactions:number = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
-
-		var quickBudgetItems:Array<JSX.Element> = [
-			<li key="qbBudgetLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
-					Budgeted Last Month: {budgetedLastMonthValue}
-				</Button>
-			</li>,
-			<li key="qbSpentLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
-					Spent Last Month: {spentLastMonthValue}
-				</Button>
-			</li>,
-			<li key="qbAverageBudgeted" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
-					Average Budgeted: {averageBudgetedValue}
-				</Button>
-			</li>,
-			<li key="qbAverageSpent" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
-					Average Spent: {averageSpentValue}
-				</Button>
-			</li>
-		];
-
-		if(upcomingTransactions != 0) {
-			quickBudgetItems.unshift(
-				<li key="qbUpcoming" style={ListItemStyle}>
-					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
-						Budget for Upcoming: {upcomingTransactions}
-					</Button>
-				</li>
-			);
-		}
-
-		return quickBudgetItems;
-	}
 
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
 		var subCategoryId = this.props.subCategoryId;
-		var currentMonth = this.props.currentMonth;
+		var currentMonth = this.props.currentMonth;``
 		// Get the subCategory and monthlySubCategoryBudget entity from the entitiesCollection
 		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
 		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
@@ -309,27 +128,6 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 			categoryAvailableValueStyle = Object.assign({}, CategoryAvailableValueStyle, {color:"#138B2E"});
 		}
 
-		// Get the Quick Budet items
-		var quickBudgetItems = this.getQuickBudgetItems(monthlySubCategoryBudget);
-
-		// Get the goals pill header. It would contain an "Edit" link if we have a goal defined.
-		var goalsPillHeader:JSX.Element;
-		if(subCategory.goalType) {
-			goalsPillHeader = (
-				<div style={GoalPillHeaderStyle}>
-					<span>GOALS</span>
-					<PLinkButton text="Edit" clickHandler={this.handleGoalEditClicked} />
-				</div>
-			);
-		}
-		else {
-			goalsPillHeader = (
-				<div style={GoalPillHeaderStyle}>
-					GOALS
-				</div>
-			);
-		}
-
 		return (
 			<div style={DefaultCategoryInspectorContainerStyle}>
 				<div style={RowStyle}>
@@ -338,7 +136,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 					<label style={CategoryMenuStyle}><Glyphicon glyph="triangle-bottom" />&nbsp;Edit</label>
 				</div>
 
-				<hr style={HRStyle}/>
+				<hr className="inspector-horizontal-rule" />
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Left Over from {prevMonthName}</label>
 					<span style={SpacerStyle}/>
@@ -359,7 +157,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 					<span style={SpacerStyle}/>
 					<label style={CategoryPropertyValueStyle}>{creditSpending}</label>
 				</div>
-				<hr style={HRStyle}/>
+				<hr className="inspector-horizontal-rule" />
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
@@ -368,32 +166,23 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 
 				<PMessage subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget} />
 
-				<div style={PillHeaderRowStyle}>
-					<div style={PillHeaderStyle}>
-						QUICK BUDGET
-					</div>
-				</div>
-				<ul style={ListStyle}>
-					{quickBudgetItems}
-				</ul>
+				<PDefaultCategoryQuickBudget
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					updateEntities={this.props.updateEntities}
+				/>	
 
-				<div style={PillHeaderRowStyle}>
-					{goalsPillHeader}
-				</div>
 				<PDefaultCategoryGoals 
-					ref={(c)=>{this.defaultCategoryGoals = c;}}
 					subCategoryId={this.props.subCategoryId}
 					currentMonth={this.props.currentMonth}
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
-				<div style={PillHeaderRowStyle}>
-					<div style={PillHeaderStyle}>
-						NOTES
-					</div>
-				</div>
-				<PNotes subCategoryId={subCategoryId} entitiesCollection={this.props.entitiesCollection} updateEntities={this.props.updateEntities} />
+				<PNotes 
+					subCategoryId={subCategoryId} 
+					entitiesCollection={this.props.entitiesCollection} 
+					updateEntities={this.props.updateEntities} 
+				/>
 			</div>
 		);
 	}

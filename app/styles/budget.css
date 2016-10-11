@@ -137,7 +137,36 @@
 	cursor: default;
 }
 
-/* Styles for the Hidden Categories Dialog */
+/* ***********************************************************************************************
+	Styles for the Budget Inspector 
+*********************************************************************************************** */
+.inspector-section-header {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	width: 100%;
+	background-color: #FFFFFF;
+	color: #003440;
+	font-weight: bold;
+	font-size: 14px;
+	border-radius: 1000px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 5px;
+}
+
+.inspector-horizontal-rule {
+	width: 100%;
+	margin-top: 0px;
+	margin-bottom: 10px;
+	border-top: 1px dotted #588697;
+}
+
+/* ***********************************************************************************************
+	Styles for the Hidden Categories Dialog 
+*********************************************************************************************** */
 .hidden-categories-list {
 	width: 100%;
 	max-height: 250px;

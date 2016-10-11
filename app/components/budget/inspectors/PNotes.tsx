@@ -16,6 +16,8 @@ export interface PNotesProps {
 }
 
 const NotesContainerStyle = {
+	display: "flex",
+	flexFlow: "column nowrap",
 	width: "100%",
 	minHeight: "100px",
 	paddingTop: "10px",
@@ -64,6 +66,9 @@ export class PNotes extends React.Component<PNotesProps, {}> {
 
 		return (
 			<div style={NotesContainerStyle}>
+				<div className="inspector-section-header">
+					NOTES
+				</div>
 				<input type="textarea" style={NotesStyle} placeholder="Enter a note..." value={note} onChange={this.onChange} />
 			</div>
 		);
