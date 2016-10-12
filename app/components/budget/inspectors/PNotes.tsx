@@ -9,8 +9,7 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PNotesProps {
-	subCategoryId:string;
-	entitiesCollection:IEntitiesCollection;
+	subCategory:budgetEntities.ISubCategory;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -43,24 +42,19 @@ export class PNotes extends React.Component<PNotesProps, {}> {
 
 	private onChange(event:React.FormEvent):void {
 
-		// Get the subcategory that we are editing the notes for
-		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(this.props.subCategoryId);
-		if(subCategory) {
-
-			// Create a clone for persisting the values
-			subCategory = Object.assign({}, subCategory);
-			// Update the notes property
-			subCategory.note = (event.target as HTMLInputElement).value;
-			this.props.updateEntities({
-				subCategories: [subCategory]
-			});
-		}
+		// Create a clone for persisting the values
+		var subCategory = Object.assign({}, this.props.subCategory);
+		// Update the notes property
+		subCategory.note = (event.target as HTMLInputElement).value;
+		this.props.updateEntities({
+			subCategories: [subCategory]
+		});
 	}	
 
 	public render() {
 
 		var note = "";
-		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(this.props.subCategoryId);
+		var subCategory = this.props.subCategory;
 		if(subCategory)
 			note = subCategory.note ? subCategory.note : "";
 

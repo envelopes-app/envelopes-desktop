@@ -12,9 +12,8 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDefaultCategoryGoalsProps {
-	subCategoryId:string;
-	currentMonth:DateWithoutTime;
-	entitiesCollection:IEntitiesCollection;
+	subCategory:budgetEntities.ISubCategory;
+	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -118,10 +117,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	public showEditor():void {
 
 		// Get the SubCategory set the values for editor in the state
-		var currentMonth = this.props.currentMonth;
-		var subCategoryId = this.props.subCategoryId;
-		var entitiesCollection = this.props.entitiesCollection;
-		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var subCategory = this.props.subCategory;
 		var targetBalanceMonth = subCategory.targetBalanceMonth ? DateWithoutTime.createFromISOString(subCategory.targetBalanceMonth) : DateWithoutTime.createForCurrentMonth();
 
 		var state = Object.assign({}, this.state);
@@ -205,10 +201,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		this.setState(state);
 
 		// Get the subcategory entity
-		var subCategoryId = this.props.subCategoryId;
-		var entitiesCollection = this.props.entitiesCollection;
-		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
-
+		var subCategory = this.props.subCategory;
 		// We are going to nul out all the goal related values from the subcategory if they exist
 		if(subCategory.goalType) {
 
@@ -241,9 +234,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		this.setState(state);
 
 		// Get the subcategory entity
-		var subCategoryId = this.props.subCategoryId;
-		var entitiesCollection = this.props.entitiesCollection;
-		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var subCategory = this.props.subCategory;
 		// We are going to update all the goal related values in the subcategory
 		var subCategoryClone = Object.assign({}, subCategory);
 		subCategoryClone.goalType = this.state.goalType;
@@ -381,10 +372,8 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	public render() {
 
 		// Get the subcategory entity
-		var currentMonth = this.props.currentMonth;
-		var subCategoryId = this.props.subCategoryId;
-		var entitiesCollection = this.props.entitiesCollection;
-		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var header = this.getGoalsHeader(subCategory);
 
 		if(this.state.showEditor == false) {
@@ -403,7 +392,6 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 			}
 			else {
 				// Get the monthlySubCategoryBudget to display the goal progress.
-				var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
 				var target = monthlySubCategoryBudget.goalTarget;
 				var completed = monthlySubCategoryBudget.goalOverallFunded;
 				var percentageCompleted = Math.round(completed / target * 100); 

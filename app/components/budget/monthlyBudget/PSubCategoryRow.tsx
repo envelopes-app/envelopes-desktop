@@ -327,7 +327,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			return (
 				<div style={CategoryNameColumnStyle}>
 					<label className="budget-row-uncategorized-subcategoryname" 
-						ref={(l)=> this.categoryNameLabel = l} >Uncategorized Transactions</label>
+						ref={(l)=> this.categoryNameLabel = l}>Uncategorized Transactions</label>
 				</div>
 			);
 		}

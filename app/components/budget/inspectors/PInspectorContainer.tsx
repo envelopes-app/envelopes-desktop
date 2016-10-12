@@ -19,6 +19,7 @@ export interface PInspectorContainerProps {
 	currentMonth:DateWithoutTime;
 	selectedSubCategories:Array<string>;
 	entitiesCollection:IEntitiesCollection;
+
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
