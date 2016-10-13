@@ -7,7 +7,7 @@ import { FormControl } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { PBalanceValue } from './PBalanceValue';
-import { InternalCategories } from '../../../constants';
+import { InternalCategories, SubCategoryType } from '../../../constants';
 import { SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -176,21 +176,24 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			});
 		}
 		else {
-			// This subCategory is already at the top under it's master category, so it can be moved
+			// This subCategory is already at the top under it's master category, so it can't be moved
 			// further up under this master category.
 			// We are going to check if we have another master category above this subcategory's parent
 			// master category. If we do, we will move this subcategory to the bottom of that master category.
-			var masterCategoryAbove = this.props.entitiesCollection.masterCategories.getMasterCategoryAbove(subCategory.masterCategoryId);
-			if(masterCategoryAbove) {
+			// NOTE: Don't move the debt subcategories out from under the debt payment master category
+			if(subCategory.type == SubCategoryType.Default) {
+				var masterCategoryAbove = this.props.entitiesCollection.masterCategories.getMasterCategoryAbove(subCategory.masterCategoryId);
+				if(masterCategoryAbove) {
 
-				var subCategoryClone = Object.assign({}, subCategory);
-				subCategoryClone.masterCategoryId = masterCategoryAbove.entityId;
-				subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryAbove.entityId);
-				// Send this subCategory for persistence
-				this.props.updateEntities({
-					subCategories: [subCategoryClone]
-				});
-			}			
+					var subCategoryClone = Object.assign({}, subCategory);
+					subCategoryClone.masterCategoryId = masterCategoryAbove.entityId;
+					subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryAbove.entityId);
+					// Send this subCategory for persistence
+					this.props.updateEntities({
+						subCategories: [subCategoryClone]
+					});
+				}
+			}
 		}
 	}
 
@@ -213,21 +216,24 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			});
 		}
 		else {
-			// This subCategory is already at the bottom under it's master category, so it can be moved
+			// This subCategory is already at the bottom under it's master category, so it can't be moved
 			// further down under this master category.
 			// We are going to check if we have another master category below this subcategory's parent
 			// master category. If we do, we will move this subcategory to the top of that master category.
-			var masterCategoryBelow = this.props.entitiesCollection.masterCategories.getMasterCategoryBelow(subCategory.masterCategoryId);
-			if(masterCategoryBelow) {
+			// NOTE: Don't move the debt subcategories out from under the debt payment master category
+			if(subCategory.type == SubCategoryType.Default) {
+				var masterCategoryBelow = this.props.entitiesCollection.masterCategories.getMasterCategoryBelow(subCategory.masterCategoryId);
+				if(masterCategoryBelow) {
 
-				var subCategoryClone = Object.assign({}, subCategory);
-				subCategoryClone.masterCategoryId = masterCategoryBelow.entityId;
-				subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtTop(masterCategoryBelow.entityId);
-				// Send this subCategory for persistence
-				this.props.updateEntities({
-					subCategories: [subCategoryClone]
-				});
-			}			
+					var subCategoryClone = Object.assign({}, subCategory);
+					subCategoryClone.masterCategoryId = masterCategoryBelow.entityId;
+					subCategoryClone.sortableIndex = this.props.entitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtTop(masterCategoryBelow.entityId);
+					// Send this subCategory for persistence
+					this.props.updateEntities({
+						subCategories: [subCategoryClone]
+					});
+				}			
+			}
 		}
 	}
 
