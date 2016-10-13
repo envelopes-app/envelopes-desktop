@@ -337,7 +337,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Budgeted Amount:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.targetBalance} onChange={this.onMonthlyFundingChange}
+						value={this.state.monthlyFunding} onChange={this.onMonthlyFundingChange}
 					/>
 				</FormGroup>
 			</div>

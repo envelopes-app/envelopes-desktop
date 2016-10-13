@@ -8,7 +8,7 @@ import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
 import { PDebtCategorySummary } from './PDebtCategorySummary';
 import { PDefaultCategoryQuickBudget } from './PDefaultCategoryQuickBudget';
-import { PDefaultCategoryGoals } from './PDefaultCategoryGoals';
+import { PDebtCategoryGoals } from './PDebtCategoryGoals';
 
 import { DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -49,6 +49,12 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 					subCategory={subCategory} 
 					monthlySubCategoryBudget={monthlySubCategoryBudget} 
 					entitiesCollection={this.props.entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<PDebtCategoryGoals 
+					subCategory={subCategory}
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}
 				/>
 			</div>
