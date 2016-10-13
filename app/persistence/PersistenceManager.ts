@@ -194,23 +194,30 @@ export class PersistenceManager {
 		var budgetId = this.activeBudget.entityId;
 		var budgetKnowledge = this.budgetKnowledge;
 
+		Logger.info(`PersistenceManager::Ensure that monthly budget data for the month of '${month.toISOString()}' already exists.'`);
 		// Check if we already have data available for this month
 		var monthlySubCategoryBudgetsArray = existingEntitiesCollection.monthlySubCategoryBudgets;
 		var monthlySubCategoryBudgetsForMonth = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(month.toISOString());
-		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0)
+		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0) {
+			debugger;
+			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' already exists.'`);
 			return Promise.resolve({});
+		}
 		else {
 
+			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' does not exist. Creating now.'`);
 			// We did not find monthlySubCategoryBudget entities for this month, so we need to create them
 			var budgetFactory = new BudgetFactory();
 			return budgetFactory.createMonthlyBudgetDataForMonth(budgetId, month, true, budgetKnowledge)
 				.then((retVal:any)=>{
 
 					// Run pending calculations
+					Logger.info(`PersistenceManager::Performing pending calculations.'`);
 					return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
 				})
 				.then((retVal:boolean)=>{
 					
+					Logger.info(`PersistenceManager::Loading updated data from the database.'`);
 					// Load updated data from the database
 					var deviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 					var deviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;

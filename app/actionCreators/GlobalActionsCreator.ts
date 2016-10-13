@@ -1,6 +1,6 @@
 /// <reference path="../_includes.ts" />
 
-import { DateWithoutTime } from '../utilities';
+import { DateWithoutTime, Logger } from '../utilities';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -90,6 +90,10 @@ export class GlobalActionsCreator {
 
 					// dispatch action open budget completed
 					dispatch(GlobalActionsCreator.openBudgetCompleted(budget, updatedEntities));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
 				});
 		};
 	}
@@ -108,6 +112,10 @@ export class GlobalActionsCreator {
 				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
 					// dispatch action sync data with database completed
 					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
 				});
 		};
 	}
@@ -126,6 +134,10 @@ export class GlobalActionsCreator {
 					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
 					// dispatch action ensure budget entities for month completed
 					dispatch(GlobalActionsCreator.EnsureBudgetEntitiesForMonthCompleted(month));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
 				});
 		};
 	}
