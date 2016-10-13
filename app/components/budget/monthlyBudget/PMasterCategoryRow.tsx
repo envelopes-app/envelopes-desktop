@@ -216,7 +216,10 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 	}
 
 	// Returns the JSX for category name in the row
-	private getCategoryNameNodes(masterCategory:budgetEntities.IMasterCategory, isHiddenMasterCategory:boolean, isSelected:boolean, glyphiconClass:string):Array<JSX.Element> {
+	private getCategoryNameNodes(masterCategory:budgetEntities.IMasterCategory, isSelected:boolean, glyphiconClass:string):Array<JSX.Element> {
+
+		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
+		var isDebtPaymentMasterCategory = (masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory); 
 
 		var nameKey = `${masterCategory.entityId}-category-name`;
 		var selectionKey = `${masterCategory.entityId}-selected`;
@@ -227,6 +230,23 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 				<div key={expandedKey} style={ExpandCollapseColumnStyle} />,
 				<div key={nameKey} style={CategoryNameColumnStyle}>
 					<label className="budget-row-hidden-mastercategoryname"
+						ref={(l)=> this.categoryNameLabel = l}
+						onClick={this.onCategoryNameClick}>
+						{masterCategory.name}
+					</label>
+				</div>
+			]);
+		}
+		else if(isDebtPaymentMasterCategory) {
+			return ([
+				<div key={selectionKey} style={SelectionColumnStyle}>
+					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
+				</div>,
+				<div key={expandedKey} style={ExpandCollapseColumnStyle}>
+					<span className={glyphiconClass} style={GlyphStyle} onClick={this.onExpandCollapseGlyphClick}></span>
+				</div>,
+				<div key={nameKey} style={CategoryNameColumnStyle}>
+					<label className="budget-row-mastercategoryname"
 						ref={(l)=> this.categoryNameLabel = l}
 						onClick={this.onCategoryNameClick}>
 						{masterCategory.name}
@@ -298,7 +318,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		}
 
 		// Get the JSX for selection colun, expand/collapse column and the category name column 
-		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isHiddenMasterCategory, isSelected, glyphiconClass);
+		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isSelected, glyphiconClass);
 
     	return (
 			<div>
