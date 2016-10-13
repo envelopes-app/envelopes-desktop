@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Glyphicon } from 'react-bootstrap';
 
 import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';

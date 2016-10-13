@@ -192,6 +192,10 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 				this.setState(state);
 			}
 		}
+		else {
+			// Hide the dialog
+			this.hide();
+		}
 	}
 
 	private onCancelClick():void { 

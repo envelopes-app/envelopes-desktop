@@ -193,6 +193,10 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 				this.setState(state);
 			}
 		}
+		else {
+			// Hide the dialog
+			this.hide();
+		}
 	}
 
 	private onCancelClick():void { 
