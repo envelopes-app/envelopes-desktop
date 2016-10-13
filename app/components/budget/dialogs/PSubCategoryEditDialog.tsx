@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
+import { SubCategoryType } from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -211,12 +212,17 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 
 	public render() {
 
+		if(!this.state.subCategory)
+			return <div />;
+
+		var isDebtSubCategory = (this.state.subCategory.type == SubCategoryType.Debt);
 		var element:JSX.Element;
 		if(this.state.validationState == "error") {
 			element = (
 				<FormGroup key="formgroup">
 					<FormControl type="text" componentClass="input" style={FormControlErrorStyle} 
 						value={this.state.subCategoryName ? this.state.subCategoryName : ""} 
+						readOnly={isDebtSubCategory} 
 						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
 					/>
 					<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
@@ -228,9 +234,48 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 				<FormGroup key="formgroup">
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
 						value={this.state.subCategoryName ? this.state.subCategoryName : ""} 
+						readOnly={isDebtSubCategory} 
 						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
 					/>
 				</FormGroup>
+			);
+		}
+
+		var buttonsContainer:JSX.Element;
+		if(isDebtSubCategory) {
+			// Don't include the "Delete" button for debt subcategories
+			buttonsContainer = (
+				<div key="buttonsContainer" className="buttons-container">
+					<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+						<Glyphicon glyph="eye-open"/>&nbsp;Hide
+					</Button>
+					<div className="spacer" />
+					<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+						Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+					</Button>
+					<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						OK&nbsp;<Glyphicon glyph="ok-circle"/>
+					</Button>
+				</div>
+			);
+		}
+		else {
+			buttonsContainer = (
+				<div key="buttonsContainer" className="buttons-container">
+					<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+						<Glyphicon glyph="eye-open"/>&nbsp;Hide
+					</Button>
+					<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
+						<Glyphicon glyph="ban-circle"/>&nbsp;Delete
+					</Button>
+					<div className="spacer" />
+					<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+						Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+					</Button>
+					<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						OK&nbsp;<Glyphicon glyph="ok-circle"/>
+					</Button>
+				</div>
 			);
 		}
 
@@ -240,21 +285,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 				<Popover id="subCategoryEditDialog" style={PopoverStyle}>
 					{element}
 					<hr style={HRStyle} />
-					<div className="buttons-container">
-						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
-							<Glyphicon glyph="eye-open"/>&nbsp;Hide
-						</Button>
-						<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
-							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
-						</Button>
-						<div className="spacer" />
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
-					</div>
+					{buttonsContainer}
 				</Popover>
 			</Overlay>
 		);
