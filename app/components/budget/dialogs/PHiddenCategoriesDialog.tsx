@@ -26,22 +26,15 @@ const PopoverStyle = {
 	width:'260px'
 }
 
-const ButtonsContainerStyle = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "flex-end"
-}
-
 const ShowAllButtonStyle = {
-	flex: "1 1 auto",
-	fontSize:"14px",
+	flex: "1 1 auto"
 }
 
 export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDialogProps, PHiddenCategoriesDialogState> {
 
 	constructor(props: any) {
         super(props);
+		this.hide = this.hide.bind(this);
 		this.onUnhideSubCategory = this.onUnhideSubCategory.bind(this);
 		this.onUnhideMasterCategory = this.onUnhideMasterCategory.bind(this);
 		this.onUnhideAllClick = this.onUnhideAllClick.bind(this);
@@ -150,11 +143,6 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		this.props.updateEntities(changedEntities);
 		this.hide();
 	}
-
-	private onCancelClick():void { 
-		// Hide the dialog
-		this.hide();
-	}
 	
 	public show(target:HTMLElement, placement:string = "left"):void {
 
@@ -218,12 +206,12 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				rootClose={true} onHide={this.hide} target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="hiddenCategoriesDialog" style={PopoverStyle} title="Click to unhide a category">
 					<li className="hidden-categories-list">
 						{categoryItems}
 					</li>
-					<div style={ButtonsContainerStyle}>
+					<div className="buttons-container">
 						<Button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
 							Show all hidden categories
 						</Button>

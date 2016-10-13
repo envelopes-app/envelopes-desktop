@@ -65,37 +65,11 @@ const HRStyle = {
 	marginBottom: "10px"
 }
 
-const ButtonsContainerStyle = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "space-between"
-}
-
 const HideButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
 	marginRight: "10px"
 }
 
-const DeleteButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
-	color:"#d33c2d"
-}
-
-const SpacerStyle = {
-	flex: "1 1 auto"
-}
-
-const CancelButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px"
-}
-
 const OkButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
 	marginLeft: "10px"
 }
 
@@ -104,6 +78,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 
 	constructor(props: any) {
         super(props);
+		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
@@ -264,15 +239,15 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 				<Popover id="subCategoryEditDialog" style={PopoverStyle}>
 					{element}
 					<hr style={HRStyle} />
-					<div style={ButtonsContainerStyle}>
+					<div className="buttons-container">
 						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
 							<Glyphicon glyph="eye-open"/>&nbsp;Hide
 						</Button>
-						<Button className="dialog-secondary-button" style={DeleteButtonStyle} onClick={this.onDeleteClick}>
+						<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
 							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
 						</Button>
-						<div style={SpacerStyle} />
-						<Button className="dialog-secondary-button" style={CancelButtonStyle} onClick={this.onCancelClick}>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
 						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>

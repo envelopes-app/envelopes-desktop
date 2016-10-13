@@ -43,21 +43,7 @@ const HRStyle = {
 	marginBottom: "10px"
 }
 
-const ButtonsContainerStyle = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "flex-end"
-}
-
-const CancelButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px"
-}
-
 const OkButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
 	marginLeft: "10px"
 }
 
@@ -240,8 +226,8 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 					</Form>
 					<hr style={HRStyle} />
-					<div style={ButtonsContainerStyle}>
-						<Button className="dialog-secondary-button" style={CancelButtonStyle} onClick={this.onCancelClick} ref={(b) => this.cancelButton = b}>
+					<div className="buttons-container">
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick} ref={(b) => this.cancelButton = b}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
 						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick} ref={(b) => this.okButton = b}>

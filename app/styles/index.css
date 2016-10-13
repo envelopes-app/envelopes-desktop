@@ -4,3 +4,93 @@ body {
   font-family: sans-serif;
   direction: 'ltr';
 }
+
+/* ************************************************************************************ */
+/* Style for buttons on Dialogs */
+/* ************************************************************************************ */
+.buttons-container {
+	display: flex;
+	flex-flow: row nowrap;	
+	width: 100%;
+	justify-content: space-between;
+}
+
+/* This is for providing space between the buttons */
+.spacer {
+	flex: 1 1 auto;
+}
+
+/* This one is usually used for the OK button */
+.dialog-primary-button {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #009cc2;
+	border-color: #009cc2;	
+}
+
+.dialog-primary-button:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+.dialog-primary-button:focus {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+/* ************************************************************************************ */
+/* This one is usually used for Cancel, and other buttons on the dialog */
+.dialog-secondary-button {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #009cc2;
+	background-color: #ffffff;	
+}
+
+.dialog-secondary-button:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+.dialog-secondary-button:focus {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #005076;	
+	border-color: #005076;	
+}
+
+/* ************************************************************************************ */
+/* This one is usually used for Delete on the dialog */
+.dialog-warning-button {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #d33c2d;
+	background-color: #ffffff;	
+}
+
+.dialog-warning-button:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #890309;
+	border-color: #890309;	
+}
+
+.dialog-warning-button:focus {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #890309;	
+	border-color: #890309;	
+}

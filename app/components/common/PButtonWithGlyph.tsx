@@ -7,13 +7,14 @@ export interface PButtonWithGlyphProps {
 	text?:string;
 	glyphName:string;
 	showGlyph?:boolean;
+	glyphColor?:string;
 	clickHandler:(event:React.MouseEvent)=>void;
 }
 
 const PButtonWithGlyphStyle = {
-	color: '#fff',
+	color: '#FFFFFF',
 	backgroundColor: '#216FB5',
-	borderColor: '#ccc'
+	borderColor: '#CCCCCC'
 }
 
 const GlyphStyle = {
@@ -37,6 +38,7 @@ export class PButtonWithGlyph extends React.Component<PButtonWithGlyphProps, {ho
 	}
 
 	private handleClick(event:React.MouseEvent) {
+		event.stopPropagation();
 		this.props.clickHandler(event);
 	}
 
@@ -57,6 +59,7 @@ export class PButtonWithGlyph extends React.Component<PButtonWithGlyphProps, {ho
 	public render() {
 
 		if(this.props.text) {
+			// When we are showing text on the button, the glyph is always visible
 			return (
 				<button type="button" className="btn btn-default" style={PButtonWithGlyphStyle} aria-label="Left Align" onClick={this.props.clickHandler}>
 					<span className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
@@ -65,9 +68,15 @@ export class PButtonWithGlyph extends React.Component<PButtonWithGlyphProps, {ho
 			);
 		}
 		else {
+			// Otherwise we use the showGlyph property to determine if it is to be shown or not
 			if(this.props.showGlyph) {
+				var glyphStyle = this.state.hoverState ? GlyphHoverStyle : GlyphStyle;
+
+				if(this.props.glyphColor)
+					glyphStyle = Object.assign({}, glyphStyle, {color:this.props.glyphColor});
+
 				return (
-					<span className={"glyphicon " + this.props.glyphName} style={this.state.hoverState ? GlyphHoverStyle : GlyphStyle} aria-hidden="true"
+					<span className={"glyphicon " + this.props.glyphName} style={glyphStyle} aria-hidden="true"
 						onClick={this.handleClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}
 					/>
 				);

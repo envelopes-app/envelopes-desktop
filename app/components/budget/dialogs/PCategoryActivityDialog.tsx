@@ -25,21 +25,7 @@ const PopoverStyle = {
 	width:'300px'
 }
 
-const ButtonsContainerStyle = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "flex-end"
-}
-
-const CancelButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px"
-}
-
 const OkButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
 	marginLeft: "10px"
 }
 
@@ -47,6 +33,7 @@ export class PCategoryActivityDialog extends React.Component<PCategoryActivityDi
 
 	constructor(props: any) {
         super(props);
+		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
@@ -101,8 +88,8 @@ export class PCategoryActivityDialog extends React.Component<PCategoryActivityDi
 			<Overlay show={this.state.show} placement={this.state.placement} 
 				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="categoryActivityDialog" style={PopoverStyle}>
-					<div style={ButtonsContainerStyle}>
-						<Button className="dialog-secondary-button" style={CancelButtonStyle} onClick={this.onCancelClick}>
+					<div className="buttons-container">
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
 						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>

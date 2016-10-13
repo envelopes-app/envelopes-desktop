@@ -67,21 +67,7 @@ const HRStyle = {
 	marginBottom: "10px"
 }
 
-const ButtonsContainerStyle = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "flex-end"
-}
-
-const CancelButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px"
-}
-
 const OkButtonStyle = {
-	flex: "0 0 auto",
-	fontSize:"14px",
 	marginLeft: "10px"
 }
 
@@ -91,6 +77,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 
 	constructor(props: any) {
         super(props);
+		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
@@ -238,8 +225,8 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 				<Popover id="createCategoryDialog" style={PopoverStyle}>
 					{element}
 					<hr style={HRStyle} />
-					<div style={ButtonsContainerStyle}>
-						<Button className="dialog-secondary-button" style={CancelButtonStyle} onClick={this.onCancelClick}>
+					<div className="buttons-container">
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
 						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
