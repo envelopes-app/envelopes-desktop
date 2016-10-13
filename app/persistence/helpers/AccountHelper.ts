@@ -73,6 +73,11 @@ export class AccountHelper {
 				}
 				else {
 
+					// Queue account calculations for this new entity
+					queriesList.push(
+						this.getCalculationInvalidationQuery(budgetId, null, changedEntity)
+					);
+
 					// Create a "transfer" payee entity for the new account
 					queriesList.push(
 						this.getTransferPayeeCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue())
@@ -93,11 +98,12 @@ export class AccountHelper {
 						);
 					}					
 
-					// If this account is onBudget and a liability account, then create a debt subcategory for it
+					// If this account is onBudget and a liability account, then create a debt subcategory for it.
+					// Also queue monthly subcategory budget calculations for the created debt category
 					var isAssetAccount:boolean = AccountTypes.isAssetAccount(changedEntity.accountType);
 					if (changedEntity.onBudget && !isAssetAccount) {
-						queriesList.push(
-							this.getDebtSubCategoryCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
+						queriesList = queriesList.concat(
+							this.getDebtSubCategoryCreationQueries(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
 						);
 					}
 				}
@@ -135,7 +141,7 @@ export class AccountHelper {
 		return budgetQueries.TransactionQueries.insertDatabaseObject(accountTransaction);
 	}
 
-	private getDebtSubCategoryCreationQuery(budgetId:string, account:budgetEntities.IAccount, deviceKnowledge:number, debtMasterCategory:budgetEntities.IMasterCategory):IDatabaseQuery {
+	private getDebtSubCategoryCreationQueries(budgetId:string, account:budgetEntities.IAccount, deviceKnowledge:number, debtMasterCategory:budgetEntities.IMasterCategory):Array<IDatabaseQuery> {
 
 		var accountSubCategory = EntityFactory.createNewSubCategory(budgetId);
 		accountSubCategory.masterCategoryId = debtMasterCategory.entityId;
@@ -143,7 +149,13 @@ export class AccountHelper {
 		accountSubCategory.name = account.accountName;
 		accountSubCategory.type = SubCategoryType.Debt;
 		accountSubCategory.deviceKnowledge = deviceKnowledge;
-		return budgetQueries.SubCategoryQueries.insertDatabaseObject(accountSubCategory);
+
+		var queries = [
+			budgetQueries.SubCategoryQueries.insertDatabaseObject(accountSubCategory),
+			CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(budgetId, accountSubCategory.entityId, null)
+		]
+
+		return queries;
 	}
 
 	private getCalculationInvalidationQuery(budgetId:string, originalEntity:budgetEntities.IAccount, updatedEntity:budgetEntities.IAccount):IDatabaseQuery {

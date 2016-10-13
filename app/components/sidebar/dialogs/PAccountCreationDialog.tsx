@@ -1,11 +1,11 @@
-/// <reference path="../../_includes.ts" />
+/// <reference path="../../../_includes.ts" />
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
-import { IAccount } from '../../interfaces/budgetEntities';
-import { AccountTypes, AccountTypeNames } from '../../constants';
+import { IAccount } from '../../../interfaces/budgetEntities';
+import { AccountTypes, AccountTypeNames } from '../../../constants';
 
 export interface PAccountCreationDialogProps { 
 	onAddAccount: (account:IAccount, currentBalance:number)=>void;
@@ -88,10 +88,10 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={this.close}>
+					<Button className="dialog-secondary-button" onClick={this.close}>
 						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 					</Button>
-					<Button onClick={this.save}>
+					<Button className="dialog-primary-button" onClick={this.save}>
 						Add Account&nbsp;<Glyphicon glyph="ok-sign" />
 					</Button>
 				</Modal.Footer>

@@ -11,13 +11,30 @@ import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
-import { PAccountCreationDialog } from './PAccountCreationDialog';
+import { PAccountCreationDialog } from './dialogs/PAccountCreationDialog';
 
 import ColorPalette from '../common/ColorPalette';
 import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
-import { ISidebarState } from '../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection, ISidebarState } from '../../interfaces/state';
 import * as collections from '../../collections';
+
+export interface PSidebarProps {
+	// State Variables
+	sidebarState: ISidebarState;
+	entitiesCollection:IEntitiesCollection;
+	// Dispatcher Functions
+	setSelectedTab: (selectedTab:string, selectedAccountId:string)=>void;
+	addAccount: (account:IAccount, currentBalance:number)=>void;
+	updateAccount: (account:IAccount, currentBalance:number)=>void;
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+}
+
+export interface PSidebarState {
+	budgetAccountsExpanded:boolean;
+	trackingAccountsExpanded:boolean;
+	closedAccountsExpanded:boolean;
+}
 
 const PSidebarStyle = {
 	display: 'flex',
@@ -55,29 +72,45 @@ const ModuleButtonIconStyle = {
 	marginRight: '0px'
 }
 
-export interface PSidebarProps {
-	// State Variables
-    accounts: collections.AccountsArray;
-	sidebarState: ISidebarState;
-	// Dispatcher Functions
-	setSelectedTab: (selectedTab:string, selectedAccountId:string)=>void;
-	setBudgetAccountsExpanded: (expanded:boolean)=>void;
-	setTrackingAccountsExpanded: (expanded:boolean)=>void;
-	setClosedAccountsExpanded: (expanded:boolean)=>void;
-	addAccount: (account:IAccount, currentBalance:number)=>void;
-	updateAccount: (account:IAccount, currentBalance:number)=>void;
-}
-
-export class PSidebar extends React.Component<PSidebarProps, {}> {
+export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
 	private accountCreationDialog:PAccountCreationDialog;
 
 	constructor(props: any) {
         super(props);
+		this.setBudgetAccountsExpanded = this.setBudgetAccountsExpanded.bind(this);
+		this.setTrackingAccountsExpanded = this.setTrackingAccountsExpanded.bind(this);
+		this.setClosedAccountsExpanded = this.setClosedAccountsExpanded.bind(this);
 		this.onBudgetSelect = this.onBudgetSelect.bind(this);
 		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
+		this.state = {
+			budgetAccountsExpanded: true,
+			trackingAccountsExpanded: false,
+			closedAccountsExpanded: false
+		}
+	}
+
+	private setBudgetAccountsExpanded(expanded:boolean):void {
+
+		var state = Object.assign({}, this.state) as PSidebarState;
+		state.budgetAccountsExpanded = expanded;
+		this.setState(state);
+	}
+
+	private setTrackingAccountsExpanded(expanded:boolean):void {
+
+		var state = Object.assign({}, this.state) as PSidebarState;
+		state.trackingAccountsExpanded = expanded;
+		this.setState(state);
+	}
+
+	private setClosedAccountsExpanded(expanded:boolean):void {
+
+		var state = Object.assign({}, this.state) as PSidebarState;
+		state.closedAccountsExpanded = expanded;
+		this.setState(state);
 	}
 
 	private onBudgetSelect() {
@@ -128,7 +161,7 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 		var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
 		var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 
-		_.forEach(this.props.accounts, (account)=>{
+		_.forEach(this.props.entitiesCollection.accounts, (account)=>{
 
 			// Is this account button selected?
 			var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
@@ -159,11 +192,11 @@ export class PSidebar extends React.Component<PSidebarProps, {}> {
 				<Divider style={PDividerStyle} />
 				<div style={PContainerStyle}>
 					<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
-						expanded={this.props.sidebarState.budgetAccountsExpanded} setExpanded={this.props.setBudgetAccountsExpanded}>
+						expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
 						{budgetAccountNodes}
 					</PAccountButtonContainer>
 					<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
-						expanded={this.props.sidebarState.trackingAccountsExpanded} setExpanded={this.props.setTrackingAccountsExpanded}>
+						expanded={this.state.trackingAccountsExpanded} setExpanded={this.setTrackingAccountsExpanded}>
 						{trackingAccountNodes}
 					</PAccountButtonContainer>
 				</div>
