@@ -7,7 +7,7 @@ import { Button } from 'react-bootstrap';
 import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
 import { PDebtCategorySummary } from './PDebtCategorySummary';
-import { PDefaultCategoryQuickBudget } from './PDefaultCategoryQuickBudget';
+import { PDebtCategoryQuickBudget } from './PDebtCategoryQuickBudget';
 import { PDebtCategoryGoals } from './PDebtCategoryGoals';
 
 import { DateWithoutTime } from '../../../utilities';
@@ -52,10 +52,20 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 					updateEntities={this.props.updateEntities}
 				/>
 
+				<PDebtCategoryQuickBudget
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					updateEntities={this.props.updateEntities}
+				/>	
+
 				<PDebtCategoryGoals 
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}
+				/>
+
+				<PNotes 
+					subCategory={subCategory} 
+					updateEntities={this.props.updateEntities} 
 				/>
 			</div>
 		);
