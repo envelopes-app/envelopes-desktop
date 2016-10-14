@@ -63,8 +63,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
-		if(subCategory && monthlySubCategoryBudget) {
+		if(subCategory) {
 
 			var state = Object.assign({}, this.state) as PDefaultCategoryActivityDialogState;
 			state.show = true;
@@ -95,8 +94,8 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 				var accountName = account ? account.accountName : "";
 				var payee = transaction.payeeId ? entitiesCollection.payees.getEntityById(transaction.payeeId) : null;
 				var payeeName = payee ? payee.name : "";
-				var category = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
-				var categoryName = category ? category.name : "";
+				var subCategory = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
+				var subCategoryName = subCategory ? subCategory.name : "";
 				
 				var transactionObject:ITransactionObject = {
 					entityId: transaction.entityId,
@@ -104,7 +103,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 					account: accountName,
 					date: DateWithoutTime.createFromUTCTime(transaction.date).toISOString(),
 					payee: payeeName,
-					category: categoryName,
+					category: subCategoryName,
 					memo: transaction.memo,
 					amount: transaction.amount
 				} 

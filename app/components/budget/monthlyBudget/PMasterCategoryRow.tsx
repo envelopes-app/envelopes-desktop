@@ -79,6 +79,7 @@ const CategoryNameStyle = {
 const ValueColumnStyle = {
 	flex: "0 0 auto",
 	width: "100px",
+	color: "#4D717A",
 	textAlign: "right",
 	paddingRight: "8px"
 }
@@ -86,7 +87,6 @@ const ValueColumnStyle = {
 const ValueStyle = {
 	fontSize: "14px",
 	fontWeight: "normal",
-	color: "#4D717A",
 	marginBottom: "0px"
 }
 
@@ -98,6 +98,7 @@ const GlyphStyle = {
 export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps, PMasterCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
+	private activityLabel:HTMLLabelElement;
 	private addCategoryButton:PButtonWithGlyph;
 	private moveCategoryUpButton:PButtonWithGlyph;
 	private moveCategoryDownButton:PButtonWithGlyph;
@@ -113,6 +114,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
+		this.onActivityClick = this.onActivityClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
 	}
 
@@ -214,6 +216,13 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			this.props.showHiddenCategoriesDialog(this.categoryNameLabel);
 		else
 			this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
+	}
+
+	private onActivityClick(event:React.MouseEvent):void {
+
+		var masterCategory = this.props.masterCategory;
+		if(!masterCategory.internalName)
+			this.props.showMasterCategoryActivityDialog(masterCategory.entityId, this.activityLabel);
 	}
 
 	// Returns the JSX for category name in the row
@@ -323,8 +332,8 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
     	return (
 			<div>
-				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}
-						onClick={this.onClick}>
+				<div style={MasterCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} 
+					onMouseLeave={this.handleMouseLeave} onClick={this.onClick}>
 
 					{categoryNameNodes}
 
@@ -332,7 +341,8 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 						<label style={ValueStyle}>{budgeted}</label>
 					</div>
 					<div style={ValueColumnStyle}>
-						<label style={ValueStyle}>{activity}</label>
+						<label className="budget-row-activity" ref={(a)=> this.activityLabel = a}
+						 	onClick={this.onActivityClick}>{activity}</label>
 					</div>
 					<div style={ValueColumnStyle}>
 						<label style={ValueStyle}>{balance}</label>

@@ -63,8 +63,7 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
-		if(subCategory && monthlySubCategoryBudget) {
+		if(subCategory) {
 
 			var state = Object.assign({}, this.state) as PDebtCategoryActivityDialogState;
 			state.show = true;

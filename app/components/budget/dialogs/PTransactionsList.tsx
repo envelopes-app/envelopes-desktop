@@ -63,10 +63,12 @@ const TransactionRow = {
 }
 
 const TransactionRowCell = {
-	flex: "1 1 auto",
+	flex: "1 0 auto",
+	minWidth: "96px",
 	paddingTop: "5px",
 	paddingBottom: "5px",
 	paddingLeft: "5px",
+	textAlign: "left"
 }
 
 const TransactionRowAmountCell = Object.assign({}, TransactionRowCell, {
@@ -94,7 +96,7 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 		headerCells.push(<div key="header_amount" style={HeaderRowAmountCell}>AMOUNT</div>);
 
 		return (
-			<div style={HeaderRow}>{headerCells}</div>
+			<div key="headerrow" style={HeaderRow}>{headerCells}</div>
 		);
 	}
 
