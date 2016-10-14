@@ -264,7 +264,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		var dateSelector = this.dateSelector;
 		var setActiveField = this.setActiveField;
 		setTimeout(function(){
-			debugger;
 			setActiveField("date");
 			dateSelector.setFocus();
 		}, 100);

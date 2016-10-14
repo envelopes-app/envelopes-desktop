@@ -56,7 +56,6 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 	private categorySelector:PCategorySelector;
 
 	private categoriesList:Array<objects.ICategoryObject>;
-
 	private focusManager:FocusManager = new FocusManager(); 
 
 	constructor(props: any) {
@@ -210,7 +209,6 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
-			state.activeField = "amount";
 			state.fromSubCategoryId = subCategoryId;
 			state.currentMonth = month;
 			state.amountToMove = amountToMove;
@@ -289,7 +287,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={false} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
+				rootClose={true} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
 				target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="moveMoneyDialog" style={PopoverStyle}>
 					<Form horizontal>

@@ -6,7 +6,7 @@ import { Button, Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Ove
 
 import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { DialogUtilities, DateWithoutTime } from '../../../utilities/';
+import { DialogUtilities, DateWithoutTime, FocusManager } from '../../../utilities/';
 import { PCategorySelector } from '../../register/trxDialog/PCategorySelector';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -20,6 +20,7 @@ export interface PCoverOverspendingDialogState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
+	activeField: string;
 	toSubCategoryId:string;
 	currentMonth:DateWithoutTime;
 	amountToCover:number;
@@ -48,28 +49,72 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 	private categorySelector:PCategorySelector;
 
 	private categoriesList:Array<objects.ICategoryObject>;
+	private focusManager:FocusManager = new FocusManager(); 
 
 	constructor(props: any) {
         super(props);
+		this.setActiveField = this.setActiveField.bind(this);
+		this.setFocusOnCategorySelector = this.setFocusOnCategorySelector.bind(this);
+		this.setFocusOnOkButton = this.setFocusOnOkButton.bind(this);
+		this.setFocusOnCancelButton = this.setFocusOnCancelButton.bind(this);
+		this.onDialogEntered = this.onDialogEntered.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
 		this.setManuallyEnteredCategoryName = this.setManuallyEnteredCategoryName.bind(this);
 		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
+		this.handleKeyDownOnOkButton = this.handleKeyDownOnOkButton.bind(this);
+		this.handleKeyDownOnCancelButton = this.handleKeyDownOnCancelButton.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
 			placement:"left", 
+			activeField: null,
 			toSubCategoryId: null,
 			currentMonth: null,
 			amountToCover: 0,
 			fromSubCategoryId: null,
 			manuallyEnteredCategoryName: null 
 		};
+
+		this.focusManager.addFocusObject("category", this.setFocusOnCategorySelector);
+		this.focusManager.addFocusObject("ok", this.setFocusOnOkButton);
+		this.focusManager.addFocusObject("cancel", this.setFocusOnCancelButton);
 	}
 
 	public isShowing():boolean {
 		return this.state.show;
+	}
+
+	private setActiveField(activeField:string):void {
+
+		if(activeField != this.state.activeField) {
+			var state = Object.assign({}, this.state) as PCoverOverspendingDialogState;
+			state.activeField = activeField;
+			this.setState(state);
+		}
+	}
+
+	private setFocusOnCategorySelector():void {
+		this.setActiveField("category");
+		this.categorySelector.setFocus();
+	}
+
+	private setFocusOnOkButton():void {
+		this.setActiveField("ok");
+		(ReactDOM.findDOMNode(this.okButton) as any).focus();
+	}
+
+	private setFocusOnCancelButton():void {
+		this.setActiveField("cancel");
+		(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
+	}
+
+	private onDialogEntered():void {
+		var setFocusOnCategorySelector = this.setFocusOnCategorySelector;
+		setTimeout(function(){
+			setFocusOnCategorySelector();
+		}, 100);
 	}
 
 	private onOkClick():void { 
@@ -170,14 +215,31 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 
 	private handleTabPressedOnCategorySelector(shiftKeyPressed:boolean):void {
 
-		// If shift key is not pressed then move the focus to the ok button. 
-		if(!shiftKeyPressed) {
-			// Set focus on the "ok" button
-			(ReactDOM.findDOMNode(this.okButton) as any).focus();
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("category");
+		else
+			this.focusManager.moveFocusBackward("category");
+	}
+
+	private handleKeyDownOnOkButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("ok");
+			else
+				this.focusManager.moveFocusBackward("ok");
 		}
-		else {
-			// Set focus on the "cancel" button
-			(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
+	}
+
+	private handleKeyDownOnCancelButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("cancel");
+			else
+				this.focusManager.moveFocusBackward("cancel");
 		}
 	}
 
@@ -187,20 +249,24 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={false} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				rootClose={true} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
+				target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="coverOverspendingDialog" style={PopoverStyle}>
 					<Form>
-						<PCategorySelector ref={(c) => this.categorySelector = c}  activeField="category"
+						<PCategorySelector ref={(c) => this.categorySelector = c}  activeField={this.state.activeField}
 							selectorLabel="Cover this overspending with:" selectorLabelPosition="top"
 							selectedCategoryId={this.state.fromSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
 							categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 					</Form>
 					<div className="buttons-container">
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
+							onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b}
+							onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
 						</Button>
 					</div>
