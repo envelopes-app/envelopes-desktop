@@ -7,13 +7,15 @@ import * as ReactDOM from 'react-dom';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
-export interface PUpcomingTransactionsDialogProps {
+export interface PUpcomingTransactionsProps {
+	subCategory:budgetEntities.ISubCategory;
+	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	entitiesCollection:IEntitiesCollection
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-export interface PUpcomingTransactionsDialogState {
+export interface PUpcomingTransactionsState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
@@ -24,9 +26,13 @@ const PopoverStyle = {
 	width:'400px'
 }
 
-export class PUpcomingTransactionsDialog extends React.Component<PUpcomingTransactionsDialogProps, PUpcomingTransactionsDialogState> {
+export class PUpcomingTransactions extends React.Component<PUpcomingTransactionsProps, PUpcomingTransactionsState> {
 
 	public render() {
-		return <div />;		
+		return (
+			<div className="inspector-section-header">
+				UPCOMING TRANSACTIONS
+			</div>
+		);		
 	}
 }

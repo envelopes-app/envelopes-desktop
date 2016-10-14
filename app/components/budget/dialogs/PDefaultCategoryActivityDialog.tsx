@@ -8,13 +8,13 @@ import { DateWithoutTime } from '../../../utilities/';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
-export interface PCategoryActivityDialogProps {
+export interface PDefaultCategoryActivityDialogProps {
 	entitiesCollection:IEntitiesCollection
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-export interface PCategoryActivityDialogState {
+export interface PDefaultCategoryActivityDialogState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
@@ -29,7 +29,7 @@ const OkButtonStyle = {
 	marginLeft: "10px"
 }
 
-export class PCategoryActivityDialog extends React.Component<PCategoryActivityDialogProps, PCategoryActivityDialogState> {
+export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCategoryActivityDialogProps, PDefaultCategoryActivityDialogState> {
 
 	constructor(props: any) {
         super(props);
@@ -68,7 +68,7 @@ export class PCategoryActivityDialog extends React.Component<PCategoryActivityDi
 		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
 		if(subCategory && monthlySubCategoryBudget) {
 
-			var state = Object.assign({}, this.state) as PCategoryActivityDialogState;
+			var state = Object.assign({}, this.state) as PDefaultCategoryActivityDialogState;
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
@@ -77,7 +77,7 @@ export class PCategoryActivityDialog extends React.Component<PCategoryActivityDi
 	}
 
 	public hide():void {
-		var state = Object.assign({}, this.state) as PCategoryActivityDialogState;
+		var state = Object.assign({}, this.state) as PDefaultCategoryActivityDialogState;
 		state.show = false;
 		this.setState(state);
 	}
