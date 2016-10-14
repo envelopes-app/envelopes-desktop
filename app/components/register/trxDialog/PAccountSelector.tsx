@@ -10,14 +10,12 @@ import { IEntitiesCollection } from '../../../interfaces/state';
 import * as objects from '../../../interfaces/objects';
 
 export interface PAccountSelectorProps { 
+	activeField:string;
 	selectedAccountId:string;
 	accountsList:Array<objects.IAccountObject>;
+	setActiveField?:(activeField:string)=>void;
 	setSelectedAccountId:(accountId:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-}
-
-export interface PAccountSelectorState { 
-	showPopover:boolean;
 }
 
 const AccountSelectorStyle = {
@@ -33,18 +31,16 @@ const PopoverStyle = {
 	width:'240px'
 }
 
-export class PAccountSelector extends React.Component<PAccountSelectorProps, PAccountSelectorState> {
+export class PAccountSelector extends React.Component<PAccountSelectorProps, {}> {
 
 	private accountInput:FormControl;
 
 	constructor(props: any) {
         super(props);
-		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
-		this.state = {showPopover:false};	
 	}
 
 	private setSelectedAccountId(accountId:string) {
@@ -58,40 +54,23 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 		this.props.handleTabPressed(false);
 	}
 
-	public showPopover():void {
-		// If the popover is already showing then we dont need to do anything
-		if(this.state.showPopover == false) {
-			this.setState({showPopover:true});		
-		}
+	public onFocus():void {
+		if(this.props.activeField != "account" && this.props.setActiveField)
+			this.props.setActiveField("account");
+	}
 
+	public setFocus():void {
 		// Set the focus on the input control
 		var domNode = ReactDOM.findDOMNode(this.accountInput) as any;
 		domNode.focus();
 		domNode.select();
 	}
 
-	public hidePopover():void {
-		// If the popover is already hidden then we dont need to do anything
-		if(this.state.showPopover == true) {
-			this.setState({showPopover:false});		
-		}
-	}
-
-	private onFocus() {
-		// If the popover is not already showing, then show it.
-		this.showPopover();
-	}
-
-	private onBlur() {
-		// If the popover is showing, hide it.
-		this.hidePopover();
-	}
-
 	private onChange() { }
 
 	private onKeyDown(event:KeyboardEvent):void {
 
-		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
+		if(this.props.activeField == "account" && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected accountId
 			var currentAccountId = this.props.selectedAccountId;
@@ -151,9 +130,8 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, PAc
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.accountInput = n } type="text" componentClass="input" style={AccountSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} contentEditable={false}
-						value={selectedAccount ? selectedAccount.name : ""} />
-					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.accountInput) }>
+						onFocus={this.onFocus} onChange={this.onChange} contentEditable={false} value={selectedAccount ? selectedAccount.name : ""} />
+					<Overlay show={this.props.activeField == "account"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.accountInput) }>
 						<Popover id="selectAccountPopover" style={PopoverStyle} title="Accounts">
 							<ul className="custom-dropdown-list">
 								{accountsPopoverItems}

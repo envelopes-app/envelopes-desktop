@@ -1,6 +1,7 @@
 export class TransactionFrequency {
 
 	public static Never:string                  = "Never";
+	public static Once:string                  	= "Once";
 	public static Daily:string              	= "Daily";
 	public static Weekly:string              	= "Weekly";
 	public static EveryOtherWeek:string         = "Every other week";

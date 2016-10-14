@@ -13,15 +13,13 @@ import { TransactionFrequency } from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDateSelectorProps { 
+	activeField:string;
 	selectedDate:DateWithoutTime;
 	selectedFrequency:string;
+	setActiveField?:(activeField:string)=>void;
 	setSelectedDate:(date:DateWithoutTime)=>void;
 	setSelectedFrequency:(frequency:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-}
-
-export interface PDateSelectorState {
-	showPopover:boolean;
 }
 
 const DateSelectorStyle = {
@@ -51,7 +49,7 @@ const RepeatSelectStyle = {
 	height:"28px"
 }
 
-export class PDateSelector extends React.Component<PDateSelectorProps, PDateSelectorState> {
+export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 
 	private dateInput:FormControl;
 	private frequencySelection:FormControl;
@@ -61,62 +59,45 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 
 	constructor(props: any) {
         super(props);
-		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onDateSelectionChange = this.onDateSelectionChange.bind(this);
 		this.onFrequencyChange = this.onFrequencyChange.bind(this);
-		this.state = {showPopover:false};	
 	}
 
 	private onDateSelectionChange(date:moment.Moment):void {
 		var newDate = DateWithoutTime.createFromMoment(date);
 		this.props.setSelectedDate(newDate);
+		this.setFocus();
 	}
 
 	private onFrequencyChange(event:React.SyntheticEvent):void {
 		var frequencySelectionNode = (ReactDOM.findDOMNode(this.frequencySelection) as HTMLSelectElement);
 		this.props.setSelectedFrequency(frequencySelectionNode.value);
+		this.setFocus();
 	}
 
-	public showPopover():void {
-		// If the popover is already showing then we dont need to do anything
-		if(this.state.showPopover == false) {
-			this.setState({showPopover:true});		
-		}
+	private onFocus():void {
+		if(this.props.activeField != "date" && this.props.setActiveField)
+			this.props.setActiveField("date");
+	}
 
+	public setFocus():void {
 		// Set the focus on the input control
 		var domNode = ReactDOM.findDOMNode(this.dateInput) as any;
 		domNode.focus();
 		domNode.select();
 	}
 
-	public hidePopover():void {
-		// If the popover is already hidden then we dont need to do anything
-		if(this.state.showPopover == true) {
-			this.setState({showPopover:false});		
-		}
-	}
-
-	private onFocus() {
-		// If the popover is not already showing, then show it.
-		this.showPopover();
-	}
-
-	private onBlur() {
-		// If the popover is showing, hide it.
-		this.hidePopover();
-	}
-
 	private onChange() {
-		// Since the date field is not editable, this is here just to get rid if the react warning that 
+		// Since the date field is not editable, this is here just to get rid of the react warning that 
 		// an onChage handler needs to be provided, or the field should be set to read-only.
 	}
 
 	private onKeyDown(event:KeyboardEvent):void {
 
-		if(this.state.showPopover == true && (event.keyCode >= 37 && event.keyCode <= 40)) {
+		if(this.props.activeField == "date" && (event.keyCode >= 37 && event.keyCode <= 40)) {
 
 			// Get the currently selected date
 			var currentDate = this.props.selectedDate.clone();
@@ -156,15 +137,15 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 
 	public render() {
 		return (
-			<FormGroup onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}>
+			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
 					Date
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
-						onChange={this.onChange} contentEditable={false} 
+						onFocus={this.onFocus} onChange={this.onChange} contentEditable={false} 
 						value={this.props.selectedDate.toISOString()} />
-					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
+					<Overlay show={this.props.activeField == "date"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
 							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} 
 								minDate={this.minDate.toUTCMoment()} maxDate={this.maxDate.toUTCMoment()}/>
@@ -174,6 +155,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, PDateSele
 										componentClass="select" value={this.props.selectedFrequency} 
 										onChange={this.onFrequencyChange}>
 									<option>{TransactionFrequency.Never}</option>
+									<option>{TransactionFrequency.Once}</option>
 									<option>{TransactionFrequency.Daily}</option>
 									<option>{TransactionFrequency.Weekly}</option>
 									<option>{TransactionFrequency.EveryOtherWeek}</option>

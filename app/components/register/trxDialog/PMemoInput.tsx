@@ -6,7 +6,9 @@ import * as ReactDOM from 'react-dom';
 import { FormControl, FormGroup, Col, ControlLabel } from 'react-bootstrap';
 
 export interface PMemoInputProps { 
+	activeField:string;
 	memo:string;
+	setActiveField?:(activeField:string)=>void;
 	setMemo:(memo:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
@@ -25,6 +27,7 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 
 	constructor(props: any) {
         super(props);
+		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 	}
@@ -33,6 +36,11 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 		// Get the memo value from the control and send it to the parent dialog
 		var memo = (ReactDOM.findDOMNode(this.memoInput) as any).value;
 		this.props.setMemo(memo);
+	}
+
+	private onFocus():void {
+		if(this.props.activeField != "memo" && this.props.setActiveField)
+			this.props.setActiveField("memo");
 	}
 
 	public setFocus():void {
@@ -63,7 +71,7 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.memoInput = n } type="text" componentClass="input" style={MemoInputStyle} 
-						onChange={this.onChange} value={this.props.memo} />
+						onFocus={this.onFocus} onChange={this.onChange} value={this.props.memo} />
 				</Col>
 			</FormGroup>
 		);

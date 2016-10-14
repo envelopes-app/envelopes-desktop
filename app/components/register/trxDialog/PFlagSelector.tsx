@@ -9,6 +9,7 @@ import { TransactionFlag } from '../../../constants';
 
 export interface PFlagSelectorProps { 
 	selectedFlag?:string;
+	setActiveField?:(activeField:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 

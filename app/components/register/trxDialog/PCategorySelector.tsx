@@ -12,18 +12,16 @@ import { IEntitiesCollection } from '../../../interfaces/state';
 import { SimpleObjectMap } from '../../../utilities';
 
 export interface PCategorySelectorProps { 
+	activeField:string;
 	selectorLabel:string;
 	selectorLabelPosition?:string;
 	selectedCategoryId:string;
 	manuallyEnteredCategoryName:string;
 	categoriesList:Array<objects.ICategoryObject>;
+	setActiveField?:(activeField:string)=>void;
 	setSelectedCategoryId:(subCategoryId:string, clearManuallyEnteredCategoryName?:boolean)=>void;
 	setManuallyEnteredCategoryName:(categoryName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-}
-
-export interface PCategorySelectorState { 
-	showPopover:boolean;
 }
 
 const CategorySelectorStyle = {
@@ -40,19 +38,17 @@ const ScrollableContainerStyle = {
 	overflowY: "scroll",
 }
 
-export class PCategorySelector extends React.Component<PCategorySelectorProps, PCategorySelectorState> {
+export class PCategorySelector extends React.Component<PCategorySelectorProps, {}> {
 
 	private categoryInput:FormControl;
 	private categoryItemRefsMap:SimpleObjectMap<HTMLElement> = {};
 
 	constructor(props: any) {
         super(props);
-		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
-		this.state = {showPopover:false};	
 	}
 
 	private setSelectedCategoryId(subCategoryId:string) {
@@ -66,33 +62,16 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 		this.props.handleTabPressed(false);
 	}
 
-	public showPopover():void {
-		// If the popover is already showing then we dont need to do anything
-		if(this.state.showPopover == false) {
-			this.setState({showPopover:true});		
-		}
+	private onFocus():void {
+		if(this.props.activeField != "category" && this.props.setActiveField)
+			this.props.setActiveField("category");
+	}
 
+	public setFocus():void {
 		// Set the focus on the input control
 		var domNode = ReactDOM.findDOMNode(this.categoryInput) as any;
 		domNode.focus();
 		domNode.select();
-	}
-
-	public hidePopover():void {
-		// If the popover is already hidden then we dont need to do anything
-		if(this.state.showPopover == true) {
-			this.setState({showPopover:false});		
-		}
-	}
-
-	private onFocus() {
-		// If the popover is not already showing, then show it.
-		this.showPopover();
-	}
-
-	private onBlur() {
-		// If the popover is showing, hide it.
-		this.hidePopover();
 	}
 
 	private onChange(event:React.SyntheticEvent) { 
@@ -104,7 +83,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 
 	private onKeyDown(event:KeyboardEvent):void {
 
-		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
+		if(this.props.activeField == "category" && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected categoryId
 			var currentCategoryId = this.props.selectedCategoryId;
@@ -265,8 +244,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 					</Col>
 					<Col sm={9}>
 						<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
-							onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={categoryValue} />
-						<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
+							onFocus={this.onFocus} onChange={this.onChange} value={categoryValue} />
+						<Overlay show={this.props.activeField == "category"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
 							<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
 								{popoverContents}
 							</Popover>
@@ -280,8 +259,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, P
 				<FormGroup onKeyDown={this.onKeyDown}>
 					<ControlLabel>{this.props.selectorLabel}</ControlLabel>
 					<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={categoryValue} />
-					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
+						onFocus={this.onFocus} onChange={this.onChange} value={categoryValue} />
+					<Overlay show={this.props.activeField == "category"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
 						<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
 							{popoverContents}
 						</Popover>

@@ -190,7 +190,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 				rootClose={false} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="coverOverspendingDialog" style={PopoverStyle}>
 					<Form>
-						<PCategorySelector ref={(c) => this.categorySelector = c} 
+						<PCategorySelector ref={(c) => this.categorySelector = c}  activeField="category"
 							selectorLabel="Cover this overspending with:" selectorLabelPosition="top"
 							selectedCategoryId={this.state.fromSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
 							categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 

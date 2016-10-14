@@ -10,16 +10,14 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 
 export interface PPayeeSelectorProps {
+	activeField:string;
 	selectedPayeeId:string;
 	manuallyEnteredPayeeName:string;
 	payeesList:Array<objects.IPayeeObject>;
+	setActiveField?:(activeField:string)=>void;
 	setSelectedPayeeId:(payeeId:string)=>void;
 	setManuallyEnteredPayeeName:(payeeName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
-}
-
-export interface PPayeeSelectorState { 
-	showPopover:boolean;
 }
 
 const PayeeSelectorStyle = {
@@ -44,13 +42,12 @@ const NewPayeeCreationMessageStyle = {
 	fontSize: "12px"
 }
 
-export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeSelectorState> {
+export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 
 	private payeeInput:FormControl;
 
 	constructor(props: any) {
         super(props);
-		this.onBlur = this.onBlur.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -69,33 +66,16 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 		this.props.handleTabPressed(false);
 	}
 
-	public showPopover():void {
-		// If the popover is already showing then we dont need to do anything
-		if(this.state.showPopover == false) {
-			this.setState({showPopover:true});		
-		}
+	private onFocus():void {
+		if(this.props.activeField != "payee" && this.props.setActiveField)
+			this.props.setActiveField("payee");
+	}
 
+	public setFocus():void {
 		// Set the focus on the input control
 		var domNode = ReactDOM.findDOMNode(this.payeeInput) as any;
 		domNode.focus();
 		domNode.select();
-	}
-
-	public hidePopover():void {
-		// If the popover is already hidden then we dont need to do anything
-		if(this.state.showPopover == true) {
-			this.setState({showPopover:false});		
-		}
-	}
-
-	private onFocus() {
-		// If the popover is not already showing, then show it.
-		this.showPopover();
-	}
-
-	private onBlur() {
-		// If the popover is showing, hide it.
-		//this.hidePopover();
 	}
 
 	private onChange(event:React.SyntheticEvent) {
@@ -107,7 +87,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 
 	private onKeyDown(event:KeyboardEvent):void {
 
-		if(this.state.showPopover == true && (event.keyCode == 38 || event.keyCode == 40)) {
+		if(this.props.activeField == "payee" && (event.keyCode == 38 || event.keyCode == 40)) {
 
 			// Get the currently selected payeeId
 			var currentPayeeId = this.props.selectedPayeeId;
@@ -238,8 +218,8 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, PPayeeS
 				</Col>
 				<Col sm={9}>
 					<FormControl ref={(n) => this.payeeInput = n } type="text" componentClass="input" style={PayeeSelectorStyle} 
-						onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onChange} value={payeeValue} />
-					<Overlay show={this.state.showPopover} placement="right" target={ ()=> ReactDOM.findDOMNode(this.payeeInput) }>
+						onFocus={this.onFocus} onChange={this.onChange} value={payeeValue} />
+					<Overlay show={this.props.activeField == "payee"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.payeeInput) }>
 						<Popover id="selectPayeePopover" style={PopoverStyle} title="Payees">
 							{popoverContents}
 						</Popover>

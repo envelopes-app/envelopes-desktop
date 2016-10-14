@@ -6,8 +6,10 @@ import * as ReactDOM from 'react-dom';
 import { FormControl, FormGroup, Col, ControlLabel } from 'react-bootstrap';
 
 export interface PAmountInputProps { 
+	activeField:string;
 	inflowAmount:number;
 	outflowAmount:number;
+	setActiveField?:(activeField:string)=>void;
 	setAmount:(inflowAmount:number, outflowAmount:number)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
@@ -28,8 +30,20 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 	constructor(props: any) {
         super(props);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onInflowFocus = this.onInflowFocus.bind(this);
+		this.onOutflowFocus = this.onOutflowFocus.bind(this);
 		this.onInflowChange = this.onInflowChange.bind(this);
 		this.onOutflowChange = this.onOutflowChange.bind(this);
+	}
+
+	private onInflowFocus():void {
+		if(this.props.activeField != "inflow" && this.props.setActiveField)
+			this.props.setActiveField("inflow");
+	}
+
+	private onOutflowFocus():void {
+		if(this.props.activeField != "outflow" && this.props.setActiveField)
+			this.props.setActiveField("outflow");
 	}
 
 	private onInflowChange() { 
@@ -105,12 +119,12 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 				</Col>
 				<Col sm={9} style={{display:"flex", flexFlow: 'row nowrap', alignItems: 'baseline'}}>
 					<FormControl ref={(n) => this.outflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onChange={this.onOutflowChange} value={this.props.outflowAmount} />
+						onFocus={this.onInflowFocus} onChange={this.onOutflowChange} value={this.props.outflowAmount} />
 					<label className="control-label" style={{paddingLeft: 15, paddingRight: 15}}>
 						Inflow
 					</label>
 					<FormControl ref={(n) => this.inflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onChange={this.onInflowChange} value={this.props.inflowAmount} />
+						onFocus={this.onOutflowFocus} onChange={this.onInflowChange} value={this.props.inflowAmount} />
 				</Col>
 			</FormGroup>
 		);
