@@ -27,6 +27,8 @@ export interface PSubCategoryRowProps {
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
 	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
+	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
@@ -75,13 +77,6 @@ const ValueColumnStyle = {
 	paddingRight: "8px"
 }
 
-const ValueStyle = {
-	fontSize: "14px",
-	fontWeight: "normal",
-	color: "#4D717A",
-	marginBottom: "0px"
-}
-
 const ValueColumnHoverStyle = Object.assign({}, ValueColumnStyle, {
 	borderStyle: "solid",
 	borderWidth: "2px",
@@ -121,6 +116,7 @@ const BudgetedValueHoverStyle = _.assign({}, BudgetedValueStyle, {
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
+	private activityLabel:HTMLLabelElement;
 	private budgetedValueInput:HTMLInputElement;
 	private balanceValue:PBalanceValue;
 	private moveCategoryUpButton:PButtonWithGlyph;
@@ -137,6 +133,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
+		this.onActivityClick = this.onActivityClick.bind(this);
 		this.onBalanceValueClick = this.onBalanceValueClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
 	}
@@ -311,6 +308,15 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
 	}
 
+	private onActivityClick(event:React.MouseEvent):void {
+
+		var subCategory = this.props.subCategory;
+		if(subCategory.type == SubCategoryType.Debt)
+			this.props.showDebtSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
+		else
+			this.props.showDefaultSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
+	}
+
 	private onBalanceValueClick(event:React.MouseEvent):void {
 
 		var subCategory = this.props.subCategory;
@@ -396,13 +402,11 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		if(!isSelected)
 			isSelected = false;
 
-		var valueStyle = _.assign({}, ValueStyle);
 		var subCategoryRowContainerStyle = _.assign({}, SubCategoryRowContainerStyle);
 		var budgetedValueStyle:any = BudgetedValueStyle;
 		var valueColumnStyle:any = ValueColumnStyle;
 
 		if(isSelected) {
-			valueStyle["color"] = "#FFFFFF";
 			subCategoryRowContainerStyle["color"] = "#FFFFFF";
 			subCategoryRowContainerStyle["backgroundColor"] = "#005A6E";
 			budgetedValueStyle = BudgetedValueSelectedStyle;
@@ -438,7 +442,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 				{categoryNameNode}
 				{budgetedValueNode}
 				<div style={ValueColumnStyle}>
-					<label style={valueStyle}>{activity}</label>
+					<label className="budget-row-activity" ref={(a)=> this.activityLabel = a} 
+						onClick={this.onActivityClick}>{activity}</label>
 				</div>
 				<div style={ValueColumnStyle}>
 					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget}

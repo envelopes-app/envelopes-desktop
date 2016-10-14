@@ -4,41 +4,39 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
+import { PTransactionsList } from './PTransactionsList';
 import { DateWithoutTime } from '../../../utilities/';
+import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
-export interface PDebtCategoryActivityDialogProps {
+export interface PMasterCategoryActivityDialogProps {
 	entitiesCollection:IEntitiesCollection
 }
 
-export interface PDebtCategoryActivityDialogState {
+export interface PMasterCategoryActivityDialogState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
+	transactions:Array<ITransactionObject>;
 }
 
 const PopoverStyle = {
 	maxWidth: 'none',
-	width:'300px'
+	width:'400px'
 }
 
-const OkButtonStyle = {
-	marginLeft: "10px"
-}
-
-export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryActivityDialogProps, PDebtCategoryActivityDialogState> {
+export class PMasterCategoryActivityDialog extends React.Component<PMasterCategoryActivityDialogProps, PMasterCategoryActivityDialogState> {
 
 	constructor(props: any) {
         super(props);
 		this.hide = this.hide.bind(this);
-		this.onChange = this.onChange.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
-		this.onCancelClick = this.onCancelClick.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
-			placement:"left" 
+			placement:"left",
+			transactions:null
 		};
 	}
 
@@ -46,51 +44,51 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 		return this.state.show;
 	}
 
-	private onChange(event:React.SyntheticEvent):void { 
-
-	}
-
 	private onOkClick():void { 
-
-	}
-
-	private onCancelClick():void { 
 		// Hide the dialog
 		this.hide();
 	}
 	
-	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "left"):void {
+	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "bottom"):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
 		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
 		if(subCategory && monthlySubCategoryBudget) {
 
-			var state = Object.assign({}, this.state) as PDebtCategoryActivityDialogState;
+			var state = Object.assign({}, this.state) as PMasterCategoryActivityDialogState;
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
+			state.transactions = this.buildTransactionObjects();
 			this.setState(state);
 		}
 	}
 
 	public hide():void {
-		var state = Object.assign({}, this.state) as PDebtCategoryActivityDialogState;
+		var state = Object.assign({}, this.state) as PMasterCategoryActivityDialogState;
 		state.show = false;
 		this.setState(state);
+	}
+
+	private buildTransactionObjects():Array<ITransactionObject> {
+
+		return null;
 	}
 
 	public render() {
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="debtCategoryActivityDialog" style={PopoverStyle}>
+				rootClose={true} onHide={this.onOkClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				<Popover id="masterCategoryActivityDialog" style={PopoverStyle}>
+					<PTransactionsList 
+						showAccountColumn={true}
+						showCategoryColumn={false}
+						transactions={this.state.transactions}
+					/>
 					<div className="buttons-container">
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						<Button className="dialog-primary-button" onClick={this.onOkClick}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
 						</Button>
 					</div>

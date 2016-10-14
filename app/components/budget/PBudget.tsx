@@ -53,6 +53,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private moveMoneyDialog:dialogs.PMoveMoneyDialog;
 	private coverOverspendingDialog:dialogs.PCoverOverspendingDialog;
 	private hiddenCategoriesDialog:dialogs.PHiddenCategoriesDialog;
+	private defaultCategoryActivityDialog:dialogs.PDefaultCategoryActivityDialog;
+	private debtCategoryActivityDialog:dialogs.PDebtCategoryActivityDialog;
+	private masterCategoryActivityDialog:dialogs.PMasterCategoryActivityDialog;
 
 	constructor(props: any) {
         super(props);
@@ -70,8 +73,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showCoverOverspendingDialog = this.showCoverOverspendingDialog.bind(this);
 		this.showMoveMoneyDialog = this.showMoveMoneyDialog.bind(this);
 		this.showHiddenCategoriesDialog = this.showHiddenCategoriesDialog.bind(this);
-		
-		this.showSubCategoryActivityDialog = this.showSubCategoryActivityDialog.bind(this);
+		this.showDefaultSubCategoryActivityDialog = this.showDefaultSubCategoryActivityDialog.bind(this);
+		this.showDebtSubCategoryActivityDialog = this.showDebtSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
 
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
@@ -276,12 +279,22 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.createCategoryDialog.show(masterCategoryId, element);
 	}
 
-	private showSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
+	private showDefaultSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for default category activity
+		var selectedMonth = this.props.selectedBudgetMonth;
+		this.defaultCategoryActivityDialog.show(subCategoryId, selectedMonth, element);
+	}
 
+	private showDebtSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
+		// Show the dialog for debt category activity
+		var selectedMonth = this.props.selectedBudgetMonth;
+		this.debtCategoryActivityDialog.show(subCategoryId, selectedMonth, element);
 	}
 
 	private showMasterCategoryActivityDialog(masterCategoryId:string, element:HTMLElement):void {
-
+		// Show the dialog for master category activity
+		var selectedMonth = this.props.selectedBudgetMonth;
+		this.masterCategoryActivityDialog.show(masterCategoryId, selectedMonth, element);
 	}
 
 	private showCoverOverspendingDialog(subCategoryId:string, amountToCover:number, element:HTMLElement, placement:string = "left"):void {
@@ -373,6 +386,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showCoverOverspendingDialog={this.showCoverOverspendingDialog}
 						showMoveMoneyDialog={this.showMoveMoneyDialog}
 						showHiddenCategoriesDialog={this.showHiddenCategoriesDialog}
+						showDefaultSubCategoryActivityDialog={this.showDefaultSubCategoryActivityDialog}
+						showDebtSubCategoryActivityDialog={this.showDebtSubCategoryActivityDialog}
+						showMasterCategoryActivityDialog={this.showMasterCategoryActivityDialog}
 					/>
 					<PInspectorContainer 
 						currentMonth={selectedMonth}
@@ -416,6 +432,21 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					ref={(d)=> this.hiddenCategoriesDialog = d} 
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
+				/>
+
+				<dialogs.PDefaultCategoryActivityDialog 
+					ref={(d)=> this.defaultCategoryActivityDialog = d} 
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+
+				<dialogs.PDebtCategoryActivityDialog 
+					ref={(d)=> this.debtCategoryActivityDialog = d} 
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+
+				<dialogs.PMasterCategoryActivityDialog 
+					ref={(d)=> this.masterCategoryActivityDialog = d} 
+					entitiesCollection={this.props.entitiesCollection}
 				/>
 			</div>
 		);

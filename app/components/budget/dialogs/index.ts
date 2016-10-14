@@ -3,6 +3,7 @@ export { PCreateCategoryDialog } from './PCreateCategoryDialog';
 export { PDebtCategoryActivityDialog } from './PDebtCategoryActivityDialog';
 export { PDefaultCategoryActivityDialog } from './PDefaultCategoryActivityDialog';
 export { PHiddenCategoriesDialog } from './PHiddenCategoriesDialog';
+export { PMasterCategoryActivityDialog } from './PMasterCategoryActivityDialog';
 export { PMasterCategoryEditDialog } from './PMasterCategoryEditDialog';
 export { PMonthSelectionDialog } from './PMonthSelectionDialog';
 export { PMoveMoneyDialog } from './PMoveMoneyDialog';

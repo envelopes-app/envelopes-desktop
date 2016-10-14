@@ -35,6 +35,9 @@ export interface PMonthlyBudgetProps {
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
 	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
+	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showMasterCategoryActivityDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -97,6 +100,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
 						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
 						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+						showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
+						showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
 						entitiesCollection={this.props.entitiesCollection}
 						updateEntities={this.props.updateEntities} />
 				);
@@ -116,6 +121,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
 					showCreateCategoryDialog={this.props.showCreateCategoryDialog}
 					showHiddenCategoriesDialog={this.props.showHiddenCategoriesDialog}
+					showMasterCategoryActivityDialog={this.props.showMasterCategoryActivityDialog}
 
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
@@ -147,6 +153,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				showSubCategoryEditDialog={this.props.showSubCategoryEditDialog}
 				showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
 				showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+				showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
+				showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
 				entitiesCollection={this.props.entitiesCollection}
 				updateEntities={this.props.updateEntities} />
 		);

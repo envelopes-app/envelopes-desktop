@@ -42,6 +42,20 @@
 	margin-bottom: 0px;
 }
 
+.budget-row-activity {
+	font-size: 14px;
+	font-weight: normal;
+	margin-bottom: 0px;
+}
+
+.budget-row-activity:hover {
+	font-size: 14px;
+	font-weight: normal;
+	text-decoration: underline;
+	margin-bottom: 0px;
+	cursor: pointer;
+}
+
 .quick-budget-button {
 	width: 100%;
 	height: 100%;

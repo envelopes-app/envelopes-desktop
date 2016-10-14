@@ -21,6 +21,7 @@ export interface PMasterCategoryRowProps {
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
+	showMasterCategoryActivityDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
