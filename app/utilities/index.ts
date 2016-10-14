@@ -1,6 +1,7 @@
 export { DateWithoutTime } from './DateWithoutTime';
 export { DialogUtilities } from './DialogUtilities';
 export { EntitiesLookupHelper } from './EntitiesLookupHelper';
+export { FocusManager } from './FocusManager';
 export { KeyGenerator } from './KeyGenerator';
 export { Logger, LogLevels } from './Logger';
 export { SerializationUtilities } from './SerializationUtilities';

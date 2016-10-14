@@ -6,7 +6,7 @@ import { Button, Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Ove
 
 import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { DialogUtilities, DateWithoutTime } from '../../../utilities/';
+import { DialogUtilities, DateWithoutTime, FocusManager } from '../../../utilities/';
 import { PCategorySelector } from '../../register/trxDialog/PCategorySelector';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -20,6 +20,7 @@ export interface PMoveMoneyDialogState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
+	activeField: string;
 	fromSubCategoryId:string;
 	currentMonth:DateWithoutTime;
 	amountToMove:number;
@@ -56,31 +57,84 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 
 	private categoriesList:Array<objects.ICategoryObject>;
 
+	private focusManager:FocusManager = new FocusManager(); 
+
 	constructor(props: any) {
         super(props);
+		this.setActiveField = this.setActiveField.bind(this);
+		this.setFocusOnAmountField = this.setFocusOnAmountField.bind(this);
+		this.setFocusOnCategorySelector = this.setFocusOnCategorySelector.bind(this);
+		this.setFocusOnOkButton = this.setFocusOnOkButton.bind(this);
+		this.setFocusOnCancelButton = this.setFocusOnCancelButton.bind(this);
+		this.onDialogEntered = this.onDialogEntered.bind(this);
 		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
 		this.setManuallyEnteredCategoryName = this.setManuallyEnteredCategoryName.bind(this);
+		this.handleKeyDownOnAmountInput = this.handleKeyDownOnAmountInput.bind(this);
 		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
-		this.onChange = this.onChange.bind(this);
+		this.handleKeyDownOnOkButton = this.handleKeyDownOnOkButton.bind(this);
+		this.handleKeyDownOnCancelButton = this.handleKeyDownOnCancelButton.bind(this);
+		this.onAmountChange = this.onAmountChange.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
 		this.state = {
 			show: false, 
 			target: null, 
 			placement: "left",
+			activeField: null,
 			fromSubCategoryId: null,
 			currentMonth: null,
 			amountToMove: 0,
 			toSubCategoryId: null,
 			manuallyEnteredCategoryName: null 
 		};
+
+		this.focusManager.addFocusObject("amount", this.setFocusOnAmountField);
+		this.focusManager.addFocusObject("category", this.setFocusOnCategorySelector);
+		this.focusManager.addFocusObject("ok", this.setFocusOnOkButton);
+		this.focusManager.addFocusObject("cancel", this.setFocusOnCancelButton);
 	}
 
 	public isShowing():boolean {
 		return this.state.show;
 	}
 
-	private onChange(event:React.SyntheticEvent):void {
+	private setActiveField(activeField:string):void {
+
+		if(activeField != this.state.activeField) {
+			var state = Object.assign({}, this.state) as PMoveMoneyDialogState;
+			state.activeField = activeField;
+			this.setState(state);
+		}
+	}
+
+	private setFocusOnAmountField():void {
+		this.setActiveField("amount");
+		var element = ReactDOM.findDOMNode(this.ctrlAmountToMove) as any;
+		element.focus();
+		element.select();
+	}
+
+	private setFocusOnCategorySelector():void {
+		this.setActiveField("category");
+		this.categorySelector.setFocus();
+	}
+
+	private setFocusOnOkButton():void {
+		this.setActiveField("ok");
+		(ReactDOM.findDOMNode(this.okButton) as any).focus();
+	}
+
+	private setFocusOnCancelButton():void {
+		this.setActiveField("cancel");
+		(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
+	}
+
+	private onDialogEntered():void {
+		// Set the focus on to the amount field
+		this.setFocusOnAmountField();
+	}
+
+	private onAmountChange(event:React.SyntheticEvent):void {
 		// Update the value in the state
 		var value = (event.target as HTMLInputElement).value;
 		var numericValue = parseFloat(value);
@@ -156,6 +210,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
+			state.activeField = "amount";
 			state.fromSubCategoryId = subCategoryId;
 			state.currentMonth = month;
 			state.amountToMove = amountToMove;
@@ -187,50 +242,84 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		this.setState(state);
 	}
 
-	private handleTabPressedOnCategorySelector(shiftKeyPressed:boolean):void {
+	private handleKeyDownOnAmountInput(event:KeyboardEvent):void {
 
-		// If shift key is not pressed then move the focus to the ok button. 
-		if(!shiftKeyPressed) {
-			// Set focus on the "ok" button
-			(ReactDOM.findDOMNode(this.okButton) as any).focus();
-		}
-		else {
-			// Set focus on the "amount to move" input
-			(ReactDOM.findDOMNode(this.ctrlAmountToMove) as any).focus();
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("amount");
+			else
+				this.focusManager.moveFocusBackward("amount");
 		}
 	}
 
+	private handleTabPressedOnCategorySelector(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("category");
+		else
+			this.focusManager.moveFocusBackward("category");
+	}
+
+	private handleKeyDownOnOkButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("ok");
+			else
+				this.focusManager.moveFocusBackward("ok");
+		}
+	}
+
+	private handleKeyDownOnCancelButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("cancel");
+			else
+				this.focusManager.moveFocusBackward("cancel");
+		}
+	}
+	
 	public render() {
 
 		var categoriesList = this.categoriesList;
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={false} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				rootClose={false} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
+				target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="moveMoneyDialog" style={PopoverStyle}>
 					<Form horizontal>
-						<FormGroup>
+						<FormGroup onKeyDown={this.handleKeyDownOnAmountInput}>
 							<Col componentClass={ControlLabel} sm={3}>
 								Move:
 							</Col>
 							<Col sm={9}>
 								<FormControl type="text" componentClass="input" style={FormControlStyle} 
-									value={this.state.amountToMove} 
-									onChange={this.onChange} ref={(c)=>{this.ctrlAmountToMove = c;}}	
+									ref={(c)=>{this.ctrlAmountToMove = c;}} value={this.state.amountToMove} 
+									onChange={this.onAmountChange}	
 								/>
 							</Col>
 						</FormGroup>
-						<PCategorySelector ref={(c) => this.categorySelector = c} activeField="category" selectorLabel="To:"
+						<PCategorySelector ref={(c) => this.categorySelector = c} 
+							activeField={this.state.activeField} selectorLabel="To:"
 							selectedCategoryId={this.state.toSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
 							categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
-							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
+							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} 
+							handleTabPressed={this.handleTabPressedOnCategorySelector} />
 					</Form>
 					<hr style={HRStyle} />
 					<div className="buttons-container">
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick} ref={(b) => this.cancelButton = b}>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
+						 	onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick} ref={(b) => this.okButton = b}>
+						<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b} 
+							onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}> 
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
 						</Button>
 					</div>
