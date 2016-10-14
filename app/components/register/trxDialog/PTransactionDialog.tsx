@@ -147,44 +147,68 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		}
 	}
 
+	private saveTransaction():void {
+
+		var entitiesCollection:ISimpleEntitiesCollection = {};
+
+		if(this.state.frequency == TransactionFrequency.Never) {
+			// Create the transaction entity and add it to the entitiesCollection 
+			this.createNewTransaction(entitiesCollection);
+		}
+		else {
+			// Create the scheduled transaction entity and add it to the entitiesCollection 
+			this.createNewScheduledTransaction(entitiesCollection);
+		}
+
+		// Check if we need to create a new payee
+		if(!this.state.payeeId && this.state.manuallyEnteredPayeeName) {
+			// There is no selected pre-existing payee, but we do have a payee name manually
+			// entered by the user in the payee input box. 
+			// Create a new payee and save it in the entitiesCollection
+			this.createNewPayee(entitiesCollection);
+
+			var payee = entitiesCollection.payees[0];
+			// Update the transaction/scheduled-transaction to point to this new payee 
+			if(entitiesCollection.transactions && entitiesCollection.transactions.length > 0) {
+				entitiesCollection.transactions[0].payeeId = payee.entityId;
+			}
+			else if(entitiesCollection.scheduledTransactions && entitiesCollection.scheduledTransactions.length > 0) {
+				entitiesCollection.scheduledTransactions[0].payeeId = payee.entityId;
+			}
+		}
+
+		// Call the passed updateEntities method in the props to save the entities
+		this.props.updateEntities(entitiesCollection);
+	}
+
 	private saveAndAddAnother():void {
 
+		if(this.validateTransaction()) {
+			// Save the transaction
+			this.saveTransaction();
+			// Reset the state to start adding another transaction.
+			// Keep the accountId to whatever was already set
+			var state = Object.assign({}, this.state);
+			state.activeField = "date";
+			state.entityId = null;
+			state.payeeId = null;
+			state.manuallyEnteredPayeeName = null;
+			state.date = DateWithoutTime.createForToday();
+			state.frequency = TransactionFrequency.Never;
+			state.subCategoryId = null;
+			state.manuallyEnteredCategoryName = null;
+			state.memo = null;
+			state.inflowAmount = 0;
+			state.outflowAmount = 0;
+			this.setState(state);
+		}
 	}
 
 	private save():void {
 
 		if(this.validateTransaction()) {
-
-			var entitiesCollection:ISimpleEntitiesCollection = {};
-
-			if(this.state.frequency == TransactionFrequency.Never) {
-				// Create the transaction entity and add it to the entitiesCollection 
-				this.createNewTransaction(entitiesCollection);
-			}
-			else {
-				// Create the scheduled transaction entity and add it to the entitiesCollection 
-				this.createNewScheduledTransaction(entitiesCollection);
-			}
-
-			// Check if we need to create a new payee
-			if(!this.state.payeeId && this.state.manuallyEnteredPayeeName) {
-				// There is no selected pre-existing payee, but we do have a payee name manually
-				// entered by the user in the payee input box. 
-				// Create a new payee and save it in the entitiesCollection
-				this.createNewPayee(entitiesCollection);
-
-				var payee = entitiesCollection.payees[0];
-				// Update the transaction/scheduled-transaction to point to this new payee 
-				if(entitiesCollection.transactions && entitiesCollection.transactions.length > 0) {
-					entitiesCollection.transactions[0].payeeId = payee.entityId;
-				}
-				else if(entitiesCollection.scheduledTransactions && entitiesCollection.scheduledTransactions.length > 0) {
-					entitiesCollection.scheduledTransactions[0].payeeId = payee.entityId;
-				}
-			}
-
-			// Call the passed updateEntities method in the props to save the entities
-			this.props.updateEntities(entitiesCollection);
+			// Save the transaction
+			this.saveTransaction();
 			// Close the modal dialog
 			this.close();
 		}
