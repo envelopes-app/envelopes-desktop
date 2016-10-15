@@ -1,10 +1,14 @@
 /// <reference path="../../../_includes.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
+import { PTransactionsList } from './PTransactionsList';
+import { TransactionSources } from '../../../constants';
 import { DateWithoutTime } from '../../../utilities/';
+import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -16,15 +20,19 @@ export interface PDebtCategoryActivityDialogState {
 	show:boolean;
 	target:HTMLElement;
 	placement:string;
+	subCategoryName:string;
+	transactions:Array<ITransactionObject>;
 }
 
 const PopoverStyle = {
 	maxWidth: 'none',
-	width:'300px'
+	width:'520px'
 }
 
-const OkButtonStyle = {
-	marginLeft: "10px"
+const TitleStyle = {
+	width: "100%",
+	color: "#4D717A",
+	fontSize: "24px",
 }
 
 export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryActivityDialogProps, PDebtCategoryActivityDialogState> {
@@ -32,13 +40,13 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 	constructor(props: any) {
         super(props);
 		this.hide = this.hide.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.onOkClick = this.onOkClick.bind(this);
-		this.onCancelClick = this.onCancelClick.bind(this);
+		this.onCloseClick = this.onCloseClick.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
-			placement:"left" 
+			placement:"left",
+			subCategoryName:null,
+			transactions:null
 		};
 	}
 
@@ -46,31 +54,60 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 		return this.state.show;
 	}
 
-	private onChange(event:React.SyntheticEvent):void { 
-
-	}
-
-	private onOkClick():void { 
-
-	}
-
-	private onCancelClick():void { 
+	private onCloseClick():void { 
 		// Hide the dialog
 		this.hide();
 	}
 	
-	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "left"):void {
+	public show(subCategoryId:string, month:DateWithoutTime, target:HTMLElement, placement:string = "bottom"):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
-		if(subCategory) {
+		// Get the liability account corresponding to this category
+		var account = this.props.entitiesCollection.accounts.getEntityById(subCategory.accountId);
+		
+		if(subCategory && account) {
 
 			var state = Object.assign({}, this.state) as PDebtCategoryActivityDialogState;
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
+			state.subCategoryName = subCategory.name;
+			state.transactions = this.buildTransactionObjects(account.entityId, month);
 			this.setState(state);
 		}
+	}
+
+	private buildTransactionObjects(accountId:string, month:DateWithoutTime):Array<ITransactionObject> {
+
+		var entitiesCollection = this.props.entitiesCollection;
+		// Get all the transactions for the specified month
+		var transactions = entitiesCollection.transactions.getTransactionsByMonth(month);
+		var transactionObjects:Array<ITransactionObject> = [];
+		_.forEach(transactions, (transaction)=>{
+			if(transaction.accountId == accountId && transaction.isTombstone == 0 && transaction.source != TransactionSources.Matched) {
+
+				var payee = transaction.payeeId ? entitiesCollection.payees.getEntityById(transaction.payeeId) : null;
+				var payeeName = payee ? payee.name : "";
+				var subCategory = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
+				var subCategoryName = subCategory ? subCategory.name : "";
+				
+				var transactionObject:ITransactionObject = {
+					entityId: transaction.entityId,
+					isTransaction: true,
+					account: null, // We can set this to null, as we are not displaying this 
+					date: DateWithoutTime.createFromUTCTime(transaction.date).toISOString(),
+					payee: payeeName,
+					category: subCategoryName,
+					memo: transaction.memo,
+					amount: transaction.amount
+				} 
+
+				transactionObjects.push(transactionObject);
+			}
+		});
+
+		return transactionObjects;
 	}
 
 	public hide():void {
@@ -83,14 +120,18 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 
 		return (
 			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				rootClose={true} onHide={this.onCloseClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
 				<Popover id="debtCategoryActivityDialog" style={PopoverStyle}>
-					<div className="buttons-container">
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-							OK&nbsp;<Glyphicon glyph="ok-circle"/>
+					<div style={TitleStyle}>{this.state.subCategoryName}</div>
+					<PTransactionsList 
+						showAccountColumn={false}
+						showCategoryColumn={true}
+						transactions={this.state.transactions}
+					/>
+					<div className="buttons-container" style={{paddingTop:"10px"}}>
+						<div className="spacer" />
+						<Button className="dialog-primary-button" onClick={this.onCloseClick}>
+							Close&nbsp;<Glyphicon glyph="ok-circle"/>
 						</Button>
 					</div>
 				</Popover>
