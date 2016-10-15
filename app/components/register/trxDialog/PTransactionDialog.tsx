@@ -39,6 +39,7 @@ export interface PTransactionDialogState {
 	scheduledTransaction?: budgetEntities.IScheduledTransaction;
 	scheduledSubTransaction?: Array<budgetEntities.IScheduledSubTransaction>;
 	// This is for managing the focus in the dialog
+	activeFieldOnInitialShow:string;
 	activeField:string;
 	// Properties to save the values for the different fields. We wont create an actual transaction 
 	// or scheduled transaction object until the user presses save.
@@ -113,7 +114,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setMemo = this.setMemo.bind(this);
 		this.setAmount = this.setAmount.bind(this);
 
-        this.state = { showModal: false, action: null, activeField: null };
+        this.state = { showModal: false, action: null, activeField: null, activeFieldOnInitialShow: null };
 
 		this.focusManager.addFocusObject("account", this.setFocusOnAccountSelector);
 		this.focusManager.addFocusObject("date", this.setFocusOnDateSelector);
@@ -126,6 +127,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.focusManager.addFocusObject("save", this.setFocusOnSaveButton);
 		this.focusManager.addFocusObject("cancel", this.setFocusOnCancelButton);
     }
+
+	private onEntered():void {
+		var activeFieldOnInitialShow = this.state.activeFieldOnInitialShow;
+		var focusManager = this.focusManager;
+		setTimeout(function() {
+			focusManager.setFocus(activeFieldOnInitialShow);
+		}, 100);
+	}
 
 	public showForNewTransaction(accountId:string):void {
 
@@ -144,6 +153,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			showModal: true,
 			action: "new-transaction",
 			activeField: null,
+			activeFieldOnInitialShow: "date",
 			entityId: null,
 			accountId: accountId,
 			payeeId: null,
@@ -158,8 +168,37 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		});
 	};
 
-	public showForExistingTransaction(transaction:budgetEntities.ITransaction):void {
+	public showForExistingTransaction(transaction:budgetEntities.ITransaction, activeField:string):void {
 
+		// Before updating the state, refresh the lists of accounts, payees and categories 
+		// for showing in the popovers of the transaction dialog.
+		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
+		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
+		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
+
+		// Update the state of this dialog to make it visible. 
+		// Also reset all the fields for storing the values for the new transaction 
+		// Note: We are not setting the activeField here, as it needs to be set in the "onEnter" handler
+		// for the dialog box. This is so that we show the required popover when the dialog box has settled
+		// into it's final position. 
+		this.setState({ 
+			showModal: true,
+			action: "existing-transaction",
+			transaction: transaction,
+			activeField: null,
+			activeFieldOnInitialShow: activeField,
+			entityId: transaction.entityId,
+			accountId: transaction.accountId,
+			payeeId: transaction.payeeId,
+			manuallyEnteredPayeeName: null,
+			date: DateWithoutTime.createFromUTCTime(transaction.date),
+			frequency: TransactionFrequency.Never,
+			subCategoryId: transaction.subCategoryId,
+			manuallyEnteredCategoryName: null,
+			memo: transaction.memo,
+			outflowAmount: transaction.amount < 0 ? transaction.amount : 0,
+			inflowAmount: transaction.amount > 0 ? transaction.amount : 0
+		});
 	}
 
 	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction):void {
@@ -395,7 +434,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private close():void {
 		// Hide the modal, and set the account in state to null
-		this.setState({ showModal: false, action: null, activeField: null });
+		this.setState({ showModal: false, action: null, activeField: null, activeFieldOnInitialShow: null });
 	};
 
 	private createNewTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
@@ -431,15 +470,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		payee.autoFillSubCategoryId = this.state.subCategoryId;
 		// Add this payee to the entities collection
 		entitiesCollection.payees = [payee];
-	}
-
-	private onEntered():void {
-		var dateSelector = this.dateSelector;
-		var setActiveField = this.setActiveField;
-		setTimeout(function(){
-			setActiveField("date");
-			dateSelector.setFocus();
-		}, 100);
 	}
 
 	private setSelectedAccountId(accountId:string):void {

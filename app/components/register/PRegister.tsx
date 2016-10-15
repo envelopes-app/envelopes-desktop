@@ -41,6 +41,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.unselectTransaction = this.unselectTransaction.bind(this);
 		this.selectAllTransactions = this.selectAllTransactions.bind(this);
 		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
+		this.editTrasaction = this.editTrasaction.bind(this);
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.state = {registersState:{}};
     }
@@ -113,16 +114,19 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.updateRegisterStateForAccount(activeAccount, registerState);
 	}
 
-	private editTrasaction(transactionId:string, focusOnField:string):void {
-
-	}
-
 	private selectAllTransactions():void {
 
 	}
 
 	private unselectAllTransactions():void {
 
+	}
+
+	private editTrasaction(transactionId:string, focusOnField:string):void {
+
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
+		var transaction = entitiesCollection.transactions.getEntityById(transactionId); 
+		this.transactionDialog.showForExistingTransaction(transaction, focusOnField);
 	}
 
 	// *******************************************************************************************************

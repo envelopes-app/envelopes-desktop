@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
+
+import { InternalCategories } from '../../../constants';
 import { ITransaction } from '../../../interfaces/budgetEntities';
 import { MasterCategoriesArray, SubCategoriesArray } from '../../../collections';
 import { SimpleObjectMap } from '../../../utilities';
@@ -50,8 +52,12 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 			var transaction = this.props.transactions[this.props.rowIndex];
 			if(transaction.subCategoryId) {
 				var subCategory = this.props.subCategories.getEntityById(transaction.subCategoryId);
-				var masterCategory = this.props.masterCategories.getEntityById(subCategory.masterCategoryId);
-				categoryName = `${masterCategory.name}: ${subCategory.name}`;
+				if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory)
+					categoryName = "Inflow: To be Budgeted";
+				else {
+					var masterCategory = this.props.masterCategories.getEntityById(subCategory.masterCategoryId);
+					categoryName = `${masterCategory.name}: ${subCategory.name}`;
+				}
 			}
 
 			// Check whether this transaction is currently selected

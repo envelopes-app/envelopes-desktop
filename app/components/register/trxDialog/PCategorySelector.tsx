@@ -230,7 +230,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 			categoryValue = this.props.manuallyEnteredCategoryName;
 		}
 		else if(selectedCategory) {
-			categoryValue = selectedCategory.name;
+			categoryValue = selectedCategory.fullName;
 		}
 
 		var filteredCategoriesList = this.getFilteredCategories();

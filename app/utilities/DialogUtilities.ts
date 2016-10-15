@@ -69,6 +69,7 @@ export class DialogUtilities {
 		categoriesList.push({
 			entityId: internalMasterCategory.entityId,
 			name: "Inflow",
+			fullName: "Inflow",
 			isMasterCategory: true,
 			isInflow: false,
 			masterCategoryId: null,
@@ -77,6 +78,7 @@ export class DialogUtilities {
 		categoriesList.push({
 			entityId: immediateIncomeSubCategory.entityId,
 			name: "To be Budgeted",
+			fullName: "Inflow: To be Budgeted",
 			isMasterCategory: false,
 			isInflow: true,
 			masterCategoryId: internalMasterCategory.entityId,
@@ -96,6 +98,7 @@ export class DialogUtilities {
 					categoriesList.push({
 						entityId: masterCategory.entityId,
 						name: masterCategory.name,
+						fullName: masterCategory.name,
 						isMasterCategory: true,
 						isInflow: false,
 						masterCategoryId: null,
@@ -110,6 +113,7 @@ export class DialogUtilities {
 						categoriesList.push({
 							entityId: subCategory.entityId,
 							name: subCategory.name,
+							fullName: `${masterCategory.name}: ${subCategory.name}`,
 							isMasterCategory: false,
 							isInflow: false,
 							masterCategoryId: masterCategory.entityId,

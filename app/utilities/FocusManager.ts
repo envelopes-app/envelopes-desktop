@@ -16,6 +16,14 @@ export class FocusManager {
 		this.focusFunctionsMap[focusItemName] = focusFunction;  
 	}
 
+	public setFocus(focusItemName:string):void {
+
+		// Get the focus function from the map against this focus item
+		var focusFunction = this.focusFunctionsMap[focusItemName];
+		// Execute the focus function
+		focusFunction();
+	}
+
 	public moveFocusForward(currentFocusItemName:string, stepSize:number = 1):void {
 
 		// Get the index of this item from the focus items list
@@ -28,12 +36,9 @@ export class FocusManager {
 			if(index >= this.focusItemsList.length)
 				index = 0;
 
-			// Get the name of the new focus item from the Array
+			// Get the name of the new focus item from the Array and set focus on it
 			var newFocusItemName = this.focusItemsList[index];
-			// Get the focus function from the map against this focus item
-			var focusFunction = this.focusFunctionsMap[newFocusItemName];
-			// Execute the focus function
-			focusFunction();
+			this.setFocus(newFocusItemName);
 		}
 	}
 
@@ -49,12 +54,9 @@ export class FocusManager {
 			if(index == -1)
 				index = this.focusItemsList.length - 1;
 
-			// Get the name of the new focus item from the Array
+			// Get the name of the new focus item from the Array and set focus on it
 			var newFocusItemName = this.focusItemsList[index];
-			// Get the focus function from the map against this focus item
-			var focusFunction = this.focusFunctionsMap[newFocusItemName];
-			// Execute the focus function
-			focusFunction();
+			this.setFocus(newFocusItemName);
 		}
 	}
 }
