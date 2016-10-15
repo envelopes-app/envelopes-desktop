@@ -18,24 +18,6 @@ export interface PDateCellProps {
 	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
 }
 
-const CellStyle = {
-	height: "100%",
-	width: "100%",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
-const CellStyleSelected = {
-	height: "100%",
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#00596F",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
 export class PDateCell extends React.Component<PDateCellProps, {}> {
 	
 	constructor(props: any) {
@@ -72,8 +54,9 @@ export class PDateCell extends React.Component<PDateCellProps, {}> {
 				selected = true;
 		}
 
+		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 		return (
-			<div style={selected ? CellStyleSelected : CellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dateString}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dateString}</div>
 		);
   	}
 }

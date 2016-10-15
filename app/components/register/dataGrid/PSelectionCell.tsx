@@ -18,24 +18,6 @@ export interface PSelectionCellProps {
 	unselectTransaction:(transactionId:string)=>void;
 }
 
-const CellStyle = {
-	height: "100%",
-	width: "100%",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
-const CellStyleSelected = {
-	height: "100%",
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#00596F",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
 export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 	
 	constructor(props: any) {
@@ -82,8 +64,9 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 				selected = true;
 		}
 
+		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 		return (
-			<div style={selected ? CellStyleSelected : CellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
 				<input type="checkbox" checked={selected} onChange={this.onChange} />
 			</div>
 		);

@@ -17,24 +17,6 @@ export interface PMemoCellProps {
 	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
 }
 
-const CellStyle = {
-	height: "100%",
-	width: "100%",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
-const CellStyleSelected = {
-	height: "100%",
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#00596F",
-	fontSize: "12px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
 export class PMemoCell extends React.Component<PMemoCellProps, {}> {
 	
 	constructor(props: any) {
@@ -70,8 +52,9 @@ export class PMemoCell extends React.Component<PMemoCellProps, {}> {
 				selected = true;
 		}
 
+		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 		return (
-			<div style={selected ? CellStyleSelected : CellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{memo}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{memo}</div>
 		);
   	}
 }

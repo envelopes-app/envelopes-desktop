@@ -20,24 +20,6 @@ export interface PClearedCellProps {
 	updateClearedForTransaction:(transaction:ITransaction)=>void;
 }
 
-const CellStyle = {
-	height: "100%",
-	width: "100%",
-	fontSize: "14px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
-const CellStyleSelected = {
-	height: "100%",
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#00596F",
-	fontSize: "14px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
 const UnclearedColor = "#C3CBCE";
 const ClearedColor = "#16A336";
 
@@ -88,14 +70,11 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 				selected = true;
 		}
 
-		var cellStyle:any;
-		if(selected)
-			cellStyle = _.assign({}, CellStyleSelected, {color:glyphColor});
-		else 
-			cellStyle = _.assign({}, CellStyle, {color:glyphColor});
+		var cellStyle = {color:glyphColor};
+		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 
 		return (
-			<div style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+			<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
 				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true" 
 					style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
 			</div>

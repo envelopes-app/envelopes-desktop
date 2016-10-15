@@ -28,24 +28,6 @@ export interface PFlagCellState {
 	transaction:ITransaction;
 }
 
-const CellStyle = {
-	height: "100%",
-	width: "100%",
-	fontSize: "14px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
-const CellStyleSelected = {
-	height: "100%",
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#00596F",
-	fontSize: "14px",
-	paddingTop: "4px",
-	paddingLeft: "4px"
-}
-
 const PopoverStyle = {
 	maxWidth: 'none', 
 	width:'200px'
@@ -176,14 +158,11 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 			}
 		}
 
-		var cellStyle:any;
-		if(selected)
-			cellStyle = _.assign({}, CellStyleSelected, {color:flagColor});
-		else 
-			cellStyle = _.assign({}, CellStyle, {color:flagColor});
+		var cellStyle = {color:flagColor};
+		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 
 		return (
-			<div style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+			<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
 				{items}
 			</div>
 		);
