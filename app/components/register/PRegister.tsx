@@ -9,7 +9,7 @@ import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
-import { SimpleObjectMap } from '../../utilities';
+import { SimpleObjectMap, Logger } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { IApplicationState, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
@@ -131,11 +131,20 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private onAddTransactionSelected():void {
 
 		// Determine which account we are showing from the sidebar state
-		var accountId:string;
+		var accountId:string = null;
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
 		var sidebarState = this.props.applicationState.sidebarState;
 
 		if(sidebarState.selectedTab == "All Accounts") {
-			accountId = null;
+			var account = entitiesCollection.accounts.getDefaultAccount();
+			if(!account) {
+				// If no account was passed, and neither were we able to select a default one, then 
+				// that means there are no usable accounts in the budget.
+				Logger.info("We cannot show the Transaction Dialog as there are no open accounts.");
+			}
+			else {
+				accountId = account.entityId;
+			}
 		}
 		else if(sidebarState.selectedTab == "Account") {
 
@@ -144,7 +153,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			accountId = account.entityId;
 		}
 
-		this.transactionDialog.show(accountId);
+		if(accountId)
+			this.transactionDialog.showForNewTransaction(accountId);
 	}
 
 	// *******************************************************************************************************

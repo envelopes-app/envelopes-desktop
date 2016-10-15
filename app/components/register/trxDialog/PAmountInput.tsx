@@ -11,7 +11,8 @@ export interface PAmountInputProps {
 	outflowAmount:number;
 	setActiveField?:(activeField:string)=>void;
 	setAmount:(inflowAmount:number, outflowAmount:number)=>void;
-	handleTabPressed:(shiftPressed:boolean)=>void;
+	handleTabPressedOnOutflow:(shiftPressed:boolean)=>void;
+	handleTabPressedOnInflow:(shiftPressed:boolean)=>void;
 }
 
 const AmountInputStyle = {
@@ -70,24 +71,10 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 			var outflowDomNode = ReactDOM.findDOMNode(this.outflowInput) as any;
 
 			if(document.activeElement == outflowDomNode) {
-				if(event.shiftKey) {
-					// Let the parent dialog know that tab was pressed
-					this.props.handleTabPressed(event.shiftKey);
-				}
-				else {
-					// Move the focus on to the inflow control
-					this.setFocusOnInflow();
-				}
+				this.props.handleTabPressedOnOutflow(event.shiftKey);
 			}
 			else if(document.activeElement == inflowDomNode) {
-				if(event.shiftKey) {
-					// Move the focus back to the outflow control
-					this.setFocusOnOutflow();
-				}
-				else {
-					// Let the parent dialog know that tab was pressed
-					this.props.handleTabPressed(event.shiftKey);
-				}
+				this.props.handleTabPressedOnInflow(event.shiftKey);
 			}
 		}
 		else if(_.indexOf(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "."], event.key) == -1) {

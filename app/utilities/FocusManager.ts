@@ -16,16 +16,16 @@ export class FocusManager {
 		this.focusFunctionsMap[focusItemName] = focusFunction;  
 	}
 
-	public moveFocusForward(currentFocusItemName:string):void {
+	public moveFocusForward(currentFocusItemName:string, stepSize:number = 1):void {
 
 		// Get the index of this item from the focus items list
 		var index = _.indexOf(this.focusItemsList, currentFocusItemName);
 		if(index != -1) {
 
 			// Increment the index to get the next item in the list
-			index++;
+			index += stepSize;
 			// If we have reached the end of the list, then move back to the beginning
-			if(index == this.focusItemsList.length)
+			if(index >= this.focusItemsList.length)
 				index = 0;
 
 			// Get the name of the new focus item from the Array

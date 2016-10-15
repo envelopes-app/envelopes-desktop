@@ -18,7 +18,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { TransactionFlag, TransactionFrequency } from '../../../constants';
 import { EntityFactory } from '../../../persistence';
 import { IEntitiesCollection, ISimpleEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
-import { DialogUtilities, DateWithoutTime, EntitiesLookupHelper, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
+import { DialogUtilities, DateWithoutTime, FocusManager, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
 
 export interface PTransactionDialogProps { 
 
@@ -31,6 +31,14 @@ export interface PTransactionDialogProps {
 
 export interface PTransactionDialogState {
 	showModal: boolean;
+	action: string; // new-transaction/existing-transaction/existing-scheduled-transaction 
+	// If we are editing a transaction, it will be in the following two state variables
+	transaction?: budgetEntities.ITransaction;
+	subTransaction?: Array<budgetEntities.ISubTransaction>;
+	// If we are editing a scheduled transaction, it will be in the following two state variables
+	scheduledTransaction?: budgetEntities.IScheduledTransaction;
+	scheduledSubTransaction?: Array<budgetEntities.IScheduledSubTransaction>;
+	// This is for managing the focus in the dialog
 	activeField:string;
 	// Properties to save the values for the different fields. We wont create an actual transaction 
 	// or scheduled transaction object until the user presses save.
@@ -62,15 +70,39 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	private accountsList:Array<objects.IAccountObject>;
 	private payeesList:Array<objects.IPayeeObject>;
 	private categoriesList:Array<objects.ICategoryObject>;
+	private focusManager:FocusManager = new FocusManager(); 
 	 
 	constructor(props: any) {
         super(props);
-		this.show = this.show.bind(this);
+		this.showForNewTransaction = this.showForNewTransaction.bind(this);
+		this.showForExistingTransaction = this.showForExistingTransaction.bind(this);
+		this.showForExistingScheduledTransaction = this.showForExistingScheduledTransaction.bind(this);
 		this.save = this.save.bind(this);
 		this.close = this.close.bind(this);
 		this.onEntered = this.onEntered.bind(this);
 
 		this.setActiveField = this.setActiveField.bind(this);
+		this.setFocusOnAccountSelector = this.setFocusOnAccountSelector.bind(this);
+		this.setFocusOnDateSelector = this.setFocusOnDateSelector.bind(this);
+		this.setFocusOnPayeeSelector = this.setFocusOnPayeeSelector.bind(this);
+		this.setFocusOnCategorySelector = this.setFocusOnCategorySelector.bind(this);
+		this.setFocusOnMemoInput = this.setFocusOnMemoInput.bind(this);
+		this.setFocusOnOutflowInput = this.setFocusOnOutflowInput.bind(this);
+		this.setFocusOnInflowInput = this.setFocusOnInflowInput.bind(this);
+		this.setFocusOnSaveAndAddAnotherButton = this.setFocusOnSaveAndAddAnotherButton.bind(this);
+		this.setFocusOnSaveButton = this.setFocusOnSaveButton.bind(this);
+		this.setFocusOnCancelButton = this.setFocusOnCancelButton.bind(this);
+		this.handleTabPressedOnAccountSelector = this.handleTabPressedOnAccountSelector.bind(this);
+		this.handleTabPressedOnDateSelector = this.handleTabPressedOnDateSelector.bind(this);
+		this.handleTabPressedOnPayeeSelector = this.handleTabPressedOnPayeeSelector.bind(this);
+		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
+		this.handleTabPressedOnMemoInput = this.handleTabPressedOnMemoInput.bind(this);
+		this.handleTabPressedOnOutflowInput = this.handleTabPressedOnOutflowInput.bind(this);
+		this.handleTabPressedOnInflowInput = this.handleTabPressedOnInflowInput.bind(this);
+		this.handleKeyPressedOnSaveAndAddAnotherButton = this.handleKeyPressedOnSaveAndAddAnotherButton.bind(this);
+		this.handleKeyPressedOnSaveButton = this.handleKeyPressedOnSaveButton.bind(this);
+		this.handleKeyPressedOnCancelButton = this.handleKeyPressedOnCancelButton.bind(this);
+
 		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
 		this.setSelectedDate = this.setSelectedDate.bind(this);
 		this.setSelectedFrequency = this.setSelectedFrequency.bind(this);
@@ -80,63 +112,59 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setManuallyEnteredCategoryName = this.setManuallyEnteredCategoryName.bind(this);
 		this.setMemo = this.setMemo.bind(this);
 		this.setAmount = this.setAmount.bind(this);
-		this.handleTabPressedOnAccountSelector = this.handleTabPressedOnAccountSelector.bind(this);
-		this.handleTabPressedOnDateSelector = this.handleTabPressedOnDateSelector.bind(this);
-		this.handleTabPressedOnPayeeSelector = this.handleTabPressedOnPayeeSelector.bind(this);
-		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
-		this.handleTabPressedOnMemoInput = this.handleTabPressedOnMemoInput.bind(this);
-		this.handleTabPressedOnAmountInput = this.handleTabPressedOnAmountInput.bind(this);
-		this.handleKeyPressedOnSaveAndAddAnotherButton = this.handleKeyPressedOnSaveAndAddAnotherButton.bind(this);
-		this.handleKeyPressedOnSaveButton = this.handleKeyPressedOnSaveButton.bind(this);
-		this.handleKeyPressedOnCancelButton = this.handleKeyPressedOnCancelButton.bind(this);
 
-        this.state = { showModal: false, activeField: null };
+        this.state = { showModal: false, action: null, activeField: null };
+
+		this.focusManager.addFocusObject("account", this.setFocusOnAccountSelector);
+		this.focusManager.addFocusObject("date", this.setFocusOnDateSelector);
+		this.focusManager.addFocusObject("payee", this.setFocusOnPayeeSelector);
+		this.focusManager.addFocusObject("category", this.setFocusOnCategorySelector);
+		this.focusManager.addFocusObject("memo", this.setFocusOnMemoInput);
+		this.focusManager.addFocusObject("outflow", this.setFocusOnOutflowInput);
+		this.focusManager.addFocusObject("inflow", this.setFocusOnInflowInput);
+		this.focusManager.addFocusObject("saveAndAddAnother", this.setFocusOnSaveAndAddAnotherButton);
+		this.focusManager.addFocusObject("save", this.setFocusOnSaveButton);
+		this.focusManager.addFocusObject("cancel", this.setFocusOnCancelButton);
     }
 
-	public show(accountId:string = null):void {
+	public showForNewTransaction(accountId:string):void {
 
-		// if this dialog is being shown from the "All Accounts", we would get a null accountId.
-		// In that case, we need to choose a default account that would be set initially in the accounts field.
-		if(!accountId) {
-			var account = EntitiesLookupHelper.getDefaultAccountForAddTransactionDialog(this.props.entitiesCollection);
-			if(account)
-				accountId = account.entityId;
-		}
+		// Before updating the state, refresh the lists of accounts, payees and categories 
+		// for showing in the popovers of the transaction dialog.
+		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
+		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
+		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
 
-		if(accountId) {
-			// Before updating the state, refresh the lists of accounts, payees and categories 
-			// for showing in the popovers of the transaction dialog.
-			this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
-			this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
-			this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
-
-			// Update the state of this dialog to make it visible. 
-			// Also reset all the fields for storing the values for the new transaction 
-			// Note: We are not setting the activeField here, as it needs to be set in the "onEnter" handler
-			// for the dialog box. This is so that we show the required popover when the dialog box has settled
-			// into it's final position. 
-			this.setState({ 
-				showModal: true,
-				activeField: null,
-				entityId: null,
-				accountId: accountId,
-				payeeId: null,
-				manuallyEnteredPayeeName: null,
-				date: DateWithoutTime.createForToday(),
-				frequency: TransactionFrequency.Never,
-				subCategoryId: null,
-				manuallyEnteredCategoryName: null,
-				memo: "",
-				inflowAmount: 0,
-				outflowAmount: 0
-			});
-		}
-		else {
-			// If no account was passed, and neither were we able to select a default one, then 
-			// that means there are no usable accounts in the budget.
-			Logger.info("We cannot show the Transaction Dialog as there are no open accounts.");
-		}
+		// Update the state of this dialog to make it visible. 
+		// Also reset all the fields for storing the values for the new transaction 
+		// Note: We are not setting the activeField here, as it needs to be set in the "onEnter" handler
+		// for the dialog box. This is so that we show the required popover when the dialog box has settled
+		// into it's final position. 
+		this.setState({ 
+			showModal: true,
+			action: "new-transaction",
+			activeField: null,
+			entityId: null,
+			accountId: accountId,
+			payeeId: null,
+			manuallyEnteredPayeeName: null,
+			date: DateWithoutTime.createForToday(),
+			frequency: TransactionFrequency.Never,
+			subCategoryId: null,
+			manuallyEnteredCategoryName: null,
+			memo: "",
+			inflowAmount: 0,
+			outflowAmount: 0
+		});
 	};
+
+	public showForExistingTransaction(transaction:budgetEntities.ITransaction):void {
+
+	}
+
+	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction):void {
+
+	}
 
 	private setActiveField(activeField:string):void {
 
@@ -144,6 +172,151 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			var state = Object.assign({}, this.state) as PTransactionDialogState;
 			state.activeField = activeField;
 			this.setState(state);
+		}
+	}
+
+	private setFocusOnAccountSelector():void {
+		this.setActiveField("account");
+		this.accountSelector.setFocus();
+	}
+
+	private setFocusOnDateSelector():void {
+		this.setActiveField("date");
+		this.dateSelector.setFocus();
+	}
+
+	private setFocusOnPayeeSelector():void {
+		this.setActiveField("payee");
+		this.payeeSelector.setFocus();
+	}
+
+	private setFocusOnCategorySelector():void {
+		this.setActiveField("category");
+		this.categorySelector.setFocus();
+	}
+
+	private setFocusOnMemoInput():void {
+		this.setActiveField("memo");
+		this.memoInput.setFocus();
+	}
+
+	private setFocusOnOutflowInput():void {
+		this.setActiveField("outflow");
+		this.amountInput.setFocusOnOutflow();
+	}
+
+	private setFocusOnInflowInput():void {
+		this.setActiveField("inflow");
+		this.amountInput.setFocusOnInflow();
+	}
+
+	private setFocusOnSaveAndAddAnotherButton():void {
+		this.setActiveField("saveAndAddAnother");
+		(ReactDOM.findDOMNode(this.saveAndAddAnotherButton) as any).focus();
+	}
+
+	private setFocusOnSaveButton():void {
+		this.setActiveField("save");
+		(ReactDOM.findDOMNode(this.saveButton) as any).focus();
+	}
+
+	private setFocusOnCancelButton():void {
+		this.setActiveField("cancel");
+		(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
+	}
+
+	private handleTabPressedOnAccountSelector(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("account");
+		else
+			this.focusManager.moveFocusBackward("account");
+	}
+
+	private handleTabPressedOnDateSelector(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("date");
+		else
+			this.focusManager.moveFocusBackward("date");
+	}
+
+	private handleTabPressedOnPayeeSelector(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("payee");
+		else
+			this.focusManager.moveFocusBackward("payee");
+	}
+
+	private handleTabPressedOnCategorySelector(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("category");
+		else
+			this.focusManager.moveFocusBackward("category");
+	}
+
+	private handleTabPressedOnMemoInput(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed) {
+			// If the selected category is of inflow type, then move the focus by 2 steps to land on inflow
+			var imediateIncomeSubCategory = this.props.entitiesCollection.subCategories.getImmediateIncomeSubCategory();
+			if(this.state.subCategoryId && imediateIncomeSubCategory.entityId == this.state.subCategoryId)
+				this.focusManager.moveFocusForward("memo", 2); // move 2 steps 
+			else
+				this.focusManager.moveFocusForward("memo");
+		}
+		else
+			this.focusManager.moveFocusBackward("memo");
+	}
+
+	private handleTabPressedOnOutflowInput(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("outflow");
+		else
+			this.focusManager.moveFocusBackward("outflow");
+	}
+
+	private handleTabPressedOnInflowInput(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("inflow");
+		else
+			this.focusManager.moveFocusBackward("inflow");
+	}
+
+	private handleKeyPressedOnSaveAndAddAnotherButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("saveAndAddAnother");
+			else
+				this.focusManager.moveFocusBackward("saveAndAddAnother");
+		}
+	}
+
+	private handleKeyPressedOnSaveButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("save");
+			else
+				this.focusManager.moveFocusBackward("save");
+		}
+	}
+
+	private handleKeyPressedOnCancelButton(event:KeyboardEvent):void {
+
+		if(event.keyCode == 9) {
+			event.preventDefault();
+			if(!event.shiftKey)
+				this.focusManager.moveFocusForward("cancel");
+			else
+				this.focusManager.moveFocusBackward("cancel");
 		}
 	}
 
@@ -222,7 +395,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private close():void {
 		// Hide the modal, and set the account in state to null
-		this.setState({ showModal: false, activeField: null });
+		this.setState({ showModal: false, action: null, activeField: null });
 	};
 
 	private createNewTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
@@ -330,165 +503,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setState(state);
 	}
 
-	private handleTabPressedOnAccountSelector(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the date selector. 
-		if(!shiftKeyPressed) {
-			// Set the focus on the date selector and show the date selector popover
-			this.dateSelector.setFocus();
-			this.setActiveField("date");
-		}
-		else {
-			// Set focus on the "cancel" button
-			this.setActiveField(null);
-			(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
-		}
-	}
-
-	private handleTabPressedOnDateSelector(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the payee selector. 
-		// Otherwise move the focus back to the account selector. 
-		if(!shiftKeyPressed) {
-
-			// Set the focus on the payee selector and show the payee selector popover
-			this.setActiveField("payee");
-			this.payeeSelector.setFocus();
-		}
-		else {
-			// Set the focus on the account selector and show the account selector popover
-			this.setActiveField("account");
-			this.accountSelector.setFocus();
-		}
-	}
-
-	private handleTabPressedOnPayeeSelector(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the category selector. 
-		// Otherwise move the focus back to the date selector. 
-		if(!shiftKeyPressed) {
-			// Set the focus on the category selector and show the category selector popover
-			this.setActiveField("category");
-			this.categorySelector.setFocus();
-		}
-		else {
-			// Set the focus on the date selector and show the date selector popover
-			this.setActiveField("date");
-			this.dateSelector.setFocus();
-		}
-	}
-
-	private handleTabPressedOnCategorySelector(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the memo input. 
-		// Otherwise move the focus back to the payee selector. 
-		if(!shiftKeyPressed) {
-			// Set the focus on the memo field
-			this.setActiveField("memo");
-			this.memoInput.setFocus();
-		}
-		else {
-			// Set the focus on the payee selector and show the payee selector popover
-			this.setActiveField("payee");
-			this.payeeSelector.setFocus();
-		}
-	}
-
-	private handleTabPressedOnMemoInput(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the amount input. 
-		// Otherwise move the focus back to the category selector. 
-		if(!shiftKeyPressed) {
-			// Set focus on amount input
-			// If the selected category is of inflow type, then move the focus on to
-			// the inflow field. Otherwise move to the outflow field.
-			var imediateIncomeSubCategory = this.props.entitiesCollection.subCategories.getImmediateIncomeSubCategory();
-			if(this.state.subCategoryId && imediateIncomeSubCategory.entityId == this.state.subCategoryId) {
-				// Set the focus on the inflow field
-				this.setActiveField("inflow");
-				this.amountInput.setFocusOnInflow();
-			}
-			else {
-				// Set the focus on the outflow field
-				this.setActiveField("outflow");
-				this.amountInput.setFocusOnOutflow();
-			}
-		}
-		else {
-			// Set the focus on the category selector and show the category selector popover
-			this.setActiveField("category");
-			this.categorySelector.setFocus();
-		}
-	}
-
-	private handleTabPressedOnAmountInput(shiftKeyPressed:boolean):void {
-
-		// If shift key is not pressed then move the focus on to the save button. 
-		// Otherwise move the focus back to the amount input. 
-		if(!shiftKeyPressed) {
-			// Set focus on the "save and add another" button
-			this.setActiveField(null);
-			(ReactDOM.findDOMNode(this.saveAndAddAnotherButton) as any).focus();
-			event.preventDefault();
-		}
-		else {
-			// Set the focus on the memo field
-			this.setActiveField("memo");
-			this.memoInput.setFocus();
-		}
-	}
-
-	private handleKeyPressedOnSaveAndAddAnotherButton(event:KeyboardEvent):void {
-
-		if(event.keyCode == 9) {
-			event.preventDefault();
-			if(!event.shiftKey) {
-				// Set focus on the "save" button
-				this.setActiveField(null);
-				(ReactDOM.findDOMNode(this.saveButton) as any).focus();
-			}
-			else {
-				// Set the focus back on to the amount inflow field
-				this.setActiveField("inflow");
-				this.amountInput.setFocusOnInflow();
-			}
-		}
-	}
-
-	private handleKeyPressedOnSaveButton(event:KeyboardEvent):void {
-
-		if(event.keyCode == 9) {
-			event.preventDefault();
-			if(!event.shiftKey) {
-				// Set focus on the "cancel" button
-				this.setActiveField(null);
-				(ReactDOM.findDOMNode(this.cancelButton) as any).focus();
-			}
-			else {
-				// Set the focus back on to the "save and add another" button
-				this.setActiveField(null);
-				(ReactDOM.findDOMNode(this.saveAndAddAnotherButton) as any).focus();
-			}
-		}
-	}
-
-	private handleKeyPressedOnCancelButton(event:KeyboardEvent):void {
-
-		if(event.keyCode == 9) {
-			event.preventDefault();
-			if(!event.shiftKey) {
-				// Set the focus on the account selector and show the account selector popover
-				this.setActiveField("account");
-				this.accountSelector.setFocus();
-			}
-			else {
-				// Set the focus back on to the "save" button
-				this.setActiveField(null);
-				(ReactDOM.findDOMNode(this.saveButton) as any).focus();
-			}
-		}
-	}
-
 	public render() {
 
 		// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
@@ -529,7 +543,8 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 						<PAmountInput ref={(c) => this.amountInput = c} 
 							activeField={this.state.activeField} setActiveField={this.setActiveField}
 							inflowAmount={this.state.inflowAmount} outflowAmount={this.state.outflowAmount} 
-							setAmount={this.setAmount} handleTabPressed={this.handleTabPressedOnAmountInput} />
+							setAmount={this.setAmount} handleTabPressedOnOutflow={this.handleTabPressedOnOutflowInput} 
+							handleTabPressedOnInflow={this.handleTabPressedOnInflowInput} />
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
