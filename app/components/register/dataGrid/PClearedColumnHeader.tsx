@@ -11,16 +11,7 @@ export interface PClearedColumnHeaderProps {
 }
 
 const PClearedColumnHeaderStyle = {
-	display: 'block',
-	backgroundColor: 'white',
-	color: '#4C7079',
-	fontSize: '14px',
-	fontWeight: 'normal',
-	width: '100%',
-	height: '100%',
-	verticalAlign: 'middle',
-	paddingLeft: '5px',
-	paddingRight: '5px'
+	fontSize: '14px'
 }
 
 export class PClearedColumnHeader extends React.Component<PClearedColumnHeaderProps, {}> {
@@ -30,7 +21,7 @@ export class PClearedColumnHeader extends React.Component<PClearedColumnHeaderPr
 		var columnHeaderStyle = _.assign({}, PClearedColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
     	return (
-			<div style={columnHeaderStyle}>
+			<div className="register-header-cell" style={columnHeaderStyle}>
 				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true"/>
 			</div>
 		);

@@ -11,16 +11,7 @@ export interface PFlagColumnHeaderProps {
 }
 
 const PFlagColumnHeaderStyle = {
-	display: 'block',
-	backgroundColor: 'white',
-	color: '#4C7079',
-	fontSize: '14px',
-	fontWeight: 'normal',
-	width: '100%',
-	height: '100%',
-	verticalAlign: 'middle',
-	paddingLeft: '5px',
-	paddingRight: '5px'
+	fontSize: '14px'
 }
 
 export class PFlagColumnHeader extends React.Component<PFlagColumnHeaderProps, {}> {
@@ -30,7 +21,7 @@ export class PFlagColumnHeader extends React.Component<PFlagColumnHeaderProps, {
 		var columnHeaderStyle = _.assign({}, PFlagColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
     	return (
-			<div style={columnHeaderStyle}>
+			<div className="register-header-cell" style={columnHeaderStyle}>
 				<span className="glyphicon glyphicon-flag" aria-hidden="true"/>
 			</div>
 		);

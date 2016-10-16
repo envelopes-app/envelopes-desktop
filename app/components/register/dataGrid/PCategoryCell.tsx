@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
+import { Badge } from 'react-bootstrap';
 
 import { InternalCategories } from '../../../constants';
 import { ITransaction } from '../../../interfaces/budgetEntities';
@@ -20,6 +21,14 @@ export interface PCategoryCellProps {
 
 	editTransaction:(transactionId:string, focusOnField:string)=>void;
 	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
+}
+
+const WarningBadgeStyle = {
+	color: "#E59100",
+	backgroundColor: "#FFEAC7",
+	fontSize: "14px",
+	fontWeight: "normal",
+	fontStyle: "italic"
 }
 
 export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
@@ -67,8 +76,18 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 		}
 
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
-		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{categoryName}</div>
-		);
+
+		if(transaction.subCategoryId) {
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{categoryName}</div>
+			);
+		}
+		else {
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+					<Badge style={WarningBadgeStyle}>This needs a category</Badge>
+				</div>
+			);
+		}
   	}
 }

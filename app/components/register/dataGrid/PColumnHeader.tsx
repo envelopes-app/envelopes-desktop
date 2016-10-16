@@ -11,31 +11,17 @@ export interface PColumnHeaderProps {
 	columnKey?:string;
 }
 
-const PColumnHeaderStyle = {
-	display: 'block',
-	backgroundColor: 'white',
-	color: '#4C7079',
-	fontSize: '11px',
-	fontWeight: 'normal',
-	width: '100%',
-	height: '100%',
-	textAlign: 'left',
-	verticalAlign: 'middle',
-	paddingLeft: '5px',
-	paddingRight: '5px'
-}
-
 export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, PColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = _.assign({}, {lineHeight: this.props.height + 'px'});
 		// If we are currently sorting by this column, then set the fontWeight to bold 
 		if(this.props.showSortIcon && this.props.showSortIcon == true)
 			columnHeaderStyle["fontWeight"] = "bold";
 
     	return (
-			<div style={columnHeaderStyle}>
+			<div className="register-header-cell" style={columnHeaderStyle}>
 				{this.props.label}
 			</div>
 		);

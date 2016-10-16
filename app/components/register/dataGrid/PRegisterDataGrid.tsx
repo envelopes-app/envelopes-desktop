@@ -223,7 +223,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 			return (
 				<div style={RegisterDataGridContainerStyle} ref={(d)=> this.dataGridContainer = d}>
-					<Table headerHeight={25} rowHeight={25} rowsCount={transactions ? transactions.length : 0} width={this.state.componentWidth} height={this.state.componentHeight}>
+					<Table headerHeight={25} rowHeight={30} rowsCount={transactions ? transactions.length : 0} width={this.state.componentWidth} height={this.state.componentHeight}>
 						{tableColumns}
 					</Table>
 				</div>
