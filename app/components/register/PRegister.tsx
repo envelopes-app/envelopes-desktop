@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { PRegisterMessageBar } from './messageBar/PRegisterMessageBar';
 import { PRegisterHeader } from './header/PRegisterHeader';
 import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
@@ -206,6 +207,12 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
     	return (
 			<div style={RegisterContainerStyle}>
+
+				<PRegisterMessageBar 
+					accountId={currentAccountId} 
+					isAllAccounts={isAllAccounts} 
+					entitiesCollection={this.props.applicationState.entitiesCollection} />
+				
 				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} 
 					unclearedBalance={unclearedBalance} workingBalance={workingBalance} showReconcileButton={isAllAccounts == false} />
 
@@ -213,7 +220,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					registerState={registerState}
 					onAddTransactionSelected={this.onAddTransactionSelected} />
 
-				<PRegisterDataGrid isAllAccounts={isAllAccounts} accountId={currentAccountId} 
+				<PRegisterDataGrid 
+					accountId={currentAccountId} 
+					isAllAccounts={isAllAccounts} 
 					entitiesCollection={this.props.applicationState.entitiesCollection}
 					updateEntities={this.props.updateEntities} registerState={registerState}
 					selectTransaction={this.selectTransaction}
