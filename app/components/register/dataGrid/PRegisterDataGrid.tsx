@@ -5,12 +5,14 @@ import * as ReactDOM from 'react-dom';
 
 import { Table, Column, Cell } from 'fixed-data-table';
 
+import { PInfoColumnHeader } from './PInfoColumnHeader';
 import { PClearedColumnHeader } from './PClearedColumnHeader';
 import { PColumnHeader } from './PColumnHeader';
 import { PFlagColumnHeader } from './PFlagColumnHeader';
 import { PSelectionColumnHeader } from './PSelectionColumnHeader';
 
 import { PSelectionCell } from './PSelectionCell';
+import { PInfoCell } from './PInfoCell';
 import { PFlagCell } from './PFlagCell';
 import { PDateCell } from './PDateCell';
 import { PAccountCell } from './PAccountCell';
@@ -141,8 +143,16 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 						unselectTransaction={this.props.unselectTransaction} />}
 				/>,
 				<Column 
+					key="infoColumn"
+					width={25}
+					header={<PInfoColumnHeader />}
+					cell={<PInfoCell transactions={transactions}  
+						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+				/>,
+				<Column 
 					key="flagColumn"
-					width={30}
+					width={25}
 					header={<PFlagColumnHeader />}
 					cell={<PFlagCell transactions={transactions} updateFlagForTransaction={this.updateFlagForTransaction} 
 						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
@@ -174,7 +184,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				/>,
 				<Column 
 					key="categoryColumn"
-					width={300}
+					width={280}
 					header={<PColumnHeader label="CATEGORY" showSortIcon={false} />}
 					cell={<PCategoryCell masterCategories={masterCategoriesArray} subCategories={subCategoriesArray} 
 						transactions={transactions} selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
@@ -218,7 +228,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 			if(this.props.isAllAccounts == false) {
 				// Remove the accounts column from the array we created above
-				tableColumns.splice(2, 1); // Start at index 2, remove 1 item
+				tableColumns.splice(3, 1); // Start at index 3, remove 1 item
 			}
 
 			return (

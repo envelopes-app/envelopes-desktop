@@ -70,7 +70,7 @@ export class PRegisterMessageBar extends React.Component<PRegisterMessageBarProp
 				retVal.warningCount += account.warningCount;
 		}
 
-		var infoMessage, warningMessage, fullMessage:string;
+		var infoMessage, warningMessage:string;
 		if(retVal.infoCount > 0) {
 			if(retVal.infoCount == 1)
 				infoMessage = "1 transaction needs approval";
@@ -86,21 +86,19 @@ export class PRegisterMessageBar extends React.Component<PRegisterMessageBarProp
 		}
 
 		if(retVal.infoCount == 0 && retVal.warningCount == 0)
-			fullMessage = "";
+			retVal.message = "";
 		else if(retVal.infoCount > 0 && retVal.warningCount == 0)
-			fullMessage = infoMessage;
+			retVal.message = infoMessage + ".";
 		else if(retVal.infoCount == 0 && retVal.warningCount > 0)
-			fullMessage = warningMessage;
+			retVal.message = warningMessage + ".";
 		else 
-			fullMessage = `${infoMessage} and ${warningMessage}`;
+			retVal.message = `${infoMessage} and ${warningMessage}.`;
 		
-		retVal.message = fullMessage;
 		return retVal;
 	}
 
 	public render() {
 
-		debugger;
 		var infoAndWarningCounts = this.getInfoAndWarningCounts();
 		
 		if(infoAndWarningCounts.infoCount == 0 && infoAndWarningCounts.warningCount == 0) {
