@@ -30,13 +30,14 @@
 }
 
 .register-transaction-cell {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	color: #000000;
 	background-color: #FFFFFF;
 	font-size: 14px;
-	padding-top: 4px;
-	padding-bottom: 4px;
 	padding-left: 4px;
 	border-color: #d3d3d3;
 	border-style: solid;
@@ -44,37 +45,40 @@
 }
 
 .register-transaction-cell-selected {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	color: #FFFFFF;
 	background-color: #00596F;
 	font-size: 14px;
-	padding-top: 4px;
-	padding-bottom: 4px;
 	padding-left: 4px;
 }
 
 .register-scheduled-transaction-cell {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	color: #8e9fb0;
 	background-color: #E7EAEB;
 	font-size: 14px;
 	font-style: italic;
-	padding-top: 4px;
-	padding-bottom: 4px;
 	padding-left: 4px;
 }
 
 .register-unapproved-transaction-cell {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	color: #000000;
 	background-color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
-	padding-top: 4px;
-	padding-bottom: 4px;
 	padding-left: 4px;
 }
 

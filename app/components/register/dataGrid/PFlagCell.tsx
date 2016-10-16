@@ -35,7 +35,7 @@ const PopoverStyle = {
 
 export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 
-	private flagGlyph:HTMLSpanElement;
+	private flagGlyph:Glyphicon;
 
 	constructor(props: any) {
         super(props);
@@ -115,9 +115,9 @@ export class PFlagCell extends React.Component<PFlagCellProps, PFlagCellState> {
 		var selected:boolean = false;
 		var items = [
 			(
-				<span key="glyph" className="glyphicon glyphicon-flag" aria-hidden="true"
-					style={{cursor: 'pointer'}} onClick={this.onGlyphClick} 
-					ref={(s)=> this.flagGlyph = s}/>
+				<Glyphicon key="glyph" glyph="flag" style={{cursor: 'pointer'}} 
+					onClick={this.onGlyphClick} ref={(s)=> this.flagGlyph = s}
+				/>
 			)
 		];
 

@@ -67,7 +67,7 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 		return (
 			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-				<input type="checkbox" checked={selected} onChange={this.onChange} />
+				<input style={{marginTop:"0px"}} type="checkbox" checked={selected} onChange={this.onChange} />
 			</div>
 		);
   	}
