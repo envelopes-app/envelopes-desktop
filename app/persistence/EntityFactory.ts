@@ -1,7 +1,7 @@
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import { KeyGenerator } from '../utilities';
-import { AccountTypes, ClearedFlag, TransactionFlag, SubCategoryType } from '../constants';
+import { AccountTypes, ClearedFlag, TransactionFrequency, TransactionFlag, SubCategoryType } from '../constants';
 
 export class EntityFactory {
 
@@ -116,6 +116,29 @@ export class EntityFactory {
 		};
 
 		return subTransaction;
+	}
+
+	public static createNewScheduledTransaction(budgetId:string = null):budgetEntities.IScheduledTransaction {
+
+		var scheduledTransaction:budgetEntities.IScheduledTransaction = {
+			budgetId: budgetId,
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			accountId: null,
+			payeeId: null,
+			subCategoryId: null,
+			date: null,
+			frequency: TransactionFrequency.Once,
+			amount: 0,
+			memo: null,
+			flag: TransactionFlag.None,
+			transferAccountId: null,
+			upcomingInstances: null,
+			deviceKnowledge: 0,
+			deviceKnowledgeForCalculatedFields: 0
+		};
+
+		return scheduledTransaction;
 	}
 
 	public static createNewTransaction(budgetId:string = null):budgetEntities.ITransaction {

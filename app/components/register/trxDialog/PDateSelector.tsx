@@ -16,6 +16,8 @@ export interface PDateSelectorProps {
 	activeField:string;
 	selectedDate:DateWithoutTime;
 	selectedFrequency:string;
+	showFrequencyControl:boolean;
+	showFrequencyNeverOption:boolean;
 	setActiveField?:(activeField:string)=>void;
 	setSelectedDate:(date:DateWithoutTime)=>void;
 	setSelectedFrequency:(frequency:string)=>void;
@@ -135,7 +137,51 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 		}
 	}
 
+	private getPopoverChildren():Array<JSX.Element> {
+
+		var children = [
+			<DatePicker key="datepicker" inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} 
+				minDate={this.minDate.toUTCMoment()} maxDate={this.maxDate.toUTCMoment()}/>
+		];
+
+		if(this.props.showFrequencyControl) {
+
+			var frequencyOptions = [];
+			if(this.props.showFrequencyNeverOption)
+				frequencyOptions.push(<option key="never">{TransactionFrequency.Never}</option>);
+
+			frequencyOptions.push(<option key="once">{TransactionFrequency.Once}</option>);
+			frequencyOptions.push(<option key="daily">{TransactionFrequency.Daily}</option>);
+			frequencyOptions.push(<option key="weekly">{TransactionFrequency.Weekly}</option>);
+			frequencyOptions.push(<option key="everyotherweek">{TransactionFrequency.EveryOtherWeek}</option>);
+			frequencyOptions.push(<option key="twiceamonth">{TransactionFrequency.TwiceAMonth}</option>);
+			frequencyOptions.push(<option key="everyfourweeks">{TransactionFrequency.Every4Weeks}</option>);
+			frequencyOptions.push(<option key="monthly">{TransactionFrequency.Monthly}</option>);
+			frequencyOptions.push(<option key="everyothermonth">{TransactionFrequency.EveryOtherMonth}</option>);
+			frequencyOptions.push(<option key="everythreemonths">{TransactionFrequency.Every3Months}</option>);
+			frequencyOptions.push(<option key="everyfourmonths">{TransactionFrequency.Every4Months}</option>);
+			frequencyOptions.push(<option key="twiceayear">{TransactionFrequency.TwiceAYear}</option>);
+			frequencyOptions.push(<option key="yearly">{TransactionFrequency.Yearly}</option>);
+
+			children.push(
+				<div key="frequency" style={RepeatDivStyle}>
+					<label style={RepeatLabelStyle}>Repeat:</label>
+					<FormControl ref={(n) => this.frequencySelection = n } style={RepeatSelectStyle} 
+							componentClass="select" value={this.props.selectedFrequency} 
+							onChange={this.onFrequencyChange}>
+						{frequencyOptions}
+					</FormControl>
+				</div>
+			)			
+		}
+
+		return children;
+	}
+
 	public render() {
+
+		var popoverChildren = this.getPopoverChildren();
+
 		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
@@ -147,28 +193,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 						value={this.props.selectedDate.toISOString()} />
 					<Overlay show={this.props.activeField == "date"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
-							<DatePicker inline onChange={this.onDateSelectionChange} selected={this.props.selectedDate.toUTCMoment()} 
-								minDate={this.minDate.toUTCMoment()} maxDate={this.maxDate.toUTCMoment()}/>
-							<div style={RepeatDivStyle}>
-								<label style={RepeatLabelStyle}>Repeat:</label>
-								<FormControl ref={(n) => this.frequencySelection = n } style={RepeatSelectStyle} 
-										componentClass="select" value={this.props.selectedFrequency} 
-										onChange={this.onFrequencyChange}>
-									<option>{TransactionFrequency.Never}</option>
-									<option>{TransactionFrequency.Once}</option>
-									<option>{TransactionFrequency.Daily}</option>
-									<option>{TransactionFrequency.Weekly}</option>
-									<option>{TransactionFrequency.EveryOtherWeek}</option>
-									<option>{TransactionFrequency.TwiceAMonth}</option>
-									<option>{TransactionFrequency.Every4Weeks}</option>
-									<option>{TransactionFrequency.Monthly}</option>
-									<option>{TransactionFrequency.EveryOtherMonth}</option>
-									<option>{TransactionFrequency.Every3Months}</option>
-									<option>{TransactionFrequency.Every4Months}</option>
-									<option>{TransactionFrequency.TwiceAYear}</option>
-									<option>{TransactionFrequency.Yearly}</option>
-								</FormControl>
-							</div>
+							{popoverChildren}
 						</Popover>
 					</Overlay>
 				</Col>

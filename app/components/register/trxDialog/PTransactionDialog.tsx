@@ -196,7 +196,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			subCategoryId: transaction.subCategoryId,
 			manuallyEnteredCategoryName: null,
 			memo: transaction.memo,
-			outflowAmount: transaction.amount < 0 ? transaction.amount : 0,
+			outflowAmount: transaction.amount < 0 ? -transaction.amount : 0,
 			inflowAmount: transaction.amount > 0 ? transaction.amount : 0
 		});
 	}
@@ -363,17 +363,63 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 		var entitiesCollection:ISimpleEntitiesCollection = {};
 
-		if(this.state.frequency == TransactionFrequency.Never) {
-			// Create the transaction entity and add it to the entitiesCollection 
-			this.createNewTransaction(entitiesCollection);
+		if(this.state.action == "new-transaction") {
+
+			if(this.state.frequency == TransactionFrequency.Never) {
+				// Create the transaction entity and add it to the entitiesCollection 
+				this.createNewTransaction(entitiesCollection);
+			}
+			else {
+				// Create the scheduled transaction entity and add it to the entitiesCollection 
+				this.createNewScheduledTransaction(entitiesCollection);
+			}
 		}
-		else {
-			// Create the scheduled transaction entity and add it to the entitiesCollection 
-			this.createNewScheduledTransaction(entitiesCollection);
+		else if(this.state.action == "existing-transaction") {
+
+			// Get the transaction entity that we were editing and male a clone of it for updating
+			var transaction = Object.assign({}, this.state.transaction);
+			// Update the values in this transaction from the state
+			transaction.accountId = this.state.accountId;
+			transaction.date = this.state.date.getUTCTime();
+			transaction.payeeId = this.state.payeeId;
+			transaction.subCategoryId = this.state.subCategoryId;
+			transaction.memo = this.state.memo;
+
+			if(this.state.inflowAmount > 0)
+				transaction.amount = this.state.inflowAmount;
+			else if(this.state.outflowAmount > 0)
+				transaction.amount = -this.state.outflowAmount;
+			else
+				transaction.amount = 0;
+
+			// Add this transaction to the entities collection
+			entitiesCollection.transactions = [transaction];
+		}
+		else if(this.state.action == "existing-scheduled-transaction") {
+
+			// Get the transaction entity that we were editing and male a clone of it for updating
+			var scheduledTransaction = Object.assign({}, this.state.scheduledTransaction);
+			// Update the values in this scheduled transaction from the state
+			scheduledTransaction.accountId = this.state.accountId;
+			scheduledTransaction.date = this.state.date.getUTCTime();
+			scheduledTransaction.payeeId = this.state.payeeId;
+			scheduledTransaction.subCategoryId = this.state.subCategoryId;
+			scheduledTransaction.memo = this.state.memo;
+
+			if(this.state.inflowAmount > 0)
+				scheduledTransaction.amount = this.state.inflowAmount;
+			else if(this.state.outflowAmount > 0)
+				scheduledTransaction.amount = -this.state.outflowAmount;
+			else
+				scheduledTransaction.amount = 0;
+
+			// Add this scheduledtransaction to the entities collection
+			entitiesCollection.scheduledTransactions = [scheduledTransaction];
 		}
 
 		// Check if we need to create a new payee
 		if(!this.state.payeeId && this.state.manuallyEnteredPayeeName) {
+
 			// There is no selected pre-existing payee, but we do have a payee name manually
 			// entered by the user in the payee input box. 
 			// Create a new payee and save it in the entitiesCollection
@@ -460,6 +506,23 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private createNewScheduledTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
 
+		var scheduledTransaction = EntityFactory.createNewScheduledTransaction();
+		// Set the values in this transaction from the state
+		scheduledTransaction.accountId = this.state.accountId;
+		scheduledTransaction.date = this.state.date.getUTCTime();
+		scheduledTransaction.payeeId = this.state.payeeId;
+		scheduledTransaction.subCategoryId = this.state.subCategoryId;
+		scheduledTransaction.memo = this.state.memo;
+
+		if(this.state.inflowAmount > 0)
+			scheduledTransaction.amount = this.state.inflowAmount;
+		else if(this.state.outflowAmount > 0)
+			scheduledTransaction.amount = -this.state.outflowAmount;
+		else
+			scheduledTransaction.amount = 0;
+
+		// Add this transaction to the entities collection
+		entitiesCollection.scheduledTransactions = [scheduledTransaction];
 	}
 
 	private createNewPayee(entitiesCollection:ISimpleEntitiesCollection):void {
@@ -541,6 +604,8 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		});
 
 		var categoriesList = this.categoriesList;
+		var showFrequencyControl = (this.state.action == "new-transaction" || this.state.action == "existing-scheduled-transaction");
+		var showFrequencyNeverOption = (this.state.action == "new-transaction");
 
 		return (
 			<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
@@ -555,8 +620,11 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 							setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
 						<PDateSelector ref={(c) => this.dateSelector = c} 
 							activeField={this.state.activeField} setActiveField={this.setActiveField}
-							selectedDate={this.state.date} selectedFrequency={this.state.frequency} setSelectedDate={this.setSelectedDate} 
-							setSelectedFrequency={this.setSelectedFrequency} handleTabPressed={this.handleTabPressedOnDateSelector} />
+							selectedDate={this.state.date} selectedFrequency={this.state.frequency}
+							showFrequencyControl={showFrequencyControl}
+							showFrequencyNeverOption={showFrequencyNeverOption}
+							setSelectedDate={this.setSelectedDate} setSelectedFrequency={this.setSelectedFrequency} 
+							handleTabPressed={this.handleTabPressedOnDateSelector} />
 						<PPayeeSelector ref={(c) => this.payeeSelector = c}
 							activeField={this.state.activeField} setActiveField={this.setActiveField}
 							selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
