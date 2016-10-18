@@ -23,6 +23,7 @@ import { POutflowCell } from './POutflowCell';
 import { PInflowCell } from './PInflowCell';
 import { PClearedCell } from './PClearedCell';
 
+import { DateWithoutTime, RegisterTransactionObject } from '../../../utilities';
 import { ClearedFlag, TransactionFlag } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection, IRegisterState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -33,11 +34,13 @@ export interface PRegisterDataGridProps {
 	entitiesCollection:IEntitiesCollection;
 	registerState:IRegisterState;
 	// Local UI state updation functions
-	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
-	unselectTransaction:(transactionId:string)=>void;
-	editTrasaction:(transactionId:string, focusOnField:string)=>void;
+	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
+	unselectTransaction:(registerTransactionObject:RegisterTransactionObject)=>void;
+	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
 	selectAllTransactions:()=>void;
 	unselectAllTransactions:()=>void;
+	showFlagSelectionDialogForTransaction:(transactionId:string, element:HTMLElement)=>void;
+	showFlagSelectionDialogForScheduledTransaction:(scheduledTransactionId:string, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -52,13 +55,15 @@ const RegisterDataGridContainerStyle = {
 	backgroundColor: '#ffffff'
 }
 
+// TODO: Pass transaction objects to the grid instead of transaction entities.  
+// TODO: Handle data sorting etc.
+// TODO: Selection by mouse not working in selectors
 export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, PRegisterDataGridState> {
   
 	private dataGridContainer:HTMLDivElement;
 
 	constructor(props: any) {
         super(props);
-		this.updateFlagForTransaction = this.updateFlagForTransaction.bind(this);
 		this.updateClearedForTransaction = this.updateClearedForTransaction.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.state = { componentWidth:0, componentHeight:0 };
@@ -83,17 +88,6 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		state.componentWidth = div.clientWidth;
 		state.componentHeight = div.clientHeight;
 		this.setState(state);
-	}
-
-	private updateFlagForTransaction(transaction:budgetEntities.ITransaction, flag:string):void {
-
-		var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
-		updatedTransaction.flag = flag;
-		var changedEntities:ISimpleEntitiesCollection = {
-			transactions: [updatedTransaction]
-		};
-
-		this.props.updateEntities(changedEntities);
 	}
 
 	private updateClearedForTransaction(transaction:budgetEntities.ITransaction):void {
@@ -132,97 +126,155 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				transactions = transactionsArray.getTransactionsByAccountId(this.props.accountId);
 			}
 
+			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
 			var tableColumns = [
 				<Column 
 					key="selectionColumn"
 					width={25}
 					header={<PSelectionColumnHeader selectAllTransactions={this.props.selectAllTransactions} unselectAllTransactions={this.props.unselectAllTransactions} />}
-					cell={<PSelectionCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction}
-						unselectTransaction={this.props.unselectTransaction} />}
+					cell={
+						<PSelectionCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+							unselectTransaction={this.props.unselectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="infoColumn"
 					width={25}
 					header={<PInfoColumnHeader />}
-					cell={<PInfoCell transactions={transactions}  
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PInfoCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="flagColumn"
 					width={25}
 					header={<PFlagColumnHeader />}
-					cell={<PFlagCell transactions={transactions} updateFlagForTransaction={this.updateFlagForTransaction} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PFlagCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							showFlagSelectionDialogForTransaction={this.props.showFlagSelectionDialogForTransaction}
+							showFlagSelectionDialogForScheduledTransaction={this.props.showFlagSelectionDialogForScheduledTransaction}
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="accountColumn"
 					width={100}
 					header={<PColumnHeader label="ACCOUNT" showSortIcon={false} />}
-					cell={<PAccountCell accounts={accountsArray} transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PAccountCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="dateColumn"
 					width={90}
 					header={<PColumnHeader label="DATE" showSortIcon={true} />}
-					cell={<PDateCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PDateCell  
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="payeeColumn"
 					width={170}
 					header={<PColumnHeader label="PAYEE" showSortIcon={false} />}
-					cell={<PPayeeCell payees={payeesArray} transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PPayeeCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="categoryColumn"
 					width={280}
 					header={<PColumnHeader label="CATEGORY" showSortIcon={false} />}
-					cell={<PCategoryCell masterCategories={masterCategoriesArray} subCategories={subCategoriesArray} 
-						transactions={transactions} selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PCategoryCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="memoColumn"
 					width={170}
 					flexGrow={1}
 					header={<PColumnHeader label="MEMO" showSortIcon={false} />}
-					cell={<PMemoCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PMemoCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="outflowColumn"
 					width={100}
 					header={<PColumnHeader label="OUTFLOW" showSortIcon={false} />}
-					cell={<POutflowCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<POutflowCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="inflowColumn"
 					width={100}
 					header={<PColumnHeader label="INFLOW" showSortIcon={false} />}
-					cell={<PInflowCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction} />}
+					cell={
+						<PInflowCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
 				/>,
 				<Column 
 					key="clearedColumn"
 					width={30}
 					header={<PClearedColumnHeader />}
-					cell={<PClearedCell transactions={transactions} 
-						selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
-						editTransaction={this.props.editTrasaction} selectTransaction={this.props.selectTransaction}
-						updateClearedForTransaction={this.updateClearedForTransaction} />}
+					cell={
+						<PClearedCell 
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction}
+							updateClearedForTransaction={this.updateClearedForTransaction} 
+						/>
+					}
 				/>
 			];
 

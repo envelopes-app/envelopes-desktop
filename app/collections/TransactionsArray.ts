@@ -13,7 +13,7 @@ export class TransactionsArray extends EntitiesArray<ITransaction> {
 	constructor(initialValues:Array<ITransaction>) {
 		super(initialValues);
 
-		// Iterate through the passed array, and save references to the monthly subcategory budgets by month
+		// Iterate through the passed array, and save references to the transactions by month and accountId
 		_.forEach(initialValues, (transaction:ITransaction)=>{
 			var month = DateWithoutTime.createFromUTCTime(transaction.date).startOfMonth();
 			this.transactionsByMonthDictionary.setValue(month.toISOString(), transaction);

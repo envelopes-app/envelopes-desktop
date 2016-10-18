@@ -201,7 +201,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		});
 	}
 
-	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction):void {
+	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction, activeField:string):void {
 
 	}
 
@@ -357,6 +357,67 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			else
 				this.focusManager.moveFocusBackward("cancel");
 		}
+	}
+
+	private setSelectedAccountId(accountId:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.accountId = accountId;
+		this.setState(state);
+	}
+
+	private setSelectedDate(date:DateWithoutTime):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.date = date;
+		this.setState(state);
+	}
+
+	private setSelectedFrequency(frequency:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.frequency = frequency;
+		this.setState(state);
+	}
+
+	private setSelectedPayeeId(payeeId:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.payeeId = payeeId;
+		this.setState(state);
+	}
+
+	private setManuallyEnteredPayeeName(payeeName:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.manuallyEnteredPayeeName = payeeName;
+		// When the user starts manually typing in a payeeName, clear the payeeId value
+		state.payeeId = null;
+		this.setState(state);
+	}
+
+	private setSelectedCategoryId(subCategoryId:string, clearManuallyEnteredCategoryName:boolean = false):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.subCategoryId = subCategoryId;
+		if(clearManuallyEnteredCategoryName)
+			state.manuallyEnteredCategoryName = null;
+		this.setState(state);
+	}
+
+	private setManuallyEnteredCategoryName(categoryName:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.manuallyEnteredCategoryName = categoryName;
+		// When the user starts manually typing in a categoryName, clear the categoryId value
+		state.subCategoryId = null;
+		this.setState(state);
+	}
+
+	private setMemo(memo:string):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.memo = memo;
+		this.setState(state);
+	}
+
+	private setAmount(inflowAmount:number, outflowAmount:number):void {
+		var state = _.assign({}, this.state) as PTransactionDialogState;
+		state.inflowAmount = inflowAmount;
+		state.outflowAmount = outflowAmount;
+		this.setState(state);
 	}
 
 	private saveTransaction():void {
@@ -533,67 +594,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		payee.autoFillSubCategoryId = this.state.subCategoryId;
 		// Add this payee to the entities collection
 		entitiesCollection.payees = [payee];
-	}
-
-	private setSelectedAccountId(accountId:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.accountId = accountId;
-		this.setState(state);
-	}
-
-	private setSelectedDate(date:DateWithoutTime):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.date = date;
-		this.setState(state);
-	}
-
-	private setSelectedFrequency(frequency:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.frequency = frequency;
-		this.setState(state);
-	}
-
-	private setSelectedPayeeId(payeeId:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.payeeId = payeeId;
-		this.setState(state);
-	}
-
-	private setManuallyEnteredPayeeName(payeeName:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.manuallyEnteredPayeeName = payeeName;
-		// When the user starts manually typing in a payeeName, clear the payeeId value
-		state.payeeId = null;
-		this.setState(state);
-	}
-
-	private setSelectedCategoryId(subCategoryId:string, clearManuallyEnteredCategoryName:boolean = false):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.subCategoryId = subCategoryId;
-		if(clearManuallyEnteredCategoryName)
-			state.manuallyEnteredCategoryName = null;
-		this.setState(state);
-	}
-
-	private setManuallyEnteredCategoryName(categoryName:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.manuallyEnteredCategoryName = categoryName;
-		// When the user starts manually typing in a categoryName, clear the categoryId value
-		state.subCategoryId = null;
-		this.setState(state);
-	}
-
-	private setMemo(memo:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.memo = memo;
-		this.setState(state);
-	}
-
-	private setAmount(inflowAmount:number, outflowAmount:number):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
-		state.inflowAmount = inflowAmount;
-		state.outflowAmount = outflowAmount;
-		this.setState(state);
 	}
 
 	public render() {

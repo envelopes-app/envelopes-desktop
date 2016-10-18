@@ -2,21 +2,20 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { PayeesArray } from '../../../collections';
-import { ITransaction } from '../../../interfaces/budgetEntities';
-import { SimpleObjectMap } from '../../../utilities';
+
+import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObjectsArray } from '../../../collections';
 
 export interface PPayeeCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	payees:PayeesArray;
-	transactions:Array<ITransaction>;
+	registerTransactionObjects:RegisterTransactionObjectsArray;
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
 
-	editTransaction:(transactionId:string, focusOnField:string)=>void;
-	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
+	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
+	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
 }
 
 export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
@@ -29,37 +28,30 @@ export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
 
 	private onClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.selectTransaction(transaction.entityId, true);
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.editTransaction(transaction.entityId, "payee");
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.editTransaction(registerTransactionObject, "payee");
 	}
 
 	public render() {
 
-		var payeeName = "";
-		var selected:boolean = false;
-		if(this.props.transactions) {
+		if(!this.props.registerTransactionObjects)
+			return <div />;
 
-			// Get the transaction for the current row
-			var transaction = this.props.transactions[this.props.rowIndex];
-			if(transaction.payeeId) {
-				var payee = this.props.payees.getEntityById(transaction.payeeId);
-				payeeName = payee.name;
-			}
-			// Check whether this transaction is currently selected
-			var selectedValue = this.props.selectedTransactionsMap[transaction.entityId];
-			if(selectedValue && selectedValue == true)
-				selected = true;
-		}
-
+		// Get the transaction for the current row
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		// Check whether this is currently selected or not
+		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
+		// CSS class name based on whether we are selected or not
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
+
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{payeeName}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.payeeName}</div>
 		);
   	}
 }

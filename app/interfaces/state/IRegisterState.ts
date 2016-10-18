@@ -1,10 +1,26 @@
 import * as budgetEntities from '../budgetEntities';
-import { SimpleObjectMap } from '../../utilities';
+import { RegisterTransactionObjectsArray } from '../../collections';
+import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
 
 export interface IRegisterState {
+
+	accountId:string;
+	sortByColumn:string;
+	sortAscending:boolean;
+
+	// Variables representing filter dialog state
+	filterShowReconciledTransactions:boolean;
+	filterShowScheduledTransactions:boolean;
+	filterSelectedTimeFrame:string;
+	filterStartDate:DateWithoutTime;
+	filterEndDate:DateWithoutTime;
+
+	searchPhrase:string;
 
 	// Array of transaction ids that are selected
 	selectedTransactions:Array<string>;
 	// Contains true/false against transaction ids to indicate whether they are selected or not.
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
+	// Array of RegisterTransactionObjects that match the filter/search criteria
+	registerTransactionObjectsArray:RegisterTransactionObjectsArray;
 }

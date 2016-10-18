@@ -2,20 +2,21 @@
 
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
-import { ITransaction } from '../../../interfaces/budgetEntities';
-import { SimpleObjectMap } from '../../../utilities';
+
+import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObjectsArray } from '../../../collections';
 
 export interface PSelectionCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	transactions:Array<ITransaction>;
+	registerTransactionObjects:RegisterTransactionObjectsArray;
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
 
-	editTransaction:(transactionId:string, focusOnField:string)=>void;
-	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
-	unselectTransaction:(transactionId:string)=>void;
+	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
+	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
+	unselectTransaction:(registerTransactionObject:RegisterTransactionObject)=>void;
 }
 
 export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
@@ -24,51 +25,58 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
-		this.onChange = this.onChange.bind(this);
+		this.onSelectionChange = this.onSelectionChange.bind(this);
 	}
 
 	private onClick(event:MouseEvent):void {
 
 		if((event.target as HTMLElement).localName == "div") {
-			var transaction = this.props.transactions[this.props.rowIndex];
-			this.props.selectTransaction(transaction.entityId, true);
+			var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			this.props.selectTransaction(registerTransactionObject, true);
 		}
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.editTransaction(transaction.entityId, null);
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
-	private onChange(event:React.SyntheticEvent):void {
+	private onSelectionChange(event:React.SyntheticEvent):void {
 		
 		var element = event.target as HTMLInputElement;
-		var transaction = this.props.transactions[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
 		if(element.checked)
-			this.props.selectTransaction(transaction.entityId, false);
+			this.props.selectTransaction(registerTransactionObject, false);
 		else
-			this.props.unselectTransaction(transaction.entityId);
+			this.props.unselectTransaction(registerTransactionObject);
 	}
 
 	public render() {
 
-		var selected:boolean = false;
-		if(this.props.transactions) {
+		if(!this.props.registerTransactionObjects)
+			return <div />;
 
-			// Get the transaction for the current row
-			var transaction = this.props.transactions[this.props.rowIndex];
-			// Check whether this transaction is currently selected
-			var selectedValue = this.props.selectedTransactionsMap[transaction.entityId];
-			if(selectedValue && selectedValue == true)
-				selected = true;
-		}
-
+		// Get the transaction for the current row
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		// Check whether this is currently selected or not
+		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
+		// CSS class name based on whether we are selected or not
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
-		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-				<input style={{marginTop:"0px"}} type="checkbox" checked={selected} onChange={this.onChange} />
-			</div>
-		);
+
+		// We are only going to show the selection checkbox if this is a transaction or a scheduled 
+		// transaction. For subTransaction and scheduledSubTransaction, it would be empty.
+		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "scheduledTransaction") {
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+					<input style={{marginTop:"0px"}} type="checkbox" checked={selected} onChange={this.onSelectionChange} />
+				</div>
+			);
+		}
+		else {
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
+			);
+		}
   	}
 }

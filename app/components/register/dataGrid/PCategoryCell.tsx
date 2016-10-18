@@ -7,20 +7,19 @@ import { Badge } from 'react-bootstrap';
 import { InternalCategories } from '../../../constants';
 import { ITransaction } from '../../../interfaces/budgetEntities';
 import { MasterCategoriesArray, SubCategoriesArray } from '../../../collections';
-import { SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObjectsArray } from '../../../collections';
 
 export interface PCategoryCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	subCategories:SubCategoriesArray;
-	masterCategories:MasterCategoriesArray;
-	transactions:Array<ITransaction>;
+	registerTransactionObjects:RegisterTransactionObjectsArray;
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
 
-	editTransaction:(transactionId:string, focusOnField:string)=>void;
-	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
+	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
+	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
 }
 
 const WarningBadgeStyle = {
@@ -41,45 +40,28 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 
 	private onClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.selectTransaction(transaction.entityId, true);
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.editTransaction(transaction.entityId, "category");
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.editTransaction(registerTransactionObject, "category");
 	}
 
 	public render() {
 
-		var categoryName = "";
-		var selected:boolean = false;
-		if(this.props.transactions) {
-
-			// Get the transaction for the current row
-			var transaction = this.props.transactions[this.props.rowIndex];
-			if(transaction.subCategoryId) {
-				var subCategory = this.props.subCategories.getEntityById(transaction.subCategoryId);
-				if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory)
-					categoryName = "Inflow: To be Budgeted";
-				else {
-					var masterCategory = this.props.masterCategories.getEntityById(subCategory.masterCategoryId);
-					categoryName = `${masterCategory.name}: ${subCategory.name}`;
-				}
-			}
-
-			// Check whether this transaction is currently selected
-			var selectedValue = this.props.selectedTransactionsMap[transaction.entityId];
-			if(selectedValue && selectedValue == true)
-				selected = true;
-		}
-
+		// Get the transaction for the current row
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		// Check whether this is currently selected or not
+		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
+		// CSS class name based on whether we are selected or not
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 
-		if(transaction.subCategoryId) {
+		if(registerTransactionObject.refSubCategory) {
 			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{categoryName}</div>
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.categoryName}</div>
 			);
 		}
 		else {

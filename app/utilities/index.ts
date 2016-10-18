@@ -5,5 +5,6 @@ export { KeyGenerator } from './KeyGenerator';
 export { Logger, LogLevels } from './Logger';
 export { SerializationUtilities } from './SerializationUtilities';
 export { MathUtilities } from './MathUtilities';
+export { RegisterTransactionObject } from './RegisterTransactionObject';
 export { SimpleObjectMap } from './SimpleObjectMap';
 export { MultiDictionary } from './Collections';

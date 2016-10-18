@@ -3,20 +3,22 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
+
 import { ITransaction } from '../../../interfaces/budgetEntities';
 import { ClearedFlag } from '../../../constants';
-import { SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
+import { RegisterTransactionObjectsArray } from '../../../collections';
 
 export interface PClearedCellProps {
 	width?:number;
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
-	transactions:Array<ITransaction>;
+	registerTransactionObjects:RegisterTransactionObjectsArray;
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
 
-	editTransaction:(transactionId:string, focusOnField:string)=>void;
-	selectTransaction:(transactionId:string, unselectAllOthers:boolean)=>void;
+	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
+	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
 	updateClearedForTransaction:(transaction:ITransaction)=>void;
 }
 
@@ -35,49 +37,59 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 	private onClick(event:MouseEvent):void {
 
 		if((event.target as any).localName == "div") {
-			var transaction = this.props.transactions[this.props.rowIndex];
-			this.props.selectTransaction(transaction.entityId, true);
+			var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			this.props.selectTransaction(registerTransactionObject, true);
 		}
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.editTransaction(transaction.entityId, null);
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
 	private onGlyphClick(event:MouseEvent):void {
 
-		var transaction = this.props.transactions[this.props.rowIndex];
-		this.props.updateClearedForTransaction(transaction);
-		event.preventDefault();
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		if(registerTransactionObject.entityType == "transaction") {
+			this.props.updateClearedForTransaction(registerTransactionObject.refTransaction);
+			event.preventDefault();
+		}
 	}
 
 	public render() {
 
-		var glyphColor = UnclearedColor;
-		var selected:boolean = false;
-		if(this.props.transactions) {
+		if(!this.props.registerTransactionObjects)
+			return <div />;
 
-			// Get the transaction for the current row
-			var transaction = this.props.transactions[this.props.rowIndex];
-			if(transaction.cleared != ClearedFlag.Uncleared)
-				glyphColor = ClearedColor;
-
-			// Check whether this transaction is currently selected
-			var selectedValue = this.props.selectedTransactionsMap[transaction.entityId];
-			if(selectedValue && selectedValue == true)
-				selected = true;
-		}
-
-		var cellStyle = {color:glyphColor};
+		// Get the transaction for the current row
+		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		// Check whether this is currently selected or not
+		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
+		// CSS class name based on whether we are selected or not
 		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
 
-		return (
-			<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-				<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true" 
-					style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
-			</div>
-		);
+		// The cleared glyph is only to be shown for transactions or scheduledTransactions, and not for subTransactions and scheduledSubTransactions 
+		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "scheduledTransaction") {
+
+			var glyphColor = UnclearedColor;
+			if(registerTransactionObject.entityType == "transaction" && registerTransactionObject.refTransaction.cleared != ClearedFlag.Uncleared)
+				glyphColor = ClearedColor;
+
+			var cellStyle = {color:glyphColor};
+
+			return (
+				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+					<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true" 
+						style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
+				</div>
+			);
+		}
+		else {
+			// For subTransaction and scheduledSubTransactions, we just need to render an empty box in selected/un-selected state
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
+			);
+		} 
   	}
 }
