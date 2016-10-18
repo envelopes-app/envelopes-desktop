@@ -37,7 +37,7 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 		this.internalMap[entity.entityId] = entity;
 	}
 
-	protected removeEntityById(entityId:string):T {
+	public removeEntityById(entityId:string):T {
 		var removedEntities:T[];
 		// Check if we have an entity with the passed entityId. If we do, then remove that.
 		if(this.internalMap[entityId]) {

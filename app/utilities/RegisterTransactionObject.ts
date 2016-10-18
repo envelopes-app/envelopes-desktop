@@ -19,6 +19,8 @@ export class RegisterTransactionObject {
 	public refMasterCategory:budgetEntities.IMasterCategory;
 
 	public entityId:string;
+	public parentEntityId:string;
+	public isSplit:boolean;
 	public date:string;
 	public accountName:string;
 	public accountOnBudget:boolean;
@@ -46,6 +48,53 @@ export class RegisterTransactionObject {
 			selected = true;
 
 		return selected;
+	}
+
+	public checkIfObjectIsStale(entitiesCollection:IEntitiesCollection):boolean {
+
+		// We are basically going to compare the source entities of the registerTransactionObject with the entities
+		// in the entitiesCollection to see if anything has changed.
+		if(this.entityType == "transaction") {
+			var transaction1 = this.refTransaction;
+			var transaction2 = entitiesCollection.transactions.getEntityById(transaction1.entityId);
+			if(transaction1 !== transaction2)
+				return true;
+		}
+		else if(this.entityType == "subTransaction") {
+			var subTransaction1 = this.refSubTransaction;
+			var subTransaction2 = entitiesCollection.subTransactions.getEntityById(subTransaction1.entityId);
+			if(subTransaction1 !== subTransaction2)
+				return true;
+		}
+		else if(this.entityType == "scheduledTransaction") {
+			var scheduledTransaction1 = this.refScheduledTransaction;
+			var scheduledTransaction2 = entitiesCollection.scheduledTransactions.getEntityById(scheduledTransaction1.entityId);
+			if(scheduledTransaction1 !== scheduledTransaction2)
+				return true;
+		}
+		else if(this.entityType == "scheduledSubTransaction") {
+			var scheduledSubTransaction1 = this.refScheduledSubTransaction;
+			var scheduledSubTransaction2 = entitiesCollection.scheduledSubTransactions.getEntityById(scheduledSubTransaction1.entityId);
+			if(scheduledSubTransaction1 !== scheduledSubTransaction2)
+				return true;
+		}
+
+		var payee1 = this.refPayee;
+		var payee2 = payee1 ? entitiesCollection.payees.getEntityById(payee1.entityId) : null;
+		if(payee1 && payee2 && payee1 !== payee2)
+			return true;
+
+		var subCategory1 = this.refSubCategory;
+		var subCategory2 = subCategory1 ? entitiesCollection.subCategories.getEntityById(subCategory1.entityId) : null;
+		if(subCategory1 && subCategory2 && subCategory1 !== subCategory2)
+			return true;
+
+		var masterCategory1 = this.refMasterCategory;
+		var masterCategory2 = masterCategory1 ? entitiesCollection.masterCategories.getEntityById(masterCategory1.entityId) : null;
+		if(masterCategory1 && masterCategory2 && masterCategory1 !== masterCategory2)
+			return true;
+
+		return false;
 	}
 
 	// ****************************************************************************************************
@@ -79,13 +128,22 @@ export class RegisterTransactionObject {
 
 			registerTransactionObject.refSubCategory = subCategory;
 			registerTransactionObject.refMasterCategory = masterCategory;
-			if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory)
+			if(subCategory.internalName == InternalCategories.SplitSubCategory) {
+				registerTransactionObject.categoryName = "Split (Multiple Categories)...";
+				registerTransactionObject.isSplit = true;
+			}
+			else if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory) {
 				registerTransactionObject.categoryName = "Inflow: To be Budgeted";
-			else
+				registerTransactionObject.isSplit = false;
+			}
+			else {
 				registerTransactionObject.categoryName = `${masterCategory.name}: ${subCategory.name}`;
+				registerTransactionObject.isSplit = false;
+			}
 		}
 		else {
 			registerTransactionObject.categoryName = "";
+			registerTransactionObject.isSplit = false;
 		}
 
 		registerTransactionObject.memo = transaction.memo ? transaction.memo : "";
@@ -107,6 +165,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.refTransaction = transaction;
 		registerTransactionObject.refSubTransaction = subTransaction;
 		registerTransactionObject.entityId = subTransaction.entityId;
+		registerTransactionObject.parentEntityId = transaction.entityId;
 		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date).toISOString();
 		registerTransactionObject.accountName = account.accountName;
 		registerTransactionObject.accountOnBudget = (account.onBudget == 1);
@@ -132,6 +191,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.categoryName = "";
 		}
 
+		registerTransactionObject.isSplit = false;
 		registerTransactionObject.memo = subTransaction.memo ? subTransaction.memo : "";
 		registerTransactionObject.outflow = subTransaction.amount < 0 ? -subTransaction.amount : 0;
 		registerTransactionObject.inflow = subTransaction.amount > 0 ? subTransaction.amount : 0;
@@ -169,15 +229,25 @@ export class RegisterTransactionObject {
 			}
 
 			if(subCategory && masterCategory) {
+
 				registerTransactionObject.refSubCategory = subCategory;
 				registerTransactionObject.refMasterCategory = masterCategory;
-				if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory)
+				if(subCategory.internalName == InternalCategories.SplitSubCategory) {
+					registerTransactionObject.categoryName = "Split (Multiple Categories)...";
+					registerTransactionObject.isSplit = true;
+				}
+				else if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory) {
 					registerTransactionObject.categoryName = "Inflow: To be Budgeted";
-				else
+					registerTransactionObject.isSplit = false;
+				}
+				else {
 					registerTransactionObject.categoryName = `${masterCategory.name}: ${subCategory.name}`;
+					registerTransactionObject.isSplit = false;
+				}
 			}
 			else {
 				registerTransactionObject.categoryName = "";
+				registerTransactionObject.isSplit = false;
 			}
 
 			registerTransactionObject.memo = scheduledTransaction.memo ? scheduledTransaction.memo : "";
@@ -206,6 +276,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.refScheduledTransaction = scheduledTransaction;
 			registerTransactionObject.refScheduledSubTransaction = scheduledSubTransaction;
 			registerTransactionObject.entityId = scheduledSubTransaction.entityId;
+			registerTransactionObject.parentEntityId = scheduledTransaction.entityId;
 			registerTransactionObject.date = upcomingInstanceDates[0];
 			registerTransactionObject.accountName = account.accountName;
 			registerTransactionObject.accountOnBudget = (account.onBudget == 1);
@@ -231,6 +302,7 @@ export class RegisterTransactionObject {
 				registerTransactionObject.categoryName = "";
 			}
 
+			registerTransactionObject.isSplit = false;
 			registerTransactionObject.memo = scheduledSubTransaction.memo ? scheduledSubTransaction.memo : "";
 			registerTransactionObject.outflow = scheduledSubTransaction.amount < 0 ? -scheduledSubTransaction.amount : 0;
 			registerTransactionObject.inflow = scheduledSubTransaction.amount > 0 ? scheduledSubTransaction.amount : 0;

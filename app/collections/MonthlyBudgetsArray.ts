@@ -31,7 +31,7 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 		this.monthlyMap[monthlyBudget.month] = monthlyBudget;
 	}
 
-	protected removeEntityById(entityId:string):IMonthlyBudget {
+	public removeEntityById(entityId:string):IMonthlyBudget {
 		var removedMonthlyBudget = super.removeEntityById(entityId);
 		if(removedMonthlyBudget)
 			this.monthlyMap[removedMonthlyBudget.month] = null;

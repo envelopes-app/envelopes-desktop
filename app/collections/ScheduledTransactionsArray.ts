@@ -43,7 +43,7 @@ export class ScheduledTransactionsArray extends EntitiesArray<IScheduledTransact
 		this.transactionsByAccountIdDictionary.setValue(scheduledTransaction.accountId, scheduledTransaction);
 	}
 
-	protected removeEntityById(entityId:string):IScheduledTransaction {
+	public removeEntityById(entityId:string):IScheduledTransaction {
 		var removedTransaction = super.removeEntityById(entityId);
 		if(removedTransaction) {
 			this.transactionsByAccountIdDictionary.remove(removedTransaction.accountId, removedTransaction);

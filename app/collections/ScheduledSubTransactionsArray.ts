@@ -31,7 +31,7 @@ export class ScheduledSubTransactionsArray extends EntitiesArray<IScheduledSubTr
 		this.subTransactionsByTransactionsIdDictionary.setValue(subTransaction.scheduledTransactionId, subTransaction);
 	}
 
-	protected removeEntityById(entityId:string):IScheduledSubTransaction {
+	public removeEntityById(entityId:string):IScheduledSubTransaction {
 		var removedSubTransaction = super.removeEntityById(entityId);
 		if(removedSubTransaction) {
 

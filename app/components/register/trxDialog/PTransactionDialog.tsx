@@ -195,7 +195,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			frequency: TransactionFrequency.Never,
 			subCategoryId: transaction.subCategoryId,
 			manuallyEnteredCategoryName: null,
-			memo: transaction.memo,
+			memo: transaction.memo ? transaction.memo : "",
 			outflowAmount: transaction.amount < 0 ? -transaction.amount : 0,
 			inflowAmount: transaction.amount > 0 ? transaction.amount : 0
 		});
@@ -516,7 +516,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			state.frequency = TransactionFrequency.Never;
 			state.subCategoryId = null;
 			state.manuallyEnteredCategoryName = null;
-			state.memo = null;
+			state.memo = "";
 			state.inflowAmount = 0;
 			state.outflowAmount = 0;
 			this.setState(state);

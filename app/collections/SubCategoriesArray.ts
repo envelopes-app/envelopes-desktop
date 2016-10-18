@@ -161,7 +161,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 			this.hiddenSubCategories.push(subCategory);
 	}
 
-	protected removeEntityById(entityId:string):ISubCategory {
+	public removeEntityById(entityId:string):ISubCategory {
 		var removedSubCategory = super.removeEntityById(entityId);
 		if(removedSubCategory && removedSubCategory.isHidden == 1) {
 

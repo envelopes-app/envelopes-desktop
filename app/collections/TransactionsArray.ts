@@ -55,7 +55,7 @@ export class TransactionsArray extends EntitiesArray<ITransaction> {
 		this.transactionsByAccountIdDictionary.setValue(transaction.accountId, transaction);
 	}
 
-	protected removeEntityById(entityId:string):ITransaction {
+	public removeEntityById(entityId:string):ITransaction {
 		var removedTransaction = super.removeEntityById(entityId);
 		if(removedTransaction) {
 

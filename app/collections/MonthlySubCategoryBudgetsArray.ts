@@ -39,7 +39,7 @@ export class MonthlySubCategoryBudgetsArray extends EntitiesArray<IMonthlySubCat
 		this.multiDictionary.setValue(monthlySubCategoryBudget.month, monthlySubCategoryBudget);
 	}
 
-	protected removeEntityById(entityId:string):IMonthlySubCategoryBudget {
+	public removeEntityById(entityId:string):IMonthlySubCategoryBudget {
 		var removedMonthlyBudget = super.removeEntityById(entityId);
 		if(removedMonthlyBudget)
 			this.multiDictionary.remove(removedMonthlyBudget.month, removedMonthlyBudget);

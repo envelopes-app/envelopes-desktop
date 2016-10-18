@@ -53,11 +53,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.state = {registersState:{}};
     }
 
-	private getActiveAccount():string {
+	private getActiveAccount(applicationState:IApplicationState):string {
 
 		var activeAccount:string;
 		// Determine which account we are showing from the sidebar state
-		var sidebarState = this.props.applicationState.sidebarState;
+		var sidebarState = applicationState.sidebarState;
 		if(sidebarState.selectedTab == "All Accounts")
 			activeAccount = "All_Accounts";
 		else if(sidebarState.selectedTab == "Account")
@@ -95,11 +95,111 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		return registerState;
 	}
 
-	private updateRegisterStateForAccount(accountId:string, registerState:IRegisterState):void {
+	private updateRegisterState(registerState:IRegisterState):void {
 
 		var state = _.assign({}, this.state) as PRegisterState;
-		state.registersState[accountId] = registerState;
+		state.registersState[registerState.accountId] = registerState;
 		this.setState(state);
+	}
+
+	// *******************************************************************************************************
+	// Methods that update the local register state
+	// *******************************************************************************************************
+	private selectTransaction(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean):void {
+
+		var entityId:string;
+		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
+			entityId = registerTransactionObject.refTransaction.entityId;
+		else
+			entityId = registerTransactionObject.refScheduledTransaction.entityId;
+		
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		if(unselectAllOthers) {
+			registerState.selectedTransactions = [];
+			registerState.selectedTransactionsMap = {};
+		}
+
+		// Mark the passed transaction id as selected
+		registerState.selectedTransactions.push(entityId);
+		registerState.selectedTransactionsMap[entityId] = true;
+		this.updateRegisterState(registerState);
+	}
+
+	private unselectTransaction(registerTransactionObject:RegisterTransactionObject):void {
+
+		var entityId:string;
+		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
+			entityId = registerTransactionObject.refTransaction.entityId;
+		else
+			entityId = registerTransactionObject.refScheduledTransaction.entityId;
+
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+
+		// Mark the passed transaction id as unselected
+		var index = _.findIndex(registerState.selectedTransactions, {entityId: entityId});
+		registerState.selectedTransactions.splice(index, 1);
+		registerState.selectedTransactionsMap[entityId] = false;
+		this.updateRegisterState(registerState);
+	}
+
+	private selectAllTransactions():void {
+
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+
+		_.forEach(registerState.registerTransactionObjectsArray, (registerTransactionObject)=>{
+
+			var entityId:string;
+			// Select the entityId based on the type of the object
+			if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
+				entityId = registerTransactionObject.refTransaction.entityId;
+			else
+				entityId = registerTransactionObject.refScheduledTransaction.entityId;
+
+			// Mark it as selected, if it is not already selected.
+			if(registerState.selectedTransactionsMap[entityId] != true) {
+				registerState.selectedTransactions.push(entityId);
+				registerState.selectedTransactionsMap[entityId] = true;
+			}
+		});
+	}
+
+	private unselectAllTransactions():void {
+
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+
+		// Simply reset the variables that we were using to keep track of selection
+		registerState.selectedTransactions = [];
+		registerState.selectedTransactionsMap = {};
+	}
+
+	private editTransaction(registerTransactionObject:RegisterTransactionObject, focusOnField:string):void {
+
+		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
+			this.transactionDialog.showForExistingTransaction(registerTransactionObject.refTransaction, focusOnField);
+		else
+			this.transactionDialog.showForExistingScheduledTransaction(registerTransactionObject.refScheduledTransaction, focusOnField);
+	}
+
+	private showFlagSelectionDialogForTransaction(transactionId:string, element:HTMLElement):void {
+
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
+		var transaction = entitiesCollection.transactions.getEntityById(transactionId); 
+		this.flagSelectionDialog.showForTransaction(transaction, element);
+	}
+
+	private showFlagSelectionDialogForScheduledTransaction(scheduledTransactionId:string, element:HTMLElement):void {
+
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
+		var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(scheduledTransactionId); 
+		this.flagSelectionDialog.showForScheduledTransaction(scheduledTransaction, element);
 	}
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
@@ -141,17 +241,62 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			});
 		}
 
-		// Start iterating through transactions month by month, and convert them into 
-		// RegisterTransactionObjects for displaying in the register.
+		// Start iterating through transactions month by month, and convert them into RegisterTransactionObjects for displaying in the register.
 		var month = startDate.clone();
 		while(month.isBefore(endDate) || month.equalsByMonth(endDate)) {
 
 			var transactions = transactionsArray.getTransactionsByMonth(month);
 			_.forEach(transactions, (transaction)=>{
 
-				if(transaction.isTombstone == 0 && (isAllAccounts || transaction.accountId == accountId)) {
-					// Only include reconciled transactions if the filter criteria allows it
-					if(transaction.cleared != ClearedFlag.Reconciled || registerState.filterShowReconciledTransactions) {
+				// Does this transaction pass the criteria for inclusion into the registerTransactionObjectsArray
+				var shouldBeIncluded = (
+					transaction.isTombstone == 0 && 
+					(isAllAccounts || transaction.accountId == accountId) &&
+					(transaction.cleared != ClearedFlag.Reconciled || registerState.filterShowReconciledTransactions) 
+				);
+
+				// Do we already have a registerTransactionObject in our array against this transaction
+				let existingRegisterTransactionObject = registerTransactionObjectsArray.getEntityById(transaction.entityId);
+				
+				// If the transaction should not be included, and it is not already included in the 
+				// registerTransactionObjectsArray, then we don't need to do anything about it.
+				// We do however need to handle the rest of the three cases:-
+				// Case 1: It is already included, but should not be. Remove it.
+				// Case 2: It is not already included, but should be. Add it.
+				// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
+
+				if(existingRegisterTransactionObject && shouldBeIncluded == false) {
+
+					// Case 1: It is already included, but should not be. Remove it.
+					// Remove the registerTransactionObject corresponding to this transaction.
+					// This also removes registerTransactionObject for any subTransactions or 
+					// scheduledSubTransactions if this was a split
+					registerTransactionObjectsArray.removeEntityById(transaction.entityId);
+				}
+				else if(!existingRegisterTransactionObject && shouldBeIncluded == true) {
+
+					// Case 2: It is not already included, but should be. Add it.
+					let registerTransactionObject = RegisterTransactionObject.createFromTransaction(transaction, entitiesCollection);
+					registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
+
+					// If this is a split transaction, get the subtransactions for this transaction
+					// and create RegisterTransactionObjects for them as well.
+					if(transaction.subCategoryId == splitSubCategoryId) {
+
+						var subTransactions = subTransactionsArray.getSubTransactionsByTransactionId(transaction.entityId);
+						_.forEach(subTransactions, (subTransaction)=>{
+
+							let registerTransactionObject = RegisterTransactionObject.createFromSubTransaction(subTransaction, transaction, entitiesCollection);
+							registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
+						});
+					} 
+				}
+				else if(existingRegisterTransactionObject && shouldBeIncluded == true) {
+
+					// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
+					var isStale = existingRegisterTransactionObject.checkIfObjectIsStale( entitiesCollection );
+					// If it is stale, then create a new one and replace the old registerTransactionObject with the new one
+					if(isStale) {
 
 						let registerTransactionObject = RegisterTransactionObject.createFromTransaction(transaction, entitiesCollection);
 						registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
@@ -174,80 +319,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			// Move to the next month
 			month.addMonths(1);
 		}
-	}
-
-	// *******************************************************************************************************
-	// Methods that update the local register state
-	// *******************************************************************************************************
-	private selectTransaction(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean):void {
-
-		var entityId:string;
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			entityId = registerTransactionObject.refTransaction.entityId;
-		else
-			entityId = registerTransactionObject.refScheduledTransaction.entityId;
-		
-		// Get the register state for the active account
-		var activeAccount = this.getActiveAccount();
-		var registerState = this.getRegisterStateForAccount(activeAccount);
-		if(unselectAllOthers) {
-			registerState.selectedTransactions = [];
-			registerState.selectedTransactionsMap = {};
-		}
-
-		// Mark the passed transaction id as selected
-		registerState.selectedTransactions.push(entityId);
-		registerState.selectedTransactionsMap[entityId] = true;
-		this.updateRegisterStateForAccount(activeAccount, registerState);
-	}
-
-	private unselectTransaction(registerTransactionObject:RegisterTransactionObject):void {
-
-		var entityId:string;
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			entityId = registerTransactionObject.refTransaction.entityId;
-		else
-			entityId = registerTransactionObject.refScheduledTransaction.entityId;
-
-		// Get the register state for the active account
-		var activeAccount = this.getActiveAccount();
-		var registerState = this.getRegisterStateForAccount(activeAccount);
-
-		// Mark the passed transaction id as unselected
-		var index = _.findIndex(registerState.selectedTransactions, {entityId: entityId});
-		registerState.selectedTransactions.splice(index, 1);
-		registerState.selectedTransactionsMap[entityId] = false;
-		this.updateRegisterStateForAccount(activeAccount, registerState);
-	}
-
-	private selectAllTransactions():void {
-
-	}
-
-	private unselectAllTransactions():void {
-
-	}
-
-	private editTransaction(registerTransactionObject:RegisterTransactionObject, focusOnField:string):void {
-
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			this.transactionDialog.showForExistingTransaction(registerTransactionObject.refTransaction, focusOnField);
-		else
-			this.transactionDialog.showForExistingScheduledTransaction(registerTransactionObject.refScheduledTransaction, focusOnField);
-	}
-
-	private showFlagSelectionDialogForTransaction(transactionId:string, element:HTMLElement):void {
-
-		var entitiesCollection = this.props.applicationState.entitiesCollection;
-		var transaction = entitiesCollection.transactions.getEntityById(transactionId); 
-		this.flagSelectionDialog.showForTransaction(transaction, element);
-	}
-
-	private showFlagSelectionDialogForScheduledTransaction(scheduledTransactionId:string, element:HTMLElement):void {
-
-		var entitiesCollection = this.props.applicationState.entitiesCollection;
-		var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(scheduledTransactionId); 
-		this.flagSelectionDialog.showForScheduledTransaction(scheduledTransaction, element);
 	}
 
 	// *******************************************************************************************************
@@ -284,8 +355,15 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	// *******************************************************************************************************
 	// *******************************************************************************************************
-	public componentWillReceiveProps(nextProps:any):void {
+	public componentWillReceiveProps(nextProps:PRegisterProps):void {
 
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(nextProps.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		var registerTransactionObjectsArray = registerState.registerTransactionObjectsArray;
+		// Update the registerTransactionObjectsArray
+		this.updateRegisterTransactionObjectsArray(registerTransactionObjectsArray, registerState, nextProps.applicationState.entitiesCollection);
+		this.updateRegisterState(registerState);
 		debugger;
 	} 
 
@@ -356,13 +434,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					selectAllTransactions={this.selectAllTransactions}
 					unselectAllTransactions={this.unselectAllTransactions} 
 					showFlagSelectionDialogForTransaction={this.showFlagSelectionDialogForTransaction}
-					showFlagSelectionDialogForScheduledTransaction={this.showFlagSelectionDialogForScheduledTransaction}
-				/>
+					showFlagSelectionDialogForScheduledTransaction={this.showFlagSelectionDialogForScheduledTransaction} />
 
 				<PFlagSelectionDialog 
 					ref={(d)=> this.flagSelectionDialog = d }
 					updateEntities={this.props.updateEntities} />
-				/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }

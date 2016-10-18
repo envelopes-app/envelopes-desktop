@@ -31,10 +31,10 @@ export class SubTransactionsArray extends EntitiesArray<ISubTransaction> {
 		this.subTransactionsByTransactionsIdDictionary.setValue(subTransaction.transactionId, subTransaction);
 	}
 
-	protected removeEntityById(entityId:string):ISubTransaction {
+	public removeEntityById(entityId:string):ISubTransaction {
+
 		var removedSubTransaction = super.removeEntityById(entityId);
 		if(removedSubTransaction) {
-
 			this.subTransactionsByTransactionsIdDictionary.remove(removedSubTransaction.transactionId, removedSubTransaction);
 		}
 		

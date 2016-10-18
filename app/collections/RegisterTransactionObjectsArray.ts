@@ -3,87 +3,61 @@
 import * as _ from 'lodash';
 import { EntitiesArray } from './EntitiesArray'; 
 import { SimpleObjectMap, RegisterTransactionObject } from '../utilities';
+import { MultiDictionary } from '../utilities';
 
 export class RegisterTransactionObjectsArray extends EntitiesArray<RegisterTransactionObject> {
 
-/*
-	private selectedIds:Array<string> = [];
-	private selectionMap:SimpleObjectMap<boolean> = {};
+	private objectsByparentEntityIdDictionary = new MultiDictionary<string, RegisterTransactionObject>();
 
-	public isSelected(registerTransactionObject:RegisterTransactionObject):boolean {
+	constructor(initialValues:Array<RegisterTransactionObject> = null) {
+		super(initialValues);
 
-		var entityId:string;
-		// Select the entityId based on the type of the object
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			entityId = registerTransactionObject.refTransaction.entityId;
-		else
-			entityId = registerTransactionObject.refScheduledTransaction.entityId;
-
-		if(this.selectionMap[entityId] == true)
-			return true;
-		else
-			return false;
-	}
-
-	public selectTransaction(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean):void {
-		
-		if(unselectAllOthers) {
-			this.selectedIds = [];
-			this.selectionMap = {};
-		}
-
-		var entityId:string;
-		// Select the entityId based on the type of the object
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			entityId = registerTransactionObject.refTransaction.entityId;
-		else
-			entityId = registerTransactionObject.refScheduledTransaction.entityId;
-
-		// Only mark it as selected, if it is not already marked.
-		if(this.selectionMap[entityId] != true) {
-			this.selectedIds.push(entityId);
-			this.selectionMap[entityId] = true;
-		}
-	}
-
-	public unselectTransaction(registerTransactionObject:RegisterTransactionObject):void {
-
-		var entityId:string;
-		// Select the entityId based on the type of the object
-		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-			entityId = registerTransactionObject.refTransaction.entityId;
-		else
-			entityId = registerTransactionObject.refScheduledTransaction.entityId;
-
-		var index = _.findIndex(this.selectedIds, {entityId: entityId});
-		this.selectedIds.splice(index, 1);
-		this.selectionMap[entityId] = false;
-	}
-
-	public selectAllTransactions():void {
-
-		_.forEach(this, (registerTransactionObject)=>{
-
-			var entityId:string;
-			// Select the entityId based on the type of the object
-			if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")
-				entityId = registerTransactionObject.refTransaction.entityId;
-			else
-				entityId = registerTransactionObject.refScheduledTransaction.entityId;
-
-			// Mark it as selected, if it is not already selected.
-			if(this.selectionMap[entityId] != true) {
-				this.selectedIds.push(entityId);
-				this.selectionMap[entityId] = true;
+		// Iterate through the passed array, and save references to the registerTransactionObjects by parentEntityId
+		_.forEach(initialValues, (registerTransactionObject:RegisterTransactionObject)=>{
+			if(registerTransactionObject.entityType == "subTransaction" || registerTransactionObject.entityType == "scheduledSubTransaction") {
+				this.objectsByparentEntityIdDictionary.setValue(registerTransactionObject.parentEntityId, registerTransactionObject);
 			}
 		});
 	}
 
-	public unselectAllTransactions():void {
-
-		// Simply reset the variables that we were using to keep track of selection
-		this.selectedIds = [];
-		this.selectionMap = {};
+	public getObjectsByParentEntityId(parentEntityId:string):Array<RegisterTransactionObject> {
+		return this.objectsByparentEntityIdDictionary.getValue(parentEntityId);
 	}
-*/	
+
+	protected addEntity(registerTransactionObject:RegisterTransactionObject):void {
+
+		if(!this.objectsByparentEntityIdDictionary)
+			this.objectsByparentEntityIdDictionary = new MultiDictionary<string, RegisterTransactionObject>();
+
+		super.addEntity(registerTransactionObject);
+		if(registerTransactionObject.entityType == "subTransaction" || registerTransactionObject.entityType == "scheduledSubTransaction") {
+			this.objectsByparentEntityIdDictionary.setValue(registerTransactionObject.parentEntityId, registerTransactionObject);
+		}
+	}
+
+	public removeEntityById(entityId:string):RegisterTransactionObject {
+
+		var removedObject = super.removeEntityById(entityId);
+		if(removedObject) {
+			if(removedObject.entityType == "transaction" || removedObject.entityType == "scheduledTransaction") {
+
+				// We remove a registerTransactionObject that was representing a transaction or a scheduled transaction
+				// if it was a split, we need to make sure that we also remove it's children
+				if(removedObject.isSplit) {
+
+					var childRegisterTransactionObjects = this.getObjectsByParentEntityId(removedObject.entityId);
+					_.forEach(childRegisterTransactionObjects, (childRegisterTransactionObject)=>{
+						
+						var removedChildObject = super.removeEntityById(childRegisterTransactionObject.entityId);
+						this.objectsByparentEntityIdDictionary.remove(removedChildObject.parentEntityId, removedChildObject);
+					});
+				}
+			}
+			else if(removedObject.entityType == "subTransaction" || removedObject.entityType == "scheduledSubTransaction") {
+				this.objectsByparentEntityIdDictionary.remove(removedObject.parentEntityId, removedObject);
+			}
+		}
+		
+		return removedObject; 
+	}
 }
