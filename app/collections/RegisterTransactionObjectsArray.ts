@@ -20,6 +20,13 @@ export class RegisterTransactionObjectsArray extends EntitiesArray<RegisterTrans
 		});
 	}
 
+	protected getIndexForInsertion(registerTransactionObject:RegisterTransactionObject):number {
+
+		// We will get fancy later. For now, just hard code sorting by the date field.
+		var index = _.sortedLastIndexBy(this, registerTransactionObject, 'date');
+		return index;
+	}
+
 	public getObjectsByParentEntityId(parentEntityId:string):Array<RegisterTransactionObject> {
 		return this.objectsByparentEntityIdDictionary.getValue(parentEntityId);
 	}

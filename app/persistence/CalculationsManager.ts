@@ -97,7 +97,6 @@ export class CalculationsManager {
 							}
 							
 							return this.transactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, referenceData.queuedTransactionCalculationsStartMonth, cacheStartMonth, referenceData.runCalcsThroughMonth);
-							
 						})
 						.then((retVal:any)=>{
 

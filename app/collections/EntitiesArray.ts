@@ -32,8 +32,18 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 		return this as Array<T>;
 	}
 
+	protected getIndexForInsertion(entity:T):number {
+
+		// The default implementation here just returns the last index of the array
+		// so that items are inserted at the end. This can be overridden by derived
+		// classes to provide sorted insertion.
+		return this.length;
+	}
+
 	protected addEntity(entity:T):void {
-		this.push(entity);
+		var index = this.getIndexForInsertion(entity);
+		this.splice(index, 0, entity);
+		// this.push(entity);
 		this.internalMap[entity.entityId] = entity;
 	}
 

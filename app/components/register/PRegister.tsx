@@ -9,6 +9,7 @@ import { PRegisterHeader } from './header/PRegisterHeader';
 import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PFlagSelectionDialog } from './dialogs/PFlagSelectionDialog';
+import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { RegisterTransactionObjectsArray } from '../../collections'; 
@@ -38,6 +39,7 @@ const RegisterContainerStyle = {
 export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private flagSelectionDialog:PFlagSelectionDialog;
+	private filterTransactionsDialog:PFilterTransactionsDialog;
 	private transactionDialog:PTransactionDialog;
 
 	constructor(props: any) {
@@ -48,8 +50,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
 		this.editTransaction = this.editTransaction.bind(this);
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
-		this.showFlagSelectionDialogForTransaction = this.showFlagSelectionDialogForTransaction.bind(this);
-		this.showFlagSelectionDialogForScheduledTransaction = this.showFlagSelectionDialogForScheduledTransaction.bind(this);
+		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
+		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
 		this.state = {registersState:{}};
     }
 
@@ -188,18 +190,17 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			this.transactionDialog.showForExistingScheduledTransaction(registerTransactionObject.refScheduledTransaction, focusOnField);
 	}
 
-	private showFlagSelectionDialogForTransaction(transactionId:string, element:HTMLElement):void {
+	private showFlagSelectionDialog(registerTransactionObject:RegisterTransactionObject, element:HTMLElement):void {
 
-		var entitiesCollection = this.props.applicationState.entitiesCollection;
-		var transaction = entitiesCollection.transactions.getEntityById(transactionId); 
-		this.flagSelectionDialog.showForTransaction(transaction, element);
+		if(registerTransactionObject.entityType == "transaction")
+			this.flagSelectionDialog.showForTransaction(registerTransactionObject.refTransaction, element);
+		else if(registerTransactionObject.entityType == "scheduledTransaction")
+			this.flagSelectionDialog.showForScheduledTransaction(registerTransactionObject.refScheduledTransaction, element);
 	}
 
-	private showFlagSelectionDialogForScheduledTransaction(scheduledTransactionId:string, element:HTMLElement):void {
+	private showFilterTransactionsDialog(element:HTMLElement):void {
 
-		var entitiesCollection = this.props.applicationState.entitiesCollection;
-		var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(scheduledTransactionId); 
-		this.flagSelectionDialog.showForScheduledTransaction(scheduledTransaction, element);
+		this.filterTransactionsDialog.show(element);
 	}
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
@@ -414,14 +415,23 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				<PRegisterMessageBar 
 					accountId={currentAccountId} 
 					isAllAccounts={isAllAccounts} 
-					entitiesCollection={this.props.applicationState.entitiesCollection} />
+					entitiesCollection={this.props.applicationState.entitiesCollection} 
+				/>
 				
-				<PRegisterHeader accountName={accountName} clearedBalance={clearedBalance} 
-					unclearedBalance={unclearedBalance} workingBalance={workingBalance} showReconcileButton={isAllAccounts == false} />
+				<PRegisterHeader 
+					accountName={accountName} 
+					clearedBalance={clearedBalance} 
+					unclearedBalance={unclearedBalance} 
+					workingBalance={workingBalance} 
+					showReconcileButton={isAllAccounts == false} 
+				/>
 
 				<PRegisterToolbar 
 					registerState={registerState}
-					onAddTransactionSelected={this.onAddTransactionSelected} />
+					onAddTransactionSelected={this.onAddTransactionSelected}
+					showEditMenu={null}
+					showFilterDialog={this.showFilterTransactionsDialog}
+				/>
 
 				<PRegisterDataGrid 
 					accountId={currentAccountId} 
@@ -433,17 +443,28 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					editTransaction={this.editTransaction}
 					selectAllTransactions={this.selectAllTransactions}
 					unselectAllTransactions={this.unselectAllTransactions} 
-					showFlagSelectionDialogForTransaction={this.showFlagSelectionDialogForTransaction}
-					showFlagSelectionDialogForScheduledTransaction={this.showFlagSelectionDialogForScheduledTransaction} />
+					showFlagSelectionDialog={this.showFlagSelectionDialog}
+				 />
 
 				<PFlagSelectionDialog 
 					ref={(d)=> this.flagSelectionDialog = d }
-					updateEntities={this.props.updateEntities} />
+					updateEntities={this.props.updateEntities} 
+				/>
+
+				<PFlagSelectionDialog 
+					ref={(d)=> this.flagSelectionDialog = d }
+					updateEntities={this.props.updateEntities} 
+				/>
+
+				<PFilterTransactionsDialog 
+					ref={(d)=> this.filterTransactionsDialog = d }
+				/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
 					entitiesCollection={entitiesCollection}
-					updateEntities={this.props.updateEntities} />
+					updateEntities={this.props.updateEntities} 
+				/>
 			</div>
 		);
   	}

@@ -7,11 +7,7 @@
 	margin-top: -250px;
 	margin-left: -200px;
 }
-/*
-	display: 'block',
-	paddingLeft: '5px',
-	paddingRight: '5px'
-*/
+
 .register-header-cell {
 	display: flex;
 	justify-content: flex-start;
@@ -296,4 +292,37 @@
 	border: none;
 	border-radius: 4px;
 	height: 30px;
+}
+
+/* ******************************************************************************* */
+/* Styles for the preset buttons in the filter transactions dialog */
+/* ******************************************************************************* */
+.filterdialog-preset-button {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #009cc2;
+	background-color: #ffffff;
+	border-color: #ffffff;	
+	border-style: solid;
+	border-radius: 20px;
+}
+
+.filterdialog-preset-button:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #009cc2;	
+	border-color: #009cc2;	
+	border-style: solid;
+	border-radius: 20px;
+}
+
+.filterdialog-preset-button-selected {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #009cc2;	
+	border-color: #009cc2;	
+	border-style: solid;
+	border-radius: 20px;
 }

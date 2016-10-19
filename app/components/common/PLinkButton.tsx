@@ -2,12 +2,14 @@
 
 import * as _ from 'lodash';
 import * as React from 'react';
+import { Glyphicon } from 'react-bootstrap';
 
 export interface PLinkButtonProps {
 	text: string;
 	glyphName?: string;
 	enabled?:boolean;
 	clickHandler?: (event:React.MouseEvent)=>void;
+	showDropDown?:boolean;
 }
 
 const PLinkButtonCommonStyle = {
@@ -25,7 +27,7 @@ const PLinkButtonHoverStyle = {
 }
 
 const PLinkButtonTextStyle = {
-	fontSize: '13px',
+	fontSize: '14px',
 	fontWeight: 'normal'
 }
 
@@ -67,20 +69,31 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 		else
 			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDefaultStyle);
 
+		var buttonContents:Array<JSX.Element> = [];
+
+		// Add the glyph before the text if one is specified
 		if(this.props.glyphName) {
-			return (
-				<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-					<span className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
-					<text style={PLinkButtonTextStyle}>&nbsp;{this.props.text}</text>
-				</div>
+			buttonContents.push(
+				<span key="button-glyph" className={"glyphicon " + this.props.glyphName} aria-hidden="true"></span>
 			);
 		}
-		else {
-			return (
-				<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-					<text style={PLinkButtonTextStyle}>&nbsp;{this.props.text}</text>
-				</div>
+
+		// Add the button text
+		buttonContents.push(
+			<text key="button-text" style={PLinkButtonTextStyle}>&nbsp;{this.props.text}&nbsp;</text>
+		);
+
+		// Add the dropdown glyph at the end 
+		if(this.props.showDropDown == true) {
+			buttonContents.push(
+				<span key="dropdown-glyph" className="glyphicon glyphicon-triangle-bottom" style={{fontSize:"10px"}} aria-hidden="true"></span>
 			);
 		}
+
+		return (
+			<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+				{buttonContents}
+			</div>
+		);
   	}
 }

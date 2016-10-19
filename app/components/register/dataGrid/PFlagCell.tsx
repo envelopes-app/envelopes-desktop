@@ -22,8 +22,7 @@ export interface PFlagCellProps {
 
 	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
 	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
-	showFlagSelectionDialogForTransaction:(transactionId:string, element:HTMLElement)=>void;
-	showFlagSelectionDialogForScheduledTransaction:(scheduledTransactionId:string, element:HTMLElement)=>void;
+	showFlagSelectionDialog:(registerTransactionObject:RegisterTransactionObject, element:HTMLElement)=>void;
 }
 
 export class PFlagCell extends React.Component<PFlagCellProps, {}> {
@@ -56,10 +55,7 @@ export class PFlagCell extends React.Component<PFlagCellProps, {}> {
 	private onGlyphClick():void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
-		if(registerTransactionObject.entityType == "transaction")
-			this.props.showFlagSelectionDialogForTransaction(registerTransactionObject.refTransaction.entityId, this.flagContainer);
-		else if(registerTransactionObject.entityType == "scheduledTransaction")
-			this.props.showFlagSelectionDialogForScheduledTransaction(registerTransactionObject.refScheduledTransaction.entityId, this.flagContainer);
+		this.props.showFlagSelectionDialog(registerTransactionObject, this.flagContainer);
 	}
 
 	public render() {

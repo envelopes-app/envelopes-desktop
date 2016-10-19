@@ -39,8 +39,7 @@ export interface PRegisterDataGridProps {
 	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
 	selectAllTransactions:()=>void;
 	unselectAllTransactions:()=>void;
-	showFlagSelectionDialogForTransaction:(transactionId:string, element:HTMLElement)=>void;
-	showFlagSelectionDialogForScheduledTransaction:(scheduledTransactionId:string, element:HTMLElement)=>void;
+	showFlagSelectionDialog:(registerTransactionObject:RegisterTransactionObject, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -152,8 +151,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 							registerTransactionObjects={registerTransactionObjects}
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
-							showFlagSelectionDialogForTransaction={this.props.showFlagSelectionDialogForTransaction}
-							showFlagSelectionDialogForScheduledTransaction={this.props.showFlagSelectionDialogForScheduledTransaction}
+							showFlagSelectionDialog={this.props.showFlagSelectionDialog}
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
