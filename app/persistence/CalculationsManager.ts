@@ -80,6 +80,16 @@ export class CalculationsManager {
 
 							referenceData = data;
 							
+							// Scheduled Transaction Calculations
+							if (referenceData.queuedScheduledTransactionCalculationIds) {
+								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
+								return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, DateWithoutTime.createForToday(), referenceData.queuedScheduledTransactionCalculationIds);
+							} 
+							else
+								return Promise.resolve(null);
+						})
+						.then((result:IScheduledTransactionCalculationsResult)=>{
+							
 							// Transaction Calculations
 							var cacheStartMonth = DateWithoutTime.earliest(referenceData.queuedAccountCalculationsStartMonth, referenceData.queuedSubCategoryCalculationsStartMonth, referenceData.queuedTransactionCalculationsStartMonth);
 							if (cacheStartMonth == null) {
@@ -115,19 +125,6 @@ export class CalculationsManager {
 							if (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.queuedSubCategoryCalculationIds) {
 								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
 								return this.monthlyCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, startMonth, referenceData.runCalcsThroughMonth);
-							} 
-							else
-								return Promise.resolve(true);
-						})
-						.then((retVal:boolean)=>{
-							
-							// Scheduled Transaction Calculations
-							if (referenceData.queuedScheduledTransactionCalculationIds) {
-								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
-								return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, DateWithoutTime.createForToday(), referenceData.queuedScheduledTransactionCalculationIds)
-									.then((result:IScheduledTransactionCalculationsResult)=>{
-										return true;
-									});
 							} 
 							else
 								return Promise.resolve(true);
