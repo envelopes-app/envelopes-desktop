@@ -114,18 +114,6 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		var showDataGrid:boolean = this.state.componentWidth > 0 && this.state.componentHeight > 0;
 		if(showDataGrid) {
 
-			var accountsArray = this.props.entitiesCollection.accounts;
-			var subCategoriesArray = this.props.entitiesCollection.subCategories;
-			var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
-			var payeesArray = this.props.entitiesCollection.payees;
-			var transactionsArray = this.props.entitiesCollection.transactions;
-			var transactions = transactionsArray ? transactionsArray.getAllItems() : null;
-
-			// If this is not the "All Accounts" then we need to filter the transactions collection
-			if(transactions && !this.props.isAllAccounts && this.props.accountId) {
-				transactions = transactionsArray.getTransactionsByAccountId(this.props.accountId);
-			}
-
 			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
 			var tableColumns = [
 				<Column 
@@ -285,7 +273,9 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 			return (
 				<div style={RegisterDataGridContainerStyle} ref={(d)=> this.dataGridContainer = d}>
-					<Table headerHeight={25} rowHeight={30} rowsCount={transactions ? transactions.length : 0} width={this.state.componentWidth} height={this.state.componentHeight}>
+					<Table headerHeight={25} rowHeight={30} 
+						rowsCount={registerTransactionObjects ? registerTransactionObjects.length : 0} 
+						width={this.state.componentWidth} height={this.state.componentHeight}>
 						{tableColumns}
 					</Table>
 				</div>

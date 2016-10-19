@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { DateWithoutTime } from '../utilities'; 
 import { IDatabaseQuery } from '../interfaces/persistence';
-import { IReferenceDataForCalculations, ICalculationQueueSummary } from '../interfaces/calculations';
+import { IReferenceDataForCalculations, IScheduledTransactionCalculationsResult, ICalculationQueueSummary } from '../interfaces/calculations';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { AccountCalculations, TransactionCalculations, SubCategoryCalculations, MonthlyCalculations, ScheduledTransactionCalculations } from './calculations';
@@ -115,6 +115,19 @@ export class CalculationsManager {
 							if (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.queuedSubCategoryCalculationIds) {
 								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
 								return this.monthlyCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, startMonth, referenceData.runCalcsThroughMonth);
+							} 
+							else
+								return Promise.resolve(true);
+						})
+						.then((retVal:boolean)=>{
+							
+							// Scheduled Transaction Calculations
+							if (referenceData.queuedScheduledTransactionCalculationIds) {
+								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
+								return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, DateWithoutTime.createForToday(), referenceData.queuedScheduledTransactionCalculationIds)
+									.then((result:IScheduledTransactionCalculationsResult)=>{
+										return true;
+									});
 							} 
 							else
 								return Promise.resolve(true);

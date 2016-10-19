@@ -54,6 +54,9 @@
 	background-color: #00596F;
 	font-size: 14px;
 	padding-left: 4px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	border-width: 0 0 1px 0;
 }
 
 .register-scheduled-transaction-cell {
@@ -67,6 +70,9 @@
 	font-size: 14px;
 	font-style: italic;
 	padding-left: 4px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	border-width: 0 0 1px 0;
 }
 
 .register-unapproved-transaction-cell {
@@ -80,6 +86,25 @@
 	font-size: 14px;
 	font-weight: bold;
 	padding-left: 4px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	border-width: 0 0 1px 0;
+}
+
+.register-unapproved-transaction-cell-selected {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	color: #FFFFFF;
+	background-color: #00596F;
+	font-size: 14px;
+	font-weight: bold;
+	padding-left: 4px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	border-width: 0 0 1px 0;
 }
 
 /* ******************************************************************************* */

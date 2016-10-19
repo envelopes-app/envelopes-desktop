@@ -64,10 +64,7 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
-		// Check whether this is currently selected or not
-		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
-		// CSS class name based on whether we are selected or not
-		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
+		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		// The cleared glyph is only to be shown for transactions or scheduledTransactions, and not for subTransactions and scheduledSubTransactions 
 		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "scheduledTransaction") {

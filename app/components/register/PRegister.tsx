@@ -204,6 +204,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
 
+		debugger;
 		var accountId = registerState.accountId;
 		var isAllAccounts = (registerState.accountId == "All_Accounts");
 		var accountsArray = entitiesCollection.accounts;
@@ -364,7 +365,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		// Update the registerTransactionObjectsArray
 		this.updateRegisterTransactionObjectsArray(registerTransactionObjectsArray, registerState, nextProps.applicationState.entitiesCollection);
 		this.updateRegisterState(registerState);
-		debugger;
 	} 
 
 	public render() {

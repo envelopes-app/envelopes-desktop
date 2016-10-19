@@ -45,10 +45,7 @@ export class PDateCell extends React.Component<PDateCellProps, {}> {
 
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
-		// Check whether this is currently selected or not
-		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
-		// CSS class name based on whether we are selected or not
-		var className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
+		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		// We are only going to show the date if this is a transaction or a scheduled 
 		// transaction. For subTransaction and scheduledSubTransaction, it would be empty.

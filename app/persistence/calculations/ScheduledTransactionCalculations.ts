@@ -78,7 +78,7 @@ export class ScheduledTransactionCalculations {
 	}
 
 	protected saveData(budgetId:string,
-						updatedEntities:ISimpleEntitiesCollection,
+						updatedEntities:IScheduledTransactionCalculationsResult,
 						upcomingTransactionValues:Array<{monthlySubCategoryBudgetId:string, upcomingTransactions:number, upcomingTransactionsCount:number}>,
 						budgetKnowledge:BudgetKnowledge,
 						createUndoChangeSet:boolean):Promise<number> {
@@ -322,9 +322,9 @@ export class ScheduledTransactionCalculations {
 
 		var calculationResults:IScheduledTransactionCalculationsResult = {
 			database_rows_affected: 0,
-			be_transactions: [],
-			be_subtransactions: [],
-			be_scheduled_transactions: []
+			transactions: [],
+			subTransactions: [],
+			scheduledTransactions: []
 		};
 
 		// If no scheduled transaction ids are passed, we are going to perform calculations
@@ -382,7 +382,7 @@ export class ScheduledTransactionCalculations {
 
 					scheduledTransaction.upcomingInstances = upcomingInstanceDatesString;
 					// Add this to the list of updated scheduled transactions
-					calculationResults.be_scheduled_transactions.push(scheduledTransaction);
+					calculationResults.scheduledTransactions.push(scheduledTransaction);
 				}
 			}
 		});
@@ -486,7 +486,7 @@ export class ScheduledTransactionCalculations {
 
 		switch(frequency) {
 
-			case TransactionFrequency.Never:
+			case TransactionFrequency.Once:
 				nextDate = null;
 				break;
 
@@ -643,7 +643,7 @@ export class ScheduledTransactionCalculations {
 
 		// If the frequency of this scheduled transaction was never, and there is no date in the
 		// upcomingInstances array, then tombstone this scheduled transaction.
-		if(scheduledTransaction.frequency == TransactionFrequency.Never && upcomingInstanceDates.length == 0)
+		if(scheduledTransaction.frequency == TransactionFrequency.Once && upcomingInstanceDates.length == 0)
 			scheduledTransaction.isTombstone = 1;
 	}
 
@@ -700,14 +700,14 @@ export class ScheduledTransactionCalculations {
 			transferTransaction.scheduledTransactionId = scheduledTransaction.entityId;
 
 			// Get the transaction database object from this transfer transaction entity and save it in the changed entities
-			calculationResults.be_transactions.push( transferTransaction );
+			calculationResults.transactions.push( transferTransaction );
 
 			// Also update the transferTransactionId value on the transaction entity
 			transaction.transferTransactionId = transferTransaction.entityId;
 		}
 
 		// Get the transaction database object from this transaction entity and save it in the calculation results
-		calculationResults.be_transactions.push( transaction );
+		calculationResults.transactions.push( transaction );
 
 		if(scheduledSubTransactions) {
 
@@ -760,14 +760,14 @@ export class ScheduledTransactionCalculations {
 					subTransactionTransferTransaction.scheduledTransactionId = scheduledTransaction.entityId;
 
 					// Get the transaction database object from this transfer transaction entity and save it in the calculation results
-					calculationResults.be_transactions.push( subTransactionTransferTransaction );
+					calculationResults.transactions.push( subTransactionTransferTransaction );
 
 					// Also update the transferTransactionId value on the transaction entity
 					subTransaction.transferTransactionId = subTransactionTransferTransaction.entityId;
 				}
 
 				// Get the sub-transaction database object from this entity and save it in the calculation results
-				calculationResults.be_subtransactions.push(subTransaction);
+				calculationResults.subTransactions.push(subTransaction);
 			});
 		}
 	}

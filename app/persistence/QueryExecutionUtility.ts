@@ -55,7 +55,7 @@ function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery
 
 // ******************************************************************************************************************
 // Following code is for accessing the database when running in a test environment, since there, we do not have 
-// access to the ipcRenderer object. These methods directly use the sqlite3 module to access the database.
+// access to the ipcRenderer object. These methods use websql to access the database.
 // ******************************************************************************************************************
 // Reference to the websql database that is used in the testing environment. This is set by the PersistenceManager.
 var _refDatabase;

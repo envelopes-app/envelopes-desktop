@@ -50,6 +50,34 @@ export class RegisterTransactionObject {
 		return selected;
 	}
 
+	public isAccepted():boolean {
+
+		if(this.entityType == "transaction" || this.entityType == "subTransaction")
+			return (this.refTransaction.accepted == 1);
+
+		return true;
+	}
+
+	public getCSSClassName(selectedTransactionsMap:SimpleObjectMap<boolean>):string {
+
+		var className:string;
+		// Check whether this is currently selected or not
+		var selected:boolean = this.isSelected(selectedTransactionsMap);
+		var accepted:boolean = this.isAccepted();
+		
+		// CSS class name based on whether we are selected/accepted or not
+		if(this.entityType == "scheduledTransaction" || this.entityType == "scheduledSubTransaction")
+			className = selected ? "register-transaction-cell-selected" : "register-scheduled-transaction-cell";
+		else {
+			if(accepted)
+				className = selected ? "register-transaction-cell-selected" : "register-transaction-cell";
+			else
+				className = selected ? "register-unapproved-transaction-cell-selected" : "register-unapproved-transaction-cell";
+		}
+
+		return className;
+	}
+
 	public checkIfObjectIsStale(entitiesCollection:IEntitiesCollection):boolean {
 
 		// We are basically going to compare the source entities of the registerTransactionObject with the entities

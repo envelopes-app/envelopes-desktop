@@ -463,6 +463,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			// Update the values in this scheduled transaction from the state
 			scheduledTransaction.accountId = this.state.accountId;
 			scheduledTransaction.date = this.state.date.getUTCTime();
+			scheduledTransaction.frequency = this.state.frequency;
 			scheduledTransaction.payeeId = this.state.payeeId;
 			scheduledTransaction.subCategoryId = this.state.subCategoryId;
 			scheduledTransaction.memo = this.state.memo;
@@ -571,6 +572,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		// Set the values in this transaction from the state
 		scheduledTransaction.accountId = this.state.accountId;
 		scheduledTransaction.date = this.state.date.getUTCTime();
+		scheduledTransaction.frequency = this.state.frequency;
 		scheduledTransaction.payeeId = this.state.payeeId;
 		scheduledTransaction.subCategoryId = this.state.subCategoryId;
 		scheduledTransaction.memo = this.state.memo;

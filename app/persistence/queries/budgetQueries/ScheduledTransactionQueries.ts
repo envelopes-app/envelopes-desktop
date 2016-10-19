@@ -87,7 +87,7 @@ export class ScheduledTransactionQueries {
 			return {
 				name: "scheduledTransactions",
 				query: `SELECT * FROM ScheduledTransactions WHERE budgetId = ?1 AND isTombstone = 0 AND accountId IN (
-					SELECT entityId FROM Accounts WHERE budgetId = ?1 AND isTombstone = 0 AND hidden = 0
+					SELECT entityId FROM Accounts WHERE budgetId = ?1 AND isTombstone = 0 AND closed = 0
 				)`,
 				arguments: [budgetId]
 			};
