@@ -328,7 +328,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private updateFilterTransactionSettings(timeFrame:string, startDate:DateWithoutTime, endDate:DateWithoutTime, showReconciled:boolean, showScheduled:boolean):void {
 
-		debugger;
 		// Get the register state for the active account and update it with the passed values
 		var activeAccount = this.getActiveAccount(this.props.applicationState);
 		var registerState = this.getRegisterStateForAccount(activeAccount);

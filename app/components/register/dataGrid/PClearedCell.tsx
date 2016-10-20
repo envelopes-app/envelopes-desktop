@@ -73,12 +73,14 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 			if(registerTransactionObject.entityType == "transaction" && registerTransactionObject.refTransaction.cleared != ClearedFlag.Uncleared)
 				glyphColor = ClearedColor;
 
-			var cellStyle = {color:glyphColor};
+			var glyphClassName = "glyphicon glyphicon-copyright-mark";
+			if(registerTransactionObject.entityType == "transaction" && registerTransactionObject.refTransaction.cleared == ClearedFlag.Reconciled)
+				glyphClassName = "glyphicon glyphicon-registration-mark";
 
+			var cellStyle = {color:glyphColor};
 			return (
 				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-					<span className="glyphicon glyphicon-copyright-mark" aria-hidden="true" 
-						style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
+					<span className={glyphClassName} aria-hidden="true" style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
 				</div>
 			);
 		}
