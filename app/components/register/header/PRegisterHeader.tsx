@@ -12,6 +12,8 @@ export interface PRegisterHeaderProps {
 	clearedBalance:number;
 	unclearedBalance:number;
 	workingBalance:number;
+	selectedTotal:number;
+	showSelectedTotal:boolean;
 	showReconcileButton:boolean;
 }
 
@@ -40,9 +42,6 @@ const SymbolStyle = {
 	fontSize: '16px',
 	fontWeight: 'bold'
 }
-const BlankSpaceStyle = {
-	flex: '1 1 auto'
-}
 
 const ReconcileAccountButtonStyle = {
 	width: '100px',
@@ -52,6 +51,7 @@ const ReconcileAccountButtonStyle = {
 	backgroundColor: '#005164',
 	borderWidth: '1px',
 	borderRadius: '3px',
+	outline: "none",
 	visibility: "visible"
 }
 
@@ -64,19 +64,40 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
 			reconcileAccountButtonStyle["visibility"] = "hidden"; 
 		}
 
-    	return (
-			<div style={RegisterHeaderContainerStyle}>
-				<div style={RegisterHeaderStyle}>
-					<PHeaderAccountName text={this.props.accountName} />
-					<PHeaderValue label="Cleared Balance" value={this.props.clearedBalance} />
-					<text style={SymbolStyle}>+</text>
-					<PHeaderValue label="Uncleared Balance" value={this.props.unclearedBalance} />
-					<text style={SymbolStyle}>=</text>
-					<PHeaderValue label="Working Balance" value={this.props.workingBalance} />
-					<div style={BlankSpaceStyle} />
-					<button style={reconcileAccountButtonStyle}>Reconcile Account</button>
+		if(this.props.showSelectedTotal) {
+
+			return (
+				<div style={RegisterHeaderContainerStyle}>
+					<div style={RegisterHeaderStyle}>
+						<PHeaderAccountName text={this.props.accountName} />
+						<PHeaderValue label="Cleared Balance" value={this.props.clearedBalance} />
+						<text style={SymbolStyle}>+</text>
+						<PHeaderValue label="Uncleared Balance" value={this.props.unclearedBalance} />
+						<text style={SymbolStyle}>=</text>
+						<PHeaderValue label="Working Balance" value={this.props.workingBalance} />
+						<div className="spacer" />
+						<PHeaderValue label="Selected Total" value={this.props.selectedTotal} />
+						<div style={{width:"10px"}} />
+						<button style={reconcileAccountButtonStyle}>Reconcile Account</button>
+					</div>
 				</div>
-			</div>
-		);
+			);
+		}
+		else {
+			return (
+				<div style={RegisterHeaderContainerStyle}>
+					<div style={RegisterHeaderStyle}>
+						<PHeaderAccountName text={this.props.accountName} />
+						<PHeaderValue label="Cleared Balance" value={this.props.clearedBalance} />
+						<text style={SymbolStyle}>+</text>
+						<PHeaderValue label="Uncleared Balance" value={this.props.unclearedBalance} />
+						<text style={SymbolStyle}>=</text>
+						<PHeaderValue label="Working Balance" value={this.props.workingBalance} />
+						<div className="spacer" />
+						<button style={reconcileAccountButtonStyle}>Reconcile Account</button>
+					</div>
+				</div>
+			);
+		}
   	}
 }

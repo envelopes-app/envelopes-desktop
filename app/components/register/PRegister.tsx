@@ -389,6 +389,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var clearedBalance:number = 0;
 		var unclearedBalance:number = 0;
 		var workingBalance:number = 0;
+		var selectedTotal:number = 0;
+		var showSelectedTotal:boolean = false;
 		var isAllAccounts:boolean = true;
 		var currentAccountId:string = null;
 		var registerState:IRegisterState = null;
@@ -415,12 +417,21 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			registerState = this.getRegisterStateForAccount(currentAccountId);
 		}
 
+		if(registerState.selectedTransactions.length > 1) {
+			// Set flag for showing the selected total
+			showSelectedTotal = true;
+			// Calculate the total of the selected transactions
+			_.forEach(registerState.selectedTransactions, (transactionId)=>{
+				var transaction = entitiesCollection.transactions.getEntityById(transactionId);
+				selectedTotal += transaction.amount;
+			});
+		}
+
 		// Calculate the cleared and uncleared balance values for the displayed account/s
 		_.forEach(accounts, (account)=>{
 			clearedBalance += (account.clearedBalance ? account.clearedBalance : 0);
 			unclearedBalance += (account.unclearedBalance ? account.unclearedBalance : 0);
 		});
-
 		// Calculate the working balance
 		workingBalance = clearedBalance + unclearedBalance;
 
@@ -439,6 +450,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					unclearedBalance={unclearedBalance} 
 					workingBalance={workingBalance} 
 					showReconcileButton={isAllAccounts == false} 
+					showSelectedTotal={showSelectedTotal}
+					selectedTotal={selectedTotal}
 				/>
 
 				<PRegisterToolbar 
