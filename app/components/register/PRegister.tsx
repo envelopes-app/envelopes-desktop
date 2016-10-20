@@ -52,6 +52,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
 		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
+		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.state = {registersState:{}};
     }
 
@@ -200,12 +201,14 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private showFilterTransactionsDialog(element:HTMLElement):void {
 
-		this.filterTransactionsDialog.show(element);
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		this.filterTransactionsDialog.show(registerState, element);
 	}
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
 
-		debugger;
 		var accountId = registerState.accountId;
 		var isAllAccounts = (registerState.accountId == "All_Accounts");
 		var accountsArray = entitiesCollection.accounts;
@@ -323,6 +326,19 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		}
 	}
 
+	private updateFilterTransactionSettings(timeFrame:string, startDate:DateWithoutTime, endDate:DateWithoutTime, showReconciled:boolean, showScheduled:boolean):void {
+
+		debugger;
+		// Get the register state for the active account and update it with the passed values
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		registerState.filterSelectedTimeFrame = timeFrame;
+		registerState.filterStartDate = startDate;
+		registerState.filterEndDate = endDate;
+		registerState.filterShowReconciledTransactions = showReconciled;
+		registerState.filterShowScheduledTransactions = showScheduled;
+		this.updateRegisterState(registerState);
+	}
 	// *******************************************************************************************************
 	// Action Handlers for commands in the Regsiter Toolbar
 	// *******************************************************************************************************
@@ -457,6 +473,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				/>
 
 				<PFilterTransactionsDialog 
+					minMonth={this.props.applicationState.entitiesCollection.monthlyBudgets.getMinMonth()}
+					maxMonth={this.props.applicationState.entitiesCollection.monthlyBudgets.getMaxMonth()} 
+					updateFilterTransactionSettings={this.updateFilterTransactionSettings}
 					ref={(d)=> this.filterTransactionsDialog = d }
 				/>
 

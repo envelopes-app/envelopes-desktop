@@ -1,5 +1,6 @@
 export class RegisterFilterTimeFrame {
 
+	public static Custom:string 			= "Custom";
 	public static ThisMonth:string 			= "ThisMonth";
 	public static LatestThreeMonths:string 	= "LatestThreeMonths";
 	public static ThisYear:string 			= "ThisYear";

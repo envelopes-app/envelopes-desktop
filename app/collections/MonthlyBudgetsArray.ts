@@ -3,10 +3,12 @@
 import * as _ from 'lodash';
 import { EntitiesArray } from './EntitiesArray'; 
 import { IMonthlyBudget } from '../interfaces/budgetEntities';
-import { SimpleObjectMap } from '../utilities';
+import { DateWithoutTime, SimpleObjectMap } from '../utilities';
 
 export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 
+	private minMonth:DateWithoutTime;
+	private maxMonth:DateWithoutTime;
 	private monthlyMap:SimpleObjectMap<IMonthlyBudget> = {};
 
 	constructor(initialValues:Array<IMonthlyBudget>) {
@@ -16,6 +18,14 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 		_.forEach(initialValues, (monthlyBudget:IMonthlyBudget)=>{
 			this.monthlyMap[monthlyBudget.month] = monthlyBudget;
 		});
+	}
+
+	public getMinMonth():DateWithoutTime {
+		return this.minMonth.clone();
+	}
+
+	public getMaxMonth():DateWithoutTime {
+		return this.maxMonth.clone();
 	}
 
 	public getMonthlyBudgetByMonth(month:string):IMonthlyBudget {
@@ -29,6 +39,12 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 
 		super.addEntity(monthlyBudget);
 		this.monthlyMap[monthlyBudget.month] = monthlyBudget;
+
+		var month = DateWithoutTime.createFromISOString(monthlyBudget.month);
+		if(!this.minMonth || this.minMonth.isAfter(month))
+			this.minMonth = month;
+		if(!this.maxMonth || this.maxMonth.isBefore(month))
+			this.maxMonth = month;
 	}
 
 	public removeEntityById(entityId:string):IMonthlyBudget {
