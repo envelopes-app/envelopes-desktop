@@ -10,6 +10,7 @@ import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PFlagSelectionDialog } from './dialogs/PFlagSelectionDialog';
 import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
+import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { RegisterTransactionObjectsArray } from '../../collections'; 
@@ -41,6 +42,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
 	private transactionDialog:PTransactionDialog;
+	private reconcileAccountDialog:PReconcileAccountDialog;
 
 	constructor(props: any) {
         super(props);
@@ -52,7 +54,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
 		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
+		this.showReconcileAccountDialog = this.showReconcileAccountDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
+		this.reconcileAccount = this.reconcileAccount.bind(this);
 		this.state = {registersState:{}};
     }
 
@@ -201,10 +205,22 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private showFilterTransactionsDialog(element:HTMLElement):void {
 
-		// Get the register state for the active account
-		var activeAccount = this.getActiveAccount(this.props.applicationState);
-		var registerState = this.getRegisterStateForAccount(activeAccount);
-		this.filterTransactionsDialog.show(registerState, element);
+		if(this.filterTransactionsDialog.isShowing() == false) {
+			// Get the register state for the active account
+			var activeAccount = this.getActiveAccount(this.props.applicationState);
+			var registerState = this.getRegisterStateForAccount(activeAccount);
+			this.filterTransactionsDialog.show(registerState, element);
+		}
+	}
+
+	private showReconcileAccountDialog(element:HTMLElement):void {
+
+		if(this.reconcileAccountDialog.isShowing() == false) {
+			// Get the active account
+			var activeAccountId = this.getActiveAccount(this.props.applicationState);
+			var account = this.props.applicationState.entitiesCollection.accounts.getEntityById(activeAccountId);
+			this.reconcileAccountDialog.show(account, element);
+		}
 	}
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
@@ -338,6 +354,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		registerState.filterShowScheduledTransactions = showScheduled;
 		this.updateRegisterState(registerState);
 	}
+
+	private reconcileAccount(account:budgetEntities.IAccount, actualCurrentBalance:number):void {
+
+	}
+
 	// *******************************************************************************************************
 	// Action Handlers for commands in the Regsiter Toolbar
 	// *******************************************************************************************************
@@ -452,6 +473,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					showReconcileButton={isAllAccounts == false} 
 					showSelectedTotal={showSelectedTotal}
 					selectedTotal={selectedTotal}
+					showReconcileAccountDialog={this.showReconcileAccountDialog}
 				/>
 
 				<PRegisterToolbar 
@@ -489,6 +511,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					maxMonth={this.props.applicationState.entitiesCollection.monthlyBudgets.getMaxMonth()} 
 					updateFilterTransactionSettings={this.updateFilterTransactionSettings}
 					ref={(d)=> this.filterTransactionsDialog = d }
+				/>
+
+				<PReconcileAccountDialog 
+					reconcileAccount={this.reconcileAccount}
+					ref={(d)=> this.reconcileAccountDialog = d }
 				/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"
