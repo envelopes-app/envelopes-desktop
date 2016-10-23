@@ -423,7 +423,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		if(sidebarState.selectedTab == "All Accounts") {
 
 			accountName = "All Accounts";
-			accounts = entitiesCollection.accounts;
+			accounts = entitiesCollection.accounts.getAllItems();
 			isAllAccounts = true;
 			currentAccountId = null;
 			registerState = this.getRegisterStateForAccount("All_Accounts");

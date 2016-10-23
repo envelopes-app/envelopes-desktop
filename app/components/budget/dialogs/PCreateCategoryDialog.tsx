@@ -135,7 +135,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 		if(this.state.masterCategoryId) {
 
 			// Make sure that this name is not already being used for any other subcategory
-			var index = _.findIndex(this.props.entitiesCollection.subCategories, (sc)=>{
+			var index = _.findIndex(this.props.entitiesCollection.subCategories.getAllItems(), (sc)=>{
 				return (sc.name == categoryName);
 			});
 		
@@ -163,7 +163,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 		else {
 
 			// Make sure that this name is not already being used for any other subcategory
-			var index = _.findIndex(this.props.entitiesCollection.masterCategories, (mc)=>{
+			var index = _.findIndex(this.props.entitiesCollection.masterCategories.getAllItems(), (mc)=>{
 				return (mc.name == categoryName);
 			});
 		

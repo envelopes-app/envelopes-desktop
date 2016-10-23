@@ -4,12 +4,12 @@ import * as _ from 'lodash';
 import { SimpleObjectMap } from '../utilities'; 
 
 // TODO: Add sorting support
-export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
+export class EntitiesArray<T extends {entityId:string}> {
 
-	private internalMap:SimpleObjectMap<T> = {};
+	protected internalArray:Array<T> = [];
+	protected internalMap:SimpleObjectMap<T> = {};
 
 	constructor(initialValues:Array<T> = null) {
-		super();
 		// If an array of initial values is passed, iterate through them and add them to
 		// this array one by one using the addObject method
 		if(initialValues) {
@@ -17,6 +17,10 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 				this.addEntity(entity);
 			});
 		}
+	}
+
+	public get length():number {
+		return this.internalArray.length;
 	}
 
 	public addOrReplaceEntity(entity:T):void {
@@ -29,7 +33,7 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 	}
 
 	public getAllItems():Array<T> {
-		return this as Array<T>;
+		return this.internalArray;
 	}
 
 	protected getIndexForInsertion(entity:T):number {
@@ -37,13 +41,12 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 		// The default implementation here just returns the last index of the array
 		// so that items are inserted at the end. This can be overridden by derived
 		// classes to provide sorted insertion.
-		return this.length;
+		return this.internalArray.length;
 	}
 
 	protected addEntity(entity:T):void {
 		var index = this.getIndexForInsertion(entity);
-		this.splice(index, 0, entity);
-		// this.push(entity);
+		this.internalArray.splice(index, 0, entity);
 		this.internalMap[entity.entityId] = entity;
 	}
 
@@ -51,8 +54,8 @@ export class EntitiesArray<T extends {entityId:string}> extends Array<T> {
 		var removedEntities:T[];
 		// Check if we have an entity with the passed entityId. If we do, then remove that.
 		if(this.internalMap[entityId]) {
-			var index = _.findIndex(this, {entityId: entityId});
-			removedEntities = this.splice(index, 1);
+			var index = _.findIndex(this.internalArray, {entityId: entityId});
+			removedEntities = this.internalArray.splice(index, 1);
 			this.internalMap[entityId] = null;
 		}
 

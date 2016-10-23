@@ -50,7 +50,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 		var subCategories:Array<ISubCategory> = [];		
 
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId)
 				subCategories.push(subCategory);
 		});
@@ -63,7 +63,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 		var subCategories:Array<ISubCategory> = [];		
 
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId && subCategory.isTombstone == 0 && subCategory.isHidden == 0)
 				subCategories.push(subCategory);
 		});
@@ -73,17 +73,17 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 	}
 
 	public getSubCategoryByName(subCategoryName:string):ISubCategory {
-		return _.find(this, {name: subCategoryName});
+		return _.find(this.internalArray, {name: subCategoryName});
 	}
 
 	public getDebtSubCategoryForAccount(accountId:string):ISubCategory {
-		return _.find(this, {accountId: accountId});
+		return _.find(this.internalArray, {accountId: accountId});
 	}
 
 	public getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryId:string):number {
 
 		var sortableIndex = 0;
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId) {
 
 				if(subCategory.sortableIndex > sortableIndex)
@@ -99,7 +99,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 	public getSortableIndexForNewSubCategoryInsertionAtTop(masterCategoryId:string):number {
 
 		var sortableIndex = 0;
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId) {
 
 				if(subCategory.sortableIndex < sortableIndex)
@@ -119,7 +119,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		var subCategoryAbove:ISubCategory = null;
 
 		// We want to find the subcategory with highest sortableIndex below the referenceSubCategory
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId && subCategory.entityId != subCategoryId && subCategory.sortableIndex < referenceSortableIndex) {
 
 				if(!subCategoryAbove || subCategoryAbove.sortableIndex < subCategory.sortableIndex)
@@ -137,7 +137,7 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		var subCategoryBelow:ISubCategory = null;
 
 		// We want to find the subCategory with lowest sortableIndex above the referenceSubCategory
-		_.forEach(this, (subCategory)=>{
+		_.forEach(this.internalArray, (subCategory)=>{
 			if(subCategory.masterCategoryId == masterCategoryId && subCategory.entityId != subCategoryId && subCategory.sortableIndex > referenceSortableIndex) {
 
 				if(!subCategoryBelow || subCategoryBelow.sortableIndex > subCategory.sortableIndex)

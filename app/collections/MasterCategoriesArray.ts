@@ -42,7 +42,7 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 
 		var masterCategories:Array<IMasterCategory> = [];		
 
-		_.forEach(this, (masterCategory)=>{
+		_.forEach(this.internalArray, (masterCategory)=>{
 			if(!masterCategory.internalName)
 				masterCategories.push(masterCategory);
 		});
@@ -55,7 +55,7 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 
 		var masterCategories:Array<IMasterCategory> = [];		
 
-		_.forEach(this, (masterCategory)=>{
+		_.forEach(this.internalArray, (masterCategory)=>{
 			if(!masterCategory.internalName && masterCategory.isTombstone == 0 && masterCategory.isHidden == 0)
 				masterCategories.push(masterCategory);
 		});
@@ -65,13 +65,13 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 	}
 
 	public getMasterCategoryByName(masterCategoryName:string):IMasterCategory {
-		return _.find(this, {name: masterCategoryName});
+		return _.find(this.internalArray, {name: masterCategoryName});
 	}
 
 	public getSortableIndexForNewMasterCategoryInsertion():number {
 
 		var sortableIndex = 0;
-		_.forEach(this, (masterCategory)=>{
+		_.forEach(this.internalArray, (masterCategory)=>{
 			if(masterCategory.sortableIndex > sortableIndex)
 				sortableIndex = masterCategory.sortableIndex;
 		});
@@ -88,7 +88,7 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 		var masterCategoryAbove:IMasterCategory = null;
 
 		// We want to find the master category with highest sortableIndex below the referenceMasterCategory
-		_.forEach(this, (masterCategory)=>{
+		_.forEach(this.internalArray, (masterCategory)=>{
 			if(!masterCategory.internalName && masterCategory.entityId != masterCategoryId && masterCategory.sortableIndex < referenceSortableIndex) {
 
 				if(!masterCategoryAbove || masterCategoryAbove.sortableIndex < masterCategory.sortableIndex)
@@ -106,7 +106,7 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 		var masterCategoryBelow:IMasterCategory = null;
 
 		// We want to find the master category with lowest sortableIndex above the referenceMasterCategory
-		_.forEach(this, (masterCategory)=>{
+		_.forEach(this.internalArray, (masterCategory)=>{
 			if(!masterCategory.internalName && masterCategory.entityId != masterCategoryId && masterCategory.sortableIndex > referenceSortableIndex) {
 
 				if(!masterCategoryBelow || masterCategoryBelow.sortableIndex > masterCategory.sortableIndex)

@@ -121,7 +121,7 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
             var availableToBudgetInCurrentMonth = monthlBudgetForCurrentMonth.availableToBudget;
             
 			// Calculate the amount that we have budgeted in future months
-            var budgetedInFutureMonths = _.reduce(monthlyBudgetsArray, (totalBudgeted:number, monthlyBudget:budgetEntities.IMonthlyBudget)=>{
+            var budgetedInFutureMonths = _.reduce(monthlyBudgetsArray.getAllItems(), (totalBudgeted:number, monthlyBudget:budgetEntities.IMonthlyBudget)=>{
 
 				var month = DateWithoutTime.createFromISOString(monthlyBudget.month);
                 if(month.isAfter(currentMonth))

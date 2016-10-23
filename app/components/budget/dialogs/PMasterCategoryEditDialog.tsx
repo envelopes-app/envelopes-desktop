@@ -145,7 +145,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 		if(masterCategory.name != updatedMasterCategoryName) {
 
 			// Make sure that this new name is not already being used
-			var index = _.findIndex(this.props.entitiesCollection.masterCategories, (mc)=>{
+			var index = _.findIndex(this.props.entitiesCollection.masterCategories.getAllItems(), (mc)=>{
 				return (mc.name == updatedMasterCategoryName);
 			});
 		

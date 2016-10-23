@@ -146,7 +146,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 		if(subCategory.name != updatedSubCategoryName) {
 
 			// Make sure that this new name is not already being used
-			var index = _.findIndex(this.props.entitiesCollection.subCategories, (sc)=>{
+			var index = _.findIndex(this.props.entitiesCollection.subCategories.getAllItems(), (sc)=>{
 				return (sc.name == updatedSubCategoryName);
 			});
 		
