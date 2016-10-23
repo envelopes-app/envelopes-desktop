@@ -11,7 +11,7 @@ import { PSubCategoryRow } from './PSubCategoryRow';
 import { InternalCategories } from '../../../constants'; 
 import { SubCategoriesArray } from '../../../collections';
 import { DateWithoutTime, SimpleObjectMap } from '../../../utilities';
-import { IEntitiesCollection, ISimpleEntitiesCollection, IBudgetState } from '../../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMonthlyBudgetProps {
@@ -63,10 +63,6 @@ const MonthlyBudgetSubContainerStyle = {
 }
 
 export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
-
-	constructor(props: any) {
-        super(props);
-	}
 
 	private getBudgetRows(masterCategory:budgetEntities.IMasterCategory, 
 					subCategoriesArray:SubCategoriesArray,

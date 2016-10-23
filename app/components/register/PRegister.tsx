@@ -446,7 +446,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			// Calculate the total of the selected transactions
 			_.forEach(registerState.selectedTransactions, (transactionId)=>{
 				var transaction = entitiesCollection.transactions.getEntityById(transactionId);
-				selectedTotal += transaction.amount;
+				if(transaction)
+					selectedTotal += transaction.amount;
+				else {
+					var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(transactionId);
+					if(scheduledTransaction)
+						selectedTotal += scheduledTransaction.amount;
+				}
 			});
 		}
 

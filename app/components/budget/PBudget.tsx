@@ -12,7 +12,7 @@ import { PInspectorContainer } from './inspectors/PInspectorContainer';
 import * as dialogs from './dialogs';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
-import { IEntitiesCollection, ISimpleEntitiesCollection, IBudgetState } from '../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface PBudgetProps {
 	// State Variables
