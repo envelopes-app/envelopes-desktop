@@ -41,20 +41,20 @@ export class PFlagCell extends React.Component<PFlagCellProps, {}> {
 	private onClick(event:MouseEvent):void {
 
 		if((event.target as any).localName == "div") {
-			var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 			this.props.selectTransaction(registerTransactionObject, true);
 		}
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
 	private onGlyphClick():void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.showFlagSelectionDialog(registerTransactionObject, this.flagContainer);
 	}
 
@@ -63,7 +63,7 @@ export class PFlagCell extends React.Component<PFlagCellProps, {}> {
 		if(!this.props.registerTransactionObjects)
 			return <div />;
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		// The flag glyph is only to be shown for transactions or scheduledTransactions, and not for subTransactions and scheduledSubTransactions 

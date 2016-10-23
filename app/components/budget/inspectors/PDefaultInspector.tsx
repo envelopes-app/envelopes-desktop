@@ -90,7 +90,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 		// Iterate through all the subcategories and update the budgeted values for overspent categories
-		_.forEach(subCategoriesArray, (subCategory)=>{
+		_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 			// Skip the hidden and internal categories
 			if(subCategory.isHidden == 0 && !subCategory.internalName) {
 
@@ -125,7 +125,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 		// Iterate through all the subcategories and update the budgeted values for categories
-		_.forEach(subCategoriesArray, (subCategory)=>{
+		_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 			// Skip the hidden and internal categories
 			if(subCategory.isHidden == 0 && !subCategory.internalName) {
 
@@ -160,7 +160,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 		// Iterate through all the subcategories and update the budgeted values for categories
-		_.forEach(subCategoriesArray, (subCategory)=>{
+		_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 			// Skip the hidden and internal categories
 			if(subCategory.isHidden == 0 && !subCategory.internalName) {
 
@@ -195,7 +195,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 		// Iterate through all the subcategories and update the budgeted values for categories
-		_.forEach(subCategoriesArray, (subCategory)=>{
+		_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 			// Skip the hidden and internal categories
 			if(subCategory.isHidden == 0 && !subCategory.internalName) {
 
@@ -230,7 +230,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 		// Iterate through all the subcategories and update the budgeted values for categories
-		_.forEach(subCategoriesArray, (subCategory)=>{
+		_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 			// Skip the hidden and internal categories
 			if(subCategory.isHidden == 0 && !subCategory.internalName) {
 
@@ -266,7 +266,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 			var monthlySubCategoryBudgetsMap = _.keyBy(monthlySubCategoryBudgets, "subCategoryId");
 
 			// Iterate through all the subcategories, and calculate the average budgeted and spent values
-			_.forEach(subCategoriesArray, (subCategory)=>{
+			_.forEach(subCategoriesArray.getAllItems(), (subCategory)=>{
 				// Skip the hidden and internal categories
 				if(subCategory.isHidden == 0 && !subCategory.internalName) {
 

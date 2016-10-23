@@ -34,14 +34,14 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 	private onClick(event:MouseEvent):void {
 
 		if((event.target as any).localName == "div") {
-			var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 			this.props.selectTransaction(registerTransactionObject, true);
 		}
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		if(
 			registerTransactionObject.entityType == "transaction" && // This is a transaction
 			!registerTransactionObject.refTransaction.subCategoryId && // Doesn't have a category
@@ -58,7 +58,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 
 	private onGlyphClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		// TODO: Show the approve/reject dialog if we were showing the info icon
 		event.preventDefault();
 	}
@@ -69,7 +69,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 			return <div />;
 
 		// Get the transaction for the current row
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		var showGlyph = false;

@@ -121,7 +121,7 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
 
-		_.forEach(masterCategoriesArray, (masterCategory)=>{
+		_.forEach(masterCategoriesArray.getAllItems(), (masterCategory)=>{
 
 			if(masterCategory.isHidden == 1) {
 				masterCategory = Object.assign({}, masterCategory);
@@ -171,7 +171,7 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 		var hiddenSubCategories = subCategoriesArray.getHiddenSubCategories();
 
 		// Iterate through all the master categories 
-		_.forEach(masterCategoriesArray, (masterCategory)=>{
+		_.forEach(masterCategoriesArray.getAllItems(), (masterCategory)=>{
 
 			if(masterCategory.isHidden == 1) {
 				// Add an item for this master category, and all it's subcategories

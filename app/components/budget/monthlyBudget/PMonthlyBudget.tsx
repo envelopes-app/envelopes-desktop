@@ -209,7 +209,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			// for the HiddenMasterCategory as well
 			var hasHiddenMasterCategories:boolean = false;
 			var hasHiddenSubCategories:boolean = false;
-			_.forEach(masterCategoriesArray, (masterCategory)=>{
+			_.forEach(masterCategoriesArray.getAllItems(), (masterCategory)=>{
 				if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 1) {
 					hasHiddenMasterCategories = true;
 					return false;

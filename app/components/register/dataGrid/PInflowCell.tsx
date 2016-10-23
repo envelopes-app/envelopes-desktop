@@ -28,13 +28,13 @@ export class PInflowCell extends React.Component<PInflowCellProps, {}> {
 
 	private onClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "inflow");
 	}
 
@@ -44,7 +44,7 @@ export class PInflowCell extends React.Component<PInflowCellProps, {}> {
 			return <div />;
 
 		// Get the transaction for the current row
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		return (

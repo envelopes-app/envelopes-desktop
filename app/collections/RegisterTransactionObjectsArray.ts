@@ -21,7 +21,7 @@ export class RegisterTransactionObjectsArray extends EntitiesArray<RegisterTrans
 	}
 
 	public sortArray(fieldName:string, sortOrder:string):void {
-		_.orderBy(this.internalArray, ["entityType", fieldName], ["asc", sortOrder]);
+		this.internalArray = _.orderBy(this.internalArray, ["entityType", fieldName], ["asc", sortOrder]);
 	}
 
 //	protected getIndexForInsertion(registerTransactionObject:RegisterTransactionObject):number {

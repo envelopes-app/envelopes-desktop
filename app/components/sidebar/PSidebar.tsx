@@ -161,50 +161,56 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
 		var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 
-		_.forEach(this.props.entitiesCollection.accounts, (account)=>{
+		if(this.props.entitiesCollection.accounts) {
 
-			// Is this account button selected?
-			var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
-			var accountNode = <PAccountButton account={account} selectAccount={this.onAccountSelect} updateAccount={this.props.updateAccount} key={account.entityId} selected={accountSelected} />;
-			var accountBalance = account.clearedBalance + account.unclearedBalance;
+			_.forEach(this.props.entitiesCollection.accounts.getAllItems(), (account)=>{
 
-			if(account.onBudget == 1 && account.closed == 0) {
-				budgetAccountNodes.push(accountNode);
-				budgetAccountsBalance += accountBalance;
-			}
-			else if(account.onBudget == 0 && account.closed == 0) {
-				trackingAccountNodes.push(accountNode);
-				trackingAccountsBalance += accountBalance;
-			}
-			else if(account.closed == 1) {
-				closedAccountNodes.push(accountNode);
-			}
-		});
+				// Is this account button selected?
+				var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
+				var accountNode = <PAccountButton account={account} selectAccount={this.onAccountSelect} updateAccount={this.props.updateAccount} key={account.entityId} selected={accountSelected} />;
+				var accountBalance = account.clearedBalance + account.unclearedBalance;
 
-		return (
-			<div style={PSidebarStyle}>
-				<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
-					<MailOutline style={ModuleButtonIconStyle} />
-				</PModuleButton>
-				<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
-					<AccountBalance style={ModuleButtonIconStyle} />
-				</PModuleButton>
-				<Divider style={PDividerStyle} />
-				<div style={PContainerStyle}>
-					<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
-						expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
-						{budgetAccountNodes}
-					</PAccountButtonContainer>
-					<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
-						expanded={this.state.trackingAccountsExpanded} setExpanded={this.setTrackingAccountsExpanded}>
-						{trackingAccountNodes}
-					</PAccountButtonContainer>
+				if(account.onBudget == 1 && account.closed == 0) {
+					budgetAccountNodes.push(accountNode);
+					budgetAccountsBalance += accountBalance;
+				}
+				else if(account.onBudget == 0 && account.closed == 0) {
+					trackingAccountNodes.push(accountNode);
+					trackingAccountsBalance += accountBalance;
+				}
+				else if(account.closed == 1) {
+					closedAccountNodes.push(accountNode);
+				}
+			});
+
+			return (
+				<div style={PSidebarStyle}>
+					<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
+						<MailOutline style={ModuleButtonIconStyle} />
+					</PModuleButton>
+					<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
+						<AccountBalance style={ModuleButtonIconStyle} />
+					</PModuleButton>
+					<Divider style={PDividerStyle} />
+					<div style={PContainerStyle}>
+						<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
+							expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
+							{budgetAccountNodes}
+						</PAccountButtonContainer>
+						<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
+							expanded={this.state.trackingAccountsExpanded} setExpanded={this.setTrackingAccountsExpanded}>
+							{trackingAccountNodes}
+						</PAccountButtonContainer>
+					</div>
+
+					<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
+
+					<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
 				</div>
-
-				<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
-
-				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
-			</div>
-		);
+			);
+		}
+		else {
+			return <div />;	
+		}
   	}
 }

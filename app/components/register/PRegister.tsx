@@ -239,7 +239,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		if(registerState.filterShowScheduledTransactions) {
 			// Start iterating through scheduled transactions, and convert them into 
 			// RegisterTransactionObjects for displaying in the register.
-			_.forEach(scheduledTransactionsArray, (scheduledTransaction)=>{
+			_.forEach(scheduledTransactionsArray.getAllItems(), (scheduledTransaction)=>{
 
 				if(isAllAccounts || scheduledTransaction.accountId == accountId) {
 
@@ -340,6 +340,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			// Move to the next month
 			month.addMonths(1);
 		}
+
+		registerTransactionObjectsArray.sortArray("date", "desc");
 	}
 
 	private updateFilterTransactionSettings(timeFrame:string, startDate:DateWithoutTime, endDate:DateWithoutTime, showReconciled:boolean, showScheduled:boolean):void {

@@ -28,13 +28,13 @@ export class PDateCell extends React.Component<PDateCellProps, {}> {
 
 	private onClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
@@ -44,7 +44,7 @@ export class PDateCell extends React.Component<PDateCellProps, {}> {
 			return <div />;
 
 		// Get the transaction for the current row
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 
 		// We are only going to show the date if this is a transaction or a scheduled 

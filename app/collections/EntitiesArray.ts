@@ -23,6 +23,10 @@ export class EntitiesArray<T extends {entityId:string}> {
 		return this.internalArray.length;
 	}
 
+	public getItemAt(index:number):T {
+		return this.internalArray[index];
+	}
+
 	public addOrReplaceEntity(entity:T):void {
 		this.removeEntityById(entity.entityId);
 		this.addEntity(entity);

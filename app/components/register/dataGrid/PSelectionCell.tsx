@@ -31,21 +31,21 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 	private onClick(event:MouseEvent):void {
 
 		if((event.target as HTMLElement).localName == "div") {
-			var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 			this.props.selectTransaction(registerTransactionObject, true);
 		}
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
 
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
 	private onSelectionChange(event:React.SyntheticEvent):void {
 		
 		var element = event.target as HTMLInputElement;
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		if(element.checked)
 			this.props.selectTransaction(registerTransactionObject, false);
 		else
@@ -58,7 +58,7 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 			return <div />;
 
 		// Get the transaction for the current row
-		var registerTransactionObject = this.props.registerTransactionObjects[this.props.rowIndex];
+		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
 		// Check whether this is currently selected or not
 		var selected:boolean = registerTransactionObject.isSelected(this.props.selectedTransactionsMap);
