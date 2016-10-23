@@ -54,7 +54,6 @@ const RegisterDataGridContainerStyle = {
 	backgroundColor: '#ffffff'
 }
 
-// TODO: Pass transaction objects to the grid instead of transaction entities.  
 // TODO: Handle data sorting etc.
 // TODO: Selection by mouse not working in selectors
 export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, PRegisterDataGridState> {
