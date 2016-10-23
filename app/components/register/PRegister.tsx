@@ -82,8 +82,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 			registerState = {
 				accountId: accountId,
-				sortByColumn: "date",
-				sortAscending: false,
+				sortByFields: ["date"],
+				sortOrders: ["desc"],
 				filterShowReconciledTransactions: false,
 				filterShowScheduledTransactions: true,
 				filterSelectedTimeFrame: RegisterFilterTimeFrame.LatestThreeMonths,
@@ -341,7 +341,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			month.addMonths(1);
 		}
 
-		registerTransactionObjectsArray.sortArray("date", "desc");
+		registerTransactionObjectsArray.sortArray(registerState.sortByFields, registerState.sortOrders);
 	}
 
 	private updateFilterTransactionSettings(timeFrame:string, startDate:DateWithoutTime, endDate:DateWithoutTime, showReconciled:boolean, showScheduled:boolean):void {

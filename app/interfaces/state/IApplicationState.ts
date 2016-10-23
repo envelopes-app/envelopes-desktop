@@ -1,7 +1,6 @@
 import { IEntitiesCollection } from './IEntitiesCollection';
 import { ISidebarState } from './ISidebarState';
 import { IRegisterState } from './IRegisterState';
-import { IBudgetState } from './IBudgetState';
 import { DateWithoutTime } from '../../utilities';
 
 export interface IApplicationState {
@@ -17,5 +16,4 @@ export interface IApplicationState {
 	selectedBudgetMonth:DateWithoutTime;
 
 	sidebarState:ISidebarState;
-	budgetState:IBudgetState;
 }

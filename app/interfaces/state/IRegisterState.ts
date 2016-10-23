@@ -5,8 +5,8 @@ import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
 export interface IRegisterState {
 
 	accountId:string;
-	sortByColumn:string;
-	sortAscending:boolean;
+	sortByFields:Array<string>;
+	sortOrders:Array<string>;
 
 	// Variables representing filter dialog state
 	filterShowReconciledTransactions:boolean;

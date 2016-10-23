@@ -20,8 +20,11 @@ export class RegisterTransactionObjectsArray extends EntitiesArray<RegisterTrans
 		});
 	}
 
-	public sortArray(fieldName:string, sortOrder:string):void {
-		this.internalArray = _.orderBy(this.internalArray, ["entityType", fieldName], ["asc", sortOrder]);
+	public sortArray(fieldNames:Array<string>, sortOrders:Array<string>):void {
+
+		var combinedFieldNames = ["entityType"].concat(fieldNames);
+		var combinedSortOrders = ["asc"].concat(sortOrders);
+		this.internalArray = _.orderBy(this.internalArray, combinedFieldNames, combinedSortOrders);
 	}
 
 //	protected getIndexForInsertion(registerTransactionObject:RegisterTransactionObject):number {

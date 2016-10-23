@@ -7,6 +7,8 @@ export { ClearedFlag } from './ClearedFlag';
 export { InternalCategories, InternalCategoryNames } from './InternalCategories';
 export { InternalPayees } from './InternalPayees';
 export { RegisterFilterTimeFrame } from './RegisterFilterTimeFrame';
+export { RegisterSortField } from './RegisterSortField';
+export { RegisterSortOrder } from './RegisterSortOrder';
 export { SubCategoryGoalType } from './SubCategoryGoalType';
 export { SubCategoryType } from './SubCategoryType';
 export { TransactionFlag } from './TransactionFlag';
