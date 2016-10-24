@@ -39,6 +39,7 @@ export interface PRegisterDataGridProps {
 	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
 	selectAllTransactions:()=>void;
 	unselectAllTransactions:()=>void;
+	setRegisterSort:(sortByFields:Array<string>, sortOrders:Array<string>)=>void;
 	showFlagSelectionDialog:(registerTransactionObject:RegisterTransactionObject, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -160,7 +161,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="accountColumn"
 					width={100}
-					header={<PColumnHeader label="ACCOUNT" showSortIcon={sortField == RegisterSortField.Account} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="ACCOUNT" fieldName={RegisterSortField.Account}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PAccountCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -173,7 +179,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="dateColumn"
 					width={90}
-					header={<PColumnHeader label="DATE" showSortIcon={sortField == RegisterSortField.Date} sortOrder={sortOrder}/>}
+					header={
+						<PColumnHeader label="DATE" fieldName={RegisterSortField.Date}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PDateCell  
 							registerTransactionObjects={registerTransactionObjects}
@@ -186,7 +197,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="payeeColumn"
 					width={170}
-					header={<PColumnHeader label="PAYEE" showSortIcon={sortField == RegisterSortField.Payee} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="PAYEE" fieldName={RegisterSortField.Payee}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PPayeeCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -199,7 +215,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="categoryColumn"
 					width={280}
-					header={<PColumnHeader label="CATEGORY" showSortIcon={sortField == RegisterSortField.Category} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="CATEGORY" fieldName={RegisterSortField.Category}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PCategoryCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -213,7 +234,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					key="memoColumn"
 					width={170}
 					flexGrow={1}
-					header={<PColumnHeader label="MEMO" showSortIcon={sortField == RegisterSortField.Memo} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="MEMO" fieldName={RegisterSortField.Memo}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PMemoCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -226,7 +252,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="outflowColumn"
 					width={100}
-					header={<PColumnHeader label="OUTFLOW" showSortIcon={sortField == RegisterSortField.Outflow} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="OUTFLOW" fieldName={RegisterSortField.Outflow}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<POutflowCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -239,7 +270,12 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="inflowColumn"
 					width={100}
-					header={<PColumnHeader label="INFLOW" showSortIcon={sortField == RegisterSortField.Inflow} sortOrder={sortOrder} />}
+					header={
+						<PColumnHeader label="INFLOW" fieldName={RegisterSortField.Inflow}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
 					cell={
 						<PInflowCell 
 							registerTransactionObjects={registerTransactionObjects}

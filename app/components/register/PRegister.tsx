@@ -50,6 +50,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.unselectTransaction = this.unselectTransaction.bind(this);
 		this.selectAllTransactions = this.selectAllTransactions.bind(this);
 		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
+		this.setRegisterSort = this.setRegisterSort.bind(this);
 		this.editTransaction = this.editTransaction.bind(this);
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
@@ -201,6 +202,19 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			this.flagSelectionDialog.showForTransaction(registerTransactionObject.refTransaction, element);
 		else if(registerTransactionObject.entityType == "scheduledTransaction")
 			this.flagSelectionDialog.showForScheduledTransaction(registerTransactionObject.refScheduledTransaction, element);
+	}
+
+	private setRegisterSort(sortByFields:Array<string>, sortOrders:Array<string>):void {
+
+		// Get the register state for the active account
+		var activeAccount = this.getActiveAccount(this.props.applicationState);
+		var registerState = this.getRegisterStateForAccount(activeAccount);
+		// Apply this new sorting on the data 
+		registerState.registerTransactionObjectsArray.sortArray(sortByFields, sortOrders); 
+		// Update the sort values in the register state
+		registerState.sortByFields = sortByFields;
+		registerState.sortOrders = sortOrders;
+		this.updateRegisterState(registerState);
 	}
 
 	private showFilterTransactionsDialog(element:HTMLElement):void {
@@ -498,6 +512,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					updateEntities={this.props.updateEntities} registerState={registerState}
 					selectTransaction={this.selectTransaction}
 					unselectTransaction={this.unselectTransaction}
+					setRegisterSort={this.setRegisterSort}
 					editTransaction={this.editTransaction}
 					selectAllTransactions={this.selectAllTransactions}
 					unselectAllTransactions={this.unselectAllTransactions} 
