@@ -11,6 +11,7 @@ import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
 import { PFlagSelectionDialog } from './dialogs/PFlagSelectionDialog';
 import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
 import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
+import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { RegisterTransactionObjectsArray } from '../../collections'; 
@@ -43,6 +44,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private filterTransactionsDialog:PFilterTransactionsDialog;
 	private transactionDialog:PTransactionDialog;
 	private reconcileAccountDialog:PReconcileAccountDialog;
+	private approveRejectDialog:PApproveRejectDialog;
 
 	constructor(props: any) {
         super(props);
@@ -57,6 +59,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
 		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
 		this.showReconcileAccountDialog = this.showReconcileAccountDialog.bind(this);
+		this.showApproveRejectDialog = this.showApproveRejectDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
 		this.state = {registersState:{}};
@@ -254,6 +257,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			var activeAccountId = this.getActiveAccount(this.props.applicationState);
 			var account = this.props.applicationState.entitiesCollection.accounts.getEntityById(activeAccountId);
 			this.reconcileAccountDialog.show(account, element);
+		}
+	}
+
+	private showApproveRejectDialog(transaction:budgetEntities.ITransaction, element:HTMLElement):void {
+
+		if(this.approveRejectDialog.isShowing() == false) {
+			this.approveRejectDialog.show(transaction, element);
 		}
 	}
 
@@ -532,17 +542,14 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					updateEntities={this.props.updateEntities} registerState={registerState}
 					selectTransaction={this.selectTransaction}
 					unselectTransaction={this.unselectTransaction}
+					updateClearedForTransaction={this.updateClearedForTransaction}
 					setRegisterSort={this.setRegisterSort}
 					editTransaction={this.editTransaction}
 					selectAllTransactions={this.selectAllTransactions}
 					unselectAllTransactions={this.unselectAllTransactions} 
 					showFlagSelectionDialog={this.showFlagSelectionDialog}
+					showApproveRejectDialog={this.showApproveRejectDialog}
 				 />
-
-				<PFlagSelectionDialog 
-					ref={(d)=> this.flagSelectionDialog = d }
-					updateEntities={this.props.updateEntities} 
-				/>
 
 				<PFlagSelectionDialog 
 					ref={(d)=> this.flagSelectionDialog = d }
@@ -559,6 +566,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				<PReconcileAccountDialog 
 					reconcileAccount={this.reconcileAccount}
 					ref={(d)=> this.reconcileAccountDialog = d }
+				/>
+
+				<PApproveRejectDialog 
+					ref={(d)=> this.approveRejectDialog = d }
+					updateEntities={this.props.updateEntities}
 				/>
 
 				<PTransactionDialog dialogTitle="Add Transaction"

@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
 
+import { ITransaction } from '../../../interfaces/budgetEntities';
 import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
 import { RegisterTransactionObjectsArray } from '../../../collections';
 
@@ -17,6 +18,7 @@ export interface PInfoCellProps {
 
 	editTransaction:(registerTransactionObject:RegisterTransactionObject, focusOnField:string)=>void;
 	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
+	showApproveRejectDialog:(transaction:ITransaction, element:HTMLElement)=>void;
 }
 
 const InfoColor = "#34ADBD";
@@ -24,6 +26,8 @@ const WarningColor = "#E59100";
 
 export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 	
+	private infoContainer:HTMLDivElement;
+
 	constructor(props: any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
@@ -59,8 +63,11 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 	private onGlyphClick(event:MouseEvent):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
-		// TODO: Show the approve/reject dialog if we were showing the info icon
-		event.preventDefault();
+		// Show the approve/reject dialog if we were showing the info icon
+		if(registerTransactionObject.entityType == "transaction" && registerTransactionObject.refTransaction.accepted == 0) {
+			this.props.showApproveRejectDialog(registerTransactionObject.refTransaction, this.infoContainer);
+			event.preventDefault();
+		}
 	}
 
 	public render() {
@@ -92,7 +99,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 
 		if(showGlyph) {
 			return (
-				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick} ref={(d)=> this.infoContainer = d}>
 					<span className="glyphicon glyphicon-info-sign" aria-hidden="true" 
 						style={{cursor: 'pointer'}} onClick={this.onGlyphClick} />
 				</div>
@@ -100,7 +107,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 		}
 		else {
 			return (
-				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
+				<div className={className} style={cellStyle} onClick={this.onClick} onDoubleClick={this.onDoubleClick} ref={(d)=> this.infoContainer = d} />
 			);
 		}
   	}

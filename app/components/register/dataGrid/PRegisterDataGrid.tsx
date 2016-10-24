@@ -42,6 +42,7 @@ export interface PRegisterDataGridProps {
 	setRegisterSort:(sortByFields:Array<string>, sortOrders:Array<string>)=>void;
 	updateClearedForTransaction:(transaction:budgetEntities.ITransaction)=>void;
 	showFlagSelectionDialog:(registerTransactionObject:RegisterTransactionObject, element:HTMLElement)=>void;
+	showApproveRejectDialog:(transaction:budgetEntities.ITransaction, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -144,6 +145,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
+							showApproveRejectDialog={this.props.showApproveRejectDialog}
 						/>
 					}
 				/>,
