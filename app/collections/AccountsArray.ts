@@ -35,4 +35,15 @@ export class AccountsArray extends EntitiesArray<IAccount> {
 
 		return selectedAccount;
 	}
+
+	public getNonTombstonedOpenAccounts():Array<IAccount> {
+
+		var accounts:Array<IAccount> = [];
+		_.forEach(this.internalArray, (account)=>{
+			if(account.isTombstone == 0 && account.closed == 0)
+				accounts.push(account);
+		});
+
+		return accounts;
+	}
 }

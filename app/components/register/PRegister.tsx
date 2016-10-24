@@ -273,7 +273,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private showEditMenuDialog(element:HTMLElement):void {
 
 		if(this.editMenuDialog.isShowing() == false) {
-			this.editMenuDialog.show(element);
+			// Get the register state for the active account
+			var activeAccount = this.getActiveAccount(this.props.applicationState);
+			var registerState = this.getRegisterStateForAccount(activeAccount);
+			// Pass the list of the selected transactions to the edit menu dialog
+			this.editMenuDialog.show(registerState.selectedTransactions, element);
 		}
 	}
 
@@ -586,6 +590,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PEditMenuDialog 
 					ref={(d)=> this.editMenuDialog = d }
+					entitiesCollection={entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
