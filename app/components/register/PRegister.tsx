@@ -51,6 +51,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.selectAllTransactions = this.selectAllTransactions.bind(this);
 		this.unselectAllTransactions = this.unselectAllTransactions.bind(this);
 		this.setRegisterSort = this.setRegisterSort.bind(this);
+		this.updateClearedForTransaction = this.updateClearedForTransaction.bind(this);
 		this.editTransaction = this.editTransaction.bind(this);
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
@@ -215,6 +216,25 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		registerState.sortByFields = sortByFields;
 		registerState.sortOrders = sortOrders;
 		this.updateRegisterState(registerState);
+	}
+
+	private updateClearedForTransaction(transaction:budgetEntities.ITransaction):void {
+
+		if(transaction.cleared != ClearedFlag.Reconciled) {
+
+			// Clear, or unclear the transaction, and send it for persistence
+			var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
+			if(updatedTransaction.cleared == ClearedFlag.Uncleared)
+				updatedTransaction.cleared = ClearedFlag.Cleared;
+			else if(updatedTransaction.cleared == ClearedFlag.Cleared)
+				updatedTransaction.cleared = ClearedFlag.Uncleared;
+
+			var changedEntities:ISimpleEntitiesCollection = {
+				transactions: [updatedTransaction]
+			};
+
+			this.props.updateEntities(changedEntities);
+		}
 	}
 
 	private showFilterTransactionsDialog(element:HTMLElement):void {

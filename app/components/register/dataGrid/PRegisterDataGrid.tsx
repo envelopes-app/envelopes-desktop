@@ -40,6 +40,7 @@ export interface PRegisterDataGridProps {
 	selectAllTransactions:()=>void;
 	unselectAllTransactions:()=>void;
 	setRegisterSort:(sortByFields:Array<string>, sortOrders:Array<string>)=>void;
+	updateClearedForTransaction:(transaction:budgetEntities.ITransaction)=>void;
 	showFlagSelectionDialog:(registerTransactionObject:RegisterTransactionObject, element:HTMLElement)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -62,7 +63,6 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 	constructor(props: any) {
         super(props);
-		this.updateClearedForTransaction = this.updateClearedForTransaction.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.state = { componentWidth:0, componentHeight:0 };
 	}
@@ -88,23 +88,26 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		this.setState(state);
 	}
 
-	private updateClearedForTransaction(transaction:budgetEntities.ITransaction):void {
+	private showInfoColumn():boolean {
 
-		if(transaction.cleared != ClearedFlag.Reconciled) {
+		var accounts:Array<budgetEntities.IAccount>;
+		if(this.props.isAllAccounts == true)
+			accounts = this.props.entitiesCollection.accounts.getAllItems();
+		else 
+			accounts = [ this.props.entitiesCollection.accounts.getEntityById(this.props.accountId) ];
 
-			// Clear, or unclear the transaction, and send it for persistence
-			var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
-			if(updatedTransaction.cleared == ClearedFlag.Uncleared)
-				updatedTransaction.cleared = ClearedFlag.Cleared;
-			else if(updatedTransaction.cleared == ClearedFlag.Cleared)
-				updatedTransaction.cleared = ClearedFlag.Uncleared;
+		var showInfoColumn = false;
+		// Iterate through all the accounts that we are showing, and if any of these have a non-zero
+		// warning or info count, then set showInfoColumn to true
+		_.forEach(accounts, (account)=>{
 
-			var changedEntities:ISimpleEntitiesCollection = {
-				transactions: [updatedTransaction]
-			};
+			if(account.infoCount > 0 || account.warningCount > 0) {
+				showInfoColumn = true;
+				return false;
+			}
+		});
 
-			this.props.updateEntities(changedEntities);
-		}
+		return showInfoColumn;
 	}
 
 	public render() {
@@ -112,9 +115,9 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		var showDataGrid:boolean = this.state.componentWidth > 0 && this.state.componentHeight > 0;
 		if(showDataGrid) {
 
-			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
 			var sortField = this.props.registerState.sortByFields[0];
 			var sortOrder = this.props.registerState.sortOrders[0];
+			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
 
 			var tableColumns = [
 				<Column 
@@ -295,7 +298,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction}
-							updateClearedForTransaction={this.updateClearedForTransaction} 
+							updateClearedForTransaction={this.props.updateClearedForTransaction} 
 						/>
 					}
 				/>
@@ -304,6 +307,11 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 			if(this.props.isAllAccounts == false) {
 				// Remove the accounts column from the array we created above
 				tableColumns.splice(3, 1); // Start at index 3, remove 1 item
+			}
+
+			if(this.showInfoColumn() == false) {
+				// Remove the info column from the array we created above
+				tableColumns.splice(1, 1); // Start at index 1, remove 1 item
 			}
 
 			return (

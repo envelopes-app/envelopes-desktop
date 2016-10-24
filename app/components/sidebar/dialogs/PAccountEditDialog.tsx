@@ -147,7 +147,9 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 			var accountBalance = account.clearedBalance + account.unclearedBalance;
 
 			return (
-				<Overlay show={this.state.show} placement={this.state.placement} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.handleCancel} 
+					target={()=> ReactDOM.findDOMNode(this.state.target)}>
 					<Popover id="editAccountPopover" style={PopoverStyle}>
 						<Form>
 							<FormGroup>
