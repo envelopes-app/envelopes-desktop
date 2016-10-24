@@ -6,7 +6,7 @@ import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { TransactionFlag } from '../../../constants';
 import { ITransaction, IScheduledTransaction } from '../../../interfaces/budgetEntities';
-import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
+import { ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PFlagSelectionDialogProps {
 	// Dispatcher Functions

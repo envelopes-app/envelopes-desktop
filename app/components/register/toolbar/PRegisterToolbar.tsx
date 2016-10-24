@@ -12,6 +12,7 @@ export interface PRegisterToolbarProps {
 	onAddTransactionSelected:()=>void;
 	showEditMenu:()=>void;
 	showFilterDialog:(element:HTMLElement)=>void;
+	showEditMenuDialog:(element:HTMLElement)=>void;
 }
 
 const RegisterToolbarContainerStyle = {
@@ -34,20 +35,25 @@ const RegisterToolbarStyle = {
 
 export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}> {
   
+	private editButton:PLinkButton;
 	private filterButton:PLinkButton;
 
   	constructor(props: any) {
         super(props);
-		this.showEditMenu = this.showEditMenu.bind(this);
+		this.showEditMenuDialog = this.showEditMenuDialog.bind(this);
 		this.showFilterDialog = this.showFilterDialog.bind(this);
     }
 
-	private showEditMenu():void {
+	private showEditMenuDialog():void {
 
+		var selectedTransactionsCount = this.props.registerState.selectedTransactions.length;
+		if(selectedTransactionsCount > 0) {
+			this.props.showEditMenuDialog(this.editButton.getRootElement());
+		}
 	}
 
 	private showFilterDialog(event:React.MouseEvent):void {
-		this.props.showFilterDialog(this.filterButton as any);
+		this.props.showFilterDialog(this.filterButton.getRootElement());
 	}
 
 	public render() {
@@ -60,14 +66,25 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
     	return (
 			<div style={RegisterToolbarContainerStyle}>
 				<div style={RegisterToolbarStyle}>
-					<PLinkButton text="Add a transaction" glyphName="glyphicon-plus-sign" clickHandler={this.props.onAddTransactionSelected} />
-					<PLinkButton enabled={selectedTransactionsCount > 0} text={editButtonText} 
-						glyphName="glyphicon-edit" showDropDown={true} clickHandler={this.showEditMenu} />
+					<PLinkButton 
+						text="Add a transaction" 
+						glyphName="glyphicon-plus-sign" 
+						clickHandler={this.props.onAddTransactionSelected} 
+					/>
+					<PLinkButton 
+						ref={(b)=> this.editButton = b }
+						enabled={selectedTransactionsCount > 0} 
+						text={editButtonText} 
+						glyphName="glyphicon-edit" 
+						showDropDown={true} 
+						clickHandler={this.showEditMenuDialog} 
+					/>
 					<div className="spacer" />
 					<PLinkButton 
-						ref={(d)=> this.filterButton = d }
+						ref={(b)=> this.filterButton = b }
 						enabled={true} text="Filter" showDropDown={true} 
-						clickHandler={this.showFilterDialog} />
+						clickHandler={this.showFilterDialog} 
+					/>
 				</div>
 			</div>
 		);

@@ -12,6 +12,7 @@ import { PFlagSelectionDialog } from './dialogs/PFlagSelectionDialog';
 import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
 import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
 import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
+import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { RegisterTransactionObjectsArray } from '../../collections'; 
@@ -45,6 +46,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private transactionDialog:PTransactionDialog;
 	private reconcileAccountDialog:PReconcileAccountDialog;
 	private approveRejectDialog:PApproveRejectDialog;
+	private editMenuDialog:PEditMenuDialog;
 
 	constructor(props: any) {
         super(props);
@@ -60,6 +62,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
 		this.showReconcileAccountDialog = this.showReconcileAccountDialog.bind(this);
 		this.showApproveRejectDialog = this.showApproveRejectDialog.bind(this);
+		this.showEditMenuDialog = this.showEditMenuDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
 		this.state = {registersState:{}};
@@ -264,6 +267,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 		if(this.approveRejectDialog.isShowing() == false) {
 			this.approveRejectDialog.show(transaction, element);
+		}
+	}
+
+	private showEditMenuDialog(element:HTMLElement):void {
+
+		if(this.editMenuDialog.isShowing() == false) {
+			this.editMenuDialog.show(element);
 		}
 	}
 
@@ -533,6 +543,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					onAddTransactionSelected={this.onAddTransactionSelected}
 					showEditMenu={null}
 					showFilterDialog={this.showFilterTransactionsDialog}
+					showEditMenuDialog={this.showEditMenuDialog}
 				/>
 
 				<PRegisterDataGrid 
@@ -570,6 +581,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PApproveRejectDialog 
 					ref={(d)=> this.approveRejectDialog = d }
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<PEditMenuDialog 
+					ref={(d)=> this.editMenuDialog = d }
 					updateEntities={this.props.updateEntities}
 				/>
 

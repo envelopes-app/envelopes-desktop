@@ -326,3 +326,51 @@
 	border-style: solid;
 	border-radius: 20px;
 }
+
+/* ******************************************************************************* */
+/* Styles for edit menu */
+/* ******************************************************************************* */
+.menu-item-separator {
+	margin-top: 0px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-top: 2px solid #dee3e8;
+	width: 100%;
+}
+
+.menu-item {
+	flex: 0 0 auto;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	color: #588697;	
+	font-size: 16px;
+	height: 24px;
+	width: 100%;
+	cursor: pointer;
+}
+
+.menu-item:hover {
+	flex: 0 0 auto;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	color: #3e5e6a;	
+	font-size: 16px;
+	height: 24px;
+	width: 100%;
+	cursor: pointer;
+}
+
+.menu-item-disabled {
+	flex: 0 0 auto;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	color: #588697;	
+	font-size: 16px;
+	height: 24px;
+	width: 100%;
+	cursor: default;
+	opacity: 0.5
+}

@@ -22,6 +22,11 @@ const PLinkButtonDefaultStyle = {
 	color: '#009cc2'
 }
 
+const PLinkButtonDisabledStyle = {
+	color: '#009cc2',
+	opacity: "0.5"
+}
+
 const PLinkButtonHoverStyle = {
 	color: '#005076'
 }
@@ -33,12 +38,18 @@ const PLinkButtonTextStyle = {
 
 export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:boolean}> {
 
+	private rootElement:HTMLDivElement;
+
 	constructor(props: any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.state = {hoverState:false};
+	}
+
+	public getRootElement():HTMLDivElement {
+		return this.rootElement;
 	}
 
 	private onClick(event:React.MouseEvent):void {
@@ -64,7 +75,9 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
   	public render() {
 
 		var style:any;
-		if(this.state.hoverState) 
+		if(this.props.enabled == false)
+			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDisabledStyle);
+		else if(this.state.hoverState) 
 			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonHoverStyle);
 		else
 			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDefaultStyle);
@@ -91,7 +104,10 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 		}
 
 		return (
-			<div style={style} onClick={this.onClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+			<div style={style} onClick={this.onClick} 
+				onMouseEnter={this.handleMouseEnter} 
+				onMouseLeave={this.handleMouseLeave}
+				ref={(d)=> this.rootElement = d }>
 				{buttonContents}
 			</div>
 		);
