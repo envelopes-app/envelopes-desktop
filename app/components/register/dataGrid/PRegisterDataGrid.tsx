@@ -24,7 +24,7 @@ import { PInflowCell } from './PInflowCell';
 import { PClearedCell } from './PClearedCell';
 
 import { DateWithoutTime, RegisterTransactionObject } from '../../../utilities';
-import { ClearedFlag, TransactionFlag } from '../../../constants';
+import { ClearedFlag, TransactionFlag, RegisterSortField, RegisterSortOrder } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection, IRegisterState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
@@ -54,7 +54,6 @@ const RegisterDataGridContainerStyle = {
 	backgroundColor: '#ffffff'
 }
 
-// TODO: Handle data sorting etc.
 // TODO: Selection by mouse not working in selectors
 export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, PRegisterDataGridState> {
   
@@ -113,6 +112,9 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		if(showDataGrid) {
 
 			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
+			var sortField = this.props.registerState.sortByFields[0];
+			var sortOrder = this.props.registerState.sortOrders[0];
+
 			var tableColumns = [
 				<Column 
 					key="selectionColumn"
@@ -158,7 +160,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="accountColumn"
 					width={100}
-					header={<PColumnHeader label="ACCOUNT" showSortIcon={false} />}
+					header={<PColumnHeader label="ACCOUNT" showSortIcon={sortField == RegisterSortField.Account} sortOrder={sortOrder} />}
 					cell={
 						<PAccountCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -171,7 +173,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="dateColumn"
 					width={90}
-					header={<PColumnHeader label="DATE" showSortIcon={true} />}
+					header={<PColumnHeader label="DATE" showSortIcon={sortField == RegisterSortField.Date} sortOrder={sortOrder}/>}
 					cell={
 						<PDateCell  
 							registerTransactionObjects={registerTransactionObjects}
@@ -184,7 +186,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="payeeColumn"
 					width={170}
-					header={<PColumnHeader label="PAYEE" showSortIcon={false} />}
+					header={<PColumnHeader label="PAYEE" showSortIcon={sortField == RegisterSortField.Payee} sortOrder={sortOrder} />}
 					cell={
 						<PPayeeCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -197,7 +199,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="categoryColumn"
 					width={280}
-					header={<PColumnHeader label="CATEGORY" showSortIcon={false} />}
+					header={<PColumnHeader label="CATEGORY" showSortIcon={sortField == RegisterSortField.Category} sortOrder={sortOrder} />}
 					cell={
 						<PCategoryCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -211,7 +213,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					key="memoColumn"
 					width={170}
 					flexGrow={1}
-					header={<PColumnHeader label="MEMO" showSortIcon={false} />}
+					header={<PColumnHeader label="MEMO" showSortIcon={sortField == RegisterSortField.Memo} sortOrder={sortOrder} />}
 					cell={
 						<PMemoCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -224,7 +226,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="outflowColumn"
 					width={100}
-					header={<PColumnHeader label="OUTFLOW" showSortIcon={false} />}
+					header={<PColumnHeader label="OUTFLOW" showSortIcon={sortField == RegisterSortField.Outflow} sortOrder={sortOrder} />}
 					cell={
 						<POutflowCell 
 							registerTransactionObjects={registerTransactionObjects}
@@ -237,7 +239,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				<Column 
 					key="inflowColumn"
 					width={100}
-					header={<PColumnHeader label="INFLOW" showSortIcon={false} />}
+					header={<PColumnHeader label="INFLOW" showSortIcon={sortField == RegisterSortField.Inflow} sortOrder={sortOrder} />}
 					cell={
 						<PInflowCell 
 							registerTransactionObjects={registerTransactionObjects}
