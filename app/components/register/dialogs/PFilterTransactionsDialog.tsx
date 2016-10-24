@@ -94,6 +94,8 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 	constructor(props: any) {
         super(props);
 		this.hide = this.hide.bind(this);
+		this.onShowReconciledTransactionsSelectionChange = this.onShowReconciledTransactionsSelectionChange.bind(this);
+		this.onShowScheduledTransactionsSelectionChange = this.onShowScheduledTransactionsSelectionChange.bind(this);
 		this.onFromMonthChange = this.onFromMonthChange.bind(this);
 		this.onFromYearChange = this.onFromYearChange.bind(this);
 		this.onToMonthChange = this.onToMonthChange.bind(this);

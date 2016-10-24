@@ -319,6 +319,12 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				}
 			});
 		}
+		else {
+			// Start iterating through scheduled transactions, and remove them all from the register.
+			_.forEach(scheduledTransactionsArray.getAllItems(), (scheduledTransaction)=>{
+				registerTransactionObjectsArray.removeEntityById(scheduledTransaction.entityId);
+			});			
+		}
 
 		// Start iterating through transactions month by month, and convert them into RegisterTransactionObjects for displaying in the register.
 		var month = startDate.clone();
@@ -412,6 +418,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		registerState.filterEndDate = endDate;
 		registerState.filterShowReconciledTransactions = showReconciled;
 		registerState.filterShowScheduledTransactions = showScheduled;
+		// Update the registerTransactionObjectsArray
+		this.updateRegisterTransactionObjectsArray(registerState.registerTransactionObjectsArray, registerState, this.props.applicationState.entitiesCollection);
 		this.updateRegisterState(registerState);
 	}
 
