@@ -24,7 +24,7 @@ const RegisterHeaderContainerStyle = {
 	height: '60px',
 	width: '100%',
 	backgroundColor: '#003540',
-	paddingLeft: '5px',
+	paddingLeft: '0px',
 	paddingRight: '5px'
 }
 

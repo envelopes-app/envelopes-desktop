@@ -9,17 +9,24 @@ export interface PHeaderAccountNameProps {
 
 const AccountNameContainerStyle = {
 	flex: '0 0 auto',
+	display: 'flex',
+	alignItems: 'center',
+	backgroundColor: '#16A336',
+	height: '100%',
+	borderTopRightRadius: '20px',
+	borderBottomRightRadius: '20px',
 	paddingLeft: '10px',
-	paddingRight: '10px'
+	paddingRight: '10px',
+	marginRight: '20px'
 }
 
 const AccountNameInnerStyle = {
 	fontSize: '20px',
 	fontWeight: '200',
 	color: '#ffffff',
-	padding: '4px',
-	borderRadius: '4px',
 	backgroundColor: '#16A336',
+	paddingTop: '4px',
+	paddingBottom: '4px',
 	paddingLeft: '10px',
 	paddingRight: '10px'
 }
