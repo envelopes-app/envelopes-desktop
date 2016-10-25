@@ -14,6 +14,7 @@ import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
 import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
 import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
 import { PBulkCategorizeDialog } from './dialogs/PBulkCategorizeDialog';
+import { PMoveToAccountDialog } from './dialogs/PMoveToAccountDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { EntityFactory } from '../../persistence';
@@ -50,6 +51,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private approveRejectDialog:PApproveRejectDialog;
 	private editMenuDialog:PEditMenuDialog;
 	private bulkCategorizeDialog:PBulkCategorizeDialog;
+	private moveToAccountDialog:PMoveToAccountDialog;
 
 	constructor(props: any) {
         super(props);
@@ -299,7 +301,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private showMoveToAccountDialog():void {
 
-		// TODO:
+		if(this.moveToAccountDialog.isShowing() == false) {
+			// Get the register state for the active account
+			var activeAccount = this.getActiveAccount(this.props.applicationState);
+			var registerState = this.getRegisterStateForAccount(activeAccount);
+			// Pass the register state to the bulk categorize dialog
+			this.moveToAccountDialog.show(registerState);
+		}
 	}
 
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
@@ -320,13 +328,37 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			// RegisterTransactionObjects for displaying in the register.
 			_.forEach(scheduledTransactionsArray.getAllItems(), (scheduledTransaction)=>{
 
-				if(isAllAccounts || scheduledTransaction.accountId == accountId) {
+				// Does this scheduled transaction pass the criteria for inclusion into the registerTransactionObjectsArray
+				var shouldBeIncluded = (
+					scheduledTransaction.isTombstone == 0 && 
+					(isAllAccounts || scheduledTransaction.accountId == accountId)
+				);
 
+				// Do we already have a registerTransactionObject in our array against this scheduledTransaction
+				let existingRegisterTransactionObject = registerTransactionObjectsArray.getEntityById(scheduledTransaction.entityId);
+
+				// If the scheduled transaction should not be included, and it is not already included in the 
+				// registerTransactionObjectsArray, then we don't need to do anything about it.
+				// We do however need to handle the rest of the three cases:-
+				// Case 1: It is already included, but should not be. Remove it.
+				// Case 2: It is not already included, but should be. Add it.
+				// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
+
+				if(existingRegisterTransactionObject && shouldBeIncluded == false) {
+
+					// Case 1: It is already included, but should not be. Remove it.
+					// Remove the registerTransactionObject corresponding to this transaction.
+					// This also removes registerTransactionObject for any subTransactions or 
+					// scheduledSubTransactions if this was a split
+					registerTransactionObjectsArray.removeEntityById(scheduledTransaction.entityId);
+				}
+				else if(!existingRegisterTransactionObject && shouldBeIncluded == true) {
+
+					// Case 2: It is not already included, but should be. Add it.
 					let registerTransactionObject = RegisterTransactionObject.createFromScheduledTransaction(scheduledTransaction, entitiesCollection);
 					if(registerTransactionObject) {
-
 						registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-						// If this is a split transaction, get the subtransactions for this transaction
+						// If this is a split transaction, get the subtransactions for this scheduled transaction
 						// and create RegisterTransactionObjects for them as well.
 						if(scheduledTransaction.subCategoryId == splitSubCategoryId) {
 
@@ -335,6 +367,28 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 								let registerTransactionObject = RegisterTransactionObject.createFromScheduledSubTransaction(scheduledSubTransaction, scheduledTransaction, entitiesCollection);
 								registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
 							});
+						}
+					}
+				}
+				else if(existingRegisterTransactionObject && shouldBeIncluded == true) {
+
+					// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
+					var isStale = existingRegisterTransactionObject.checkIfObjectIsStale( entitiesCollection );
+					// If it is stale, then create a new one and replace the old registerTransactionObject with the new one
+					if(isStale) {
+						let registerTransactionObject = RegisterTransactionObject.createFromScheduledTransaction(scheduledTransaction, entitiesCollection);
+						if(registerTransactionObject) {
+							registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
+							// If this is a split transaction, get the subtransactions for this transaction
+							// and create RegisterTransactionObjects for them as well.
+							if(scheduledTransaction.subCategoryId == splitSubCategoryId) {
+
+								var scheduledSubTransactions = scheduledSubTransactionsArray.getSubTransactionsByTransactionId(scheduledTransaction.entityId);
+								_.forEach(scheduledSubTransactions, (scheduledSubTransaction)=>{
+									let registerTransactionObject = RegisterTransactionObject.createFromScheduledSubTransaction(scheduledSubTransaction, scheduledTransaction, entitiesCollection);
+									registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
+								});
+							}
 						}
 					}
 				}
@@ -658,6 +712,12 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PBulkCategorizeDialog 
 					ref={(d)=> this.bulkCategorizeDialog = d }
+					entitiesCollection={entitiesCollection}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<PMoveToAccountDialog 
+					ref={(d)=> this.moveToAccountDialog = d }
 					entitiesCollection={entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>

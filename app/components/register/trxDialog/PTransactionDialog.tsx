@@ -203,6 +203,35 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction, activeField:string):void {
 
+		// Before updating the state, refresh the lists of accounts, payees and categories 
+		// for showing in the popovers of the transaction dialog.
+		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
+		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
+		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
+
+		// Update the state of this dialog to make it visible. 
+		// Also reset all the fields for storing the values for the new transaction 
+		// Note: We are not setting the activeField here, as it needs to be set in the "onEnter" handler
+		// for the dialog box. This is so that we show the required popover when the dialog box has settled
+		// into it's final position. 
+		this.setState({ 
+			showModal: true,
+			action: "existing-scheduled-transaction",
+			scheduledTransaction: scheduledTransaction,
+			activeField: null,
+			activeFieldOnInitialShow: activeField,
+			entityId: scheduledTransaction.entityId,
+			accountId: scheduledTransaction.accountId,
+			payeeId: scheduledTransaction.payeeId,
+			manuallyEnteredPayeeName: null,
+			date: DateWithoutTime.createFromUTCTime(scheduledTransaction.date),
+			frequency: scheduledTransaction.frequency,
+			subCategoryId: scheduledTransaction.subCategoryId,
+			manuallyEnteredCategoryName: null,
+			memo: scheduledTransaction.memo ? scheduledTransaction.memo : "",
+			outflowAmount: scheduledTransaction.amount < 0 ? -scheduledTransaction.amount : 0,
+			inflowAmount: scheduledTransaction.amount > 0 ? scheduledTransaction.amount : 0
+		});
 	}
 
 	private setActiveField(activeField:string):void {

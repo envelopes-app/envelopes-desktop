@@ -45,7 +45,7 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
-
+		debugger;
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "category");
 	}
@@ -62,11 +62,19 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 			);
 		}
 		else {
-			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-					<Badge style={WarningBadgeStyle}>This needs a category</Badge>
-				</div>
-			);
+			// This needs a category message is to be shown only for transactions
+			if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction") {
+				return (
+					<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+						<Badge style={WarningBadgeStyle}>This needs a category</Badge>
+					</div>
+				);
+			}
+			else {
+				return (
+					<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
+				);
+			}
 		}
   	}
 }

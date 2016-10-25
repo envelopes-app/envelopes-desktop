@@ -116,8 +116,8 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 		var selectedCategoryId:string = this.state.selectedCategoryId;
 		var categoriesList:Array<objects.ICategoryObject> = this.state.categoriesList;
 
-		var categoiresPopoverItem:JSX.Element;
-		var categoiresPopoverItems:Array<JSX.Element> = [];
+		var categoiresItem:JSX.Element;
+		var categoiresItems:Array<JSX.Element> = [];
 		
 		// Get the currently selected category so that we can highlight the corresponding item
 		var selectedCategory = selectedCategoryId ? _.find(this.state.categoriesList, {entityId: selectedCategoryId}) : null;
@@ -127,8 +127,8 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 
 			if(category.isMasterCategory) {
 				// Create the list item for the master category
-				categoiresPopoverItem = <li key={category.entityId} className="categories-dropdown-list-section">{category.name}:</li>;
-				categoiresPopoverItems.push(categoiresPopoverItem);
+				categoiresItem = <li key={category.entityId} className="categories-dropdown-list-section">{category.name}:</li>;
+				categoiresItems.push(categoiresItem);
 			}
 			else {
 				var availableAmountClassName = "categories-dropdown-list-positive-available-amount";
@@ -138,7 +138,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 					availableAmountClassName = "categories-dropdown-list-negative-available-amount";
 
 				if(selectedCategory && selectedCategory.entityId == category.entityId) {
-					categoiresPopoverItem = (
+					categoiresItem = (
 						<div key={category.entityId} className="categories-dropdown-list-item-selected" 
 							id={category.entityId}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
@@ -147,7 +147,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 					);
 				}
 				else {
-					categoiresPopoverItem = (
+					categoiresItem = (
 						<div key={category.entityId} className="categories-dropdown-list-item" 
 							id={category.entityId} onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
@@ -156,13 +156,13 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 					);
 				}
 
-				categoiresPopoverItems.push(categoiresPopoverItem);
+				categoiresItems.push(categoiresItem);
 			}
 		});
 
 		return (
 			<ul className="categories-dropdown-list" style={ScrollableContainerStyle}>
-				{categoiresPopoverItems}
+				{categoiresItems}
 			</ul>
 		);
 	}
