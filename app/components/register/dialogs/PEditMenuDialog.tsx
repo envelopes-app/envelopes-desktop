@@ -11,6 +11,9 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 
 export interface PEditMenuDialogProps {
 	entitiesCollection:IEntitiesCollection;
+
+	showBulkCategorizeDialog:()=>void;
+	showMoveToAccountDialog:()=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }

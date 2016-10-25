@@ -42,15 +42,15 @@ export class PRegisterMessageBar extends React.Component<PRegisterMessageBarProp
 
 		var retVal = {infoCount: 0, warningCount: 0, message: ""};
 		var accountId = this.props.accountId;
-		var accounts = this.props.entitiesCollection.accounts;
+		var accountsArray = this.props.entitiesCollection.accounts;
 
-		if(!accounts || accounts.length == 0)
+		if(!accountsArray || accountsArray.length == 0)
 			return retVal;
 
 		if(this.props.isAllAccounts) {
 
 			// Iterate through all the accounts and sum up the info/warning counts
-			_.forEach(accounts, (account)=>{
+			_.forEach(accountsArray.getAllItems(), (account)=>{
 
 				if(account.isTombstone == 0) {
 
@@ -64,7 +64,7 @@ export class PRegisterMessageBar extends React.Component<PRegisterMessageBarProp
 		}
 		else {
 
-			var account = accounts.getEntityById(accountId);
+			var account = accountsArray.getEntityById(accountId);
 			retVal.infoCount += account.infoCount;
 			if(account.onBudget == 1) 
 				retVal.warningCount += account.warningCount;

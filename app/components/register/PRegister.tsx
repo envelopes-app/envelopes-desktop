@@ -15,6 +15,7 @@ import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
 import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
+import { EntityFactory } from '../../persistence';
 import { RegisterTransactionObjectsArray } from '../../collections'; 
 import { ClearedFlag, RegisterFilterTimeFrame } from '../../constants';
 import { DateWithoutTime, RegisterTransactionObject, SerializationUtilities, SimpleObjectMap, Logger } from '../../utilities';
@@ -281,6 +282,16 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		}
 	}
 
+	private showBulkCategorizeDialog():void {
+
+		// TODO:
+	}
+
+	private showMoveToAccountDialog():void {
+
+		// TODO:
+	}
+
 	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
 
 		var accountId = registerState.accountId;
@@ -425,6 +436,37 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private reconcileAccount(account:budgetEntities.IAccount, actualCurrentBalance:number):void {
 
+		var changedEntities:ISimpleEntitiesCollection = {
+			transactions:[]
+		};
+
+		// Iterate through all the transactions in the account, and mark all cleared transactions as reconciled.
+		var entitiesCollection = this.props.applicationState.entitiesCollection;
+		var transactions = entitiesCollection.transactions.getTransactionsByAccountId(account.entityId);
+		_.forEach(transactions, (transaction)=>{
+
+			if(transaction.cleared == ClearedFlag.Cleared && transaction.isTombstone == 0) {
+				var updatedTransaction = Object.assign({}, transaction);
+				updatedTransaction.cleared = ClearedFlag.Reconciled;
+				changedEntities.transactions.push(updatedTransaction);
+			}
+		});
+
+		// If the actualCurrentBalance of the account (as entered by the user) is different then what we 
+		// have in the account entity, then we need to create a reconciliation adjustment transaction.
+		if(account.clearedBalance != actualCurrentBalance) {
+
+			var adjustmentTransaction = EntityFactory.createNewTransaction();
+			adjustmentTransaction.accountId = account.entityId;
+			adjustmentTransaction.payeeId = entitiesCollection.payees.getReconciliationBalanceAdjustmentPayee().entityId;
+			adjustmentTransaction.subCategoryId = entitiesCollection.subCategories.getImmediateIncomeSubCategory().entityId;
+			adjustmentTransaction.date = DateWithoutTime.createForToday().getUTCTime();
+			adjustmentTransaction.amount = actualCurrentBalance - account.clearedBalance;
+			adjustmentTransaction.cleared = ClearedFlag.Reconciled;
+			changedEntities.transactions.push(adjustmentTransaction);
+		}
+
+		this.props.updateEntities(changedEntities);
 	}
 
 	// *******************************************************************************************************
@@ -599,6 +641,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				<PEditMenuDialog 
 					ref={(d)=> this.editMenuDialog = d }
 					entitiesCollection={entitiesCollection}
+					showBulkCategorizeDialog={this.showBulkCategorizeDialog}
+					showMoveToAccountDialog={this.showMoveToAccountDialog}
 					updateEntities={this.props.updateEntities}
 				/>
 
