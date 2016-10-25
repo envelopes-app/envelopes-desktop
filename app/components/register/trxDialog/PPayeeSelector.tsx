@@ -15,7 +15,7 @@ export interface PPayeeSelectorProps {
 	manuallyEnteredPayeeName:string;
 	payeesList:Array<objects.IPayeeObject>;
 	setActiveField?:(activeField:string)=>void;
-	setSelectedPayeeId:(payeeId:string)=>void;
+	setSelectedPayeeId:(payeeId:string, callback?:()=>any)=>void;
 	setManuallyEnteredPayeeName:(payeeName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
@@ -51,7 +51,6 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
 		this.state = {showPopover:false};	
 	}
 
@@ -59,11 +58,11 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedPayeeId != payeeId) {
-			this.props.setSelectedPayeeId(payeeId);
+			this.props.setSelectedPayeeId(payeeId, ()=>{
+				// Call handleTabPressed as we want to move the focus on to the next control
+				this.props.handleTabPressed(false);
+			});
 		}
-
-		// Call handleTabPressed as we want to move the focus on to the next control
-		this.props.handleTabPressed(false);
 	}
 
 	private onFocus():void {

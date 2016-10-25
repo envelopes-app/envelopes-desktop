@@ -19,7 +19,7 @@ export interface PCategorySelectorProps {
 	manuallyEnteredCategoryName:string;
 	categoriesList:Array<objects.ICategoryObject>;
 	setActiveField?:(activeField:string)=>void;
-	setSelectedCategoryId:(subCategoryId:string, clearManuallyEnteredCategoryName?:boolean)=>void;
+	setSelectedCategoryId:(subCategoryId:string, clearManuallyEnteredCategoryName?:boolean, callback?:()=>any)=>void;
 	setManuallyEnteredCategoryName:(categoryName:string)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
@@ -48,18 +48,17 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.setSelectedCategoryId = this.setSelectedCategoryId.bind(this);
 	}
 
 	private setSelectedCategoryId(subCategoryId:string) {
 
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedCategoryId != subCategoryId) {
-			this.props.setSelectedCategoryId(subCategoryId, true);
+			this.props.setSelectedCategoryId(subCategoryId, true, ()=>{
+				// Call handleTabPressed as we want to move the focus on to the next control
+				this.props.handleTabPressed(false);
+			});
 		}
-
-		// Call handleTabPressed as we want to move the focus on to the next control
-		this.props.handleTabPressed(false);
 	}
 
 	private onFocus():void {
@@ -217,6 +216,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 	public render() {
 
+		debugger;
 		// Get the currently selected category so that we can highlight the corresponding item
 		var selectedCategoryId = this.props.selectedCategoryId;
 		var selectedCategory = selectedCategoryId ? _.find(this.props.categoriesList, {entityId: selectedCategoryId}) : null;

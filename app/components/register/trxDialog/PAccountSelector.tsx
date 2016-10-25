@@ -14,7 +14,7 @@ export interface PAccountSelectorProps {
 	selectedAccountId:string;
 	accountsList:Array<objects.IAccountObject>;
 	setActiveField?:(activeField:string)=>void;
-	setSelectedAccountId:(accountId:string)=>void;
+	setSelectedAccountId:(accountId:string, callback?:()=>any)=>void;
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
@@ -40,18 +40,17 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, {}>
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
 	}
 
 	private setSelectedAccountId(accountId:string) {
 
 		// This method is called when the user selects an item from the popover using mouse click
 		if(this.props.selectedAccountId != accountId) {
-			this.props.setSelectedAccountId(accountId);
+			this.props.setSelectedAccountId(accountId, ()=>{
+				// Call handleTabPressed as we want to move the focus on to the next control
+				this.props.handleTabPressed(false);
+			});
 		}
-
-		// Call handleTabPressed as we want to move the focus on to the next control
-		this.props.handleTabPressed(false);
 	}
 
 	public onFocus():void {

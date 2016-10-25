@@ -45,7 +45,7 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 	}	
 
 	private onDoubleClick(event:MouseEvent):void {
-		debugger;
+
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "category");
 	}
