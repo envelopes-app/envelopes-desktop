@@ -57,7 +57,6 @@ const RegisterDataGridContainerStyle = {
 	backgroundColor: '#ffffff'
 }
 
-// TODO: Selection by mouse not working in selectors
 export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, PRegisterDataGridState> {
   
 	private dataGridContainer:HTMLDivElement;

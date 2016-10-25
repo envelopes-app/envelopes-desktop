@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import { SimpleObjectMap } from '../utilities'; 
 
-// TODO: Add sorting support
 export class EntitiesArray<T extends {entityId:string}> {
 
 	protected internalArray:Array<T> = [];
