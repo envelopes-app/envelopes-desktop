@@ -13,7 +13,7 @@ export class DialogUtilities {
 
 		var accountsList:Array<objects.IAccountObject> = [];
 		// Go through the account entities and build a list of open, non-tombstoned accounts
-		_.forEach(entitiesCollection.accounts, (account)=>{
+		_.forEach(entitiesCollection.accounts.getAllItems(), (account)=>{
 
 			if(account.isTombstone == 0 && account.closed == 0) {
 				accountsList.push({
@@ -30,7 +30,7 @@ export class DialogUtilities {
 
 		var payeesList:Array<objects.IPayeeObject> = [];
 		// Go through the payee entities and build a list of non-tombstoned, non-internal payees
-		_.forEach(entitiesCollection.payees, (payee)=>{
+		_.forEach(entitiesCollection.payees.getAllItems(), (payee)=>{
 
 			if(payee.isTombstone == 0 && !payee.internalName) {
 				payeesList.push({
@@ -86,7 +86,7 @@ export class DialogUtilities {
 		});
 
 		// Go through the master categories and build a list of non-tombstoned, non-internal master categories
-		_.forEach(masterCategories, (masterCategory)=>{
+		_.forEach(masterCategories.getAllItems(), (masterCategory)=>{
 
 			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && !masterCategory.internalName) {
 

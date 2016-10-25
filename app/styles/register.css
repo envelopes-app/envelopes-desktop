@@ -374,3 +374,16 @@
 	cursor: default;
 	opacity: 0.5
 }
+
+/* ******************************************************************************* */
+/* Styles for bulk categorize dialog */
+/* ******************************************************************************* */
+.bulk-categorize-dialog {
+	width: 280px;
+	height: 500px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -250px;
+	margin-left: -140px;
+}

@@ -46,6 +46,8 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		this.approveSelectedTransactions = this.approveSelectedTransactions.bind(this);
 		this.rejectSelectedTransactions = this.rejectSelectedTransactions.bind(this);
 		this.deleteSelectedTransactions = this.deleteSelectedTransactions.bind(this);
+		this.showBulkCategorizeDialog = this.showBulkCategorizeDialog.bind(this);
+		this.showMoveToAccountDialog = this.showMoveToAccountDialog.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
@@ -71,6 +73,7 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		state.selectedTransactionIds = selectedTransactionIds;
 		state.enableApproveRejectMenus = this.getEnableApproveRejectMenus(selectedTransactionIds);
 		state.enableClearUnclearMenus = this.getEnableClearUnclearMenus(selectedTransactionIds);
+		state.enableMoveToAccountMenu = this.getEnableMoveToAccountMenu();
 		state.enableMoveToAccountMenu = this.getEnableMoveToAccountMenu();
 		this.setState(state);
 	}
@@ -267,6 +270,18 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		this.hide();
 	}
 	
+	public showBulkCategorizeDialog():void {
+
+		this.hide();
+		this.props.showBulkCategorizeDialog();
+	}
+
+	public showMoveToAccountDialog():void {
+
+		this.hide();
+		this.props.showMoveToAccountDialog();
+	}
+
 	public render() {
 
 		if(this.state.show) {
@@ -293,12 +308,12 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 							&nbsp;Reject
 						</div>
 						<div className="menu-item-separator" />
-						<div className="menu-item">
+						<div className="menu-item" onClick={this.showBulkCategorizeDialog}>
 							<Glyphicon glyph="envelope" />
 							&nbsp;Categorize as
 						</div>
 						<div className="menu-item-separator" />
-						<div className={this.state.enableMoveToAccountMenu ? "menu-item" : "menu-item-disabled"}>
+						<div className={this.state.enableMoveToAccountMenu ? "menu-item" : "menu-item-disabled"} onClick={this.showMoveToAccountDialog}>
 							<Glyphicon glyph="transfer" />
 							&nbsp;Move to account
 						</div>

@@ -13,6 +13,7 @@ import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
 import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
 import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
 import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
+import { PBulkCategorizeDialog } from './dialogs/PBulkCategorizeDialog';
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { EntityFactory } from '../../persistence';
@@ -48,6 +49,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private reconcileAccountDialog:PReconcileAccountDialog;
 	private approveRejectDialog:PApproveRejectDialog;
 	private editMenuDialog:PEditMenuDialog;
+	private bulkCategorizeDialog:PBulkCategorizeDialog;
 
 	constructor(props: any) {
         super(props);
@@ -64,6 +66,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.showReconcileAccountDialog = this.showReconcileAccountDialog.bind(this);
 		this.showApproveRejectDialog = this.showApproveRejectDialog.bind(this);
 		this.showEditMenuDialog = this.showEditMenuDialog.bind(this);
+		this.showBulkCategorizeDialog = this.showBulkCategorizeDialog.bind(this);
+		this.showMoveToAccountDialog = this.showMoveToAccountDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
 		this.state = {registersState:{}};
@@ -284,7 +288,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private showBulkCategorizeDialog():void {
 
-		// TODO:
+		if(this.bulkCategorizeDialog.isShowing() == false) {
+			// Get the register state for the active account
+			var activeAccount = this.getActiveAccount(this.props.applicationState);
+			var registerState = this.getRegisterStateForAccount(activeAccount);
+			// Pass the register state to the bulk categorize dialog
+			this.bulkCategorizeDialog.show(registerState);
+		}
 	}
 
 	private showMoveToAccountDialog():void {
@@ -643,6 +653,12 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					entitiesCollection={entitiesCollection}
 					showBulkCategorizeDialog={this.showBulkCategorizeDialog}
 					showMoveToAccountDialog={this.showMoveToAccountDialog}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<PBulkCategorizeDialog 
+					ref={(d)=> this.bulkCategorizeDialog = d }
+					entitiesCollection={entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
