@@ -4,8 +4,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 
-import ColorPalette from '../common/ColorPalette';
-
 export interface PModuleButtonProps {
 	label: string,
 	selected: boolean;
@@ -15,22 +13,21 @@ export interface PModuleButtonProps {
 const ModuleButtonContainerStyle = {
 	display: 'flex',
 	flexFlow: 'row nowrap',	
-	height: '50px',
-	borderRadius: '2px',
+	height: '70px',
 	top: '0px',
 	paddingLeft: '16px', 
 	alignItems: 'center',
 	cursor: 'pointer',
-	backgroundColor: ColorPalette.Shade500
+	backgroundColor: "transparent"
 };
 
 const ModuleButtonLabelStyle = {
 
 	position: 'relative',
 	opacity: 1,
-	fontSize: '18px',
+	fontSize: '20px',
 	letterSpacing: '0px',
-	fontWeight: 500, 
+	fontWeight: 'normal', 
 	margin: '0px', 
 	paddingLeft: '8px', 
 	paddingRight: '16px',
@@ -55,19 +52,17 @@ export class PModuleButton extends React.Component<PModuleButtonProps, {hoverSta
 	}
 
   	public render() {
+
+		var moduleButtonContainerStyle = _.assign({}, ModuleButtonContainerStyle);
+
 		var colorValue:string;
 		if(this.props.selected == true)
-			colorValue = ColorPalette.Shade800;
+			moduleButtonContainerStyle["backgroundColor"] = "#00596F";
 		else {
 			var hoverState = (this.state as any).hoverState;
 			if(hoverState == true)
-				colorValue = ColorPalette.Shade700;
-			else
-				colorValue = ColorPalette.Shade500;
+				moduleButtonContainerStyle["backgroundColor"] = "#1D879B";
 		}
-
-		// Create a clone of the style object, and update the backgroundColor value in it
-		var moduleButtonContainerStyle = _.assign({}, ModuleButtonContainerStyle, {backgroundColor: colorValue}); 
 
 		return (
 			<div style={moduleButtonContainerStyle} ref="moduleButtonContainer" 

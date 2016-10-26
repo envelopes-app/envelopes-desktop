@@ -7,3 +7,29 @@
 	margin-top: -250px;
 	margin-left: -300px;
 }
+
+.sidebar-horizontal-rule {
+	width: 100%;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	border-top: 1px solid #1D879B;
+	opacity: 0.5
+}
+
+.add-account-button {
+	flex: 0 0 auto;
+	font-size: 18px;
+	color: #FFFFFF;
+	background-color: #1F8CA7;
+	border: none;
+	outline: none;
+}
+
+.add-account-button:hover {
+	flex: 0 0 auto;
+	font-size: 18px;
+	color: #FFFFFF;
+	background-color: #1D879B;
+	border: none;
+	outline: none;
+}

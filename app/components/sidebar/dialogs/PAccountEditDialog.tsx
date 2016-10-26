@@ -5,7 +5,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Glyphicon, Overlay } from 'react-bootstrap';
 
-import ColorPalette from '../../common/ColorPalette';
 import { IAccount } from '../../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../../constants';
 

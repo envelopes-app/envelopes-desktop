@@ -6,7 +6,6 @@ import * as ReactDOM from 'react-dom';
 
 import { PButtonWithGlyph } from '../common/PButtonWithGlyph';
 import { PAccountEditDialog } from './dialogs/PAccountEditDialog';
-import ColorPalette from '../common/ColorPalette';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 
@@ -18,7 +17,7 @@ const AccountButtonContainerStyle = {
 	paddingLeft: '16px', 
 	alignItems: 'center',
 	cursor: 'pointer',
-	backgroundColor: ColorPalette.Shade500
+	backgroundColor: "transparent"
 };
 
 const AccountButtonLabelStyle = {
@@ -97,17 +96,14 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 
 		var hoverState = (this.state as any).hoverState;
 
-		// Based on the hoverState, determine the backgroundColor value
-		var backgroundColorValue:string = ColorPalette.Shade800;
-		if(this.props.selected == false) {
+		// Based on the hoverState, set the backgroundColor value for the buttons
+		var accountButtonContainerStyle = _.assign({}, AccountButtonContainerStyle); 
+		if(this.props.selected == true)
+			accountButtonContainerStyle["backgroundColor"] = "#00596F";
+		else {
 			if(hoverState == true)
-				backgroundColorValue = ColorPalette.Shade700;
-			else
-				backgroundColorValue = ColorPalette.Shade500;
+				accountButtonContainerStyle["backgroundColor"] = "#1D879B";
 		}
-
-		// Create a clone of the style object, and update the backgroundColor value in it
-		var accountButtonContainerStyle = _.assign({}, AccountButtonContainerStyle, {backgroundColor: backgroundColorValue}); 
 
 		// If the value is negative, we need to show it with a badge around it
 		var valueNode;

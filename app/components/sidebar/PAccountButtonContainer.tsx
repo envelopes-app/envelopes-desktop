@@ -3,23 +3,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import ColorPalette from '../common/ColorPalette';
-
 const PAccountButtonContainerStyle = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	width: '100%',
 	alignItems: 'center',
-	cursor: 'pointer',
-	backgroundColor: ColorPalette.Shade500
+	cursor: 'pointer'
 };
 
 const PAccountButtonContainerButtonStyle = {
 	flex: '1 1 auto',
 	borderRadius: '0px',
 	color: 'white',
-	backgroundColor: ColorPalette.Shade500,
-	borderColor: ColorPalette.Shade500,
+	backgroundColor: "transparent",
+	borderColor: "transparent",
 	fontSize: '12px',
 	textAlign: 'left',
 	outline: 'none',
@@ -102,6 +99,7 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 				<div className={containerClass} id={collapseContainerIdentity}>
 					{this.props.children}
 				</div>
+				<hr className="sidebar-horizontal-rule" />
 			</div>
 		);
 	}

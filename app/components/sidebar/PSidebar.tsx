@@ -3,8 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Divider from 'material-ui/Divider';
-import RaisedButton from 'material-ui/RaisedButton';
+import { Button } from 'react-bootstrap';
 import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 
@@ -13,7 +12,6 @@ import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
 import { PAccountCreationDialog } from './dialogs/PAccountCreationDialog';
 
-import ColorPalette from '../common/ColorPalette';
 import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection, ISidebarState } from '../../interfaces/state';
@@ -40,26 +38,17 @@ const PSidebarStyle = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	height: "100%",
-	backgroundColor: ColorPalette.Shade500,
+	backgroundImage: "linear-gradient(#34aebe, #227e99)"
 };
 
 const PModuleButtonStyle = {
 	flex: "0 0 auto"
 };
 
-const PDividerStyle = {
-	flex: "0 0 auto",
-	backgroundColor: ColorPalette.Shade600
-}
-
 const PContainerStyle = {
 	flex: "1 1 100%",
 	overflowY: "scroll"
 }
-
-const PButtonStyle = {
-	flex: "0 0 auto"
-};
 
 const ModuleButtonIconStyle = {
 	display: 'inline-block',
@@ -191,7 +180,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
 						<AccountBalance style={ModuleButtonIconStyle} />
 					</PModuleButton>
-					<Divider style={PDividerStyle} />
+					<hr className="sidebar-horizontal-rule" />
 					<div style={PContainerStyle}>
 						<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
 							expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
@@ -203,7 +192,9 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 						</PAccountButtonContainer>
 					</div>
 
-					<RaisedButton style={PButtonStyle} label="Add Account" primary={true} onClick={this.onAddAccountClick} />
+					<Button className="add-account-button" onClick={this.onAddAccountClick}>
+						Add Account
+					</Button>
 
 					<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
 				</div>
