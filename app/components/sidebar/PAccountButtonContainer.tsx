@@ -40,7 +40,7 @@ const PAccountButtonContainerValueWithBadgeStyle = {
 export interface PAccountButtonContainerProps {
 	identity: string,
 	label: string,
-	value: number,
+	value?: number,
 	expanded: boolean,
 	setExpanded: (expanded:boolean)=>void;
 }
@@ -72,7 +72,9 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 			containerClass = "collapse";
 		}
 
-		if(this.props.value < 0)
+		if(!this.props.value)
+			valueNode = <span style={PAccountButtonContainerValueStyle} />;
+		else if(this.props.value < 0)
 			valueNode = <span className="badge" style={PAccountButtonContainerValueWithBadgeStyle}>{this.props.value}</span>;
 		else
 			valueNode = <span style={PAccountButtonContainerValueStyle}>{this.props.value}</span>;

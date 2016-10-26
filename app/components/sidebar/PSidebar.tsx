@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button } from 'react-bootstrap';
+import { Button, Glyphicon } from 'react-bootstrap';
 import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 
@@ -140,19 +140,19 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.accountCreationDialog.show(account);
 	}
 
-  	public render() {
-		
+	private getAccountButtonContainerNodes():Array<JSX.Element> {
+
 		var budgetAccountNodes = [];
 		var trackingAccountNodes = [];
 		var closedAccountNodes = [];
 		var budgetAccountsBalance:number = 0;
 		var trackingAccountsBalance:number = 0;
-		var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
-		var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 
-		if(this.props.entitiesCollection.accounts) {
+		var accountButtonContainers:Array<JSX.Element> = [];
+		var entitiesCollection = this.props.entitiesCollection; 
+		if(entitiesCollection.accounts) {
 
-			_.forEach(this.props.entitiesCollection.accounts.getAllItems(), (account)=>{
+			_.forEach(entitiesCollection.accounts.getAllItems(), (account)=>{
 
 				// Is this account button selected?
 				var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
@@ -172,36 +172,62 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 				}
 			});
 
-			return (
-				<div style={PSidebarStyle}>
-					<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
-						<MailOutline style={ModuleButtonIconStyle} />
-					</PModuleButton>
-					<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
-						<AccountBalance style={ModuleButtonIconStyle} />
-					</PModuleButton>
-					<hr className="sidebar-horizontal-rule" />
-					<div style={PContainerStyle}>
-						<PAccountButtonContainer label="BUDGET" value={budgetAccountsBalance} identity="budget" 
-							expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
-							{budgetAccountNodes}
-						</PAccountButtonContainer>
-						<PAccountButtonContainer label="TRACKING" value={trackingAccountsBalance} identity="tracking"
-							expanded={this.state.trackingAccountsExpanded} setExpanded={this.setTrackingAccountsExpanded}>
-							{trackingAccountNodes}
-						</PAccountButtonContainer>
-					</div>
+			if(budgetAccountNodes.length > 0) {
+				accountButtonContainers.push(
+					<PAccountButtonContainer key="budget-accounts-container" label="BUDGET" value={budgetAccountsBalance} identity="budget" 
+						expanded={this.state.budgetAccountsExpanded} setExpanded={this.setBudgetAccountsExpanded}>
+						{budgetAccountNodes}
+					</PAccountButtonContainer>
+				);
+			}
 
-					<Button className="add-account-button" onClick={this.onAddAccountClick}>
-						Add Account
-					</Button>
+			if(trackingAccountNodes.length > 0) {
+				accountButtonContainers.push(
+					<PAccountButtonContainer key="tracking-accounts-container" label="TRACKING" value={trackingAccountsBalance} identity="tracking"
+						expanded={this.state.trackingAccountsExpanded} setExpanded={this.setTrackingAccountsExpanded}>
+						{trackingAccountNodes}
+					</PAccountButtonContainer>
+				);
+			}
 
-					<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
+			if(closedAccountNodes.length > 0) {
+				accountButtonContainers.push(
+					<PAccountButtonContainer key="closed-accounts-container" label="CLOSED" identity="closed"
+						expanded={this.state.closedAccountsExpanded} setExpanded={this.setClosedAccountsExpanded}>
+						{trackingAccountNodes}
+					</PAccountButtonContainer>
+				);
+			}
+		}
+
+		return accountButtonContainers;
+	}
+
+  	public render() {
+		
+		var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
+		var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
+		var accountButtonContainers:Array<JSX.Element> = this.getAccountButtonContainerNodes();
+
+		return (
+			<div style={PSidebarStyle}>
+				<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
+					<MailOutline style={ModuleButtonIconStyle} />
+				</PModuleButton>
+				<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
+					<AccountBalance style={ModuleButtonIconStyle} />
+				</PModuleButton>
+				<hr className="sidebar-horizontal-rule" />
+				<div style={PContainerStyle}>
+					{accountButtonContainers}
 				</div>
-			);
-		}
-		else {
-			return <div />;	
-		}
+
+				<Button className="add-account-button" onClick={this.onAddAccountClick}>
+					<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
+				</Button>
+
+				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
+			</div>
+		);
   	}
 }
