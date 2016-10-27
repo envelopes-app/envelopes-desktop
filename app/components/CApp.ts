@@ -3,7 +3,9 @@
 import { connect } from 'react-redux';
 
 import { PApp } from './PApp';
-import { IApplicationState } from '../interfaces/state';
+import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
+import { GlobalActionsCreator } from '../actionCreators';
+import * as catalogEntities from '../interfaces/catalogEntities';
 
 const mapStateToProps = (state:IApplicationState) => {
 	return {
@@ -12,7 +14,17 @@ const mapStateToProps = (state:IApplicationState) => {
 };
 
 const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
-  	return { }
+  	return { 
+		createBudget:(budgetName:string, budgetSettings:any) => {
+      		dispatch(GlobalActionsCreator.createBudget());
+		},
+		openBudget:(budget:catalogEntities.IBudget) => {
+      		dispatch(GlobalActionsCreator.openBudget(budget));
+		},
+		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
+      		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
+		}
+	  }
 }
 
 const CApp = connect(mapStateToProps, mapDispatchToProps)(PApp);

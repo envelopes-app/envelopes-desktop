@@ -57,7 +57,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private debtCategoryActivityDialog:dialogs.PDebtCategoryActivityDialog;
 	private masterCategoryActivityDialog:dialogs.PMasterCategoryActivityDialog;
 
-	constructor(props: any) {
+	constructor(props:any) {
         super(props);
 		this.setSelectedMonth = this.setSelectedMonth.bind(this); 
 		this.selectSubCategory = this.selectSubCategory.bind(this);

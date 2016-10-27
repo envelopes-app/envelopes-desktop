@@ -1,11 +1,11 @@
 .add-account-dialog {
-	width: 600px;
+	width: 400px;
 	height: 500px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	margin-top: -250px;
-	margin-left: -300px;
+	margin-left: -200px;
 }
 
 .sidebar-horizontal-rule {
@@ -23,6 +23,7 @@
 	background-color: #1F8CA7;
 	border: none;
 	outline: none;
+	height: 40px;
 }
 
 .add-account-button:hover {
@@ -32,4 +33,5 @@
 	background-color: #1D879B;
 	border: none;
 	outline: none;
+	height: 40px;
 }

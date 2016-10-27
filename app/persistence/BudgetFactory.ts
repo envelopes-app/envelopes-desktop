@@ -16,7 +16,7 @@ import * as miscQueries from './queries/miscQueries';
 
 export class BudgetFactory {
 
-	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, currencyFormat:string, dateFormat:string):Promise<catalogEntities.IBudget> {
+	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, dataFormat:string):Promise<catalogEntities.IBudget> {
 
 		Logger.info(`BudgetFactory::Creating budget ${budgetName}.`);
 		var subCategoryIds:Array<string> = [];
@@ -29,8 +29,7 @@ export class BudgetFactory {
 		var budget:catalogEntities.IBudget = {
 			entityId: budgetId,
 			budgetName: budgetName,
-			dateFormat: dateFormat,
-			currencyFormat: currencyFormat,
+			dataFormat: dataFormat,
 			lastAccessedOn: null,
 			firstMonth: currentMonth.toISOString(),
 			lastMonth: currentMonth.toISOString(),
@@ -173,8 +172,7 @@ export class BudgetFactory {
 				queriesList.push(catalogQueries.BudgetQueries.insertDatabaseObject({
 					entityId: budgetId,
 					budgetName: clonedBudgetName,
-					dateFormat: existingBudget.dateFormat,
-					currencyFormat: existingBudget.currencyFormat,
+					dataFormat: existingBudget.dataFormat,
 					lastAccessedOn: null,
 					firstMonth: existingBudget.firstMonth,
 					lastMonth: existingBudget.lastMonth,

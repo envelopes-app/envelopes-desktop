@@ -1,10 +1,27 @@
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogEntities from '../interfaces/catalogEntities';
-import { KeyGenerator } from '../utilities';
+import { DataFormats, DateWithoutTime, KeyGenerator } from '../utilities';
 import { AccountTypes, ClearedFlag, TransactionFrequency, TransactionFlag, SubCategoryType } from '../constants';
 
 export class EntityFactory {
 
+	public static createNewBudget():catalogEntities.IBudget {
+
+		var currentMonth = DateWithoutTime.createForCurrentMonth();
+		var budget:catalogEntities.IBudget = {
+			entityId: KeyGenerator.generateUUID(),
+			isTombstone: 0,
+			budgetName: "My Budget",
+			lastAccessedOn: null,
+			dataFormat: JSON.stringify(DataFormats.locale_mappings["en_US"]),
+			firstMonth: currentMonth.toISOString(),
+			lastMonth: currentMonth.toISOString(),
+			deviceKnowledge: 0
+		}
+
+		return budget;
+	}
+	
 	public static createNewAccount(budgetId:string = null):budgetEntities.IAccount {
 
 		var account:budgetEntities.IAccount = {

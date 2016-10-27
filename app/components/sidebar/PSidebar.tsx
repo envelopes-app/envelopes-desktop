@@ -222,9 +222,9 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					{accountButtonContainers}
 				</div>
 
-				<Button className="add-account-button" onClick={this.onAddAccountClick}>
+				<button className="add-account-button" onClick={this.onAddAccountClick}>
 					<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
-				</Button>
+				</button>
 
 				<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
 			</div>

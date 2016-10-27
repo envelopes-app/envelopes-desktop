@@ -100,7 +100,7 @@ export class PersistenceManager {
 
 					// Currently there is no budget in the database. Create a blank new budget.
 					var budgetFactory = new BudgetFactory();
-					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null, null);
+					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null);
 				}
 			})
 			.then((budget:catalogEntities.IBudget)=>{
@@ -168,7 +168,7 @@ export class PersistenceManager {
 
 				// Create a blank new budget.
 				var budgetFactory = new BudgetFactory();
-				return budgetFactory.createNewBudget(this.catalogKnowledge, budgetName, null, null);
+				return budgetFactory.createNewBudget(this.catalogKnowledge, budgetName, null);
 			})
 			.then((budget:catalogEntities.IBudget)=>{
 

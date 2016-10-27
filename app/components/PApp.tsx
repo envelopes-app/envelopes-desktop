@@ -6,10 +6,13 @@ import * as ReactDOM from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { MuiThemeProvider, lightBaseTheme } from 'material-ui/styles';
 
+import { PBudgetDialog } from './dialogs/PBudgetDialog';
+
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
 import CRegister from './register/CRegister';
-import { IApplicationState } from '../interfaces/state';
+import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
+import * as catalogEntities from '../interfaces/catalogEntities';
 
 const AppStyle = {
   display: "flex",
@@ -29,12 +32,30 @@ const AppModuleContainerStyle = {
 }
 
 export interface AppProps {
-	// State Variable
+	// Application State
 	applicationState:IApplicationState;
+	// Dispatcher functions
+	createBudget:(budgetName:string, budgetSettings:any)=>void;
+	openBudget:(budget:catalogEntities.IBudget)=>void;
+	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
 export class PApp extends React.Component<AppProps, {}> {
   
+	private budgetDialog:PBudgetDialog;
+
+	constructor(props:any) {
+		super(props);
+
+		this.startListeningForMessages = this.startListeningForMessages.bind(this);
+		this.handleCreateNewBudgetMessage = this.handleCreateNewBudgetMessage.bind(this);
+		this.handleOpenBudgetMessage = this.handleOpenBudgetMessage.bind(this);
+		this.handleShowBudgetProperties = this.handleShowBudgetProperties.bind(this);
+
+		// Start listening for menu messages from the main window
+		this.startListeningForMessages();
+	}
+
 	public render() {
 
 		var visibleModule;
@@ -56,8 +77,48 @@ export class PApp extends React.Component<AppProps, {}> {
 					<div style={AppModuleContainerStyle}>
 						{visibleModule}
 					</div>
+
+					<PBudgetDialog 
+						ref={(d)=> this.budgetDialog = d }
+					/>
 				</div>
 			</MuiThemeProvider>
 		);
   	}
+
+	/* ************************************************************************************* */
+	// Methods for handling the menu actions
+	/* ************************************************************************************* */
+	private startListeningForMessages():void {
+
+		var { ipcRenderer } = require('electron');
+		ipcRenderer.on("menu-message", (event, ...args:any[])=> {
+
+			var menuArgs = args[0];
+			if(menuArgs && menuArgs.menu == "create_new_budget")			
+				this.handleCreateNewBudgetMessage();
+
+			else if(menuArgs && menuArgs.menu == "open_budget")			
+				this.handleOpenBudgetMessage();
+
+			else if(menuArgs && menuArgs.menu == "show_budget_properties")			
+				this.handleOpenBudgetMessage();
+
+		});
+	}
+
+	private handleCreateNewBudgetMessage():void {
+
+		if(this.budgetDialog.isShowing() == false) {
+			this.budgetDialog.show();
+		}
+	}
+
+	private handleOpenBudgetMessage():void {
+
+	}
+
+	private handleShowBudgetProperties():void {
+
+	}
 }

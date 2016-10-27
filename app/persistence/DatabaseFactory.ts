@@ -187,8 +187,7 @@ export class DatabaseFactory {
 				query: `CREATE TABLE IF NOT EXISTS 'Budgets' (
 					'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
 					'budgetName' VARCHAR NOT NULL,
-					'dateFormat' VARCHAR,
-					'currencyFormat' VARCHAR,
+					'dataFormat' VARCHAR,
 					'lastAccessedOn' DATETIME,
 					'firstMonth' VARCHAR,
 					'lastMonth' VARCHAR,

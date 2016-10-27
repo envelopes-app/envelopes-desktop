@@ -1,4 +1,4 @@
-const { app, Menu } = require('electron');
+const { app, Menu, ipcMain } = require('electron');
 
 function initializeModule() {
 
@@ -7,17 +7,26 @@ function initializeModule() {
 		label: 'File',
 		submenu : [
 			{
-				label: 'Create a New Budget...'
+				label: 'Create a New Budget...',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"create_new_budget"});
+				}
 			},
 			{
 				label: 'Open...',
 				accelerator: 'CmdOrCtrl+O',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"open_budget"});
+				}
 			},
 			{
 				type: 'separator'
 			},
 			{
-				label: 'Budget Properties...'
+				label: 'Budget Properties...',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"show_budget_properties"});
+				}
 			},
 			{
 				type: 'separator'
