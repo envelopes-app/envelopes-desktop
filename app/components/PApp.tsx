@@ -35,7 +35,7 @@ export interface AppProps {
 	// Application State
 	applicationState:IApplicationState;
 	// Dispatcher functions
-	createBudget:(budgetName:string, budgetSettings:any)=>void;
+	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
@@ -80,6 +80,9 @@ export class PApp extends React.Component<AppProps, {}> {
 
 					<PBudgetDialog 
 						ref={(d)=> this.budgetDialog = d }
+						entitiesCollection={this.props.applicationState.entitiesCollection}
+						createBudget={this.props.createBudget}
+						updateEntities={this.props.updateEntities}
 					/>
 				</div>
 			</MuiThemeProvider>

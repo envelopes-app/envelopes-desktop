@@ -72,7 +72,7 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static createBudget() {
+	public static createBudget(budget:catalogEntities.IBudget) {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 

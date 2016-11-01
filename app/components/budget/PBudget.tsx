@@ -11,12 +11,14 @@ import { PInspectorContainer } from './inspectors/PInspectorContainer';
 
 import * as dialogs from './dialogs';
 import * as budgetEntities from '../../interfaces/budgetEntities';
+import * as catalogEntities from '../../interfaces/catalogEntities';
 import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface PBudgetProps {
 	// State Variables
 	selectedBudgetMonth:DateWithoutTime;
+	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -356,6 +358,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
     	return (
 			<div style={BudgetContainerStyle} tabIndex={1}>
 				<PBudgetHeader currentMonth={selectedMonth} 
+					currentBudget={this.props.currentBudget}
 					entitiesCollection={this.props.entitiesCollection}
 					setSelectedMonth={this.setSelectedMonth}
 					showCoverOverspendingDialog={this.showCoverOverspendingDialog}

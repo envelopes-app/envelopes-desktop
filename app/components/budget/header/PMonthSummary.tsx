@@ -140,7 +140,7 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
-		if(entitiesCollection && entitiesCollection.monthlyBudgets) {
+		if(entitiesCollection && entitiesCollection.monthlyBudgets && entitiesCollection.monthlyBudgets.length > 0) {
 
 			var currentMonth = this.props.currentMonth;
 			var prevMonth = currentMonth.clone().subtractMonths(1);

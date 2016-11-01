@@ -15,8 +15,8 @@ const mapStateToProps = (state:IApplicationState) => {
 
 const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
   	return { 
-		createBudget:(budgetName:string, budgetSettings:any) => {
-      		dispatch(GlobalActionsCreator.createBudget());
+		createBudget:(budget:catalogEntities.IBudget) => {
+      		dispatch(GlobalActionsCreator.createBudget(budget));
 		},
 		openBudget:(budget:catalogEntities.IBudget) => {
       		dispatch(GlobalActionsCreator.openBudget(budget));

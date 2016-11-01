@@ -6,12 +6,16 @@ import * as ReactDOM from 'react-dom';
 import { Button, Col, Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
 
 import { EntityFactory } from '../../persistence';
-import { IISOCurrency, INumberFormat, IDataFormat } from '../../interfaces/formatters';
 import { DataFormats, DateWithoutTime } from '../../utilities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
+import { IISOCurrency, INumberFormat, IDataFormat } from '../../interfaces/formatters';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface PBudgetDialogProps { 
-
+	entitiesCollection:IEntitiesCollection
+	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
+	createBudget:(budget:catalogEntities.IBudget)=>void;
 }
 
 export interface PBudgetDialogState {
@@ -20,6 +24,8 @@ export interface PBudgetDialogState {
 	isNewBudget:boolean;
 	budgetEntity:catalogEntities.IBudget;
 	dataFormat:IDataFormat;
+	validationState:string;
+	validationMessage:string;
 }
 
 const LabelStyle = {
@@ -42,6 +48,22 @@ const FormControlStyle = {
 	borderRightWidth: '2px',
 }
 
+const ErrorMessageStyle = {
+	width: "100%",
+	color: "#FFFFFF",
+	backgroundColor: "#D33C2D",
+	fontSize: "12px",
+	fontWeight: "normal",
+	borderTopLeftRadius: "0px",
+	borderTopRightRadius: "0px",
+	borderBottomLeftRadius: "3px",
+	borderBottomRightRadius: "3px",
+	paddingLeft: "8px",
+	paddingRight: "8px",
+	paddingTop: "3px",
+	paddingBottom: "3px"
+}
+
 export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDialogState> {
 
 	private ctrlBudgetName:FormControl;
@@ -54,6 +76,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);
 		this.save = this.save.bind(this);
+		this.onBudgetNameChange = this.onBudgetNameChange.bind(this);
 		this.onCurrencySelectionChange = this.onCurrencySelectionChange.bind(this);
 		this.onNumberFormatSelectionChange = this.onNumberFormatSelectionChange.bind(this);
 		this.setCurrencySymbolPlacementToBefore = this.setCurrencySymbolPlacementToBefore.bind(this);
@@ -64,19 +87,80 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 			showModal: false,
 			isNewBudget: false,
 			budgetEntity: null,
-			dataFormat: null
+			dataFormat: null,
+			validationState: null,
+			validationMessage: null
 		};
     }
 
+	private validateBudgetName():boolean {
+
+		var retVal:boolean = true;
+		var budget = this.state.budgetEntity;
+		// Ensure that budget name is provided.
+		if(budget.budgetName == "") {
+
+			let state = Object.assign({}, this.state);
+			state.validationState = "error";
+			state.validationMessage = "The budget name is required.";
+			this.setState(state);
+			retVal = false;
+		}
+		else {
+
+			var isBudgetNameUnique = true;
+			// We want to make sure that the budget name is unique. 
+			_.forEach(this.props.entitiesCollection.budgets, (existingBudget)=>{
+				if(existingBudget.budgetName == budget.budgetName && existingBudget.entityId != budget.entityId)
+					isBudgetNameUnique = false;
+			});
+
+			if(isBudgetNameUnique == false) {
+				let state = Object.assign({}, this.state);
+				state.validationState = "error";
+				state.validationMessage = "This budget name already exists.";
+				this.setState(state);
+				retVal = false;
+			}
+		}
+
+		if(retVal == true && this.state.validationState == "error") {
+			// No validation error was found this time around. The validation failure in 
+			// state exists from a previous validation attempt. Clear out the validation variables.
+			var state = Object.assign({}, this.state);
+			state.validationState = null;
+			state.validationMessage = null;
+			this.setState(state);
+		}
+
+		return retVal;
+	}
+
 	private hide():void {
 		// Hide the modal, and set the account in state to null
-		this.setState({ showModal:false, isNewBudget:false, budgetEntity:null, dataFormat:null });
+		this.setState({ showModal:false, isNewBudget:false, budgetEntity:null, dataFormat:null, validationState:null, validationMessage: null });
 	};
 
 	private save():void {
 
-		// Close the modal dialog
-		this.hide();
+		var validated = this.validateBudgetName();
+
+		if(validated == true) {
+
+			var budget = this.state.budgetEntity;
+			budget.dataFormat = JSON.stringify(this.state.dataFormat);
+			if(this.state.isNewBudget) {
+				this.props.createBudget(budget);
+			}
+			else {
+				this.props.updateEntities({
+					budgets: [budget]
+				});
+			}
+
+			// Close the modal dialog
+			this.hide();
+		}
 	}
 
 	public isShowing():boolean {
@@ -85,20 +169,33 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 
 	public show(budgetEntity:catalogEntities.IBudget = null):void {
 
-		var isNewBudget = false;
+		var isNewBudget:boolean;
 		if(!budgetEntity) {
-
 			isNewBudget = true;
 			budgetEntity = EntityFactory.createNewBudget();
+		}
+		else {
+			isNewBudget = false;
+			budgetEntity = Object.assign({}, budgetEntity);
 		}
 
 		this.setState({ 
 			showModal: true,
 			isNewBudget: isNewBudget,
 			budgetEntity: budgetEntity,
-			dataFormat: JSON.parse(budgetEntity.dataFormat) 
+			dataFormat: JSON.parse(budgetEntity.dataFormat),
+			validationState: null,
+			validationMessage: null 
 		});
 	};
+
+	private onBudgetNameChange(event:React.SyntheticEvent):void { 
+
+		var updatedBudgetName = (event.target as HTMLInputElement).value;
+		var state = _.assign({}, this.state) as PBudgetDialogState;
+		state.budgetEntity.budgetName = updatedBudgetName;
+		this.setState(state);
+	}
 
 	private onCurrencySelectionChange(event:React.SyntheticEvent):void {
 
@@ -165,16 +262,35 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 
 	private getBudgetNameControl():JSX.Element {
 
-		return (
-			<FormGroup>
+		var budget = this.state.budgetEntity;
+		var element:JSX.Element;
+		if(this.state.validationState == "error") {
+			element = (
+				<FormGroup key="formgroup">
 				<Col componentClass={ControlLabel} sm={4} style={LabelStyle}>
 					Budget Name:
 				</Col>
 				<Col sm={8} style={{paddingLeft:"6px"}}>
-					<FormControl ref={(c)=> {this.ctrlBudgetName = c;}} type="text" style={FormControlStyle} />
+					<FormControl ref={(c)=> {this.ctrlBudgetName = c;}} type="text" style={FormControlStyle} value={budget.budgetName} onChange={this.onBudgetNameChange} />
+					<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
 				</Col>
-			</FormGroup>
-		);
+				</FormGroup>
+			);
+		}
+		else {
+			element = (
+				<FormGroup>
+					<Col componentClass={ControlLabel} sm={4} style={LabelStyle}>
+						Budget Name:
+					</Col>
+					<Col sm={8} style={{paddingLeft:"6px"}}>
+						<FormControl ref={(c)=> {this.ctrlBudgetName = c;}} type="text" style={FormControlStyle} value={budget.budgetName}  onChange={this.onBudgetNameChange}/>
+					</Col>
+				</FormGroup>
+			);
+		}
+
+		return element;
 	}
 
 	private getCurrencySelectionControl():JSX.Element {

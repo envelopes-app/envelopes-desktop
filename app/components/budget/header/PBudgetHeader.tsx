@@ -8,10 +8,12 @@ import { PMonthSelection } from './PMonthSelection';
 import { PMonthSummary } from './PMonthSummary';
 import { PMonthAOM } from './PMonthAOM';
 import { DateWithoutTime } from '../../../utilities';
+import * as catalogEntities from '../../../interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PBudgetHeaderProps {
 	currentMonth:DateWithoutTime;
+	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
 
 	setSelectedMonth:(month:DateWithoutTime)=>void;
@@ -57,7 +59,7 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 		// Get the first and last months from the budget entity. Min and Max months will
 		// be -1 and +1 months from them respectively.
 		var minMonth, maxMonth:DateWithoutTime;
-		var budgetEntity = this.props.entitiesCollection.budget;
+		var budgetEntity = this.props.currentBudget;
 
 		if(budgetEntity && budgetEntity.firstMonth)
 			minMonth = DateWithoutTime.createFromISOString(budgetEntity.firstMonth).subtractMonths(1);

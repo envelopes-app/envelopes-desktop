@@ -11,7 +11,7 @@ export class EntityFactory {
 		var budget:catalogEntities.IBudget = {
 			entityId: KeyGenerator.generateUUID(),
 			isTombstone: 0,
-			budgetName: "My Budget",
+			budgetName: "",
 			lastAccessedOn: null,
 			dataFormat: JSON.stringify(DataFormats.locale_mappings["en_US"]),
 			firstMonth: currentMonth.toISOString(),

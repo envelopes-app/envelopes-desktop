@@ -5,7 +5,8 @@ import * as catalogEntities from '../catalogEntities';
 export interface IEntitiesCollection {
 
 	// The budget entity to which the below entitied belong
-	budget?:catalogEntities.IBudget;
+	budgets?:Array<catalogEntities.IBudget>;
+	globalSettings?:Array<catalogEntities.IGlobalSetting>;
 	
 	// Arrays to save all budget entities by their types
 	accounts?:collections.AccountsArray;
@@ -25,6 +26,9 @@ export interface IEntitiesCollection {
 }
 
 export interface ISimpleEntitiesCollection {
+
+	budgets?:Array<catalogEntities.IBudget>;
+	globalSettings?:Array<catalogEntities.IGlobalSetting>;
 
 	accounts?:Array<budgetEntities.IAccount>;
 	accountMappings?:Array<budgetEntities.IAccountMapping>;

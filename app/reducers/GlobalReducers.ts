@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as collections from '../collections';
 import * as common from '../interfaces/common';
 import * as budgetEntities from '../interfaces/budgetEntities';
+import * as catalogEntities from '../interfaces/catalogEntities';
 import { IEntitiesCollection } from '../interfaces/state';
 import { ActionNames } from '../constants';
 import { DateWithoutTime } from '../utilities';
@@ -10,6 +11,24 @@ import { DateWithoutTime } from '../utilities';
 import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
 
 export class GlobalReducers {
+
+	public static currentBudget(previousValue:catalogEntities.IBudget, action:Redux.Action):catalogEntities.IBudget {
+
+		var newValue:catalogEntities.IBudget;
+		if(!previousValue)
+			newValue = null;
+		else
+			newValue = Object.assign({}, previousValue);
+
+		switch(action.type) {
+
+			case ActionNames.GLOBAL_LOAD_BUDGET_COMPLETED:
+				newValue =  (action as OpenBudgetCompletedAction).budget;
+				break;
+		}
+
+		return newValue;
+	}
 
 	public static selectedBudgetMonth(previousValue:DateWithoutTime, action:Redux.Action):DateWithoutTime {
 
@@ -56,7 +75,8 @@ export class GlobalReducers {
 
 		// We have data for a new budget coming in through the action. Replace all data in the state
 		// with the this new data.
-		newValue.budget = action.budget;
+		newValue.budgets = action.entities.budgets;
+		newValue.globalSettings = action.entities.globalSettings;
 		newValue.accounts = new collections.AccountsArray(action.entities.accounts);
 		newValue.accountMappings = new collections.AccountMappingsArray(action.entities.accountMappings);
 		newValue.masterCategories = new collections.MasterCategoriesArray(action.entities.masterCategories);

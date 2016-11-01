@@ -4,15 +4,18 @@ import * as uuid from 'node-uuid';
 import * as _ from 'lodash';
 
 import { Logger } from '../utilities';
-import { BudgetKnowledge } from './KnowledgeObjects';
+import { BudgetKnowledge, CatalogKnowledge } from './KnowledgeObjects';
 import { KnowledgeValueQueries } from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence/IDatabaseQuery';
 
 export function executeSqlQueriesAndSaveKnowledge(queryList:Array<IDatabaseQuery>,
 											budgetId:string,
-											budgetKnowledge:BudgetKnowledge):Promise<any> {
+											budgetKnowledge:BudgetKnowledge,
+											catalogKnowledge?:CatalogKnowledge):Promise<any> {
 
 	// Append the query to persist the budgetKnowledge values to the list of queries
+	if(catalogKnowledge)
+		queryList.push( KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 	queryList.push( KnowledgeValueQueries.getSaveBudgetKnowledgeValueQuery(budgetId, budgetKnowledge) );
 	return executeSqlQueries(queryList);
 }
