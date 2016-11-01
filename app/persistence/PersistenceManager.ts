@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
+import { EntityFactory } from './EntityFactory';
 import { CalculationsManager } from './CalculationsManager';
 import * as commonInterfaces from '../interfaces/common'; 
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -103,7 +104,9 @@ export class PersistenceManager {
 
 					// Currently there is no budget in the database. Create a blank new budget.
 					var budgetFactory = new BudgetFactory();
-					return budgetFactory.createNewBudget(this.catalogKnowledge, "My Budget", null);
+					var budgetEntity = EntityFactory.createNewBudget();
+					budgetEntity.budgetName = "My Budget"; 
+					return budgetFactory.createNewBudget(budgetEntity, this.catalogKnowledge);
 				}
 			})
 			.then((budget:catalogEntities.IBudget)=>{
@@ -127,6 +130,7 @@ export class PersistenceManager {
 
 	public loadBudgetData():Promise<ISimpleEntitiesCollection> {
 
+		Logger.info(`Loading data for budget ${this.activeBudget.budgetName}`);
 		var budgetId = this.activeBudget.entityId;
 		var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 		var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
@@ -156,25 +160,11 @@ export class PersistenceManager {
 			});
 	}
 
-	public createNewBudget(budgetName:string):Promise<catalogEntities.IBudget> {
+	public createNewBudget(budget:catalogEntities.IBudget):Promise<catalogEntities.IBudget> {
 
-		// Get all the budget entities from the database. We want to make sure that there are no 
-		// existing budgets with the same name.
-		var query = catalogQueries.BudgetQueries.getAllBudgets();
-		return executeSqlQueries([query])
-			.then((result:any)=>{
-
-				if(result.budgets && result.budgets.length > 0) {
-					
-					var budget = _.find(result.budgets, {name: budgetName, isTombstone: false});
-					if(budget)
-						Promise.reject(`There is already a budget named ${budgetName} in the database.`);
-				}
-
-				// Create a blank new budget.
-				var budgetFactory = new BudgetFactory();
-				return budgetFactory.createNewBudget(this.catalogKnowledge, budgetName, null);
-			})
+		// Create a blank new budget.
+		var budgetFactory = new BudgetFactory();
+		return budgetFactory.createNewBudget(budget, this.catalogKnowledge)
 			.then((budget:catalogEntities.IBudget)=>{
 
 				// Set this as the currently active budget in persistence manager

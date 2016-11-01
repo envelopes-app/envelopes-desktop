@@ -16,70 +16,58 @@ import * as miscQueries from './queries/miscQueries';
 
 export class BudgetFactory {
 
-	public createNewBudget(catalogKnowledge:CatalogKnowledge, budgetName:string, dataFormat:string):Promise<catalogEntities.IBudget> {
+	public createNewBudget(budget:catalogEntities.IBudget, catalogKnowledge:CatalogKnowledge):Promise<catalogEntities.IBudget> {
 
-		Logger.info(`BudgetFactory::Creating budget ${budgetName}.`);
+		Logger.info(`BudgetFactory::Creating budget ${budget.budgetName}.`);
 		var subCategoryIds:Array<string> = [];
 		var queriesList:Array<IDatabaseQuery> = [];
 		var budgetKnowledge = new BudgetKnowledge();
-		var budgetId = KeyGenerator.generateUUID();
-		var currentMonth = DateWithoutTime.createForCurrentMonth();
 
 		// Create the budget entity
-		var budget:catalogEntities.IBudget = {
-			entityId: budgetId,
-			budgetName: budgetName,
-			dataFormat: dataFormat,
-			lastAccessedOn: null,
-			firstMonth: currentMonth.toISOString(),
-			lastMonth: currentMonth.toISOString(),
-			isTombstone: 0,
-			deviceKnowledge: catalogKnowledge.getNextValue()
-		};
-
+		budget.deviceKnowledge = catalogKnowledge.getNextValue();
 		queriesList.push(catalogQueries.BudgetQueries.insertDatabaseObject(budget));
 
 		// Create any setting entities that are required
-		queriesList = queriesList.concat( this.createSettings(budgetId, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createSettings(budget.entityId, budgetKnowledge) );
 
 		// Create the internal master category and it's sub-categories
-		queriesList = queriesList.concat( this.createInternalMasterAndSubCategories(budgetId, 0, subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createInternalMasterAndSubCategories(budget.entityId, 0, subCategoryIds, budgetKnowledge) );
 		// Create the debt master category
-		queriesList = queriesList.concat( this.createDebtPaymentMasterCategory(budgetId, 10000, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createDebtPaymentMasterCategory(budget.entityId, 10000, budgetKnowledge) );
 
 		// Create the regular master and subcategories for the new budget.
-		queriesList = queriesList.concat( this.createMasterAndSubCategories(budgetId, "Immediate Obligations", 20000, ["Rent/Mortgage", "Electric", "Water", "Internet", "Groceries", "Transportation", "Interest & Fees"], subCategoryIds, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createMasterAndSubCategories(budgetId, "True Expenses", 30000, ["Auto Maintenance", "Home Maintenance", "Renter's Home Insurance", "Medical", "Clothing", "Gifts", "Giving", "Computer Replacement", "Software Subscriptions", "Stuff I Forgot to Budget For"], subCategoryIds, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createMasterAndSubCategories(budgetId, "Debt Payments", 40000, ["Student Loan", "Auto Loan"], subCategoryIds, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createMasterAndSubCategories(budgetId, "Quality of Life Goals", 50000, ["Vacation", "Fitness", "Education"], subCategoryIds, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createMasterAndSubCategories(budgetId, "Just for Fun", 60000, ["Dining Out", "Gaming", "Music", "Fun Money"], subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createMasterAndSubCategories(budget.entityId, "Immediate Obligations", 20000, ["Rent/Mortgage", "Electric", "Water", "Internet", "Groceries", "Transportation", "Interest & Fees"], subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createMasterAndSubCategories(budget.entityId, "True Expenses", 30000, ["Auto Maintenance", "Home Maintenance", "Renter's Home Insurance", "Medical", "Clothing", "Gifts", "Giving", "Computer Replacement", "Software Subscriptions", "Stuff I Forgot to Budget For"], subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createMasterAndSubCategories(budget.entityId, "Debt Payments", 40000, ["Student Loan", "Auto Loan"], subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createMasterAndSubCategories(budget.entityId, "Quality of Life Goals", 50000, ["Vacation", "Fitness", "Education"], subCategoryIds, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createMasterAndSubCategories(budget.entityId, "Just for Fun", 60000, ["Dining Out", "Gaming", "Music", "Fun Money"], subCategoryIds, budgetKnowledge) );
 
 		// Create the hidden master category
-		queriesList = queriesList.concat( this.createHiddenMasterCategory(budgetId, 80000, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createHiddenMasterCategory(budget.entityId, 80000, budgetKnowledge) );
 
 		// Create the monthly budgets and the monthly subcategory budgets for previous,current and next month.
 		var month = DateWithoutTime.createForCurrentMonth().subtractMonths(1);
 		for(var i:number = 0; i < 2; i++) {
 
-			var query = this.createMonthlyBudgetForMonth(budgetId, month, null, budgetKnowledge);
+			var query = this.createMonthlyBudgetForMonth(budget.entityId, month, null, budgetKnowledge);
 			if(query)
 				queriesList.push(query);
 
-			queriesList = queriesList.concat( this.createMonthlySubCategoryBudgetsForMonth(budgetId, month, subCategoryIds, null, budgetKnowledge) );
+			queriesList = queriesList.concat( this.createMonthlySubCategoryBudgetsForMonth(budget.entityId, month, subCategoryIds, null, budgetKnowledge) );
 			month.addMonths(1);
 		}
 
 		// Create the starting balance and balance adjustment payees
-		queriesList = queriesList.concat( this.createStartingBalancePayee(budgetId, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createManualBalanceAdjustmentPayee(budgetId, budgetKnowledge) );
-		queriesList = queriesList.concat( this.createReconciliationBalanceAdjustmentPayee(budgetId, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createStartingBalancePayee(budget.entityId, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createManualBalanceAdjustmentPayee(budget.entityId, budgetKnowledge) );
+		queriesList = queriesList.concat( this.createReconciliationBalanceAdjustmentPayee(budget.entityId, budgetKnowledge) );
 
 		// Queue a full calculation for this budget
-		queriesList.push( miscQueries.CalculationQueries.getQueueCompleteCalculationQuery(budgetId) );
+		queriesList.push( miscQueries.CalculationQueries.getQueueCompleteCalculationQuery(budget.entityId) );
 
 		queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 
-		return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge)
+		return executeSqlQueriesAndSaveKnowledge(queriesList, budget.entityId, budgetKnowledge)
 			.then((result:any)=>{
 
 				return budget;

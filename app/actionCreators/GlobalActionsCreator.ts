@@ -76,7 +76,17 @@ export class GlobalActionsCreator {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
-			return Promise.resolve(null);
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.createNewBudget(budget)
+				.then((createdBudget:catalogEntities.IBudget)=>{
+
+					// dispatch action open budget to open this newly created budget
+					dispatch(GlobalActionsCreator.openBudget(createdBudget));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
 		};
 	}
 
