@@ -7,6 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { MuiThemeProvider, lightBaseTheme } from 'material-ui/styles';
 
 import { PBudgetDialog } from './dialogs/PBudgetDialog';
+import { POpenBudgetDialog } from './dialogs/POpenBudgetDialog';
 
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
@@ -43,6 +44,7 @@ export interface AppProps {
 export class PApp extends React.Component<AppProps, {}> {
   
 	private budgetDialog:PBudgetDialog;
+	private openBudgetDialog:POpenBudgetDialog;
 
 	constructor(props:any) {
 		super(props);
@@ -84,6 +86,14 @@ export class PApp extends React.Component<AppProps, {}> {
 						createBudget={this.props.createBudget}
 						updateEntities={this.props.updateEntities}
 					/>
+
+					<POpenBudgetDialog 
+						ref={(d)=> this.openBudgetDialog = d }
+						activeBudget={this.props.applicationState.currentBudget}
+						entitiesCollection={this.props.applicationState.entitiesCollection}
+						showCreateNewBudgetDialog={this.handleCreateNewBudgetMessage}
+						openBudget={this.props.openBudget}
+					/>
 				</div>
 			</MuiThemeProvider>
 		);
@@ -119,6 +129,9 @@ export class PApp extends React.Component<AppProps, {}> {
 
 	private handleOpenBudgetMessage():void {
 
+		if(this.openBudgetDialog.isShowing() == false) {
+			this.openBudgetDialog.show();
+		}
 	}
 
 	private handleShowBudgetProperties():void {

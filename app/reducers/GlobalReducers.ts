@@ -73,10 +73,21 @@ export class GlobalReducers {
 
 	private static replaceCollections(newValue:IEntitiesCollection, action:OpenBudgetCompletedAction):void {
 
+		// This method is called when we are loading a new budget, and want to replace all the loaded
+		// entities of the previous budget with the entities of the new budget.
+		// The catalog entitie arrays however are not replaced, but updated.
+		if(newValue.budgets)
+			GlobalReducers.updateCollectionArray(newValue.budgets, action.entities.budgets);
+		else 
+			newValue.budgets = new collections.BudgetsArray(action.entities.budgets);
+		
+		if(newValue.budgets)
+			GlobalReducers.updateCollectionArray(newValue.globalSettings, action.entities.globalSettings);
+		else 
+			newValue.globalSettings = new collections.GlobalSettingsArray(action.entities.globalSettings);
+
 		// We have data for a new budget coming in through the action. Replace all data in the state
 		// with the this new data.
-		newValue.budgets = action.entities.budgets;
-		newValue.globalSettings = action.entities.globalSettings;
 		newValue.accounts = new collections.AccountsArray(action.entities.accounts);
 		newValue.accountMappings = new collections.AccountMappingsArray(action.entities.accountMappings);
 		newValue.masterCategories = new collections.MasterCategoriesArray(action.entities.masterCategories);
@@ -94,6 +105,9 @@ export class GlobalReducers {
 	}
 
 	private static updateCollection(newValue:IEntitiesCollection, action:SyncDataWithDatabaseCompletedAction):void {
+
+		GlobalReducers.updateCollectionArray(newValue.budgets, action.entities.budgets);
+		GlobalReducers.updateCollectionArray(newValue.globalSettings, action.entities.globalSettings);
 
 		GlobalReducers.updateCollectionArray(newValue.accounts, action.entities.accounts);
 		GlobalReducers.updateCollectionArray(newValue.accountMappings, action.entities.accountMappings);

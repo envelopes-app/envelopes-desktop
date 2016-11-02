@@ -95,7 +95,7 @@ export class GlobalActionsCreator {
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			var persistenceManager = PersistenceManager.getInstance();
-			return persistenceManager.loadBudgetData()
+			return persistenceManager.loadBudget(budget)
 				.then((updatedEntities:ISimpleEntitiesCollection)=>{
 
 					// dispatch action open budget completed

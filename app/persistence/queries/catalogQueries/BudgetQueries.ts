@@ -1,5 +1,6 @@
 /// <reference path='../../../_includes.ts' />
 
+import { DateWithoutTime } from '../../../utilities';
 import { IDatabaseQuery } from '../../../interfaces/persistence';
 import * as catalogEntities from '../../../interfaces/catalogEntities';
 
@@ -36,6 +37,21 @@ export class BudgetQueries {
 			query: "SELECT * FROM Budgets WHERE deviceKnowledge = 0 OR deviceKnowledge > ?",
 			arguments: [
 				deviceKnowledge
+			]
+		};
+
+		return query;
+	}
+
+	public static updateLastAccessedOnForBudget(budgetId:string):IDatabaseQuery {
+
+		var currentDate = DateWithoutTime.createForToday();
+		var query:IDatabaseQuery = {
+
+			query: "UPDATE Budgets SET lastAccessedOn = ? WHERE entityId = ?",
+			arguments: [
+				currentDate.getUTCTime(),
+				budgetId
 			]
 		};
 

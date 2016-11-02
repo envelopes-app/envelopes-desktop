@@ -108,34 +108,24 @@ export class PersistenceManager {
 					budgetEntity.budgetName = "My Budget"; 
 					return budgetFactory.createNewBudget(budgetEntity, this.catalogKnowledge);
 				}
-			})
-			.then((budget:catalogEntities.IBudget)=>{
-
-				// Set this as the currently active budget in persistence manager
-				this.activeBudget = budget;
-				// Load the budget knowledge values for this budget
-				return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId);
-			})
-			.then((budgetKnowledge:BudgetKnowledge)=>{
-
-				this.budgetKnowledge = budgetKnowledge;
-				return this.activeBudget;
-			})
-			.catch((error:Error)=>{
-
-				Logger.error(error.toString());
-				return null;
 			});
 	}
 
-	public loadBudgetData():Promise<ISimpleEntitiesCollection> {
+	public loadBudget(budget:catalogEntities.IBudget):Promise<ISimpleEntitiesCollection> {
 
-		Logger.info(`Loading data for budget ${this.activeBudget.budgetName}`);
-		var budgetId = this.activeBudget.entityId;
-		var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
-		var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
-		var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
-		return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
+		Logger.info(`Loading budget ${budget.budgetName}.`);
+		// Set this as the currently active budget in persistence manager
+		this.activeBudget = budget;
+		// Load the budget knowledge values for this budget
+		return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId)
+			.then((budgetKnowledge:BudgetKnowledge)=>{
+
+				this.budgetKnowledge = budgetKnowledge;
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+				return this.loadEntitiesFromDatabase(budget.entityId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
+			});
 	}
 
 	public syncDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
@@ -165,23 +155,6 @@ export class PersistenceManager {
 		// Create a blank new budget.
 		var budgetFactory = new BudgetFactory();
 		return budgetFactory.createNewBudget(budget, this.catalogKnowledge)
-			.then((budget:catalogEntities.IBudget)=>{
-
-				// Set this as the currently active budget in persistence manager
-				this.activeBudget = budget;
-				// Load the budget knowledge values for this budget
-				return this.loadBudgetKnowledgeValuesFromDatabase(budget.entityId);
-			})
-			.then((budgetKnowledge:BudgetKnowledge)=>{
-
-				this.budgetKnowledge = budgetKnowledge;
-				return this.activeBudget;
-			})
-			.catch((error:Error)=>{
-
-				Logger.error(error.toString());
-				return null;
-			});
 	}
 
 	public ensureMonthlyDataExistsForMonth(month:DateWithoutTime, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
@@ -331,6 +304,8 @@ export class PersistenceManager {
 	private loadEntitiesFromDatabase(budgetId:string, budgetDeviceKnowlege:number, budgetDeviceKnowledgeForCalculations:number, catalogDeviceKnowledge:number):Promise<ISimpleEntitiesCollection> {
 
 		var queryList = [
+			// Whenever we load the entities for a particular budget, we also update it's lastAccessedOn value
+			catalogQueries.BudgetQueries.updateLastAccessedOnForBudget(budgetId),
 			catalogQueries.BudgetQueries.loadDatabaseObject(catalogDeviceKnowledge),
 			catalogQueries.GlobalSettingQueries.loadDatabaseObject(catalogDeviceKnowledge),
 			budgetQueries.AccountQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
