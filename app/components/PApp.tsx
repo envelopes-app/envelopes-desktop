@@ -89,7 +89,7 @@ export class PApp extends React.Component<AppProps, {}> {
 
 					<POpenBudgetDialog 
 						ref={(d)=> this.openBudgetDialog = d }
-						activeBudget={this.props.applicationState.currentBudget}
+						activeBudgetId={this.props.applicationState.activeBudgetId}
 						entitiesCollection={this.props.applicationState.entitiesCollection}
 						showCreateNewBudgetDialog={this.handleCreateNewBudgetMessage}
 						openBudget={this.props.openBudget}
@@ -115,7 +115,7 @@ export class PApp extends React.Component<AppProps, {}> {
 				this.handleOpenBudgetMessage();
 
 			else if(menuArgs && menuArgs.menu == "show_budget_properties")			
-				this.handleOpenBudgetMessage();
+				this.handleShowBudgetProperties();
 
 		});
 	}
@@ -136,5 +136,11 @@ export class PApp extends React.Component<AppProps, {}> {
 
 	private handleShowBudgetProperties():void {
 
+		if(this.budgetDialog.isShowing() == false) {
+			// Get the currentl active budget from the state and pass it to the budget dialog
+			var budgetId = this.props.applicationState.activeBudgetId;
+			var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
+			this.budgetDialog.show(budget);
+		}
 	}
 }

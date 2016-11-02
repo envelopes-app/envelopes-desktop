@@ -216,7 +216,6 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 	public render() {
 
-		debugger;
 		// Get the currently selected category so that we can highlight the corresponding item
 		var selectedCategoryId = this.props.selectedCategoryId;
 		var selectedCategory = selectedCategoryId ? _.find(this.props.categoriesList, {entityId: selectedCategoryId}) : null;

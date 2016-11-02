@@ -12,18 +12,18 @@ import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureB
 
 export class GlobalReducers {
 
-	public static currentBudget(previousValue:catalogEntities.IBudget, action:Redux.Action):catalogEntities.IBudget {
+	public static activeBudgetId(previousValue:string, action:Redux.Action):string {
 
-		var newValue:catalogEntities.IBudget;
+		var newValue:string;
 		if(!previousValue)
 			newValue = null;
 		else
-			newValue = Object.assign({}, previousValue);
+			newValue = previousValue;
 
 		switch(action.type) {
 
 			case ActionNames.GLOBAL_LOAD_BUDGET_COMPLETED:
-				newValue =  (action as OpenBudgetCompletedAction).budget;
+				newValue = (action as OpenBudgetCompletedAction).budget.entityId;
 				break;
 		}
 
@@ -81,7 +81,7 @@ export class GlobalReducers {
 		else 
 			newValue.budgets = new collections.BudgetsArray(action.entities.budgets);
 		
-		if(newValue.budgets)
+		if(newValue.globalSettings)
 			GlobalReducers.updateCollectionArray(newValue.globalSettings, action.entities.globalSettings);
 		else 
 			newValue.globalSettings = new collections.GlobalSettingsArray(action.entities.globalSettings);

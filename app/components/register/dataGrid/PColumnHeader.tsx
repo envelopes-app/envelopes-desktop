@@ -37,7 +37,6 @@ export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 
 	private handleClick(event:React.MouseEvent):void {
 
-		debugger;
 		// If we are already sorted by this field, then simply flip the sort order
 		if(this.props.fieldName == this.props.sortByField) {
 

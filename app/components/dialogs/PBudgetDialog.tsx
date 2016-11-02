@@ -110,7 +110,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 
 			var isBudgetNameUnique = true;
 			// We want to make sure that the budget name is unique. 
-			_.forEach(this.props.entitiesCollection.budgets, (existingBudget)=>{
+			_.forEach(this.props.entitiesCollection.budgets.getAllItems(), (existingBudget)=>{
 				if(existingBudget.budgetName == budget.budgetName && existingBudget.entityId != budget.entityId)
 					isBudgetNameUnique = false;
 			});

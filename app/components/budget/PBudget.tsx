@@ -17,8 +17,8 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces
 
 export interface PBudgetProps {
 	// State Variables
+	activeBudgetId:string;
 	selectedBudgetMonth:DateWithoutTime;
-	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -353,12 +353,16 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	// *******************************************************************************************************
 	public render() {
 
+		if(!this.props.entitiesCollection.budgets || this.props.entitiesCollection.budgets.length == 0)
+			return <div />;
+			
 		var selectedMonth = this.props.selectedBudgetMonth;
+		var currentBudget = this.props.entitiesCollection.budgets.getEntityById(this.props.activeBudgetId);
 
     	return (
 			<div style={BudgetContainerStyle} tabIndex={1}>
 				<PBudgetHeader currentMonth={selectedMonth} 
-					currentBudget={this.props.currentBudget}
+					currentBudget={currentBudget}
 					entitiesCollection={this.props.entitiesCollection}
 					setSelectedMonth={this.setSelectedMonth}
 					showCoverOverspendingDialog={this.showCoverOverspendingDialog}

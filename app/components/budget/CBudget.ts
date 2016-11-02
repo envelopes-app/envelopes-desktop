@@ -12,7 +12,7 @@ import { PBudget } from './PBudget';
 const mapStateToProps = (state:IApplicationState) => {
 	return {
 		selectedBudgetMonth: state.selectedBudgetMonth,
-		currentBudget: state.currentBudget,
+		activeBudgetId: state.activeBudgetId,
 		entitiesCollection: state.entitiesCollection
   	};
 };

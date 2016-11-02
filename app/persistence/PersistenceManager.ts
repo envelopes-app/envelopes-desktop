@@ -167,7 +167,6 @@ export class PersistenceManager {
 		var monthlySubCategoryBudgetsArray = existingEntitiesCollection.monthlySubCategoryBudgets;
 		var monthlySubCategoryBudgetsForMonth = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(month.toISOString());
 		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0) {
-			debugger;
 			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' already exists.'`);
 			return Promise.resolve({});
 		}

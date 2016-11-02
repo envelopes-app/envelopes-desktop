@@ -146,7 +146,6 @@ function executeSqlQuery(refTransaction:SQLTransaction, queryObj:IDatabaseQuery,
 		,
 		function(transaction:SQLTransaction, error:SQLError):boolean {
 
-			debugger;
 			Logger.error(error.message);
 			return false;
 		}

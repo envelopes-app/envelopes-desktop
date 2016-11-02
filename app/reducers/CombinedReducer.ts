@@ -6,7 +6,7 @@ import { SidebarReducers } from './SidebarReducers';
 
 const combinedReducer = combineReducers({
 
-	currentBudget: GlobalReducers.currentBudget,
+	activeBudgetId: GlobalReducers.activeBudgetId,
 	selectedBudgetMonth: GlobalReducers.selectedBudgetMonth,
 	entitiesCollection: GlobalReducers.entitiesCollection,
 	sidebarState: SidebarReducers.sidebarState

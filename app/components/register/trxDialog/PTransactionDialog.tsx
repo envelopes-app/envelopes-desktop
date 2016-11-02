@@ -639,7 +639,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			var showFrequencyControl = (this.state.action == "new-transaction" || this.state.action == "existing-scheduled-transaction");
 			var showFrequencyNeverOption = (this.state.action == "new-transaction");
 
-			debugger;
 			return (
 				<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
 					<Modal.Header bsClass="modal-header">

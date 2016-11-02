@@ -11,7 +11,7 @@ import * as catalogEntities from '../../interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface POpenBudgetDialogProps { 
-	activeBudget:catalogEntities.IBudget;
+	activeBudgetId:string;
 	entitiesCollection:IEntitiesCollection
 
 	showCreateNewBudgetDialog:()=>void;
@@ -78,7 +78,7 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 		_.forEach(this.props.entitiesCollection.budgets.getAllItems(), (budget)=>{
 
 			// If this is not the currently active budget, add it to the list
-			if(budget.isTombstone == 0 && budget.entityId != this.props.activeBudget.entityId) {
+			if(budget.isTombstone == 0 && budget.entityId != this.props.activeBudgetId) {
 				
 				var lastAccessedOn = "";
 				if(budget.lastAccessedOn)
