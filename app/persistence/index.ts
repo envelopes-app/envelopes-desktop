@@ -6,3 +6,4 @@ export { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 export { MigrationsManager } from './MigrationsManager';
 export { PersistenceManager } from './PersistenceManager';
 export { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
+export { YNABDataImporter } from './YNABDataImporter';

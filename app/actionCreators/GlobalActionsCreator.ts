@@ -3,6 +3,7 @@
 import { DateWithoutTime, Logger } from '../utilities';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
+import { IImportedAccountObject } from '../interfaces/objects';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state';
 import { 
@@ -100,6 +101,23 @@ export class GlobalActionsCreator {
 
 					// dispatch action open budget completed
 					dispatch(GlobalActionsCreator.openBudgetCompleted(budget, updatedEntities));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
+		};
+	}
+
+	public static importYnabData(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) {
+
+		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.importYnabData(budgetName, accountsList, budgetRows, registerRows)
+				.then((createdBudget:catalogEntities.IBudget)=>{
+					// dispatch action open budget to open this newly created budget
+					dispatch(GlobalActionsCreator.openBudget(createdBudget));
 				})
 				.catch((error)=>{
 					Logger.error(error.message);

@@ -2,6 +2,7 @@ import { SimpleObjectMap } from '../utilities';
 
 export class AccountTypes {
 
+	public static None = "None";
 	public static Checking = "Checking";
 	public static Savings = "Savings";
 	public static CreditCard = "CreditCard";

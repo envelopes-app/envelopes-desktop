@@ -3,6 +3,7 @@
 import { connect } from 'react-redux';
 
 import { PApp } from './PApp';
+import { IImportedAccountObject } from '../interfaces/objects';
 import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
 import { GlobalActionsCreator } from '../actionCreators';
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -23,8 +24,11 @@ const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => 
 		},
 		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
       		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
+		},
+		importYnabData:(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) => {
+      		dispatch(GlobalActionsCreator.importYnabData(budgetName, accountsList, budgetRows, registerRows));
 		}
-	  }
+	}
 }
 
 const CApp = connect(mapStateToProps, mapDispatchToProps)(PApp);

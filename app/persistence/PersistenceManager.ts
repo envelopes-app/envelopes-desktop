@@ -5,8 +5,10 @@ import * as _ from 'lodash';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import { EntityFactory } from './EntityFactory';
+import { YNABDataImporter } from './YNABDataImporter';
 import { CalculationsManager } from './CalculationsManager';
 import * as commonInterfaces from '../interfaces/common'; 
+import { IImportedAccountObject } from '../interfaces/objects';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogQueries from './queries/catalogQueries';
@@ -193,6 +195,15 @@ export class PersistenceManager {
 				});
 		}
 	}
+
+	public importYnabData(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>):Promise<ISimpleEntitiesCollection> {
+
+		var dataImporter = new YNABDataImporter();
+
+
+		return Promise.resolve(null);
+	}
+
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************

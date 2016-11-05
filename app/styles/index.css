@@ -24,6 +24,16 @@ body {
 	margin-top: -300px;
 	margin-left: -250px;
 }
+
+.import-ynab-data-dialog {
+	width: 600px;
+	height: 400px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -200px;
+	margin-left: -300px;
+}
 /* ************************************************************************************ */
 /* Style for buttons on Dialogs */
 /* ************************************************************************************ */
@@ -162,4 +172,41 @@ body {
 	font-style: italic;
 	margin-bottom: 0px;
 	cursor: inherit;
+}
+
+/* ************************************************************************************ */
+/* Style for the browse button in import data dialog */ 
+/* ************************************************************************************ */
+.dialog-browse-button {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #2FA2B5;
+	background-color: #ffffff;	
+	border-color: #2FA2B5;	
+	outline: none;
+}
+
+.dialog-browse-button:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #2FA2B5;	
+	border-color: #2FA2B5;	
+	outline: none;
+}
+
+.dialog-browse-button:focus {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #2FA2B5;	
+	border-color: #2FA2B5;	
+	outline: none;
+}
+
+.dialog-listitem-separator {
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	border-top: 1px solid #4D717A;
 }

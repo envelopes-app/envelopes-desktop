@@ -1,3 +1,4 @@
+/// <reference path="globals/babyparse/index.d.ts" />
 /// <reference path="globals/chai/index.d.ts" />
 /// <reference path="globals/fixed-data-table/index.d.ts" />
 /// <reference path="globals/github-electron/index.d.ts" />

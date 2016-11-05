@@ -32,7 +32,10 @@ function initializeModule() {
 				type: 'separator'
 			},
 			{
-				label: 'Import Budget from YNAB'
+				label: 'Import YNAB Budget Data',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"import_ynab_budget_data"});
+				}
 			}
 		]
 	},

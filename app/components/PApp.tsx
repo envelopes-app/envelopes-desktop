@@ -8,10 +8,12 @@ import { MuiThemeProvider, lightBaseTheme } from 'material-ui/styles';
 
 import { PBudgetDialog } from './dialogs/PBudgetDialog';
 import { POpenBudgetDialog } from './dialogs/POpenBudgetDialog';
+import { PImportYnabDataDialog } from './dialogs/PImportYnabDataDialog';
 
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
 import CRegister from './register/CRegister';
+import { IImportedAccountObject } from '../interfaces/objects';
 import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
 import * as catalogEntities from '../interfaces/catalogEntities';
 
@@ -38,6 +40,7 @@ export interface AppProps {
 	// Dispatcher functions
 	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
+	importYnabData:(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
@@ -45,6 +48,7 @@ export class PApp extends React.Component<AppProps, {}> {
   
 	private budgetDialog:PBudgetDialog;
 	private openBudgetDialog:POpenBudgetDialog;
+	private importYnabDataDialog:PImportYnabDataDialog;
 
 	constructor(props:any) {
 		super(props);
@@ -53,6 +57,7 @@ export class PApp extends React.Component<AppProps, {}> {
 		this.handleCreateNewBudgetMessage = this.handleCreateNewBudgetMessage.bind(this);
 		this.handleOpenBudgetMessage = this.handleOpenBudgetMessage.bind(this);
 		this.handleShowBudgetProperties = this.handleShowBudgetProperties.bind(this);
+		this.handleImportYnabBudgetData = this.handleImportYnabBudgetData.bind(this);
 
 		// Start listening for menu messages from the main window
 		this.startListeningForMessages();
@@ -94,6 +99,12 @@ export class PApp extends React.Component<AppProps, {}> {
 						showCreateNewBudgetDialog={this.handleCreateNewBudgetMessage}
 						openBudget={this.props.openBudget}
 					/>
+
+					<PImportYnabDataDialog 
+						ref={(d)=> this.importYnabDataDialog = d }
+						entitiesCollection={this.props.applicationState.entitiesCollection}
+						importYnabData={this.props.importYnabData}
+					/>
 				</div>
 			</MuiThemeProvider>
 		);
@@ -117,6 +128,8 @@ export class PApp extends React.Component<AppProps, {}> {
 			else if(menuArgs && menuArgs.menu == "show_budget_properties")			
 				this.handleShowBudgetProperties();
 
+			else if(menuArgs && menuArgs.menu == "import_ynab_budget_data")
+				this.handleImportYnabBudgetData();
 		});
 	}
 
@@ -141,6 +154,13 @@ export class PApp extends React.Component<AppProps, {}> {
 			var budgetId = this.props.applicationState.activeBudgetId;
 			var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
 			this.budgetDialog.show(budget);
+		}
+	}
+
+	private handleImportYnabBudgetData():void {
+
+		if(this.importYnabDataDialog.isShowing() == false) {
+			this.importYnabDataDialog.show();
 		}
 	}
 }

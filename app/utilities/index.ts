@@ -1,3 +1,4 @@
+export { MultiDictionary } from './Collections';
 export { DataFormats } from './DataFormats';
 export { DateWithoutTime } from './DateWithoutTime';
 export { DialogUtilities } from './DialogUtilities';
@@ -8,4 +9,3 @@ export { SerializationUtilities } from './SerializationUtilities';
 export { MathUtilities } from './MathUtilities';
 export { RegisterTransactionObject } from './RegisterTransactionObject';
 export { SimpleObjectMap } from './SimpleObjectMap';
-export { MultiDictionary } from './Collections';

@@ -5,6 +5,7 @@
   },
   "globalDependencies": {
     "ag-grid": "registry:dt/ag-grid#2.1.2+20160317120654",
+    "babyparse": "registry:dt/babyparse#0.0.0+20160923113729",
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "fixed-data-table": "registry:dt/fixed-data-table#0.6.0+20160425160256",
     "github-electron": "registry:dt/github-electron#1.2.5+20160812193136",
