@@ -119,6 +119,7 @@ export class YNABDataImporter {
 						// Create a master category entity and add to the updatedEntities collection
 						masterCategoryEntity = EntityFactory.createNewMasterCategory();
 						masterCategoryEntity.name = masterCategoryName;
+						masterCategoryEntity.sortableIndex = existingEntitiesCollection.masterCategories.getSortableIndexForNewMasterCategoryInsertion();
 						this.updatedEntities.masterCategories.push(masterCategoryEntity);
 						this.masterCategoriesMap[masterCategoryName] = masterCategoryEntity;
 					}
@@ -133,6 +134,7 @@ export class YNABDataImporter {
 						subCategoryEntity = EntityFactory.createNewSubCategory();
 						subCategoryEntity.name = subCategoryName;
 						subCategoryEntity.masterCategoryId = masterCategoryEntity.entityId;
+						subCategoryEntity.sortableIndex = existingEntitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryEntity.entityId);
 						this.updatedEntities.subCategories.push(subCategoryEntity);
 						this.subCategoriesMap[subCategoryFullName] = subCategoryEntity;
 					}
