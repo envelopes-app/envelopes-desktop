@@ -36,29 +36,13 @@ export interface PImportYnabDataDialogState {
 	accountsList:Array<IImportedAccountObject>;
 }
 
-const LabelStyle = {
-	textAlign: "right",
-	paddingRight: "0px"
-}
-
 const FormControlsContainer = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignContent: "stretch"
 }
 
-const BudgetNameInputStyle = {
-	flex: "1 1 auto",
-	borderColor: '#2FA2B5',
-	borderWidth: '2px',
-}
-
-const BudgetNameInputErrorStyle = Object.assign({}, BudgetNameInputStyle, {
-	borderBottomLeftRadius: "0px",
-	borderBottomRightRadius: "0px",
-});
-
-const FormInputStyle = {
+const FileInputStyle = {
 	flex: "1 1 auto",
 	borderColor: '#2FA2B5',
 	borderWidth: '2px',
@@ -67,7 +51,7 @@ const FormInputStyle = {
 	borderBottomRightRadius: "0px",
 }
 
-const FormInputErrorStyle = Object.assign({}, FormInputStyle, {
+const FileInputErrorStyle = Object.assign({}, FileInputStyle, {
 	borderBottomLeftRadius: "0px",
 });
 
@@ -107,7 +91,8 @@ const AccountsListContainerStyle = {
 const ListItemContainer = {
 	display: "flex",
 	flexFlow: "row nowrap",
-	alignItems: "center"
+	alignItems: "center",
+	marginBottom: "5px"
 }
 
 const ListHeaderAccountNameLabelStyle = {
@@ -127,7 +112,9 @@ const ListHeaderAccountTypeLabelStyle = {
 }
 
 const ListStyle = {
-	paddingLeft: "0px"	
+	paddingLeft: "0px",
+	maxHeight: "250px",	
+	overflowY: "scroll",
 }
 
 const ListAccountNameStyle = {
@@ -142,6 +129,12 @@ const ListAccountTypeStyle = {
 	fontWeight: "normal",
 	color: "#4D717A",
 	width: "70%"
+}
+
+const AccountTypeInputStyle = {
+	flex: "1 1 auto",
+	borderColor: '#2FA2B5',
+	borderWidth: '2px',
 }
 
 export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialogProps, PImportYnabDataDialogState> {
@@ -379,7 +372,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						'Budget.csv' Path:
 					</ControlLabel>
 					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FormInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
+						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
 						<Button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForBudgetFile}>
 							<Glyphicon glyph="folder-open" />
 						</Button>
@@ -395,7 +388,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						'Budget.csv' Path:
 					</ControlLabel>
 					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FormInputStyle} value={this.state.budgetPath} readOnly={true} />
+						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetPath} readOnly={true} />
 						<Button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForBudgetFile}>
 							<Glyphicon glyph="folder-open" />
 						</Button>
@@ -417,7 +410,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						'Register.csv' Path:
 					</ControlLabel>
 					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FormInputErrorStyle} value={this.state.registerPath} readOnly={true} />
+						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerPath} readOnly={true} />
 						<Button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForRegisterFile}>
 							<Glyphicon glyph="folder-open" />
 						</Button>
@@ -433,7 +426,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						'Register.csv' Path:
 					</ControlLabel>
 					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FormInputStyle} value={this.state.registerPath} readOnly={true} />
+						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerPath} readOnly={true} />
 						<Button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForRegisterFile}>
 							<Glyphicon glyph="folder-open" />
 						</Button>
@@ -485,7 +478,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<div key={accountObj.accountName} style={ListItemContainer}>
 						<label style={ListAccountNameStyle}>{accountObj.accountName}</label>
 						<div style={ListAccountTypeStyle}>
-							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
+							<FormControl componentClass="select" style={AccountTypeInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
 								<option label="Select an Account Type...">{AccountTypes.None}</option>
 								<option label={AccountTypeNames.CreditCard}>{AccountTypes.CreditCard}</option>
 								<option label={AccountTypeNames.LineOfCredit}>{AccountTypes.LineOfCredit}</option>
@@ -499,7 +492,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<div key={accountObj.accountName} style={ListItemContainer}>
 						<label style={ListAccountNameStyle}>{accountObj.accountName}</label>
 						<div style={ListAccountTypeStyle}>
-							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
+							<FormControl componentClass="select" style={AccountTypeInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
 								<option label="Select an Account Type...">{AccountTypes.None}</option>
 								<optgroup label="Budget">
 									<option label={AccountTypeNames.Checking}>{AccountTypes.Checking}</option>
@@ -516,6 +509,18 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 									<option label={AccountTypeNames.OtherAsset}>{AccountTypes.OtherAsset}</option>
 									<option label={AccountTypeNames.OtherLiability}>{AccountTypes.OtherLiability}</option>
 								</optgroup>
+							</FormControl>
+						</div>
+					</div>
+				);
+			}
+			else {
+				accountItems.push(
+					<div key={accountObj.accountName} style={ListItemContainer}>
+						<label style={ListAccountNameStyle}>{accountObj.accountName}</label>
+						<div style={ListAccountTypeStyle}>
+							<FormControl componentClass="text" style={AccountTypeInputStyle} readOnly={true}>
+								{AccountTypes.getLabel(accountObj.selectedAccountType)}
 							</FormControl>
 						</div>
 					</div>

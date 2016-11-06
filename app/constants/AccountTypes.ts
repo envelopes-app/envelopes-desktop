@@ -68,6 +68,12 @@ export class AccountTypes {
 		var props:AccountTypeProperties = AccountTypes._accountTypes[accountType];
 		return props ? props.isAssetAccount : true; // Default is that the account is an asset account
 	}
+
+	public static getLabel(accountType:string):string {
+		AccountTypes.init();
+		var props:AccountTypeProperties = AccountTypes._accountTypes[accountType];
+		return props.label;
+	}
 }
 
 export class AccountTypeNames {

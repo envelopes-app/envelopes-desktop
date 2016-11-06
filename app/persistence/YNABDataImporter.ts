@@ -194,8 +194,21 @@ export class YNABDataImporter {
 			var accountName = registerRow[0];
 			var accountFound:boolean = false;
 
+			// Check if it already exists in the existing entities collection
+			var accountEntity = existingEntitiesCollection.accounts.getAccountByName(accountName);
+			if(accountEntity) {
+
+				accountFound = true;
+				var accountObj:IImportedAccountObject = {
+					accountName: accountName,
+					suggestedAccountType: accountEntity.accountType,
+					selectedAccountType: accountEntity.accountType
+				}
+				accountsMap[accountName] = accountObj;
+				accountsList.push(accountObj);
+			}
 			// Check if we have already added this to our map.
-			if(accountsMap[accountName])
+			else if(accountsMap[accountName])
 				accountFound = true;
 
 			// If the account has not yet been created, then add it to the accountsMap for creation.
@@ -213,21 +226,23 @@ export class YNABDataImporter {
 			}
 		}
 
-		// Iterate through all the budget rows. If for any account name, we find a corresponding debt category,
-		// then mark that account as credit card account.
-		for(var i:number = 1; i < budgetRows.length; i++) {
+		if(accountsList.length > 0) {
+			// Iterate through all the budget rows. If for any account name, we find a corresponding debt category,
+			// then mark that account as credit card account.
+			for(var i:number = 1; i < budgetRows.length; i++) {
 
-			var budgetRow = budgetRows[i];
-			var masterCategoryName = budgetRow[2];
-			var subCategoryName = budgetRow[3];
-			if(masterCategoryName == "Credit Card Payments") {
+				var budgetRow = budgetRows[i];
+				var masterCategoryName = budgetRow[2];
+				var subCategoryName = budgetRow[3];
+				if(masterCategoryName == "Credit Card Payments") {
 
-				// Check if we have an account corresponding to this subcategory in our accountsMap
-				var accountObj = accountsMap[subCategoryName];
-				// Mark this account object to be of type liability
-				if(accountObj)
-					accountObj.suggestedAccountType = AccountTypes.Liability;
-			} 
+					// Check if we have an account corresponding to this subcategory in our accountsMap
+					var accountObj = accountsMap[subCategoryName];
+					// Mark this account object to be of type liability
+					if(accountObj && accountObj.selectedAccountType == AccountTypes.None)
+						accountObj.suggestedAccountType = AccountTypes.Liability;
+				} 
+			}
 		}
 
 		return accountsList;
