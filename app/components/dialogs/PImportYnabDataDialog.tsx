@@ -6,25 +6,24 @@ import * as ReactDOM from 'react-dom';
 import * as Baby from 'babyparse';
 import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
+import * as budgetEntities from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 import { YNABDataImporter } from '../../persistence';
-import { IEntitiesCollection } from '../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 import { IImportedAccountObject } from '../../interfaces/objects';
 
 export interface PImportYnabDataDialogProps { 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
-	importYnabData:(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
+	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
+	importYnabData:(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
 }
 
 export interface PImportYnabDataDialogState {
 
 	showModal:boolean;
 	currentStep:number;
-	budgetName:string;
 	budgetPath:string;
-	budgetNameValidationState:string;
-	budgetNameValidationMessage:string;
 	budgetPathValidationState:string;
 	budgetPathValidationMessage:string;
 	registerPath:string;
@@ -34,7 +33,7 @@ export interface PImportYnabDataDialogState {
 	// These contain the parsed csv data
 	budgetRows:Array<any>;
 	registerRows:Array<any>;
-	accountList:Array<IImportedAccountObject>
+	accountsList:Array<IImportedAccountObject>;
 }
 
 const LabelStyle = {
@@ -147,7 +146,6 @@ const ListAccountTypeStyle = {
 
 export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialogProps, PImportYnabDataDialogState> {
 
-	private ctrlBudgetName:FormControl;
 	private ctrlBudgetCsvPath:FormControl;
 	private ctrlRegisterCsvPath:FormControl;
 
@@ -155,7 +153,6 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);
-		this.onBudgetNameChange = this.onBudgetNameChange.bind(this);
 		this.browseForBudgetFile = this.browseForBudgetFile.bind(this);
 		this.browseForRegisterFile = this.browseForRegisterFile.bind(this);
 		this.validateStep1 = this.validateStep1.bind(this);
@@ -163,28 +160,17 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
         this.state = { 
 			showModal: false,
 			currentStep: 0,
-			budgetName: "",
 			budgetPath: "",
 			registerPath: "",
-			budgetNameValidationState: null,
-			budgetNameValidationMessage: null,
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
 			registerPathValidationMessage: null,
 			budgetRows: null,
 			registerRows: null,
-			accountList: null
+			accountsList: null
 		};
     }
-
-	private onBudgetNameChange(event:React.SyntheticEvent):void {
-
-		var updatedBudgetName = (event.target as HTMLInputElement).value;
-		var state = _.assign({}, this.state) as PImportYnabDataDialogState;
-		state.budgetName = updatedBudgetName;
-		this.setState(state);
-	}
 
 	private browseForBudgetFile():void {
 
@@ -224,39 +210,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 	private validateStep1():void {
 
-		var budgetNameValidated:boolean = true;
-		var budgetName = this.state.budgetName;
 		var state = Object.assign({}, this.state) as PImportYnabDataDialogState;
-
-		// ****************************************************************
-		// Validate Budget Name
-		// ****************************************************************
-		// Ensure that budget name is provided.
-		if(budgetName == "") {
-			budgetNameValidated = false;
-			state.budgetNameValidationState = "error";
-			state.budgetNameValidationMessage = "The budget name is required.";
-		}
-		else {
-
-			// We want to make sure that the budget name is unique. 
-			_.forEach(this.props.entitiesCollection.budgets.getAllItems(), (existingBudget)=>{
-				if(existingBudget.budgetName == budgetName)
-					budgetNameValidated = false;
-			});
-
-			if(budgetNameValidated == false) {
-				state.budgetNameValidationState = "error";
-				state.budgetNameValidationMessage = "This budget name already exists.";
-			}
-		}
-
-		if(budgetNameValidated) {
-
-			state.budgetNameValidationState = null;
-			state.budgetNameValidationMessage = null;
-		}
-
 		// ****************************************************************
 		// Validate Budget File Path
 		// ****************************************************************
@@ -330,7 +284,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 				state.registerPathValidationMessage = 'This file is not in the correct format. Are you sure you have selected the correct file?';
 			}
 			else {
-				state.registerRows = budgetRows;
+				state.registerRows = registerRows;
 			}
 		}
 
@@ -339,15 +293,13 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 			state.registerPathValidationMessage = null;
 		}
 
-		var validationPassed = (budgetNameValidated && budgetPathValidated && registerPathValidated);
-		if(validationPassed) {
+		if(budgetPathValidated && registerPathValidated) {
 			// Get the list of accounts present in the imported data
-			var dataImporter = new YNABDataImporter();
-			state.accountList = dataImporter.getAccountsList(budgetRows, registerRows);
+			state.accountsList = YNABDataImporter.getAccountsList(budgetRows, registerRows, this.props.entitiesCollection);
 			state.currentStep = 2;
 		}
 		else {
-			state.accountList = null;
+			state.accountsList = null;
 		}
 
 		this.setState(state);
@@ -355,25 +307,26 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 	private onAccountTypeChange(accountObj:IImportedAccountObject, event:React.SyntheticEvent):void {
 		// Update the accountObj with the selected option
-		accountObj.accountType = (event.target as HTMLInputElement).value;
+		accountObj.selectedAccountType = (event.target as HTMLInputElement).value;
+		var state = Object.assign({}, this.state);
+		this.setState(state);
 	}
 
 	private validateStep2():void {
 
-		var accountsList = this.state.accountList;
+		var accountsList = this.state.accountsList;
 		// We want to ensure that account types have been assigned to all of the accounts
 		var validated = true;
 		_.forEach(accountsList, (accountObj)=>{
-			if(accountObj.accountType == AccountTypes.None)
+			if(accountObj.selectedAccountType == AccountTypes.None || accountObj.selectedAccountType == AccountTypes.Liability)
 				validated = false;
 		});
 
 		if(validated == true) {
 
-			var budgetName = this.state.budgetName;
-			var budgetRows = this.state.budgetRows;
-			var registerRows = this.state.registerRows;
-			this.props.importYnabData(budgetName, accountsList, budgetRows, registerRows);
+			var dataImporter = new YNABDataImporter();
+			dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, this.props.entitiesCollection, accountsList);
+			this.props.updateEntities(dataImporter.updatedEntities);
 			this.hide();
 		}
 	}
@@ -387,18 +340,15 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.setState({ 
 			showModal: true,
 			currentStep: 1,
-			budgetName: "",
 			budgetPath: "",
 			registerPath: "",
-			budgetNameValidationState: null,
-			budgetNameValidationMessage: null,
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
 			registerPathValidationMessage: null,
 			budgetRows: null,
 			registerRows: null,
-			accountList: null
+			accountsList: null
 		});
 	};
 
@@ -407,47 +357,16 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.setState({ 
 			showModal: false,
 			currentStep: 0,
-			budgetName: "",
 			budgetPath: "",
 			registerPath: "",
-			budgetNameValidationState: null,
-			budgetNameValidationMessage: null,
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
 			registerPathValidationMessage: null,
 			budgetRows: null,
 			registerRows: null,
-			accountList: null
+			accountsList: null
 		});
-	}
-
-	private getBudgetNameControl():JSX.Element {
-
-		var element:JSX.Element;
-		if(this.state.budgetNameValidationState == "error") {
-			element = (
-				<FormGroup>
-					<ControlLabel>
-						Budget Name:
-					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlBudgetName = c;}} type="text" style={BudgetNameInputErrorStyle} value={this.state.budgetName} onChange={this.onBudgetNameChange} />
-					<label style={ErrorMessageStyle}>{this.state.budgetNameValidationMessage}</label>
-				</FormGroup>
-			);
-		}
-		else {
-			element = (
-				<FormGroup>
-					<ControlLabel>
-						Budget Name:
-					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlBudgetName = c;}} type="text" style={BudgetNameInputStyle} value={this.state.budgetName} onChange={this.onBudgetNameChange} />
-				</FormGroup>
-			);
-		}
-
-		return element;
 	}
 
 	private getBudgetCsvPathControl():JSX.Element {
@@ -528,7 +447,6 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 	private getModalForStep1():JSX.Element {
 
-		var budgetName = this.getBudgetNameControl();
 		var budgetPath = this.getBudgetCsvPathControl();
 		var registerPath = this.getRegisterCsvPathControl();
 
@@ -539,7 +457,6 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
-						{budgetName}
 						{budgetPath}
 						{registerPath}
 					</Form>
@@ -559,16 +476,16 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 	private getAccountItemControls():Array<JSX.Element> {
 
 		var accountItems:Array<JSX.Element> = [];
-		var accountsList = this.state.accountList;
+		var accountsList = this.state.accountsList;
 
 		_.forEach(accountsList, (accountObj)=>{
 
-			if(accountObj.isLiabilityAccount) {
+			if(accountObj.suggestedAccountType == AccountTypes.Liability) {
 				accountItems.push(
 					<div key={accountObj.accountName} style={ListItemContainer}>
 						<label style={ListAccountNameStyle}>{accountObj.accountName}</label>
 						<div style={ListAccountTypeStyle}>
-							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.accountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
+							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
 								<option label="Select an Account Type...">{AccountTypes.None}</option>
 								<option label={AccountTypeNames.CreditCard}>{AccountTypes.CreditCard}</option>
 								<option label={AccountTypeNames.LineOfCredit}>{AccountTypes.LineOfCredit}</option>
@@ -577,12 +494,12 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</div>
 				);
 			}
-			else {
+			else if(accountObj.suggestedAccountType == AccountTypes.None) {
 				accountItems.push(
 					<div key={accountObj.accountName} style={ListItemContainer}>
 						<label style={ListAccountNameStyle}>{accountObj.accountName}</label>
 						<div style={ListAccountTypeStyle}>
-							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.accountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
+							<FormControl componentClass="select" style={FormInputStyle} value={accountObj.selectedAccountType} onChange={this.onAccountTypeChange.bind(this, accountObj)}>
 								<option label="Select an Account Type...">{AccountTypes.None}</option>
 								<optgroup label="Budget">
 									<option label={AccountTypeNames.Checking}>{AccountTypes.Checking}</option>

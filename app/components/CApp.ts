@@ -25,8 +25,8 @@ const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => 
 		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
       		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
 		},
-		importYnabData:(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) => {
-      		dispatch(GlobalActionsCreator.importYnabData(budgetName, accountsList, budgetRows, registerRows));
+		importYnabData:(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) => {
+      		dispatch(GlobalActionsCreator.importYnabData(accountsList, budgetRows, registerRows));
 		}
 	}
 }

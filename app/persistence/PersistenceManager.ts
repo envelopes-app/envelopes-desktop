@@ -196,7 +196,7 @@ export class PersistenceManager {
 		}
 	}
 
-	public importYnabData(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>):Promise<ISimpleEntitiesCollection> {
+	public importYnabData(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
 
 		var dataImporter = new YNABDataImporter();
 

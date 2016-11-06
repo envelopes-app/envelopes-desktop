@@ -109,12 +109,17 @@ export class GlobalActionsCreator {
 		};
 	}
 
-	public static importYnabData(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) {
+	public static importYnabData(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>) {
 
 		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
+			// Get the existing in-memory entities collection from state. This is so that we can
+			// determine in the PersistenceManager which entities being saved are new, and which are
+			// being updated (and what fields are being updated). On the basis of this we will be 
+			// queueing the calculations to be run. 
+			var existingEntitiesCollection = getState().entitiesCollection;
 			var persistenceManager = PersistenceManager.getInstance();
-			return persistenceManager.importYnabData(budgetName, accountsList, budgetRows, registerRows)
+			return persistenceManager.importYnabData(accountsList, budgetRows, registerRows, existingEntitiesCollection)
 				.then((createdBudget:catalogEntities.IBudget)=>{
 					// dispatch action open budget to open this newly created budget
 					dispatch(GlobalActionsCreator.openBudget(createdBudget));

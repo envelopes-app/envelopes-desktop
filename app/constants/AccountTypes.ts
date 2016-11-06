@@ -2,7 +2,11 @@ import { SimpleObjectMap } from '../utilities';
 
 export class AccountTypes {
 
+	// These two constants are only used when importing YNAB data. We temporarily assign
+	// these types to account until later we can inquire from the user about their actual types. 
 	public static None = "None";
+	public static Liability = "Liability";
+
 	public static Checking = "Checking";
 	public static Savings = "Savings";
 	public static CreditCard = "CreditCard";

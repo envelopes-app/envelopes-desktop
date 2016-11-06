@@ -40,7 +40,7 @@ export interface AppProps {
 	// Dispatcher functions
 	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
-	importYnabData:(budgetName:string, accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
+	importYnabData:(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
@@ -103,6 +103,7 @@ export class PApp extends React.Component<AppProps, {}> {
 					<PImportYnabDataDialog 
 						ref={(d)=> this.importYnabDataDialog = d }
 						entitiesCollection={this.props.applicationState.entitiesCollection}
+						updateEntities={this.props.updateEntities}
 						importYnabData={this.props.importYnabData}
 					/>
 				</div>
