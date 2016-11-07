@@ -10,6 +10,7 @@ import { PSidebar } from './PSidebar';
 
 const mapStateToProps = (state:IApplicationState) => {
 	return {
+		activeBudgetId: state.activeBudgetId,
     	entitiesCollection: state.entitiesCollection,
 		sidebarState: state.sidebarState
   	};

@@ -6,6 +6,8 @@ import * as ReactDOM from 'react-dom';
 
 import { PButtonWithGlyph } from '../common/PButtonWithGlyph';
 import { PAccountEditDialog } from './dialogs/PAccountEditDialog';
+
+import { DataFormatter } from '../../utilities';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 
@@ -49,6 +51,7 @@ const AccountButtonValueWithBadgeStyle = {
 export interface PAccountButtonProps {
 	account:IAccount;
 	selected: boolean;
+	dataFormatter:DataFormatter;
 	// Method to call on PSidebar for selecting the account
 	selectAccount?: (accountId:string)=>void;
 	// Dispatcher method from CSidebar for updating the account
@@ -106,13 +109,14 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 		}
 
 		// If the value is negative, we need to show it with a badge around it
-		var valueNode;
+		var valueNode:JSX.Element;
 		var account = this.props.account;
+		var dataFormatter = this.props.dataFormatter;
 		var accountBalance = account.clearedBalance + account.unclearedBalance;
 		if(accountBalance < 0)
-			valueNode = <span className="badge" style={AccountButtonValueWithBadgeStyle}>{accountBalance}</span>;
+			valueNode = <span className="badge" style={AccountButtonValueWithBadgeStyle}>{dataFormatter.formatCurrency(accountBalance)}</span>;
 		else
-			valueNode = <span style={AccountButtonValueStyle}>{accountBalance}</span>;
+			valueNode = <span style={AccountButtonValueStyle}>{dataFormatter.formatCurrency(accountBalance)}</span>;
 
 		return (
 			<div>

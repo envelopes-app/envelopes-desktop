@@ -2,6 +2,16 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { DataFormatter } from '../../utilities';
+
+export interface PAccountButtonContainerProps {
+	identity: string;
+	label: string;
+	value?: number;
+	expanded: boolean;
+	dataFormatter: DataFormatter;
+	setExpanded: (expanded:boolean)=>void;
+}
 
 const PAccountButtonContainerStyle = {
 	display: 'flex',
@@ -37,14 +47,6 @@ const PAccountButtonContainerValueWithBadgeStyle = {
 	backgroundColor: 'white'
 };
 
-export interface PAccountButtonContainerProps {
-	identity: string,
-	label: string,
-	value?: number,
-	expanded: boolean,
-	setExpanded: (expanded:boolean)=>void;
-}
-
 export class PAccountButtonContainer extends React.Component<PAccountButtonContainerProps, {}> {
 
 	constructor(props: any) {
@@ -59,7 +61,7 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 
   	public render() {
 
-		var valueNode;
+		var valueNode:JSX.Element;
 		var glyphiconClass, containerClass:string;
 		var collapseContainerIdentity = "collapseContainer_" + this.props.identity;
 
@@ -72,12 +74,14 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 			containerClass = "collapse";
 		}
 
+		var dataFormatter = this.props.dataFormatter;
+		debugger;
 		if(!this.props.value)
 			valueNode = <span style={PAccountButtonContainerValueStyle} />;
 		else if(this.props.value < 0)
-			valueNode = <span className="badge" style={PAccountButtonContainerValueWithBadgeStyle}>{this.props.value}</span>;
+			valueNode = <span className="badge" style={PAccountButtonContainerValueWithBadgeStyle}>{dataFormatter.formatCurrency(this.props.value)}</span>;
 		else
-			valueNode = <span style={PAccountButtonContainerValueStyle}>{this.props.value}</span>;
+			valueNode = <span style={PAccountButtonContainerValueStyle}>{dataFormatter.formatCurrency(this.props.value)}</span>;
 
 		return (
 			<div>

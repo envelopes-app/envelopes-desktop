@@ -13,7 +13,7 @@ import { PImportYnabDataDialog } from './dialogs/PImportYnabDataDialog';
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
 import CRegister from './register/CRegister';
-import { DataFormatter, Logger } from '../utilities';
+import { DataFormats, DataFormatter, Logger } from '../utilities';
 import { IDataFormat } from '../interfaces/formatters';
 import { IImportedAccountObject } from '../interfaces/objects';
 import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
@@ -65,9 +65,11 @@ export class PApp extends React.Component<AppProps, AppState> {
 		this.handleOpenBudgetMessage = this.handleOpenBudgetMessage.bind(this);
 		this.handleShowBudgetProperties = this.handleShowBudgetProperties.bind(this);
 		this.handleImportYnabBudgetData = this.handleImportYnabBudgetData.bind(this);
+		// Default the formatter to en_US so that we have something to work with at startup
+		var dataFormat = DataFormats.locale_mappings["en_US"];
 		this.state = {
-			dataFormat: null,
-			dataFormatter: null
+			dataFormat: JSON.stringify(dataFormat),
+			dataFormatter: new DataFormatter(dataFormat)
 		}
 
 		// Start listening for menu messages from the main window
@@ -76,14 +78,12 @@ export class PApp extends React.Component<AppProps, AppState> {
 
 	public componentWillReceiveProps(nextProps:AppProps):void {
 
-		// Get the active budget entity from the next props
+		// If the dataFormat in the active budget has changed, then recreate the dataFormatter.
 		var activeBudgetId = nextProps.applicationState.activeBudgetId;
 		if(activeBudgetId && nextProps.applicationState.entitiesCollection.budgets) {
 
 			var activeBudget = nextProps.applicationState.entitiesCollection.budgets.getEntityById(activeBudgetId);
 			if(activeBudget && activeBudget.dataFormat != this.state.dataFormat) {
-
-				Logger.info(`PApp::Loading formatting settings for ${activeBudget.budgetName}.`);
 				var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
 				var dataFormatter = new DataFormatter(dataFormat);
 				var state = Object.assign({}, this.state) as AppState;

@@ -360,7 +360,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var currentBudget = this.props.entitiesCollection.budgets.getEntityById(this.props.activeBudgetId);
 
     	return (
-			<div style={BudgetContainerStyle} tabIndex={1}>
+			<div style={BudgetContainerStyle}>
 				<PBudgetHeader currentMonth={selectedMonth} 
 					currentBudget={currentBudget}
 					entitiesCollection={this.props.entitiesCollection}
