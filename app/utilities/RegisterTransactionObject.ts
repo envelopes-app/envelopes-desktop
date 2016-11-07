@@ -18,6 +18,7 @@ export class RegisterTransactionObject {
 	public refPayee:budgetEntities.IPayee;
 	public refSubCategory:budgetEntities.ISubCategory;
 	public refMasterCategory:budgetEntities.IMasterCategory;
+	public refTransferAccount:budgetEntities.IAccount;
 
 	public entityId:string;
 	public parentEntityId:string;
@@ -157,6 +158,11 @@ export class RegisterTransactionObject {
 		if(masterCategory1 && masterCategory2 && masterCategory1 !== masterCategory2)
 			return true;
 
+		var transferAccount1 = this.refTransferAccount;
+		var transferAccount2 = transferAccount1 ? entitiesCollection.accounts.getEntityById(transferAccount1.entityId) : null;
+		if(transferAccount1 && transferAccount2 && transferAccount1 !== transferAccount2)
+			return true;
+
 		return false;
 	}
 
@@ -169,6 +175,7 @@ export class RegisterTransactionObject {
 		var payee = transaction.payeeId ? entitiesCollection.payees.getEntityById(transaction.payeeId) : null;
 		var subCategory = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
 		var masterCategory = subCategory ? entitiesCollection.masterCategories.getEntityById(subCategory.masterCategoryId) : null;
+		var transferAccount = transaction.transferAccountId ? entitiesCollection.accounts.getEntityById(transaction.transferAccountId) : null;
 
 		var registerTransactionObject = new RegisterTransactionObject();
 		registerTransactionObject.entityType = "transaction";
@@ -186,6 +193,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.refPayee = payee;
 		registerTransactionObject.refSubCategory = subCategory;
 		registerTransactionObject.refMasterCategory = masterCategory;
+		registerTransactionObject.refTransferAccount = transferAccount;
 		return registerTransactionObject;
 	}
  
@@ -195,6 +203,7 @@ export class RegisterTransactionObject {
 		var payee = subTransaction.payeeId ? entitiesCollection.payees.getEntityById(subTransaction.payeeId) : null;
 		var subCategory = subTransaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(subTransaction.subCategoryId) : null;
 		var masterCategory = subCategory ? entitiesCollection.masterCategories.getEntityById(subCategory.masterCategoryId) : null;
+		var transferAccount = subTransaction.transferAccountId ? entitiesCollection.accounts.getEntityById(subTransaction.transferAccountId) : null;
 
 		var registerTransactionObject = new RegisterTransactionObject();
 		registerTransactionObject.entityType = "subTransaction";
@@ -214,6 +223,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.refPayee = payee;
 		registerTransactionObject.refSubCategory = subCategory;
 		registerTransactionObject.refMasterCategory = masterCategory;
+		registerTransactionObject.refTransferAccount = transferAccount;
 		return registerTransactionObject;
 	}
 
@@ -228,6 +238,7 @@ export class RegisterTransactionObject {
 			var payee = scheduledTransaction.payeeId ? entitiesCollection.payees.getEntityById(scheduledTransaction.payeeId) : null;
 			var subCategory = scheduledTransaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(scheduledTransaction.subCategoryId) : null;
 			var masterCategory = subCategory ? entitiesCollection.masterCategories.getEntityById(subCategory.masterCategoryId) : null;
+			var transferAccount = scheduledTransaction.transferAccountId ? entitiesCollection.accounts.getEntityById(scheduledTransaction.transferAccountId) : null;
 
 			registerTransactionObject = new RegisterTransactionObject();
 			registerTransactionObject.entityType = "scheduledTransaction";
@@ -245,6 +256,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.refPayee = payee;
 			registerTransactionObject.refSubCategory = subCategory;
 			registerTransactionObject.refMasterCategory = masterCategory;
+			registerTransactionObject.refTransferAccount = transferAccount;
 		}
 
 		return registerTransactionObject;
@@ -261,6 +273,7 @@ export class RegisterTransactionObject {
 			var payee = scheduledSubTransaction.payeeId ? entitiesCollection.payees.getEntityById(scheduledSubTransaction.payeeId) : null;
 			var subCategory = scheduledSubTransaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(scheduledSubTransaction.subCategoryId) : null;
 			var masterCategory = subCategory ? entitiesCollection.masterCategories.getEntityById(subCategory.masterCategoryId) : null;
+			var transferAccount = scheduledSubTransaction.transferAccountId ? entitiesCollection.accounts.getEntityById(scheduledSubTransaction.transferAccountId) : null;
 
 			registerTransactionObject = new RegisterTransactionObject();
 			registerTransactionObject.entityType = "scheduledSubTransaction";
@@ -280,6 +293,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.refPayee = payee;
 			registerTransactionObject.refSubCategory = subCategory;
 			registerTransactionObject.refMasterCategory = masterCategory;
+			registerTransactionObject.refTransferAccount = transferAccount;
 		}
 
 		return registerTransactionObject;

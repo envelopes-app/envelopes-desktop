@@ -55,26 +55,37 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
+		var categoryName:string = registerTransactionObject.refSubCategory ? registerTransactionObject.categoryName : "";
+		var showNeedsCategoryMessage:boolean = false;
 
-		if(registerTransactionObject.refSubCategory) {
+		// The "needs category" message only needs to be shown for transactions/sub-transactions if they are missing a category.
+		// Also, it is not shown if the transaction is a trnsfer from an on-budget to on-budget account
+		if(!registerTransactionObject.refSubCategory && 
+			(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction")) {
+
+			if(!registerTransactionObject.refTransferAccount) {
+				// This is not a transfer, so show the warning message
+				showNeedsCategoryMessage = true;
+			}
+			else {
+				if(registerTransactionObject.refAccount.onBudget != 1 || registerTransactionObject.refTransferAccount.onBudget != 1) {
+					// This is not an on-budget to on-budget transfer, so show the warning message
+					showNeedsCategoryMessage = true;
+				}
+			}
+		}
+		
+		if(showNeedsCategoryMessage == false) {
 			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.categoryName}</div>
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{categoryName}</div>
 			);
 		}
 		else {
-			// This needs a category message is to be shown only for transactions
-			if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "subTransaction") {
-				return (
-					<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
-						<Badge style={WarningBadgeStyle}>This needs a category</Badge>
-					</div>
-				);
-			}
-			else {
-				return (
-					<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
-				);
-			}
+			return (
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+					<Badge style={WarningBadgeStyle}>This needs a category</Badge>
+				</div>
+			);
 		}
   	}
 }
