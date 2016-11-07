@@ -47,10 +47,12 @@ export class POutflowCell extends React.Component<POutflowCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
-		var dataFormatter = this.props.dataFormatter;
+		var formattedValue = "";
+		if(registerTransactionObject.outflow != 0)
+			formattedValue = this.props.dataFormatter.formatCurrency(registerTransactionObject.outflow);
 
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dataFormatter.formatCurrency(registerTransactionObject.outflow)}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{formattedValue}</div>
 		);
   	}
 }

@@ -47,10 +47,12 @@ export class PInflowCell extends React.Component<PInflowCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
-		var dataFormatter = this.props.dataFormatter;
+		var formattedValue = "";
+		if(registerTransactionObject.inflow != 0)
+			formattedValue = this.props.dataFormatter.formatCurrency(registerTransactionObject.inflow);
 
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dataFormatter.formatCurrency(registerTransactionObject.inflow)}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{formattedValue}</div>
 		);
   	}
 }

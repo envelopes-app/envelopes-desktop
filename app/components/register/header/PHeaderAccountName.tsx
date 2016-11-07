@@ -21,8 +21,8 @@ const AccountNameContainerStyle = {
 }
 
 const AccountNameInnerStyle = {
-	fontSize: '20px',
-	fontWeight: '200',
+	fontSize: '24px',
+	fontWeight: 'normal',
 	color: '#ffffff',
 	backgroundColor: '#16A336',
 	paddingTop: '4px',
