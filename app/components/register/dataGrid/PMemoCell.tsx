@@ -46,9 +46,19 @@ export class PMemoCell extends React.Component<PMemoCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
+		var truncatedDivStyle = {
+			width: this.props.width,
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+			textOverflow: "ellipsis"
+		};
 
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.memo}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+				<div style={truncatedDivStyle} title={registerTransactionObject.memo}>
+					{registerTransactionObject.memo}
+				</div>
+			</div>
 		);
   	}
 }

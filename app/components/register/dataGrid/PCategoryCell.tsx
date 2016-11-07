@@ -52,6 +52,9 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 
 	public render() {
 
+		if(!this.props.registerTransactionObjects)
+			return <div />;
+
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
@@ -74,15 +77,26 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 				}
 			}
 		}
+
+		var truncatedDivStyle = {
+			width: this.props.width,
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+			textOverflow: "ellipsis"
+		};
 		
 		if(showNeedsCategoryMessage == false) {
 			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{categoryName}</div>
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+					<div style={truncatedDivStyle} title={categoryName}>
+						{categoryName}
+					</div>
+				</div>
 			);
 		}
 		else {
 			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+				<div className={className} style={{width:this.props.width}} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
 					<Badge style={WarningBadgeStyle}>This needs a category</Badge>
 				</div>
 			);

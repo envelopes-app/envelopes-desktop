@@ -46,9 +46,19 @@ export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
+		var truncatedDivStyle = {
+			width: this.props.width,
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+			textOverflow: "ellipsis"
+		};
 
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.payeeName}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>
+				<div style={truncatedDivStyle} title={registerTransactionObject.payeeName}>
+					{registerTransactionObject.payeeName}
+				</div>
+			</div>
 		);
   	}
 }

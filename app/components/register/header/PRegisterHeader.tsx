@@ -24,7 +24,7 @@ export interface PRegisterHeaderProps {
 
 const RegisterHeaderContainerStyle = {
 	flex: '0 0 auto',
-	height: '60px',
+	height: '70px',
 	width: '100%',
 	backgroundColor: '#003540',
 	paddingLeft: '0px',
