@@ -6,13 +6,16 @@ import * as ReactDOM from 'react-dom';
 import * as Baby from 'babyparse';
 import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
+import { DataFormatter } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 import { YNABDataImporter } from '../../persistence';
+import { IDataFormat } from '../../interfaces/formatters';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 import { IImportedAccountObject } from '../../interfaces/objects';
 
 export interface PImportYnabDataDialogProps { 
+	activeBudgetId:string;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
@@ -317,8 +320,15 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 		if(validated == true) {
 
-			var dataImporter = new YNABDataImporter();
-			dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, this.props.entitiesCollection, accountsList);
+			// Get the active budget and get the data format from it
+			var activeBudget = this.props.entitiesCollection.budgets.getEntityById( this.props.activeBudgetId ); 
+			var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+			// Build a data formatter object for passing to the data importer utility
+			var dataFormatter = new DataFormatter(dataFormat);
+			var dataImporter = new YNABDataImporter(activeBudget, this.props.entitiesCollection, dataFormatter);
+			// Build up the list of entities that need to be created/updated in the budget
+			dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, accountsList);
+			// Send the entities for persistence
 			this.props.updateEntities(dataImporter.updatedEntities);
 			this.hide();
 		}
@@ -534,7 +544,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 	private getModalForStep2():JSX.Element {
 
 		var accountItems = this.getAccountItemControls();
-
+		
 		return (
 			<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="import-ynab-data-dialog">
 				<Modal.Header bsClass="modal-header">

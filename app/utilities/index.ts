@@ -1,5 +1,6 @@
 export { MultiDictionary } from './Collections';
 export { DataFormats } from './DataFormats';
+export { DataFormatter } from './DataFormatter';
 export { DateWithoutTime } from './DateWithoutTime';
 export { DialogUtilities } from './DialogUtilities';
 export { FocusManager } from './FocusManager';

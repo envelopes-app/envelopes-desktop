@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/cdff35292bc4fb22439702f2aaba065cc26fc97f/numeraljs/numeraljs.d.ts",
+    "raw": "registry:dt/numeraljs#0.0.0+20161014114953",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/cdff35292bc4fb22439702f2aaba065cc26fc97f/numeraljs/numeraljs.d.ts"
+  }
+}

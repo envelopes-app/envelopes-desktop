@@ -1,6 +1,6 @@
 /// <reference path='../_includes.ts' />
 
-import { SimpleObjectMap } from '../utilities';
+import { SimpleObjectMap } from './SimpleObjectMap';
 import { IDataFormat, IISOCurrency, INumberFormat } from '../interfaces/formatters';
 
 export class DataFormats {

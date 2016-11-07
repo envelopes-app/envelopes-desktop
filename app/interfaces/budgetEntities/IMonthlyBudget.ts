@@ -5,7 +5,6 @@ export interface IMonthlyBudget extends IBudgetEntity {
 	month:string;
 	note:string;
 
-	// These properties are actually coming from the monthly budget calculation entity from the server
 	previousIncome:number;
 	immediateIncome:number;
 	budgeted:number;

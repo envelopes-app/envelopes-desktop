@@ -102,6 +102,7 @@ export class PApp extends React.Component<AppProps, {}> {
 
 					<PImportYnabDataDialog 
 						ref={(d)=> this.importYnabDataDialog = d }
+						activeBudgetId={this.props.applicationState.activeBudgetId}
 						entitiesCollection={this.props.applicationState.entitiesCollection}
 						updateEntities={this.props.updateEntities}
 						importYnabData={this.props.importYnabData}

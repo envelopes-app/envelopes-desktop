@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import { EntityFactory } from './EntityFactory';
-import { YNABDataImporter } from './YNABDataImporter';
 import { CalculationsManager } from './CalculationsManager';
 import * as commonInterfaces from '../interfaces/common'; 
 import { IImportedAccountObject } from '../interfaces/objects';
@@ -197,9 +196,6 @@ export class PersistenceManager {
 	}
 
 	public importYnabData(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
-
-		var dataImporter = new YNABDataImporter();
-
 
 		return Promise.resolve(null);
 	}

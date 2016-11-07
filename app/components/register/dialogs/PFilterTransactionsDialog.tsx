@@ -216,9 +216,11 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 
 	private onOkClick():void { 
 
+		var fromMonth = parseInt(this.state.fromMonth) + 1;
+		var toMonth = parseInt(this.state.toMonth) + 1;
 		// Take the values from the local state and pass them back to the register
-		var startDate = DateWithoutTime.createFromISOString(`${this.state.fromYear}-${this.state.fromMonth}-01`).addMonths(1);
-		var endDate = DateWithoutTime.createFromISOString(`${this.state.toYear}-${this.state.toMonth}-01`).addMonths(1);
+		var startDate = DateWithoutTime.createFromISOString(`${this.state.fromYear}-01-01`).setMonth(fromMonth);
+		var endDate = DateWithoutTime.createFromISOString(`${this.state.toYear}-01-01`).setMonth(toMonth);
 		this.props.updateFilterTransactionSettings(
 			this.state.selectedTimeFrame,
 			startDate,

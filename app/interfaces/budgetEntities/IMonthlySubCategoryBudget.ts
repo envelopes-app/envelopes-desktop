@@ -8,7 +8,6 @@ export interface IMonthlySubCategoryBudget extends IBudgetEntity {
 	note:string;
 	month:string;
 
-	// These properties are actually coming from the monthly subcategory budget calculation entity from the server
 	cashOutflows:number;
 	positiveCashOutflows:number;
 	creditOutflows:number;

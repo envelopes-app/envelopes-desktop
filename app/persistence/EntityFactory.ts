@@ -110,6 +110,84 @@ export class EntityFactory {
 		return payee;
 	}
 
+	public static createNewMonthlyBudget(budgetId:string, month:DateWithoutTime):budgetEntities.IMonthlyBudget {
+
+		var monthlyBudget:budgetEntities.IMonthlyBudget = {
+
+			budgetId: budgetId,
+			entityId: KeyGenerator.getMonthlyBudgetIdentity(budgetId, month),
+			isTombstone: 0,
+			month: month.toISOString(),
+			note: null,
+			previousIncome: 0,
+			immediateIncome: 0,
+			budgeted: 0,
+			cashOutflows: 0,
+			creditOutflows: 0,
+			balance: 0,
+			overSpent: 0,
+			availableToBudget: 0,
+			uncategorizedCashOutflows: 0, 
+			uncategorizedCreditOutflows: 0,
+			uncategorizedBalance: 0,
+			hiddenBudgeted: 0,
+			hiddenCashOutflows: 0,
+			hiddenCreditOutflows: 0,
+			hiddenBalance: 0,
+			additionalToBeBudgeted: 0,
+			ageOfMoney: 0,
+			deviceKnowledge: 0,
+			deviceKnowledgeForCalculatedFields: 0
+		}
+
+		return monthlyBudget;
+	}
+
+	public static createNewMonthlySubCategoryBudget(budgetId:string, subCategoryId:string, month:DateWithoutTime):budgetEntities.IMonthlySubCategoryBudget {
+
+		var monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget = {
+
+				budgetId: budgetId,
+				entityId: KeyGenerator.getMonthlySubCategoryBudgetIdentity(subCategoryId, month),
+				isTombstone: 0,
+				monthlyBudgetId: KeyGenerator.getMonthlyBudgetIdentity(budgetId, month),
+				subCategoryId: subCategoryId,
+				budgeted: 0,
+				note: null,
+				month: month.toISOString(),
+				cashOutflows: 0,
+				positiveCashOutflows: 0,
+				creditOutflows: 0,
+				balance: 0,
+				budgetedCashOutflows: 0,
+				budgetedCreditOutflows: 0,
+				unBudgetedCashOutflows: 0,
+				unBudgetedCreditOutflows: 0,
+				budgetedPreviousMonth: 0,
+				spentPreviousMonth: 0,
+				paymentPreviousMonth: 0,
+				balancePreviousMonth: 0,
+				budgetedAverage: 0,
+				spentAverage: 0,
+				paymentAverage: 0,
+				budgetedSpending: 0,
+				allSpending: 0,
+				allSpendingSinceLastPayment: 0,
+				upcomingTransactions: 0,
+				upcomingTransactionsCount: 0,
+				additionalToBeBudgeted: 0,
+				goalTarget: 0,
+				goalOverallFunded: 0,
+				goalOverallLeft: 0,
+				goalUnderFunded: 0,
+				goalExpectedCompletion: 0,
+				deviceKnowledge: 0,
+				deviceKnowledgeForCalculatedFields: 0
+		}
+
+		return monthlySubCategoryBudget;
+	}
+
 	public static createNewSubTransaction(budgetId:string = null):budgetEntities.ISubTransaction {
 
 		var subTransaction:budgetEntities.ISubTransaction = {
