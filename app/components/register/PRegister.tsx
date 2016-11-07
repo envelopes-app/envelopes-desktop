@@ -20,8 +20,9 @@ import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 import { EntityFactory } from '../../persistence';
 import { RegisterTransactionObjectsArray } from '../../collections'; 
 import { ClearedFlag, RegisterFilterTimeFrame } from '../../constants';
-import { DateWithoutTime, RegisterTransactionObject, SerializationUtilities, SimpleObjectMap, Logger } from '../../utilities';
+import { DataFormats, DataFormatter, DateWithoutTime, RegisterTransactionObject, SerializationUtilities, SimpleObjectMap, Logger } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
+import { IDataFormat } from '../../interfaces/formatters';
 import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection, IRegisterState } from '../../interfaces/state';
 
 export interface PRegisterProps {
@@ -32,6 +33,8 @@ export interface PRegisterProps {
 }
 
 export interface PRegisterState {
+	dataFormat:string;
+	dataFormatter:DataFormatter;
 	registersState: SimpleObjectMap<IRegisterState>;
 }
 
@@ -53,7 +56,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private bulkCategorizeDialog:PBulkCategorizeDialog;
 	private moveToAccountDialog:PMoveToAccountDialog;
 
-	constructor(props: any) {
+	constructor(props:PRegisterProps) {
         super(props);
 		this.selectTransaction = this.selectTransaction.bind(this);
 		this.unselectTransaction = this.unselectTransaction.bind(this);
@@ -72,7 +75,23 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.showMoveToAccountDialog = this.showMoveToAccountDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
-		this.state = {registersState:{}};
+
+		// Default the formatter to en_US so that we have something to work with at startup
+		var dataFormat = DataFormats.locale_mappings["en_US"];
+		var activeBudgetId = props.applicationState.activeBudgetId;
+		if(activeBudgetId && props.applicationState.entitiesCollection.budgets) {
+
+			var activeBudget = props.applicationState.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat) {
+				dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+			}
+		}
+
+		this.state = {
+			dataFormat: JSON.stringify(dataFormat),
+			dataFormatter: new DataFormatter(dataFormat),
+			registersState:{}
+		};
     }
 
 	private getActiveAccount(applicationState:IApplicationState):string {
@@ -575,7 +594,23 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var registerTransactionObjectsArray = registerState.registerTransactionObjectsArray;
 		// Update the registerTransactionObjectsArray
 		this.updateRegisterTransactionObjectsArray(registerTransactionObjectsArray, registerState, nextProps.applicationState.entitiesCollection);
-		this.updateRegisterState(registerState);
+		var state = _.assign({}, this.state) as PRegisterState;
+		state.registersState[registerState.accountId] = registerState;
+
+		// If the dataFormat in the active budget has changed, then recreate the dataFormatter.
+		var activeBudgetId = nextProps.applicationState.activeBudgetId;
+		if(activeBudgetId && nextProps.applicationState.entitiesCollection.budgets) {
+
+			var activeBudget = nextProps.applicationState.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat != this.state.dataFormat) {
+				var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+				var dataFormatter = new DataFormatter(dataFormat);
+				state.dataFormat = activeBudget.dataFormat;
+				state.dataFormatter = dataFormatter;
+			}
+		}
+
+		this.setState(state);
 	} 
 
 	public render() {
@@ -653,6 +688,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					showReconcileButton={isAllAccounts == false} 
 					showSelectedTotal={showSelectedTotal}
 					selectedTotal={selectedTotal}
+					dataFormatter={this.state.dataFormatter}
 					showReconcileAccountDialog={this.showReconcileAccountDialog}
 				/>
 

@@ -7,6 +7,8 @@ import * as ReactDOM from 'react-dom';
 import { PHeaderAccountName } from './PHeaderAccountName';
 import { PHeaderValue } from './PHeaderValue';
 
+import { DataFormatter } from '../../../utilities';
+
 export interface PRegisterHeaderProps {
 	accountName:string;
 	clearedBalance:number;
@@ -16,6 +18,7 @@ export interface PRegisterHeaderProps {
 	showSelectedTotal:boolean;
 	showReconcileButton:boolean;
 
+	dataFormatter:DataFormatter;
 	showReconcileAccountDialog:(element:HTMLElement)=>void;
 }
 
@@ -71,18 +74,19 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
 
 	private getHeaderContents():Array<JSX.Element> {
 
+		var dataFormatter = this.props.dataFormatter;
 		var headerContents = [
 			<PHeaderAccountName key="account_name" text={this.props.accountName} />,
-			<PHeaderValue key="cleared_balance" label="Cleared Balance" value={this.props.clearedBalance} />,
+			<PHeaderValue key="cleared_balance" label="Cleared Balance" value={this.props.clearedBalance} formattedValue={dataFormatter.formatCurrency(this.props.clearedBalance)} />,
 			<text key="plus_symbol" style={SymbolStyle}>+</text>,
-			<PHeaderValue key="uncleared_balance" label="Uncleared Balance" value={this.props.unclearedBalance} />,
+			<PHeaderValue key="uncleared_balance" label="Uncleared Balance" value={this.props.unclearedBalance} formattedValue={dataFormatter.formatCurrency(this.props.unclearedBalance)} />,
 			<text key="equal_symbol" style={SymbolStyle}>=</text>,
-			<PHeaderValue key="working_balance" label="Working Balance" value={this.props.workingBalance} />
+			<PHeaderValue key="working_balance" label="Working Balance" value={this.props.workingBalance} formattedValue={dataFormatter.formatCurrency(this.props.workingBalance)} />
 		];
 
 		if(this.props.showSelectedTotal) {
 			headerContents.push(<text key="separator_symbol" style={SymbolStyle}>|</text>);
-			headerContents.push(<PHeaderValue key="selected_total" label="Selected Total" value={this.props.selectedTotal} />);
+			headerContents.push(<PHeaderValue key="selected_total" label="Selected Total" value={this.props.selectedTotal} formattedValue={dataFormatter.formatCurrency(this.props.selectedTotal)} />);
 		}
 
 		headerContents.push(<div key="spacer" className="spacer" />);

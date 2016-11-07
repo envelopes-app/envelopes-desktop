@@ -75,7 +75,6 @@ export class PAccountButtonContainer extends React.Component<PAccountButtonConta
 		}
 
 		var dataFormatter = this.props.dataFormatter;
-		debugger;
 		if(!this.props.value)
 			valueNode = <span style={PAccountButtonContainerValueStyle} />;
 		else if(this.props.value < 0)
