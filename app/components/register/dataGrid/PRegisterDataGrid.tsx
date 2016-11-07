@@ -266,6 +266,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					}
 					cell={
 						<POutflowCell 
+							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
@@ -284,6 +285,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					}
 					cell={
 						<PInflowCell 
+							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 

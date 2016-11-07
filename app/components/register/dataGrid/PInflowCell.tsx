@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Cell } from 'fixed-data-table';
 
-import { RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
+import { DataFormatter, RegisterTransactionObject, SimpleObjectMap } from '../../../utilities';
 import { RegisterTransactionObjectsArray } from '../../../collections';
 
 export interface PInflowCellProps {
@@ -11,6 +11,7 @@ export interface PInflowCellProps {
 	height?:number;
 	rowIndex?:number;
 	columnKey?:string;
+	dataFormatter:DataFormatter;
 	registerTransactionObjects:RegisterTransactionObjectsArray;
 	selectedTransactionsMap:SimpleObjectMap<boolean>;
 
@@ -46,9 +47,10 @@ export class PInflowCell extends React.Component<PInflowCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
+		var dataFormatter = this.props.dataFormatter;
 
 		return (
-			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{registerTransactionObject.inflow.toString()}</div>
+			<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dataFormatter.formatCurrency(registerTransactionObject.inflow)}</div>
 		);
   	}
 }
