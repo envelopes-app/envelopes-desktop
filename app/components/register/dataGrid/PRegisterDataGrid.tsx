@@ -23,7 +23,7 @@ import { POutflowCell } from './POutflowCell';
 import { PInflowCell } from './PInflowCell';
 import { PClearedCell } from './PClearedCell';
 
-import { DateWithoutTime, RegisterTransactionObject } from '../../../utilities';
+import { DataFormatter, DateWithoutTime, RegisterTransactionObject } from '../../../utilities';
 import { ClearedFlag, TransactionFlag, RegisterSortField, RegisterSortOrder } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection, IRegisterState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -31,6 +31,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 export interface PRegisterDataGridProps {
 	accountId:string;
 	isAllAccounts:boolean;
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection;
 	registerState:IRegisterState;
 	// Local UI state updation functions
@@ -191,6 +192,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					}
 					cell={
 						<PDateCell  
+							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
 							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 

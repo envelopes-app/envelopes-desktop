@@ -22,7 +22,7 @@ export class RegisterTransactionObject {
 
 	public entityId:string;
 	public parentEntityId:string;
-	public date:string;
+	public date:DateWithoutTime;
 	public flag:string;
 	public memo:string;
 	public inflow:number;
@@ -181,7 +181,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.entityType = "transaction";
 		registerTransactionObject.refTransaction = transaction;
 		registerTransactionObject.entityId = transaction.entityId;
-		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date).toISOString();
+		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date);
 		registerTransactionObject.flag = transaction.flag;
 		registerTransactionObject.memo = transaction.memo ? transaction.memo : "";
 		registerTransactionObject.outflow = transaction.amount < 0 ? -transaction.amount : 0;
@@ -211,7 +211,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.refSubTransaction = subTransaction;
 		registerTransactionObject.entityId = subTransaction.entityId;
 		registerTransactionObject.parentEntityId = transaction.entityId;
-		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date).toISOString();
+		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date);
 		registerTransactionObject.flag = null;
 		registerTransactionObject.memo = subTransaction.memo ? subTransaction.memo : "";
 		registerTransactionObject.outflow = subTransaction.amount < 0 ? -subTransaction.amount : 0;
@@ -244,7 +244,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.entityType = "scheduledTransaction";
 			registerTransactionObject.refScheduledTransaction = scheduledTransaction;
 			registerTransactionObject.entityId = scheduledTransaction.entityId;
-			registerTransactionObject.date = upcomingInstanceDates[0];
+			registerTransactionObject.date = DateWithoutTime.createFromISOString(upcomingInstanceDates[0]);
 			registerTransactionObject.flag = scheduledTransaction.flag;
 			registerTransactionObject.memo = scheduledTransaction.memo ? scheduledTransaction.memo : "";
 			registerTransactionObject.outflow = scheduledTransaction.amount < 0 ? -scheduledTransaction.amount : 0;
@@ -281,7 +281,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.refScheduledSubTransaction = scheduledSubTransaction;
 			registerTransactionObject.entityId = scheduledSubTransaction.entityId;
 			registerTransactionObject.parentEntityId = scheduledTransaction.entityId;
-			registerTransactionObject.date = upcomingInstanceDates[0];
+			registerTransactionObject.date = DateWithoutTime.createFromISOString(upcomingInstanceDates[0]);
 			registerTransactionObject.flag = null;
 			registerTransactionObject.memo = scheduledSubTransaction.memo ? scheduledSubTransaction.memo : "";
 			registerTransactionObject.outflow = scheduledSubTransaction.amount < 0 ? -scheduledSubTransaction.amount : 0;

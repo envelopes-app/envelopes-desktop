@@ -63,6 +63,10 @@ export class DataFormatter {
 		return DateWithoutTime.createFromString(dateInCustomFormat, this.dataFormat.date_format);
 	}
 
+	public formatDate(value:DateWithoutTime):string {
+		return value.format(this.dataFormat.date_format);
+	}
+
 	// Given a milli-number, convert it to a formatted number string as specified by the number format
 	// in the active budget
 	public formatCurrency(value:number):string {

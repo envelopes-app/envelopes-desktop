@@ -702,7 +702,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PRegisterDataGrid 
 					accountId={currentAccountId} 
-					isAllAccounts={isAllAccounts} 
+					isAllAccounts={isAllAccounts}
+					dataFormatter={this.state.dataFormatter} 
 					entitiesCollection={this.props.applicationState.entitiesCollection}
 					updateEntities={this.props.updateEntities} registerState={registerState}
 					selectTransaction={this.selectTransaction}
