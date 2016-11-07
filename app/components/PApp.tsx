@@ -13,6 +13,8 @@ import { PImportYnabDataDialog } from './dialogs/PImportYnabDataDialog';
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
 import CRegister from './register/CRegister';
+import { DataFormatter, Logger } from '../utilities';
+import { IDataFormat } from '../interfaces/formatters';
 import { IImportedAccountObject } from '../interfaces/objects';
 import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/state';
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -44,7 +46,12 @@ export interface AppProps {
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
-export class PApp extends React.Component<AppProps, {}> {
+export interface AppState {
+	dataFormat:string;
+	dataFormatter:DataFormatter;
+}
+
+export class PApp extends React.Component<AppProps, AppState> {
   
 	private budgetDialog:PBudgetDialog;
 	private openBudgetDialog:POpenBudgetDialog;
@@ -58,10 +65,34 @@ export class PApp extends React.Component<AppProps, {}> {
 		this.handleOpenBudgetMessage = this.handleOpenBudgetMessage.bind(this);
 		this.handleShowBudgetProperties = this.handleShowBudgetProperties.bind(this);
 		this.handleImportYnabBudgetData = this.handleImportYnabBudgetData.bind(this);
+		this.state = {
+			dataFormat: null,
+			dataFormatter: null
+		}
 
 		// Start listening for menu messages from the main window
 		this.startListeningForMessages();
 	}
+
+	public componentWillReceiveProps(nextProps:AppProps):void {
+
+		// Get the active budget entity from the next props
+		var activeBudgetId = nextProps.applicationState.activeBudgetId;
+		if(activeBudgetId && nextProps.applicationState.entitiesCollection.budgets) {
+
+			var activeBudget = nextProps.applicationState.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat != this.state.dataFormat) {
+
+				Logger.info(`PApp::Loading formatting settings for ${activeBudget.budgetName}.`);
+				var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+				var dataFormatter = new DataFormatter(dataFormat);
+				var state = Object.assign({}, this.state) as AppState;
+				state.dataFormat = activeBudget.dataFormat;
+				state.dataFormatter = dataFormatter;
+				this.setState(state);
+			}
+		}
+	} 
 
 	public render() {
 
@@ -102,6 +133,7 @@ export class PApp extends React.Component<AppProps, {}> {
 
 					<PImportYnabDataDialog 
 						ref={(d)=> this.importYnabDataDialog = d }
+						dataFormatter={this.state.dataFormatter}
 						activeBudgetId={this.props.applicationState.activeBudgetId}
 						entitiesCollection={this.props.applicationState.entitiesCollection}
 						updateEntities={this.props.updateEntities}

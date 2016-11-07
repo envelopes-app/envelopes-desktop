@@ -16,6 +16,7 @@ import { IImportedAccountObject } from '../../interfaces/objects';
 
 export interface PImportYnabDataDialogProps { 
 	activeBudgetId:string;
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
@@ -322,10 +323,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 			// Get the active budget and get the data format from it
 			var activeBudget = this.props.entitiesCollection.budgets.getEntityById( this.props.activeBudgetId ); 
-			var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
-			// Build a data formatter object for passing to the data importer utility
-			var dataFormatter = new DataFormatter(dataFormat);
-			var dataImporter = new YNABDataImporter(activeBudget, this.props.entitiesCollection, dataFormatter);
+			var dataImporter = new YNABDataImporter(activeBudget, this.props.entitiesCollection, this.props.dataFormatter);
 			// Build up the list of entities that need to be created/updated in the budget
 			dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, accountsList);
 			// Send the entities for persistence

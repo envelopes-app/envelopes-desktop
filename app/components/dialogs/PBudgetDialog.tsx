@@ -420,6 +420,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 			</FormGroup>
 		);		
 	}
+
 	public render() {
 
 		if(this.state.showModal) {

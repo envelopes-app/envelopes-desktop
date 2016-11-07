@@ -6,7 +6,7 @@ import * as budgetEntities from '../interfaces/budgetEntities';
 import * as catalogEntities from '../interfaces/catalogEntities';
 import { IEntitiesCollection } from '../interfaces/state';
 import { ActionNames } from '../constants';
-import { DateWithoutTime } from '../utilities';
+import { DateWithoutTime, DataFormatter } from '../utilities';
 
 import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
 

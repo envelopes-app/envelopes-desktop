@@ -1,12 +1,12 @@
 /// <reference path='../_includes.ts' />
 
 import * as numeral from 'numeral';
+import { DateWithoutTime } from './DateWithoutTime'; 
 import { IDataFormat } from '../interfaces/formatters';
 
 export class DataFormatter {
 
 	private dataFormat:IDataFormat;
-	private dateFormatSrting:string;
 	private currencyFormatString:string;
 
 	constructor(dataFormat:IDataFormat) {
@@ -58,16 +58,9 @@ export class DataFormatter {
 	}
 
 
-	// Given a date in ISO format, convert it to the date format specified in the currently active budget
-	public formatDate(dateInIsoFormat:string):string {
-
-		return null;
-	}
-
-	// Given a date in the date format specified in the currently active budget, return a date in ISO format
-	public unformatDate(dateInCustomFormat:string):string {
-
-		return null;
+	// Given a date in the date format specified in the currently active budget, return a DateWithoutTime object
+	public parseDate(dateInCustomFormat:string):DateWithoutTime {
+		return DateWithoutTime.createFromString(dateInCustomFormat, this.dataFormat.date_format);
 	}
 
 	// Given a milli-number, convert it to a formatted number string as specified by the number format

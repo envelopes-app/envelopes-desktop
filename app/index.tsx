@@ -21,7 +21,7 @@ import combinedReducer from './reducers/CombinedReducer';
 injectTapEventPlugin();
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
 var refreshDatabase:boolean = (process.env.NODE_ENV === 'development') ? true : false;
-store.dispatch(GlobalActionsCreator.initializeDatabase(false));
+store.dispatch(GlobalActionsCreator.initializeDatabase(true));
 
 ReactDOM.render(
 	<Provider store={store}>

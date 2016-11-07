@@ -159,7 +159,7 @@ export class YNABDataImporter {
 			let accountEntity = this.accountsMap[trxAccountName];
 			let payeeEntity = trxPayeeName != "" ? this.payeesMap[trxPayeeName] : null;
 			let subCategoryEntity = trxSubCategoryFullName != "" ? this.subCategoriesMap[trxSubCategoryFullName] : null;
-			let date = DateWithoutTime.createFromISOString(trxDate);
+			let date = this.dataFormatter.parseDate(trxDate);
 			let outflow = this.dataFormatter.unformatCurrency(trxOutflow);
 			let inflow = this.dataFormatter.unformatCurrency(trxInflow);
 
