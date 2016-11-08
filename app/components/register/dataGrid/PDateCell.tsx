@@ -53,7 +53,7 @@ export class PDateCell extends React.Component<PDateCellProps, {}> {
 		// transaction. For subTransaction and scheduledSubTransaction, it would be empty.
 		if(registerTransactionObject.entityType == "transaction" || registerTransactionObject.entityType == "scheduledTransaction") {
 			return (
-				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dataFormatter.formatDate(registerTransactionObject.date)}</div>
+				<div className={className} onClick={this.onClick} onDoubleClick={this.onDoubleClick}>{dataFormatter.formatDateWithoutTime(registerTransactionObject.date)}</div>
 			);
 		}
 		else {

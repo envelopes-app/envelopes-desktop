@@ -132,6 +132,7 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 
 				<PAccountEditDialog 
 					ref={(d)=> { this.accountEditDialog = d; }}
+					dataFormatter={this.props.dataFormatter}
 					updateAccount={this.props.updateAccount}
 				/>
 			</div>				

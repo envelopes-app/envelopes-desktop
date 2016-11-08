@@ -18,11 +18,12 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { TransactionFlag, TransactionFrequency } from '../../../constants';
 import { EntityFactory } from '../../../persistence';
 import { IEntitiesCollection, ISimpleEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
-import { DialogUtilities, DateWithoutTime, FocusManager, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
+import { DataFormatter, DialogUtilities, DateWithoutTime, FocusManager, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
 
 export interface PTransactionDialogProps { 
 
 	dialogTitle:string;
+	dataFormatter:DataFormatter;
 	// Entities collections from the global state 
 	entitiesCollection:IEntitiesCollection;
 	// Dispatch methods
@@ -655,6 +656,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 								selectedDate={this.state.date} selectedFrequency={this.state.frequency}
 								showFrequencyControl={showFrequencyControl}
 								showFrequencyNeverOption={showFrequencyNeverOption}
+								dataFormatter={this.props.dataFormatter}
 								setSelectedDate={this.setSelectedDate} setSelectedFrequency={this.setSelectedFrequency} 
 								handleTabPressed={this.handleTabPressedOnDateSelector} />
 							<PPayeeSelector ref={(c) => this.payeeSelector = c}

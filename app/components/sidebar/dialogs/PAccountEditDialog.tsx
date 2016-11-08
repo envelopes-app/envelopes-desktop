@@ -5,8 +5,22 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Glyphicon, Overlay } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
 import { IAccount } from '../../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../../constants';
+
+export interface PAccountEditDialogProps {
+	dataFormatter:DataFormatter;
+	// Dispatcher method from CSidebar for updating the account
+	updateAccount: (account:IAccount, currentBalance:number)=>void;
+}
+
+export interface PAccountEditDialogState {
+	show:boolean;
+	target:HTMLElement;
+	placement:string;
+	account:IAccount;
+}
 
 const PopoverStyle = {
 	maxWidth: 'none', 
@@ -23,18 +37,6 @@ const ButtonsContainerStyle = {
 const ButtonStyle = {
 	flex: "0 0 auto",
 	fontSize: "14px"
-}
-
-export interface PAccountEditDialogProps {
-	// Dispatcher method from CSidebar for updating the account
-	updateAccount: (account:IAccount, currentBalance:number)=>void;
-}
-
-export interface PAccountEditDialogState {
-	show:boolean;
-	target:HTMLElement;
-	placement:string;
-	account:IAccount;
 }
 
 export class PAccountEditDialog extends React.Component<PAccountEditDialogProps, PAccountEditDialogState> {
@@ -144,6 +146,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		else {
 			var account = this.state.account;
 			var accountBalance = account.clearedBalance + account.unclearedBalance;
+			var dataFormatter = this.props.dataFormatter;
 
 			return (
 				<Overlay show={this.state.show} placement={this.state.placement} 
@@ -161,6 +164,14 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 								<ControlLabel>Today's Balance:</ControlLabel>
 								<FormControl ref={(c)=> { this.ctrlAccountBalance = c; }} type="text" value={accountBalance} />
 								<HelpBlock>An adjustment transaction will be created automatically if you change this amount.</HelpBlock>
+							</FormGroup>
+							<FormGroup>
+								<ControlLabel>Last Reconciliation Date:</ControlLabel>
+								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledDate ? dataFormatter.formatDate(account.lastReconciledDate) : ""} />
+							</FormGroup>
+							<FormGroup>
+								<ControlLabel>Last Reconciled Balance:</ControlLabel>
+								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledBalance ? dataFormatter.formatCurrency(account.lastReconciledBalance) : ""} />
 							</FormGroup>
 						</Form>
 						<div className="buttons-container">

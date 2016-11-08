@@ -63,7 +63,12 @@ export class DataFormatter {
 		return DateWithoutTime.createFromString(dateInCustomFormat, this.dataFormat.date_format);
 	}
 
-	public formatDate(value:DateWithoutTime):string {
+	public formatDate(value:number):string {
+		var date = DateWithoutTime.createFromUTCTime(value);
+		return date.format(this.dataFormat.date_format);
+	}
+
+	public formatDateWithoutTime(value:DateWithoutTime):string {
 		return value.format(this.dataFormat.date_format);
 	}
 

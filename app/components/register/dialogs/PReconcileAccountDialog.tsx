@@ -4,10 +4,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Checkbox, ControlLabel, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
 import { IRegisterState } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PReconcileAccountDialogProps {
+	dataFormatter:DataFormatter;
 	reconcileAccount:(account:budgetEntities.IAccount, actualCurrentBalance:number)=>void;
 }
 
@@ -178,6 +180,7 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 
 		var account = this.state.account;
 		var currentBalance = account.clearedBalance;
+		var dataFormatter = this.props.dataFormatter;
 		var balanceStyle = {
 			fontSize: "32px",
 			fontWeight: "normal",
@@ -192,7 +195,7 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 					<label style={{fontSize: "16px", fontWeight: "normal"}}>account balance</label>
 				</div>
 				<div style={InternalContainerStyle}>
-					<label style={balanceStyle}>{currentBalance}</label>
+					<label style={balanceStyle}>{dataFormatter.formatCurrency(currentBalance)}</label>
 					<div style={{width: "3px"}} />
 					<label style={{fontSize: "32px", fontWeight: "normal"}}>?</label>
 				</div>
@@ -232,12 +235,13 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 		var message:string;
 		var accountBalance = this.state.account.clearedBalance;
 		var userEnteredBalance = this.state.enteredBalanceNumber;
-		
+		var dataFormatter = this.props.dataFormatter;
+
 		if(accountBalance < userEnteredBalance) {
-			message = `This account's cleared balance in ENAB is ${userEnteredBalance - accountBalance} lower than your actual account.`;
+			message = `This account's cleared balance in ENAB is ${dataFormatter.formatCurrency(userEnteredBalance - accountBalance)} lower than your actual account.`;
 		}
 		else {
-			message = `This account's cleared balance in ENAB is ${accountBalance - userEnteredBalance} higher than your actual account.`;
+			message = `This account's cleared balance in ENAB is ${dataFormatter.formatCurrency(accountBalance - userEnteredBalance)} higher than your actual account.`;
 		}
 		
 		return [

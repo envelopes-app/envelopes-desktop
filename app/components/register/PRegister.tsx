@@ -520,6 +520,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private reconcileAccount(account:budgetEntities.IAccount, actualCurrentBalance:number):void {
 
 		var changedEntities:ISimpleEntitiesCollection = {
+			accounts: [],
 			transactions:[]
 		};
 
@@ -549,6 +550,10 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			changedEntities.transactions.push(adjustmentTransaction);
 		}
 
+		// Also update the last recociliation date and balance values in the account entity
+		var updatedAccount = Object.assign({}, account);
+		updatedAccount.lastReconciledDate = DateWithoutTime.createForToday().getUTCTime();
+		updatedAccount.lastReconciledBalance = account.clearedBalance; 
 		this.props.updateEntities(changedEntities);
 	}
 
@@ -730,8 +735,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				/>
 
 				<PReconcileAccountDialog 
-					reconcileAccount={this.reconcileAccount}
 					ref={(d)=> this.reconcileAccountDialog = d }
+					reconcileAccount={this.reconcileAccount}
+					dataFormatter={this.state.dataFormatter} 
 				/>
 
 				<PApproveRejectDialog 
@@ -761,6 +767,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PTransactionDialog dialogTitle="Add Transaction"
 					ref={(d)=> this.transactionDialog = d }
+					dataFormatter={this.state.dataFormatter} 
 					entitiesCollection={entitiesCollection}
 					updateEntities={this.props.updateEntities} 
 				/>

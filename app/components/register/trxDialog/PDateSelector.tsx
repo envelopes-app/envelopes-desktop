@@ -8,7 +8,7 @@ import { FormControl, FormGroup, Col, ControlLabel, Overlay, Popover } from 'rea
 
 var DatePicker:any = require('react-datepicker');
 
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { TransactionFrequency } from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
@@ -18,6 +18,7 @@ export interface PDateSelectorProps {
 	selectedFrequency:string;
 	showFrequencyControl:boolean;
 	showFrequencyNeverOption:boolean;
+	dataFormatter:DataFormatter;
 	setActiveField?:(activeField:string)=>void;
 	setSelectedDate:(date:DateWithoutTime)=>void;
 	setSelectedFrequency:(frequency:string)=>void;
@@ -181,6 +182,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 	public render() {
 
 		var popoverChildren = this.getPopoverChildren();
+		var dataFormatter = this.props.dataFormatter;
 
 		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
@@ -190,7 +192,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 				<Col sm={9}>
 					<FormControl ref={(n) => this.dateInput = n } type="text" componentClass="input" style={DateSelectorStyle} 
 						onFocus={this.onFocus} onChange={this.onChange} contentEditable={false} 
-						value={this.props.selectedDate.toISOString()} />
+						value={dataFormatter.formatDateWithoutTime(this.props.selectedDate)} />
 					<Overlay show={this.props.activeField == "date"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.dateInput) }>
 						<Popover id="selectDatePopover" style={PopoverStyle}>
 							{popoverChildren}
