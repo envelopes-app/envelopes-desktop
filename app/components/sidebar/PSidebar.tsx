@@ -10,7 +10,9 @@ import AccountBalance from 'material-ui/svg-icons/action/account-balance';
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
 import { PAccountButton } from './PAccountButton';
+import { PAccountEditDialog } from './dialogs/PAccountEditDialog';
 import { PAccountCreationDialog } from './dialogs/PAccountCreationDialog';
+import { PAccountClosingDialog } from './dialogs/PAccountClosingDialog';
 
 import * as collections from '../../collections';
 import { DataFormats, DataFormatter } from '../../utilities';
@@ -68,9 +70,10 @@ const ModuleButtonIconStyle = {
 
 export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
+	private accountEditDialog:PAccountEditDialog;
 	private accountCreationDialog:PAccountCreationDialog;
 
-	constructor(props: any) {
+	constructor(props:PSidebarProps) {
         super(props);
 		this.setBudgetAccountsExpanded = this.setBudgetAccountsExpanded.bind(this);
 		this.setTrackingAccountsExpanded = this.setTrackingAccountsExpanded.bind(this);
@@ -79,6 +82,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
+		this.showAccountEditDialog = this.showAccountEditDialog.bind(this);
 		// Default the formatter to en_US so that we have something to work with at startup
 		var dataFormat = DataFormats.locale_mappings["en_US"];
 		this.state = {
@@ -156,7 +160,6 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 			// Set the "Account" as selected tab in the sidebar state 
 			this.props.setSelectedTab("Account", accountId);
-			// Navigate to this account
 		}
 	}
 
@@ -165,6 +168,11 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		// Create a new account entity and pass it to the account creation dialog
 		var account = EntityFactory.createNewAccount();
 		this.accountCreationDialog.show(account);
+	}
+
+	private showAccountEditDialog(account:IAccount, target:HTMLElement):void {
+		// Show the popover for editing the account
+		this.accountEditDialog.show(account, target);
 	}
 
 	private getAccountButtonContainerNodes():Array<JSX.Element> {
@@ -190,7 +198,8 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 										updateAccount={this.props.updateAccount} 
 										key={account.entityId} 
 										selected={accountSelected}
-										dataFormatter={this.state.dataFormatter} />;
+										dataFormatter={this.state.dataFormatter}
+										showAccountEditDialog={this.showAccountEditDialog} />;
 
 				if(account.onBudget == 1 && account.closed == 0) {
 					budgetAccountNodes.push(accountNode);
@@ -278,7 +287,17 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 						<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
 					</button>
 
-					<PAccountCreationDialog ref={(d)=> this.accountCreationDialog = d } onAddAccount={this.props.addAccount} />
+					<PAccountCreationDialog 
+						ref={(d)=> this.accountCreationDialog = d } 
+						onAddAccount={this.props.addAccount} 
+					/>
+
+					<PAccountEditDialog 
+						ref={(d)=> { this.accountEditDialog = d; }}
+						dataFormatter={this.state.dataFormatter}
+						updateAccount={this.props.updateAccount}
+					/>
+
 				</div>
 			);
 		}

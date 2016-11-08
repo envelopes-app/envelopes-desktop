@@ -7,16 +7,16 @@ import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } 
 import { IAccount } from '../../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../../constants';
 
-export interface PAccountCreationDialogProps { 
+export interface PAccountClosingDialogProps { 
 	onAddAccount: (account:IAccount, currentBalance:number)=>void;
 }
 
-export interface PAccountCreationDialogState {
+export interface PAccountClosingDialogState {
 	showModal:boolean;
 	account?:IAccount;
-} 
+}
 
-export class PAccountCreationDialog extends React.Component<PAccountCreationDialogProps, PAccountCreationDialogState> {
+export class PAccountClosingDialog extends React.Component<PAccountClosingDialogProps, PAccountClosingDialogState> {
 
 	private ctrlAccountName:FormControl;
 	private ctrlAccountType:FormControl;
@@ -57,34 +57,13 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		return (
 			<Modal show={this.state.showModal} animation={true} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-account-dialog">
 				<Modal.Header bsClass="modal-header">
-					<Modal.Title>Add a New Account</Modal.Title>
+					<Modal.Title>Close Account</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
 						<FormGroup>
 							<ControlLabel>Account Name:</ControlLabel>
 							<FormControl ref={(c)=> {this.ctrlAccountName = c;}} type="text" placeholder="New Account" />
-						</FormGroup>
-						<FormGroup>
-							<ControlLabel>Account Type:</ControlLabel>
-							<FormControl ref={(c)=> {this.ctrlAccountType = c;}} componentClass="select">
-								<option>Select an Account Type...</option>
-								<optgroup label="Budget">
-									<option label={AccountTypeNames.Checking}>{AccountTypes.Checking}</option>
-									<option label={AccountTypeNames.Savings}>{AccountTypes.Savings}</option>
-									<option label={AccountTypeNames.CreditCard}>{AccountTypes.CreditCard}</option>
-									<option label={AccountTypeNames.Cash}>{AccountTypes.Cash}</option>
-									<option label={AccountTypeNames.LineOfCredit}>{AccountTypes.LineOfCredit}</option>
-									<option label={AccountTypeNames.PayPal}>{AccountTypes.PayPal}</option>
-									<option label={AccountTypeNames.MerchantAccount}>{AccountTypes.MerchantAccount}</option>
-								</optgroup>
-								<optgroup label="Tracking">
-									<option label={AccountTypeNames.InvestmentAccount}>{AccountTypes.InvestmentAccount}</option>
-									<option label={AccountTypeNames.Mortgage}>{AccountTypes.Mortgage}</option>
-									<option label={AccountTypeNames.OtherAsset}>{AccountTypes.OtherAsset}</option>
-									<option label={AccountTypeNames.OtherLiability}>{AccountTypes.OtherLiability}</option>
-								</optgroup>
-							</FormControl>
 						</FormGroup>
 						<FormGroup>
 							<ControlLabel>Today's Balance:</ControlLabel>

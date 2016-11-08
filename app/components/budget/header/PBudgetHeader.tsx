@@ -7,11 +7,13 @@ import * as ReactDOM from 'react-dom';
 import { PMonthSelection } from './PMonthSelection';
 import { PMonthSummary } from './PMonthSummary';
 import { PMonthAOM } from './PMonthAOM';
-import { DateWithoutTime } from '../../../utilities';
+
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import * as catalogEntities from '../../../interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PBudgetHeaderProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
@@ -81,6 +83,7 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 					/>
 
 					<PMonthSummary 
+						dataFormatter={this.props.dataFormatter}
 						currentMonth={this.props.currentMonth} 
 						entitiesCollection={this.props.entitiesCollection}
 						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}

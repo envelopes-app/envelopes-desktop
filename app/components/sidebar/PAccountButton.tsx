@@ -54,14 +54,14 @@ export interface PAccountButtonProps {
 	dataFormatter:DataFormatter;
 	// Method to call on PSidebar for selecting the account
 	selectAccount?: (accountId:string)=>void;
+	showAccountEditDialog:(account:IAccount, target:HTMLElement)=>void;
 	// Dispatcher method from CSidebar for updating the account
-	updateAccount: (account:IAccount, currentBalance:number)=>void;
+	updateAccount:(account:IAccount, currentBalance:number)=>void;
 }
 
 export class PAccountButton extends React.Component<PAccountButtonProps, {hoverState:boolean}> {
   
 	private accountButtonContainer:HTMLDivElement;
-	private accountEditDialog:PAccountEditDialog;
 
 	constructor(props: any) {
         super(props);
@@ -92,7 +92,7 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 
 	private onAccountEditClick() {
 		// Show the popover for editing the account
-		this.accountEditDialog.show(this.props.account, this.accountButtonContainer);
+		this.props.showAccountEditDialog(this.props.account, this.accountButtonContainer);
 	}
 
   	public render() {
@@ -129,12 +129,6 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 					{valueNode}
 					<span style={{width:'8px'}} />
 				</div>
-
-				<PAccountEditDialog 
-					ref={(d)=> { this.accountEditDialog = d; }}
-					dataFormatter={this.props.dataFormatter}
-					updateAccount={this.props.updateAccount}
-				/>
 			</div>				
 		);
   	}

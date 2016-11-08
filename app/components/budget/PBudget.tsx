@@ -12,7 +12,8 @@ import { PInspectorContainer } from './inspectors/PInspectorContainer';
 import * as dialogs from './dialogs';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
-import { DateWithoutTime, SimpleObjectMap } from '../../utilities';
+import { IDataFormat } from '../../interfaces/formatters';
+import { DataFormats, DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface PBudgetProps {
@@ -26,6 +27,8 @@ export interface PBudgetProps {
 }
 
 export interface PBudgetState {
+	dataFormat:string;
+	dataFormatter:DataFormatter;
 	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
@@ -59,7 +62,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private debtCategoryActivityDialog:dialogs.PDebtCategoryActivityDialog;
 	private masterCategoryActivityDialog:dialogs.PMasterCategoryActivityDialog;
 
-	constructor(props:any) {
+	constructor(props:PBudgetProps) {
         super(props);
 		this.setSelectedMonth = this.setSelectedMonth.bind(this); 
 		this.selectSubCategory = this.selectSubCategory.bind(this);
@@ -82,7 +85,21 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
+		// If there is not active budget, default the formatter to en_US so that 
+		// we have something to work with at startup
+		var dataFormat = DataFormats.locale_mappings["en_US"];
+		var activeBudgetId = props.activeBudgetId;
+		if(activeBudgetId && props.entitiesCollection.budgets) {
+
+			var activeBudget = props.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat) {
+				dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+			}
+		}
+
 		this.state = {
+			dataFormat: JSON.stringify(dataFormat),
+			dataFormatter: new DataFormatter(dataFormat),
 			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
@@ -351,6 +368,25 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	// *******************************************************************************************************
 	// *******************************************************************************************************
+	public componentWillReceiveProps(nextProps:PBudgetProps):void {
+
+		// If the dataFormat in the active budget has changed, then recreate the dataFormatter.
+		var activeBudgetId = nextProps.activeBudgetId;
+		if(activeBudgetId && nextProps.entitiesCollection.budgets) {
+
+			var activeBudget = nextProps.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat != this.state.dataFormat) {
+				var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+				var dataFormatter = new DataFormatter(dataFormat);
+
+				var state = _.assign({}, this.state) as PBudgetState;
+				state.dataFormat = activeBudget.dataFormat;
+				state.dataFormatter = dataFormatter;
+				this.setState(state);
+			}
+		}
+	} 
+
 	public render() {
 
 		if(!this.props.entitiesCollection.budgets || this.props.entitiesCollection.budgets.length == 0)
@@ -363,6 +399,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			<div style={BudgetContainerStyle}>
 				<PBudgetHeader currentMonth={selectedMonth} 
 					currentBudget={currentBudget}
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 					setSelectedMonth={this.setSelectedMonth}
 					showCoverOverspendingDialog={this.showCoverOverspendingDialog}
@@ -398,6 +435,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						showMasterCategoryActivityDialog={this.showMasterCategoryActivityDialog}
 					/>
 					<PInspectorContainer 
+						dataFormatter={this.state.dataFormatter}
 						currentMonth={selectedMonth}
 						selectedSubCategories={this.state.selectedSubCategories}
 						entitiesCollection={this.props.entitiesCollection} 

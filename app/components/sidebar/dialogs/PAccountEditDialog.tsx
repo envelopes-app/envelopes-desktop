@@ -12,7 +12,7 @@ import { AccountTypes, AccountTypeNames } from '../../../constants';
 export interface PAccountEditDialogProps {
 	dataFormatter:DataFormatter;
 	// Dispatcher method from CSidebar for updating the account
-	updateAccount: (account:IAccount, currentBalance:number)=>void;
+	updateAccount:(account:IAccount, currentBalance:number)=>void;
 }
 
 export interface PAccountEditDialogState {
@@ -120,6 +120,8 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 		// Hide the popover for editing the account		
 		this.hide();
+
+		// If the account's current balance is zero, we can close it immediately
 
 		// Set the closed flag on the account and send it for update
 		var updatedAccount = _.assign({}, this.state.account) as IAccount;

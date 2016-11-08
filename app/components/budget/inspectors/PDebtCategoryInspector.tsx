@@ -11,11 +11,12 @@ import { PDebtCategoryPayments } from './PDebtCategoryPayments';
 import { PDebtCategoryQuickBudget } from './PDebtCategoryQuickBudget';
 import { PDebtCategoryGoals } from './PDebtCategoryGoals';
 
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDebtCategoryInspectorProps {
+	dataFormatter:DataFormatter;
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;

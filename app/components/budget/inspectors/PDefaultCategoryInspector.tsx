@@ -10,13 +10,14 @@ import { PDefaultCategorySummary } from './PDefaultCategorySummary';
 import { PDefaultCategoryQuickBudget } from './PDefaultCategoryQuickBudget';
 import { PDefaultCategoryGoals } from './PDefaultCategoryGoals';
 
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 // TODO: Dialog for viewing Upcoming Transactions
 
 export interface PDefaultCategoryInspectorProps {
+	dataFormatter:DataFormatter;
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;

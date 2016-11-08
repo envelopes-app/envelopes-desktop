@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
@@ -15,6 +15,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 // TODO: Dialog for viewing Upcoming Transactions
 
 export interface PUncategorizedInspectorProps {
+	dataFormatter:DataFormatter;
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;

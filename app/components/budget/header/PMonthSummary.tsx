@@ -4,11 +4,12 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMonthSummaryProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
 
@@ -142,6 +143,7 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 		var entitiesCollection = this.props.entitiesCollection;
 		if(entitiesCollection && entitiesCollection.monthlyBudgets && entitiesCollection.monthlyBudgets.length > 0) {
 
+			var dataFormatter = this.props.dataFormatter;
 			var currentMonth = this.props.currentMonth;
 			var prevMonth = currentMonth.clone().subtractMonths(1);
 			var currentMonthName = currentMonth.format("MMM");
@@ -167,14 +169,14 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 				<div style={MonthSummaryContainerStyle}>
 					<div style={MonthSummaryInnerStyle}>
 						<div style={atbContainerStyle} ref={(d)=> this.atbContainer = d}>
-							<button style={ATBNumberStyle} onClick={this.handleAvailableToBudgetClick}>{availableToBudget}</button>
+							<button style={ATBNumberStyle} onClick={this.handleAvailableToBudgetClick}>{dataFormatter.formatCurrency(availableToBudget)}</button>
 							<label style={ATBLabelStyle}>To be Budgeted</label>
 						</div>
 						<div style={SummaryNumbersContainerStyle}>
-							<label style={SummaryNumberStyle}>{fundsForCurrentMonth}</label>
-							<label style={SummaryNumberStyle}>{overspentInPrevMonth}</label>
-							<label style={SummaryNumberStyle}>-{budgetedInCurrentMonth}</label>
-							<label style={SummaryNumberStyle}>-{budgetedInFuture}</label>
+							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(fundsForCurrentMonth)}</label>
+							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(overspentInPrevMonth)}</label>
+							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInCurrentMonth)}</label>
+							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInFuture)}</label>
 						</div>
 						<div style={SummaryLabelsContainerStyle}>
 							<label style={SummaryLabelStyle}>Funds for {currentMonthName}</label>

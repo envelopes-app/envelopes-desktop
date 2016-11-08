@@ -6,11 +6,12 @@ import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
 import { InternalCategories } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDefaultInspectorProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
@@ -283,6 +284,7 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var entitiesCollection = this.props.entitiesCollection;
 		var currentMonth = this.props.currentMonth;
 		var prevMonth = currentMonth.clone().subtractMonths(1);
@@ -310,22 +312,22 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 			<div style={DefaultInspectorContainerStyle}>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL BUDGETED</label>
-					<label style={ValueStyle}>{totalBudgeted}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(totalBudgeted)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL ACTIVTY</label>
-					<label style={ValueStyle}>{totalActivity}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(totalActivity)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL AVAILABLE</label>
-					<label style={ValueStyle}>{totalAvailable}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(totalAvailable)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL INFLOWS</label>
-					<label style={ValueStyle}>{totalInflows}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(totalInflows)}</label>
 				</div>
 
 				<hr style={HRStyle}/>
@@ -334,27 +336,27 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 					<ul style={ListStyle}>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToUnderFunded}>
-								Underfunded: {underfundedValue}
+								Underfunded: {dataFormatter.formatCurrency(underfundedValue)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
-								Budgeted Last Month: {budgetedLastMonth}
+								Budgeted Last Month: {dataFormatter.formatCurrency(budgetedLastMonth)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
-								Spent Last Month: {-spentLastMonth}
+								Spent Last Month: {dataFormatter.formatCurrency(-spentLastMonth)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
-								Average Budgeted: {averageBudgetedAndSpent.averageBudgeted}
+								Average Budgeted: {dataFormatter.formatCurrency(averageBudgetedAndSpent.averageBudgeted)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
-								Average Spent: {-averageBudgetedAndSpent.averageSpent}
+								Average Spent: {dataFormatter.formatCurrency(-averageBudgetedAndSpent.averageSpent)}
 							</Button>
 						</li>
 					</ul>

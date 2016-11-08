@@ -6,11 +6,12 @@ import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
 import { InternalCategories } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMultiCategoryInspectorProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	selectedSubCategories:Array<string>;
 	entitiesCollection:IEntitiesCollection;

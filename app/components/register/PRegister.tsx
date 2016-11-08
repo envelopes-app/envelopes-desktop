@@ -76,7 +76,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
 
-		// Default the formatter to en_US so that we have something to work with at startup
+		// If there is not active budget, default the formatter to en_US so that 
+		// we have something to work with at startup
 		var dataFormat = DataFormats.locale_mappings["en_US"];
 		var activeBudgetId = props.applicationState.activeBudgetId;
 		if(activeBudgetId && props.applicationState.entitiesCollection.budgets) {
