@@ -18,9 +18,10 @@ export interface PImportYnabDataDialogProps {
 	activeBudgetId:string;
 	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection;
+
+	showBudgetSettings:()=>void;
 	// Dispatcher Functions
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
-	importYnabData:(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
 }
 
 export interface PImportYnabDataDialogState {
@@ -44,6 +45,12 @@ const FormControlsContainer = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignContent: "stretch"
+}
+
+const ButtonsContainerStyle = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap"
 }
 
 const FileInputStyle = {
@@ -150,6 +157,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);
+		this.showBudgetSettings = this.showBudgetSettings.bind(this);
 		this.browseForBudgetFile = this.browseForBudgetFile.bind(this);
 		this.browseForRegisterFile = this.browseForRegisterFile.bind(this);
 		this.validateStep1 = this.validateStep1.bind(this);
@@ -168,6 +176,12 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 			accountsList: null
 		};
     }
+
+	private showBudgetSettings():void {
+
+		this.hide();
+		this.props.showBudgetSettings();
+	}
 
 	private browseForBudgetFile():void {
 
@@ -458,17 +472,27 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
+						<div>
+							Before importing your YNAB data, make sure that the date and currency formatting settings in this budget match those of your online YNAB budget. If the settings do not match, the data may not import correctly.
+						</div>
+						<br />
 						{budgetPath}
 						{registerPath}
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button className="dialog-secondary-button" onClick={this.hide}>
-						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-					</Button>
-					<Button className="dialog-primary-button" onClick={this.validateStep1}>
-						Next&nbsp;<Glyphicon glyph="ok-sign" />
-					</Button>
+					<div style={ButtonsContainerStyle}>
+						<Button className="dialog-secondary-button" onClick={this.showBudgetSettings}>
+							Budget Settings&nbsp;<Glyphicon glyph="cog" />
+						</Button>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" onClick={this.hide}>
+							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+						</Button>
+						<Button className="dialog-primary-button" onClick={this.validateStep1}>
+							Next&nbsp;<Glyphicon glyph="ok-sign" />
+						</Button>
+					</div>
 				</Modal.Footer>
 			</Modal>
 		);

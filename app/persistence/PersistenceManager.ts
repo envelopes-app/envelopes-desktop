@@ -195,11 +195,6 @@ export class PersistenceManager {
 		}
 	}
 
-	public importYnabData(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
-
-		return Promise.resolve(null);
-	}
-
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************

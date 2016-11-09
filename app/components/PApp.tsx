@@ -42,7 +42,6 @@ export interface AppProps {
 	// Dispatcher functions
 	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
-	importYnabData:(accountsList:Array<IImportedAccountObject>, budgetRows:Array<any>, registerRows:Array<any>)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
@@ -63,7 +62,7 @@ export class PApp extends React.Component<AppProps, AppState> {
 		this.startListeningForMessages = this.startListeningForMessages.bind(this);
 		this.handleCreateNewBudgetMessage = this.handleCreateNewBudgetMessage.bind(this);
 		this.handleOpenBudgetMessage = this.handleOpenBudgetMessage.bind(this);
-		this.handleShowBudgetProperties = this.handleShowBudgetProperties.bind(this);
+		this.handleShowBudgetSettings = this.handleShowBudgetSettings.bind(this);
 		this.handleImportYnabBudgetData = this.handleImportYnabBudgetData.bind(this);
 		// Default the formatter to en_US so that we have something to work with at startup
 		var dataFormat = DataFormats.locale_mappings["en_US"];
@@ -136,8 +135,8 @@ export class PApp extends React.Component<AppProps, AppState> {
 						dataFormatter={this.state.dataFormatter}
 						activeBudgetId={this.props.applicationState.activeBudgetId}
 						entitiesCollection={this.props.applicationState.entitiesCollection}
+						showBudgetSettings={this.handleShowBudgetSettings}
 						updateEntities={this.props.updateEntities}
-						importYnabData={this.props.importYnabData}
 					/>
 				</div>
 			</MuiThemeProvider>
@@ -159,8 +158,8 @@ export class PApp extends React.Component<AppProps, AppState> {
 			else if(menuArgs && menuArgs.menu == "open_budget")			
 				this.handleOpenBudgetMessage();
 
-			else if(menuArgs && menuArgs.menu == "show_budget_properties")			
-				this.handleShowBudgetProperties();
+			else if(menuArgs && menuArgs.menu == "show_budget_settings")			
+				this.handleShowBudgetSettings();
 
 			else if(menuArgs && menuArgs.menu == "import_ynab_budget_data")
 				this.handleImportYnabBudgetData();
@@ -181,7 +180,7 @@ export class PApp extends React.Component<AppProps, AppState> {
 		}
 	}
 
-	private handleShowBudgetProperties():void {
+	private handleShowBudgetSettings():void {
 
 		if(this.budgetDialog.isShowing() == false) {
 			// Get the currentl active budget from the state and pass it to the budget dialog

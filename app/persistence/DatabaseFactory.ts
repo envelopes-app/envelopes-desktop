@@ -497,6 +497,7 @@ export class DatabaseFactory {
 						'creditAmount' NUMERIC,
 						'subCategoryCreditAmountPreceding' NUMERIC,
 						'memo' VARCHAR,
+						'checkNumber' VARCHAR,
 						'cleared' VARCHAR NOT NULL,
 						'accepted' BOOL NOT NULL,
 						'flag' VARCHAR,

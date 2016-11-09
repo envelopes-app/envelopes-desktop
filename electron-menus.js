@@ -23,9 +23,9 @@ function initializeModule() {
 				type: 'separator'
 			},
 			{
-				label: 'Budget Properties...',
+				label: 'Budget Settings...',
 				click: function(menuItem, browserWindow, event) {
-					browserWindow.webContents.send("menu-message", {menu:"show_budget_properties"});
+					browserWindow.webContents.send("menu-message", {menu:"show_budget_settings"});
 				}
 			},
 			{
