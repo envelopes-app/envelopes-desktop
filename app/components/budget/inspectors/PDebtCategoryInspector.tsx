@@ -47,6 +47,7 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 			<div style={DebtCategoryInspectorContainerStyle}>
 
 				<PDebtCategorySummary 
+					dataFormatter={this.props.dataFormatter}
 					currentMonth={currentMonth}
 					subCategory={subCategory} 
 					monthlySubCategoryBudget={monthlySubCategoryBudget} 

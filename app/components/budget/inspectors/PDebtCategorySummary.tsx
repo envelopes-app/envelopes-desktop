@@ -7,11 +7,12 @@ import { Glyphicon } from 'react-bootstrap';
 
 import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
 import { PSubCategoryEditDialog } from '../dialogs';
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDebtCategorySummaryProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
@@ -103,6 +104,7 @@ export class PDebtCategorySummary extends React.Component<PDebtCategorySummaryPr
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var subCategory = this.props.subCategory;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 
@@ -151,23 +153,26 @@ export class PDebtCategorySummary extends React.Component<PDebtCategorySummaryPr
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Left Over from {prevMonthName}</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{cashLeftOver}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashLeftOver)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Budgeted This Month</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{budgetedThisMonth}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(budgetedThisMonth)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Activity this Month</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{cashSpending}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashSpending)}</label>
 				</div>
 				<hr className="inspector-horizontal-rule" />
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget} />
+					<PBalanceValue 
+						dataFormatter={dataFormatter}
+						monthlySubCategoryBudget={monthlySubCategoryBudget} 
+					/>
 				</div>
 
 				<PSubCategoryEditDialog 

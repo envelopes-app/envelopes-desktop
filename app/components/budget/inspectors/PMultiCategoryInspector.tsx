@@ -316,6 +316,7 @@ export class PMultiCategoryInspector extends React.Component<PMultiCategoryInspe
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var currentMonth = this.props.currentMonth;
 		var entitiesCollection = this.props.entitiesCollection;
 
@@ -347,17 +348,17 @@ export class PMultiCategoryInspector extends React.Component<PMultiCategoryInspe
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL BUDGETED</label>
-					<label style={ValueStyle}>{categoryValues.budgeted}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(categoryValues.budgeted)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL ACTIVTY</label>
-					<label style={ValueStyle}>{categoryValues.activity}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(categoryValues.activity)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={SectionStyle}>
 					<label style={LabelStyle}>TOTAL AVAILABLE</label>
-					<label style={ValueStyle}>{categoryValues.available}</label>
+					<label style={ValueStyle}>{dataFormatter.formatCurrency(categoryValues.available)}</label>
 				</div>
 
 				<hr style={HRStyle}/>
@@ -366,27 +367,27 @@ export class PMultiCategoryInspector extends React.Component<PMultiCategoryInspe
 					<ul style={ListStyle}>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToUnderFunded}>
-								Underfunded: {-categoryValues.underFunded}
+								Underfunded: {dataFormatter.formatCurrency(-categoryValues.underFunded)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
-								Budgeted Last Month: {categoryValues.budgetedLastMonth}
+								Budgeted Last Month: {dataFormatter.formatCurrency(categoryValues.budgetedLastMonth)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
-								Spent Last Month: {-categoryValues.spentLastMonth}
+								Spent Last Month: {dataFormatter.formatCurrency(-categoryValues.spentLastMonth)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
-								Average Budgeted: {categoryValues.averageBudgeted}
+								Average Budgeted: {dataFormatter.formatCurrency(categoryValues.averageBudgeted)}
 							</Button>
 						</li>
 						<li style={ListItemStyle}>
 							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
-								Average Spent: {-categoryValues.averageSpent}
+								Average Spent: {dataFormatter.formatCurrency(-categoryValues.averageSpent)}
 							</Button>
 						</li>
 					</ul>

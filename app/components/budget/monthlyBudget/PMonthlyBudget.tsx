@@ -10,11 +10,12 @@ import { PSubCategoryRow } from './PSubCategoryRow';
 
 import { InternalCategories } from '../../../constants'; 
 import { SubCategoriesArray } from '../../../collections';
-import { DateWithoutTime, SimpleObjectMap } from '../../../utilities';
+import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMonthlyBudgetProps {
+	dataFormatter:DataFormatter;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
 	editingSubCategory:string;
@@ -83,7 +84,9 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			if(createSubCategoryRows) {
 
 				var subCategoryRow = (
-					<PSubCategoryRow key={subCategory.entityId} 
+					<PSubCategoryRow 
+						key={subCategory.entityId} 
+						dataFormatter={this.props.dataFormatter}
 						subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
 						editingSubCategory={this.props.editingSubCategory}
 						selectedSubCategories={this.props.selectedSubCategories} 
@@ -108,6 +111,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 		masterCategoryRow = (
 				<PMasterCategoryRow
 					key={masterCategory.entityId} 
+					dataFormatter={this.props.dataFormatter}
 					masterCategory={masterCategory} 
 					subCategories={subCategories} 
 					monthlySubCategoryBudgets={monthlySubCategoryBudgets}
@@ -136,7 +140,9 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 		var uncategorizedSubCategory = this.props.entitiesCollection.subCategories.getUncategorizedSubCategory();
 		var monthlySubCategoryBudget = this.props.entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(uncategorizedSubCategory.entityId, monthString);
 		var uncategorizedRow = (
-			<PSubCategoryRow key={uncategorizedSubCategory.entityId} 
+			<PSubCategoryRow 
+				key={uncategorizedSubCategory.entityId} 
+				dataFormatter={this.props.dataFormatter}
 				subCategory={uncategorizedSubCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
 				editingSubCategory={this.props.editingSubCategory}
 				selectedSubCategories={this.props.selectedSubCategories} 

@@ -4,9 +4,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Badge } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PBalanceValueProps {
+	dataFormatter:DataFormatter;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	onClick?:(event:React.MouseEvent)=>void;
 }
@@ -15,6 +17,7 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var fromPreviousMonth = monthlySubCategoryBudget && monthlySubCategoryBudget.balancePreviousMonth ? monthlySubCategoryBudget.balancePreviousMonth : 0;
 		var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
@@ -54,12 +57,12 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 
 		if(!this.props.onClick) {
 			return (
-				<Badge className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{balance}</Badge>
+				<Badge className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</Badge>
 			);
 		}
 		else {
 			return (
-				<Badge className={className} onClick={this.props.onClick}>{balance}</Badge>
+				<Badge className={className} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</Badge>
 			);
 		}
   	}

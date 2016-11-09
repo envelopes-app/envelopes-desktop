@@ -271,7 +271,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
   	public render() {
 		
-		if(this.props.entitiesCollection.accounts && this.props.entitiesCollection.accounts.length > 0) {
+		if(this.props.entitiesCollection.accounts) {
 
 			var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
 			var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";

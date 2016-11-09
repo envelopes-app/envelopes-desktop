@@ -43,15 +43,6 @@ function initializeModule() {
 		label: 'Edit',
 		submenu: [
 			{
-				role: 'undo'
-			},
-			{
-				role: 'redo'
-			},
-			{
-				type: 'separator'
-			},
-			{
 				role: 'cut'
 			},
 			{
@@ -59,15 +50,6 @@ function initializeModule() {
 			},
 			{
 				role: 'paste'
-			},
-			{
-				role: 'pasteandmatchstyle'
-			},
-			{
-				role: 'delete'
-			},
-			{
-				role: 'selectall'
 			}
 		]
 	},
@@ -131,9 +113,8 @@ function initializeModule() {
 	]
 
 	if (process.platform === 'darwin') {
-		const name = require('electron').app.getName()
 		template.unshift({
-			label: name,
+			label: "ENAB",
 			submenu: [
 				{
 					role: 'about'
@@ -165,23 +146,6 @@ function initializeModule() {
 				}
 			]
 		})
-		// Edit menu.
-		template[2].submenu.push(
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Speech',
-				submenu: [
-					{
-						role: 'startspeaking'
-					},
-					{
-						role: 'stopspeaking'
-					}
-				]
-			}
-		)
 		// Window menu.
 		template[4].submenu = [
 			{

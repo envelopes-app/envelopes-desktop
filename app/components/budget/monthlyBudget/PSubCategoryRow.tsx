@@ -8,11 +8,12 @@ import { FormControl } from 'react-bootstrap';
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { PBalanceValue } from './PBalanceValue';
 import { InternalCategories, SubCategoryType } from '../../../constants';
-import { SimpleObjectMap, Logger } from '../../../utilities';
+import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PSubCategoryRowProps {
+	dataFormatter:DataFormatter;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	editingSubCategory:string;
@@ -376,10 +377,11 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			);
 		}
 		else {
+			var dataFormatter = this.props.dataFormatter;
 			var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
 			return (
 				<div style={valueColumnStyle}>
-					<input type="text" style={budgetedValueStyle} value={budgeted} 
+					<input type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgeted)} 
 						ref={(i)=> this.budgetedValueInput = i}
 						onClick={this.onClick} onChange={this.onBudgetValueChange} />
 				</div>
@@ -389,6 +391,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var subCategory = this.props.subCategory;
 		var isUncategorizedCategory = (subCategory.internalName == InternalCategories.UncategorizedSubCategory); 
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
@@ -443,11 +446,14 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 				{budgetedValueNode}
 				<div style={ValueColumnStyle}>
 					<label className="budget-row-activity" ref={(a)=> this.activityLabel = a} 
-						onClick={this.onActivityClick}>{activity}</label>
+						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget}
-						ref={(b)=> this.balanceValue = b} onClick={this.onBalanceValueClick} />
+					<PBalanceValue 
+						ref={(b)=> this.balanceValue = b}
+						dataFormatter={dataFormatter}
+						monthlySubCategoryBudget={monthlySubCategoryBudget}
+						onClick={this.onBalanceValueClick} />
 				</div>
 			</div>
 		);

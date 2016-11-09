@@ -6,11 +6,12 @@ import * as ReactDOM from 'react-dom';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { InternalCategories } from '../../../constants';
-import { SimpleObjectMap, Logger } from '../../../utilities';
+import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PMasterCategoryRowProps {
+	dataFormatter:DataFormatter;
 	masterCategory:budgetEntities.IMasterCategory;
 	subCategories:Array<budgetEntities.ISubCategory>;
 	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
@@ -292,6 +293,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var glyphiconClass, containerClass:string;
 		var collapseContainerIdentity = "subCategoriesContainer_" + this.props.masterCategory.entityId;
 
@@ -338,14 +340,14 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 					{categoryNameNodes}
 
 					<div style={ValueColumnStyle}>
-						<label style={ValueStyle}>{budgeted}</label>
+						<label style={ValueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
 					</div>
 					<div style={ValueColumnStyle}>
 						<label className="budget-row-activity" ref={(a)=> this.activityLabel = a}
-						 	onClick={this.onActivityClick}>{activity}</label>
+						 	onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
 					</div>
 					<div style={ValueColumnStyle}>
-						<label style={ValueStyle}>{balance}</label>
+						<label style={ValueStyle}>{dataFormatter.formatCurrency(balance)}</label>
 					</div>
 				</div>
 				<div className={containerClass} id={collapseContainerIdentity}>

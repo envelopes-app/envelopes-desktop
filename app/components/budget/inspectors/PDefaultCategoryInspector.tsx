@@ -48,6 +48,7 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 			<div style={DefaultCategoryInspectorContainerStyle}>
 
 				<PDefaultCategorySummary 
+					dataFormatter={this.props.dataFormatter}
 					currentMonth={currentMonth}
 					subCategory={subCategory} 
 					monthlySubCategoryBudget={monthlySubCategoryBudget} 

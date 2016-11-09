@@ -81,8 +81,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showDefaultSubCategoryActivityDialog = this.showDefaultSubCategoryActivityDialog.bind(this);
 		this.showDebtSubCategoryActivityDialog = this.showDebtSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
-
-		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
 		// If there is not active budget, default the formatter to en_US so that 
@@ -358,10 +356,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   	// *******************************************************************************************************
 	// Action Handlers for commands in the Budget Toolbar
 	// *******************************************************************************************************
-	private onAddTransactionSelected():void {
-
-	}
-
 	private onAddCategoryGroupSelected(element:HTMLElement):void {
 		this.showCreateCategoryDialog(null, element);
 	}
@@ -407,10 +401,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					showMoveMoneyDialog={this.showMoveMoneyDialog}
 					updateEntities={this.props.updateEntities} />
 
-				<PBudgetToolbar onAddTransactionSelected={this.onAddTransactionSelected} onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
+				<PBudgetToolbar onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
 
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
+						dataFormatter={this.state.dataFormatter}
 						currentMonth={selectedMonth} 
 						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 

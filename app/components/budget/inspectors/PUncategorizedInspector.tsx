@@ -108,6 +108,7 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		var entitiesCollection = this.props.entitiesCollection;
 		var subCategoryId = this.props.subCategoryId;
 		var currentMonth = this.props.currentMonth;
@@ -150,23 +151,26 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Left Over from {prevMonthName}</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{cashLeftOver}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashLeftOver)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Spending</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{cashSpending}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashSpending)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Credit Spending</label>
 					<span style={SpacerStyle}/>
-					<label style={CategoryPropertyValueStyle}>{creditSpending}</label>
+					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(creditSpending)}</label>
 				</div>
 				<hr style={HRStyle}/>
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<PBalanceValue monthlySubCategoryBudget={monthlySubCategoryBudget} />
+					<PBalanceValue 
+						dataFormatter={dataFormatter} 
+						monthlySubCategoryBudget={monthlySubCategoryBudget} 
+					/>
 				</div>
 
 				<PMessage subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget} />
