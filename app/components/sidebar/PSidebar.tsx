@@ -72,6 +72,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
 	private accountEditDialog:PAccountEditDialog;
 	private accountCreationDialog:PAccountCreationDialog;
+	private accountClosingDialog:PAccountClosingDialog;
 
 	constructor(props:PSidebarProps) {
         super(props);
@@ -83,6 +84,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
 		this.showAccountEditDialog = this.showAccountEditDialog.bind(this);
+		this.showAccountClosingDialog = this.showAccountClosingDialog.bind(this);
 		// Default the formatter to en_US so that we have something to work with at startup
 		var dataFormat = DataFormats.locale_mappings["en_US"];
 		this.state = {
@@ -173,6 +175,11 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 	private showAccountEditDialog(account:IAccount, target:HTMLElement):void {
 		// Show the popover for editing the account
 		this.accountEditDialog.show(account, target);
+	}
+
+	private showAccountClosingDialog(account:IAccount):void {
+		// Show the popover for closing the account
+		this.accountClosingDialog.show(account);
 	}
 
 	private getAccountButtonContainerNodes():Array<JSX.Element> {
@@ -295,9 +302,17 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					<PAccountEditDialog 
 						ref={(d)=> { this.accountEditDialog = d; }}
 						dataFormatter={this.state.dataFormatter}
+						showAccountClosingDialog={this.showAccountClosingDialog}
 						updateAccount={this.props.updateAccount}
+						updateEntities={this.props.updateEntities}
 					/>
 
+					<PAccountClosingDialog 
+						ref={(d)=> { this.accountClosingDialog = d; }}
+						dataFormatter={this.state.dataFormatter}
+						entitiesCollection={this.props.entitiesCollection}
+						updateEntities={this.props.updateEntities}
+					/>
 				</div>
 			);
 		}

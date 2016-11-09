@@ -49,9 +49,9 @@ export class DataFormatter {
 
 		if(dataFormat.display_symbol) {
 			if(dataFormat.symbol_first)
-				currencyFormatString = `$currencyFormatString`;	
+				currencyFormatString = "$" + currencyFormatString;	
 			else
-				currencyFormatString = `currencyFormatString$`;	
+				currencyFormatString = currencyFormatString + "$";	
 		}
 
 		this.currencyFormatString = currencyFormatString;

@@ -11,29 +11,6 @@ export interface PBalanceValueProps {
 	onClick?:(event:React.MouseEvent)=>void;
 }
 
-const BalanceValueStyle = {
-	fontSize: "14px",
-	fontWeight: "normal",
-	color: "#FFFFFF",
-	cursor: 'pointer',
-}
-
-const BalanceValueGreyStyle = Object.assign({}, BalanceValueStyle, {
-	backgroundColor: "#CFD5D8"
-});
-
-const BalanceValueGreenStyle = Object.assign({}, BalanceValueStyle, {
-	backgroundColor: "#138B2E"
-});
-
-const BalanceValueOrangeStyle = Object.assign({}, BalanceValueStyle, {
-	backgroundColor: "#C37B00"
-});
-
-const BalanceValueRedStyle = Object.assign({}, BalanceValueStyle, {
-	backgroundColor: "#B43326"
-});
-
 export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 
 	public render() {
@@ -48,38 +25,42 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 		var balanceAfterUpcoming = balance - upcomingTransactions;
 		var balanceBeforeOutflows = fromPreviousMonth + budgeted;
 
-		var balanceValueStyle;
+		var className;
 		if(balance < 0) {
 			// if we have overspent with cash, then this would be red. If we have overspent
 			// just by credit, this would be orange.
 			if(balanceBeforeOutflows + cashOutflows < 0) 
-				balanceValueStyle = BalanceValueRedStyle;
+				className = "budget-row-balance-red";
 			else
-				balanceValueStyle = BalanceValueOrangeStyle;
+				className = "budget-row-balance-orange";
 		}
 		else {
 			// Balance is 0 or greater
 			if(upcomingTransactions == 0) {
 				// There are no upcoming transactions. We can decide based on just the balance
 				if(balance == 0)
-					balanceValueStyle = BalanceValueGreyStyle;
+					className = "budget-row-balance-grey";
 				else // balance > 0
-					balanceValueStyle = BalanceValueGreenStyle;
+					className = "budget-row-balance-green";
 			}
 			else {
 				// There are upcomingTransactions. We have to decide based on balanceAfterUpcoming
 				if(balanceAfterUpcoming < 0)
-					balanceValueStyle = BalanceValueOrangeStyle;
+					className = "budget-row-balance-orange";
 				else // balanceAfterUpcoming >= 0
-					balanceValueStyle = BalanceValueGreenStyle;
+					className = "budget-row-balance-green";
 			}
 		}
 
-		if(!this.props.onClick)
-			balanceValueStyle = Object.assign({}, balanceValueStyle, {cursor:"default"});
-
-    	return (
-			<Badge style={balanceValueStyle} onClick={this.props.onClick}>{balance}</Badge>
-		);
+		if(!this.props.onClick) {
+			return (
+				<Badge className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{balance}</Badge>
+			);
+		}
+		else {
+			return (
+				<Badge className={className} onClick={this.props.onClick}>{balance}</Badge>
+			);
+		}
   	}
 }

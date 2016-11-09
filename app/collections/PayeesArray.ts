@@ -30,6 +30,10 @@ export class PayeesArray extends EntitiesArray<IPayee> {
 		return _.find(this.internalArray, {name: payeeName});
 	}
 
+	public getPayeeByAccountId(accountId:string):IPayee {
+		return _.find(this.internalArray, {accountId: accountId});
+	}
+
 	public getStartingBalancePayee():IPayee {
 		return this.startingBalancePayee;
 	}

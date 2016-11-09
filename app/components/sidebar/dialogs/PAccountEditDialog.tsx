@@ -8,11 +8,14 @@ import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button,
 import { DataFormatter } from '../../../utilities';
 import { IAccount } from '../../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../../constants';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PAccountEditDialogProps {
 	dataFormatter:DataFormatter;
+	showAccountClosingDialog:(account:IAccount)=>void;
 	// Dispatcher method from CSidebar for updating the account
 	updateAccount:(account:IAccount, currentBalance:number)=>void;
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 export interface PAccountEditDialogState {
@@ -20,6 +23,9 @@ export interface PAccountEditDialogState {
 	target:HTMLElement;
 	placement:string;
 	account:IAccount;
+	accountName:string;
+	accountNote:string;
+	accountBalance:number;
 }
 
 const PopoverStyle = {
@@ -41,12 +47,11 @@ const ButtonStyle = {
 
 export class PAccountEditDialog extends React.Component<PAccountEditDialogProps, PAccountEditDialogState> {
   
-	private ctrlAccountName:FormControl;
-	private ctrlNote:FormControl;
-	private ctrlAccountBalance:FormControl;
-
 	constructor(props: any) {
         super(props);
+		this.onAccountNameChange = this.onAccountNameChange.bind(this);
+		this.onAccountNoteChange = this.onAccountNoteChange.bind(this);
+		this.onAccountBalanceChange = this.onAccountBalanceChange.bind(this);
 		this.handleOk = this.handleOk.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleCloseAccount = this.handleCloseAccount.bind(this);
@@ -56,8 +61,27 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 			show:false, 
 			target:null, 
 			placement:"right",
-			account: null
+			account: null,
+			accountName: null,
+			accountNote: null,
+			accountBalance: 0
 		};
+	}
+
+	private onAccountNameChange(event:React.SyntheticEvent):void {
+
+		this.state.accountName = (event.target as HTMLInputElement).value;
+	}
+
+	private onAccountNoteChange(event:React.SyntheticEvent):void {
+
+		this.state.accountNote = (event.target as HTMLInputElement).value;
+	}
+
+	private onAccountBalanceChange(event:React.SyntheticEvent):void {
+
+		var updatedBalance = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
+		this.state.accountBalance = updatedBalance;
 	}
 
 	public isShowing():boolean {
@@ -71,6 +95,9 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		state.target = target;
 		state.placement = placement;
 		state.account = account;
+		state.accountName = account.accountName;
+		state.accountBalance = account.clearedBalance + account.unclearedBalance;
+		state.accountNote = account.note ? account.note : "";		
 		this.setState(state);
 	}
 
@@ -82,27 +109,22 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 	private handleOk() {
 
-		// Get the values from the form controls
-		var accountName = (ReactDOM.findDOMNode(this.ctrlAccountName) as any).value;
-		var accountNote = (ReactDOM.findDOMNode(this.ctrlNote) as any).value;
-		var accountBalance = (ReactDOM.findDOMNode(this.ctrlAccountBalance) as any).value;
-
-		// Hide the popover		
-		this.hide();
-
 		// If the user has changed any of the account properties, then call updateAccount
 		var account:IAccount = this.state.account;
 		if(
-			account.accountName !== accountName ||
-			account.note !== accountNote ||
-			account.clearedBalance + account.unclearedBalance !== accountBalance 
+			account.accountName !== this.state.accountName ||
+			account.note !== this.state.accountNote ||
+			account.clearedBalance + account.unclearedBalance !== this.state.accountBalance 
 		) {
 			// Create a copy of the account entity, update the values in it and call the update method with it
 			var updatedAccount = Object.assign({}, account) as IAccount;
-			updatedAccount.accountName = accountName;
-			updatedAccount.note = accountNote;
-			this.props.updateAccount(updatedAccount, accountBalance);			 
+			updatedAccount.accountName = this.state.accountName;
+			updatedAccount.note = this.state.accountNote;
+			this.props.updateAccount(updatedAccount, this.state.accountBalance);			 
 		}
+
+		// Hide the popover		
+		this.hide();
 	}
 
 	private handleCancel() {
@@ -113,42 +135,84 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 	private handleCloseAccount() {
 
-		// Get the values from the form controls
-		var accountName = (ReactDOM.findDOMNode(this.ctrlAccountName) as any).value;
-		var accountNote = (ReactDOM.findDOMNode(this.ctrlNote) as any).value;
-		var accountBalance = (ReactDOM.findDOMNode(this.ctrlAccountBalance) as any).value;
+		var account = this.state.account;
+		// If the account's current balance is zero, we can close it immediately
+		if(account.clearedBalance + account.unclearedBalance == 0) {
+			// Set the closed flag on the account and send it for update
+			var updatedAccount = _.assign({}, account) as IAccount;
+			updatedAccount.closed = 1;
+			this.props.updateEntities({
+				accounts: [updatedAccount]
+			});			 
+		}
+		else {
+			// We have balance in the account that needs to be reassigned. Show the account closing dialog.
+			this.props.showAccountClosingDialog(account);
+		}
 
 		// Hide the popover for editing the account		
 		this.hide();
-
-		// If the account's current balance is zero, we can close it immediately
-
-		// Set the closed flag on the account and send it for update
-		var updatedAccount = _.assign({}, this.state.account) as IAccount;
-		updatedAccount.closed = 1;
-		updatedAccount.accountName = accountName;
-		updatedAccount.note = accountNote;
-		this.props.updateAccount(updatedAccount, accountBalance);			 
 	}
 
 	private handleDeleteAccount() {
-		// TODO
+
+		var account = this.state.account;
+		// Set the tombstone flag on the account and send it for update
+		var updatedAccount = _.assign({}, account) as IAccount;
+		updatedAccount.isTombstone = 1;
+		this.props.updateEntities({
+			accounts: [updatedAccount]
+		});			 
+
+		// Hide the popover for editing the account		
+		this.hide();
 	}
 
 	private handleReopenAccount() {
-		// TODO
+
+		var account = this.state.account;
+		// Set the closed flag on the account to false and send it for update
+		var updatedAccount = _.assign({}, account) as IAccount;
+		updatedAccount.closed = 0;
+		this.props.updateEntities({
+			accounts: [updatedAccount]
+		});			 
+
+		// Hide the popover for editing the account		
+		this.hide();
+	}
+
+	private getActionButtons():Array<JSX.Element> {
+
+		var account = this.state.account;
+
+		// If the account is open, just show the close account button
+		if(account.closed == 0) {
+			return [
+				<Button key="close-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleCloseAccount}>
+					<Glyphicon glyph="minus-sign" />&nbsp;Close Account
+				</Button>
+			];
+		}
+		else {
+			// Else show the reopen account and delete account buttons
+			return [
+				<Button key="reopen-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleReopenAccount}>
+					<Glyphicon glyph="minus-sign" />&nbsp;Reopen Account
+				</Button>,
+				<Button key="delete-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleDeleteAccount}>
+					<Glyphicon glyph="minus-sign" />&nbsp;Delete Account
+				</Button>
+			];
+		}
 	}
 
   	public render() {
 
-		if(!this.state.account) {
-
-			return <div />;
-		}
-		else {
+		if(this.state.show) {
 			var account = this.state.account;
-			var accountBalance = account.clearedBalance + account.unclearedBalance;
 			var dataFormatter = this.props.dataFormatter;
+			var actionButtons = this.getActionButtons();
 
 			return (
 				<Overlay show={this.state.show} placement={this.state.placement} 
@@ -157,14 +221,14 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 					<Popover id="editAccountPopover" style={PopoverStyle}>
 						<Form>
 							<FormGroup>
-								<FormControl ref={(c)=> { this.ctrlAccountName = c; }} componentClass="input" type="text" value={account.accountName} />
+								<FormControl componentClass="input" type="text" value={this.state.accountName} onChange={this.onAccountNameChange} />
 							</FormGroup>
 							<FormGroup>
-								<FormControl ref={(c)=> { this.ctrlNote = c; }} componentClass="textarea" placeholder="Enter a note (not your account number)..." value={account.note} />
+								<FormControl componentClass="textarea" placeholder="Enter a note (not your account number)..." value={this.state.accountNote} onChange={this.onAccountNoteChange} />
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Today's Balance:</ControlLabel>
-								<FormControl ref={(c)=> { this.ctrlAccountBalance = c; }} type="text" value={accountBalance} />
+								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} onChange={this.onAccountBalanceChange} />
 								<HelpBlock>An adjustment transaction will be created automatically if you change this amount.</HelpBlock>
 							</FormGroup>
 							<FormGroup>
@@ -177,9 +241,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 							</FormGroup>
 						</Form>
 						<div className="buttons-container">
-							<Button className="dialog-warning-button" style={ButtonStyle} onClick={this.handleCloseAccount}>
-								<Glyphicon glyph="minus-sign" />&nbsp;Close Account
-							</Button>
+							{actionButtons}
 							<div className="spacer" />
 							<Button className="dialog-secondary-button" style={ButtonStyle} onClick={this.handleCancel}>
 								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
@@ -192,6 +254,9 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 					</Popover>
 				</Overlay>
 			);
+		}
+		else {
+			return <div />;
 		}
   	}
 }

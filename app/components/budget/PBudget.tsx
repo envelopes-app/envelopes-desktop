@@ -397,7 +397,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
     	return (
 			<div style={BudgetContainerStyle}>
-				<PBudgetHeader currentMonth={selectedMonth} 
+				<PBudgetHeader 
+					currentMonth={selectedMonth} 
 					currentBudget={currentBudget}
 					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}

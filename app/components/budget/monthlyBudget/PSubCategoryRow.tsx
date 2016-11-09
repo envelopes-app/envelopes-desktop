@@ -435,7 +435,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
     	return (
 			<div style={subCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
-					onClick={this.onClick}>
+					onClick={this.onClick} onKeyDown={this.onKeyDown}>
 				<div style={SelectionColumnStyle}>
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
