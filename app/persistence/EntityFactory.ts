@@ -249,6 +249,7 @@ export class EntityFactory {
 			dateEnteredFromSchedule: null,
 			amount: 0,
 			memo: null,
+			checkNumber: null,
 			cleared: ClearedFlag.Uncleared,
 			accepted: 1,
 			flag: TransactionFlag.None,

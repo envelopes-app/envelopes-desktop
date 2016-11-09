@@ -9,6 +9,7 @@ export interface ITransaction extends IBudgetEntity {
 	dateEnteredFromSchedule:number;
 	amount:number;
 	memo:string;
+	checkNumber:string;
 	cleared:string;
 	accepted:number;
 	flag:string;

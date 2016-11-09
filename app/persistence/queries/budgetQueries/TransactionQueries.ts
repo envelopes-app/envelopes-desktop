@@ -34,6 +34,7 @@ export class TransactionQueries {
 						creditAmount, 
 						subCategoryCreditAmountPreceding, 
 						memo, 
+						checkNumber,
 						cleared, 
 						accepted, 
 						flag, 
@@ -48,7 +49,7 @@ export class TransactionQueries {
 						importedDate, 
 						deviceKnowledge,
 						deviceKnowledgeForCalculatedFields
-					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+					) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			arguments: [
 				dbObject.budgetId,
 				dbObject.entityId,
@@ -63,6 +64,7 @@ export class TransactionQueries {
 				dbObject.creditAmount,
 				dbObject.subCategoryCreditAmountPreceding,
 				dbObject.memo ? dbObject.memo : null,
+				dbObject.checkNumber ? dbObject.checkNumber : null,
 				dbObject.cleared,
 				dbObject.accepted,
 				dbObject.flag ? dbObject.flag : null,
