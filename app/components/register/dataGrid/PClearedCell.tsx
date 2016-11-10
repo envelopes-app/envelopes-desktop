@@ -75,7 +75,7 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 
 			var glyphClassName = "glyphicon glyphicon-copyright-mark";
 			if(registerTransactionObject.entityType == "transaction" && registerTransactionObject.refTransaction.cleared == ClearedFlag.Reconciled)
-				glyphClassName = "glyphicon glyphicon-registration-mark";
+				glyphClassName = "glyphicon glyphicon-ok";
 
 			var cellStyle = {color:glyphColor};
 			return (

@@ -40,6 +40,35 @@ const ButtonsContainerStyle = {
 	justifyContent: "space-between"
 }
 
+const FormControlStyle = {
+	borderColor: '#2FA2B5',
+	borderTopWidth: '2px',
+	borderBottomWidth: '2px',
+	borderLeftWidth: '2px',
+	borderRightWidth: '2px',
+}
+
+const FormControlErrorStyle = Object.assign({}, FormControlStyle, {
+	borderBottomLeftRadius: "0px",
+	borderBottomRightRadius: "0px"
+});
+
+const ErrorMessageStyle = {
+	width: "100%",
+	color: "#FFFFFF",
+	backgroundColor: "#D33C2D",
+	fontSize: "12px",
+	fontWeight: "normal",
+	borderTopLeftRadius: "0px",
+	borderTopRightRadius: "0px",
+	borderBottomLeftRadius: "3px",
+	borderBottomRightRadius: "3px",
+	paddingLeft: "8px",
+	paddingRight: "8px",
+	paddingTop: "3px",
+	paddingBottom: "3px"
+}
+
 const ButtonStyle = {
 	flex: "0 0 auto",
 	fontSize: "14px"
@@ -197,11 +226,12 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		else {
 			// Else show the reopen account and delete account buttons
 			return [
-				<Button key="reopen-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleReopenAccount}>
-					<Glyphicon glyph="minus-sign" />&nbsp;Reopen Account
+				<Button key="reopen-account-button" className="dialog-secondary-button" style={ButtonStyle} onClick={this.handleReopenAccount}>
+					<Glyphicon glyph="plus-sign" />&nbsp;Reopen
 				</Button>,
+				<div key="space" style={{width: '8px'}} />,
 				<Button key="delete-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleDeleteAccount}>
-					<Glyphicon glyph="minus-sign" />&nbsp;Delete Account
+					<Glyphicon glyph="minus-sign" />&nbsp;Delete
 				</Button>
 			];
 		}
@@ -221,23 +251,23 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 					<Popover id="editAccountPopover" style={PopoverStyle}>
 						<Form>
 							<FormGroup>
-								<FormControl componentClass="input" type="text" value={this.state.accountName} onChange={this.onAccountNameChange} />
+								<FormControl componentClass="input" type="text" value={this.state.accountName} onChange={this.onAccountNameChange} style={FormControlStyle} />
 							</FormGroup>
 							<FormGroup>
-								<FormControl componentClass="textarea" placeholder="Enter a note (not your account number)..." value={this.state.accountNote} onChange={this.onAccountNoteChange} />
+								<FormControl componentClass="textarea" placeholder="Enter a note (not your account number)..." value={this.state.accountNote} onChange={this.onAccountNoteChange} style={FormControlStyle} />
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Today's Balance:</ControlLabel>
-								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} onChange={this.onAccountBalanceChange} />
+								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} onChange={this.onAccountBalanceChange} style={FormControlStyle} />
 								<HelpBlock>An adjustment transaction will be created automatically if you change this amount.</HelpBlock>
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Last Reconciliation Date:</ControlLabel>
-								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledDate ? dataFormatter.formatDate(account.lastReconciledDate) : ""} />
+								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledDate ? dataFormatter.formatDate(account.lastReconciledDate) : ""} style={FormControlStyle} />
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Last Reconciled Balance:</ControlLabel>
-								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledBalance ? dataFormatter.formatCurrency(account.lastReconciledBalance) : ""} />
+								<FormControl componentClass="input" type="text" readOnly={true} value={account.lastReconciledBalance ? dataFormatter.formatCurrency(account.lastReconciledBalance) : ""} style={FormControlStyle} />
 							</FormGroup>
 						</Form>
 						<div className="buttons-container">

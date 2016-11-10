@@ -1,6 +1,6 @@
 /// <reference path="../_includes.ts" />
 
-import { DateWithoutTime, Logger } from '../utilities';
+import { DateWithoutTime, TransactionUtilities, Logger } from '../utilities';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
 import { IImportedAccountObject } from '../interfaces/objects';
@@ -118,6 +118,11 @@ export class GlobalActionsCreator {
 			// being updated (and what fields are being updated). On the basis of this we will be 
 			// queueing the calculations to be run. 
 			var existingEntitiesCollection = getState().entitiesCollection;
+			// Before passing the data to persistence manager for saving, run it through the transaction
+			// utilities for additional processing. It takes care of creating/updating other side of the 
+			// transfer transactions.
+			TransactionUtilities.processTransactions(updatedEntitiesCollection, existingEntitiesCollection);
+			// Pass these now to the persistence manager for saving
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.syncDataWithDatabase(updatedEntitiesCollection, existingEntitiesCollection)
 				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{

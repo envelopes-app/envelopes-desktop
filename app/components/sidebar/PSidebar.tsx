@@ -195,28 +195,30 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 			_.forEach(entitiesCollection.accounts.getAllItems(), (account)=>{
 
-				// Is this account button selected?
-				var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
-				var accountBalance = account.clearedBalance + account.unclearedBalance;
-				var accountNode = <PAccountButton 
-										account={account} 
-										selectAccount={this.onAccountSelect} 
-										updateAccount={this.props.updateAccount} 
-										key={account.entityId} 
-										selected={accountSelected}
-										dataFormatter={this.state.dataFormatter}
-										showAccountEditDialog={this.showAccountEditDialog} />;
+				if(account.isTombstone == 0) {
+					// Is this account button selected?
+					var accountSelected = (this.props.sidebarState.selectedTab == "Account" && this.props.sidebarState.selectedAccountId == account.entityId); 
+					var accountBalance = account.clearedBalance + account.unclearedBalance;
+					var accountNode = <PAccountButton 
+											account={account} 
+											selectAccount={this.onAccountSelect} 
+											updateAccount={this.props.updateAccount} 
+											key={account.entityId} 
+											selected={accountSelected}
+											dataFormatter={this.state.dataFormatter}
+											showAccountEditDialog={this.showAccountEditDialog} />;
 
-				if(account.onBudget == 1 && account.closed == 0) {
-					budgetAccountNodes.push(accountNode);
-					budgetAccountsBalance += accountBalance;
-				}
-				else if(account.onBudget == 0 && account.closed == 0) {
-					trackingAccountNodes.push(accountNode);
-					trackingAccountsBalance += accountBalance;
-				}
-				else if(account.closed == 1) {
-					closedAccountNodes.push(accountNode);
+					if(account.onBudget == 1 && account.closed == 0) {
+						budgetAccountNodes.push(accountNode);
+						budgetAccountsBalance += accountBalance;
+					}
+					else if(account.onBudget == 0 && account.closed == 0) {
+						trackingAccountNodes.push(accountNode);
+						trackingAccountsBalance += accountBalance;
+					}
+					else if(account.closed == 1) {
+						closedAccountNodes.push(accountNode);
+					}
 				}
 			});
 
@@ -259,7 +261,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 						expanded={this.state.closedAccountsExpanded} 
 						dataFormatter={this.state.dataFormatter}
 						setExpanded={this.setClosedAccountsExpanded}>
-						{trackingAccountNodes}
+						{closedAccountNodes}
 					</PAccountButtonContainer>
 				);
 			}

@@ -33,7 +33,8 @@ const AppSidebarStyle = {
 }
 
 const AppModuleContainerStyle = {
-	flex: "1 1 auto"
+	flex: "1 1 auto",
+	minWidth: "800px"
 }
 
 export interface AppProps {

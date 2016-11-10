@@ -467,7 +467,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		}
 		else if(this.state.action == "existing-transaction") {
 
-			// Get the transaction entity that we were editing and male a clone of it for updating
+			// Get the transaction entity that we were editing and make a clone of it for updating
 			var transaction = Object.assign({}, this.state.transaction);
 			// Update the values in this transaction from the state
 			transaction.accountId = this.state.accountId;
