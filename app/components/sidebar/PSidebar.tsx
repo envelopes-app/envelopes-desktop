@@ -17,7 +17,6 @@ import { PAccountClosingDialog } from './dialogs/PAccountClosingDialog';
 import * as collections from '../../collections';
 import { DataFormats, DataFormatter } from '../../utilities';
 import { IDataFormat } from '../../interfaces/formatters';
-import { EntityFactory } from '../../persistence';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection, ISidebarState } from '../../interfaces/state';
 
@@ -167,9 +166,9 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 	private onAddAccountClick() {
 
-		// Create a new account entity and pass it to the account creation dialog
-		var account = EntityFactory.createNewAccount();
-		this.accountCreationDialog.show(account);
+		if(this.accountCreationDialog.isShowing() == false) {
+			this.accountCreationDialog.show();
+		}
 	}
 
 	private showAccountEditDialog(account:IAccount, target:HTMLElement):void {
@@ -296,7 +295,9 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 					<PAccountCreationDialog 
 						ref={(d)=> this.accountCreationDialog = d } 
-						onAddAccount={this.props.addAccount} 
+						dataFormatter={this.state.dataFormatter}
+						entitiesCollection={this.props.entitiesCollection}
+						addAccount={this.props.addAccount} 
 					/>
 
 					<PAccountEditDialog 
