@@ -5,7 +5,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormControl, FormGroup, Col, ControlLabel } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
+
 export interface PAmountInputProps { 
+	dataFormatter:DataFormatter;
 	activeField:string;
 	inflowAmount:number;
 	outflowAmount:number;
@@ -50,13 +53,15 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 	private onInflowChange() { 
 		// Get the value from inflow control and send it to the parent dialog
 		var inflowAmount = (ReactDOM.findDOMNode(this.inflowInput) as any).value;
-		this.props.setAmount(inflowAmount, 0);
+		var inflowAmountParsed = this.props.dataFormatter.unformatCurrency(inflowAmount);
+		this.props.setAmount(inflowAmountParsed, 0);
 	}
 
 	private onOutflowChange() { 
 		// Get the value from outflow control and send it to the parent dialog
 		var outflowAmount = (ReactDOM.findDOMNode(this.outflowInput) as any).value;
-		this.props.setAmount(0, outflowAmount);
+		var outflowAmountParsed = this.props.dataFormatter.unformatCurrency(outflowAmount);
+		this.props.setAmount(0, outflowAmountParsed);
 	}
 
 	private onKeyDown(event:KeyboardEvent):void {
@@ -77,10 +82,6 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 				this.props.handleTabPressedOnInflow(event.shiftKey);
 			}
 		}
-		else if(_.indexOf(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "."], event.key) == -1) {
-			// Ignore any key press other then the numeric keys
-			event.preventDefault();
-		}
 	}
 
 	public setFocusOnInflow():void {
@@ -99,6 +100,7 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 
 	public render() {
 
+		var dataFormatter = this.props.dataFormatter;
 		return (
 			<FormGroup onKeyDown={this.onKeyDown}>
 				<Col componentClass={ControlLabel} sm={3}>
@@ -106,12 +108,12 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 				</Col>
 				<Col sm={9} style={{display:"flex", flexFlow: 'row nowrap', alignItems: 'baseline'}}>
 					<FormControl ref={(n) => this.outflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onFocus={this.onInflowFocus} onChange={this.onOutflowChange} value={this.props.outflowAmount} />
+						onFocus={this.onInflowFocus} onChange={this.onOutflowChange} value={dataFormatter.formatCurrency(this.props.outflowAmount)} />
 					<label className="control-label" style={{paddingLeft: 15, paddingRight: 15}}>
 						Inflow
 					</label>
 					<FormControl ref={(n) => this.inflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onFocus={this.onOutflowFocus} onChange={this.onInflowChange} value={this.props.inflowAmount} />
+						onFocus={this.onOutflowFocus} onChange={this.onInflowChange} value={dataFormatter.formatCurrency(this.props.inflowAmount)} />
 				</Col>
 			</FormGroup>
 		);

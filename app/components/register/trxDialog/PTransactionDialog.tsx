@@ -673,6 +673,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 								activeField={this.state.activeField} setActiveField={this.setActiveField}
 								memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />
 							<PAmountInput ref={(c) => this.amountInput = c} 
+								dataFormatter={this.props.dataFormatter}
 								activeField={this.state.activeField} setActiveField={this.setActiveField}
 								inflowAmount={this.state.inflowAmount} outflowAmount={this.state.outflowAmount} 
 								setAmount={this.setAmount} handleTabPressedOnOutflow={this.handleTabPressedOnOutflowInput} 
