@@ -305,6 +305,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					<PAccountEditDialog 
 						ref={(d)=> { this.accountEditDialog = d; }}
 						dataFormatter={this.state.dataFormatter}
+						entitiesCollection={this.props.entitiesCollection}
 						showAccountClosingDialog={this.showAccountClosingDialog}
 						updateAccount={this.props.updateAccount}
 						updateEntities={this.props.updateEntities}

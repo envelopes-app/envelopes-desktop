@@ -124,6 +124,21 @@ body {
 	border-color: #890309;	
 }
 
+.dialog-warning-button-disabled {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #d33c2d;
+	background-color: #ffffff;
+}
+
+.dialog-warning-button-disabled:hover {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #d33c2d;
+	background-color: #ffffff;
+	cursor: pointer;
+}
+
 /* ************************************************************************************ */
 /* Style for the budgets list in open budget dialog */ 
 /* ************************************************************************************ */

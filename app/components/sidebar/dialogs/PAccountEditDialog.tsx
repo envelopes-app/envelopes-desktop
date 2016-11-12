@@ -13,6 +13,7 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 export interface PAccountEditDialogProps {
 	dataFormatter:DataFormatter;
 	showAccountClosingDialog:(account:IAccount)=>void;
+	entitiesCollection:IEntitiesCollection;
 	// Dispatcher method from CSidebar for updating the account
 	updateAccount:(account:IAccount, currentBalance:number)=>void;
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -69,11 +70,6 @@ const ErrorMessageStyle = {
 	paddingBottom: "3px"
 }
 
-const ButtonStyle = {
-	flex: "0 0 auto",
-	fontSize: "14px"
-}
-
 export class PAccountEditDialog extends React.Component<PAccountEditDialogProps, PAccountEditDialogState> {
   
 	constructor(props: any) {
@@ -99,18 +95,26 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 	private onAccountNameChange(event:React.SyntheticEvent):void {
 
-		this.state.accountName = (event.target as HTMLInputElement).value;
+		var state = Object.assign({}, this.state);
+		state.accountName = (event.target as HTMLInputElement).value;
+		this.setState(state);
 	}
 
 	private onAccountNoteChange(event:React.SyntheticEvent):void {
 
-		this.state.accountNote = (event.target as HTMLInputElement).value;
+		var state = Object.assign({}, this.state);
+		state.accountNote = (event.target as HTMLInputElement).value;
+		this.setState(state);
 	}
 
 	private onAccountBalanceChange(event:React.SyntheticEvent):void {
 
-		var updatedBalance = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
-		this.state.accountBalance = updatedBalance;
+		if(this.state.account.closed == 0) {
+			var updatedBalance = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
+			var state = Object.assign({}, this.state);
+			state.accountBalance = updatedBalance;
+			this.setState(state);
+		}
 	}
 
 	public isShowing():boolean {
@@ -218,22 +222,43 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		// If the account is open, just show the close account button
 		if(account.closed == 0) {
 			return [
-				<Button key="close-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleCloseAccount}>
+				<Button key="close-account-button" className="dialog-warning-button" onClick={this.handleCloseAccount}>
 					<Glyphicon glyph="minus-sign" />&nbsp;Close Account
 				</Button>
 			];
 		}
 		else {
 			// Else show the reopen account and delete account buttons
-			return [
-				<Button key="reopen-account-button" className="dialog-secondary-button" style={ButtonStyle} onClick={this.handleReopenAccount}>
+			// The delete account button is to enabled only if there are no transactions in the account
+			var transactionCount = this.props.entitiesCollection.transactions.getTransactionsByAccountId(account.entityId).length;
+
+			var buttons = [
+				<Button key="reopen-account-button" className="dialog-secondary-button" onClick={this.handleReopenAccount}>
 					<Glyphicon glyph="plus-sign" />&nbsp;Reopen
-				</Button>,
-				<div key="space" style={{width: '8px'}} />,
-				<Button key="delete-account-button" className="dialog-warning-button" style={ButtonStyle} onClick={this.handleDeleteAccount}>
-					<Glyphicon glyph="minus-sign" />&nbsp;Delete
 				</Button>
 			];
+
+			if(transactionCount > 0) {
+				buttons = buttons.concat([
+					<div key="space" style={{width: '8px'}} />,
+					<Button key="delete-account-button" disabled={true} className="dialog-warning-button-disabled">
+						<Glyphicon glyph="minus-sign" />&nbsp;Delete
+					</Button>
+				]);
+			}
+			else {
+				var tooltip = "If you want to delete this account, first delete all of the transactions in it and transfers pointing to it. Be cautious, as this will potentially change your budget values.";
+				buttons = buttons.concat([
+					<div key="space" style={{width: '8px'}} />,
+					<div title={tooltip}>
+						<Button key="delete-account-button" className="dialog-warning-button" onClick={this.handleDeleteAccount}>
+							<Glyphicon glyph="minus-sign" />&nbsp;Delete
+						</Button>
+					</div>
+				]);
+			}
+
+			return buttons;
 		}
 	}
 
@@ -273,11 +298,11 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 						<div className="buttons-container">
 							{actionButtons}
 							<div className="spacer" />
-							<Button className="dialog-secondary-button" style={ButtonStyle} onClick={this.handleCancel}>
+							<Button className="dialog-secondary-button" onClick={this.handleCancel}>
 								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 							</Button>
 							<div style={{width: '8px'}} />
-							<Button className="dialog-primary-button" style={ButtonStyle} onClick={this.handleOk}>
+							<Button className="dialog-primary-button" onClick={this.handleOk}>
 								OK&nbsp;<Glyphicon glyph="ok-sign" />
 							</Button>
 						</div>
