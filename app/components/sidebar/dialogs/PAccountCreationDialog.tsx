@@ -71,6 +71,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		this.close = this.close.bind(this);
 		this.onAccountNameChange = this.onAccountNameChange.bind(this);
 		this.onAccountTypeChange = this.onAccountTypeChange.bind(this);
+		this.onAccountBalanceChange = this.onAccountBalanceChange.bind(this);
         this.state = { 
 			showModal: false, 
 			account: null,
@@ -97,6 +98,14 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		var updatedType = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
 		state.accountType = updatedType;
+		this.setState(state);
+	}
+
+	private onAccountBalanceChange(event:React.SyntheticEvent):void {
+
+		var updatedBalance = (event.target as HTMLInputElement).value;
+		var state = Object.assign({}, this.state);
+		state.accountBalance = updatedBalance;
 		this.setState(state);
 	}
 
@@ -290,7 +299,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		element = (
 			<FormGroup>
 				<ControlLabel>Today's Balance:</ControlLabel>
-				<FormControl type="text" style={FormControlStyle} placeholder="What is the balance of this account right now?" value={this.state.accountBalance} />
+				<FormControl type="text" style={FormControlStyle} placeholder="What is the balance of this account right now?" value={this.state.accountBalance} onChange={this.onAccountBalanceChange} />
 			</FormGroup>
 		);
 

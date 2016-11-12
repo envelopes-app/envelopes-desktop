@@ -40,9 +40,9 @@ function executeSqlQueriesInProductionEnvironment(queryList:Array<IDatabaseQuery
 		ipcRenderer.once(requestId, function(event, ...args:any[]) {
 
 			// If there was an error, it would be in the first args position
-			if(args[0])
-				reject(args[0]);
-
+			if(args[0]) {
+				debugger; reject(args[0]);
+			}
 			// Resolve the promise object with the data received from the main process
 			resolve(args[1]);
 		});

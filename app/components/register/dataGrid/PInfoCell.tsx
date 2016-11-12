@@ -90,8 +90,12 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 				glyphColor = InfoColor;
 			}
 			else if(!transaction.subCategoryId && registerTransactionObject.accountOnBudget == true) {
-				showGlyph = true;
-				glyphColor = WarningColor;
+
+				// If this is not a transfer, or transfers to a tracking account
+				if(!registerTransactionObject.refTransferAccount || registerTransactionObject.refTransferAccount.onBudget == 0) {
+					showGlyph = true;
+					glyphColor = WarningColor;
+				}
 			}
 		}
 
