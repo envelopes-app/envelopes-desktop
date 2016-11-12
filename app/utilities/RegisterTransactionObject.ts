@@ -27,6 +27,7 @@ export class RegisterTransactionObject {
 	public memo:string;
 	public inflow:number;
 	public outflow:number;
+	public amount:number;
 	public cleared:string;
 
 	public get accountName():string {
@@ -186,6 +187,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.memo = transaction.memo ? transaction.memo : "";
 		registerTransactionObject.outflow = transaction.amount < 0 ? -transaction.amount : 0;
 		registerTransactionObject.inflow = transaction.amount > 0 ? transaction.amount : 0;
+		registerTransactionObject.amount = transaction.amount;
 		registerTransactionObject.cleared = transaction.cleared;
 
 		// Set references to the other entities that this transaction references
@@ -216,6 +218,7 @@ export class RegisterTransactionObject {
 		registerTransactionObject.memo = subTransaction.memo ? subTransaction.memo : "";
 		registerTransactionObject.outflow = subTransaction.amount < 0 ? -subTransaction.amount : 0;
 		registerTransactionObject.inflow = subTransaction.amount > 0 ? subTransaction.amount : 0;
+		registerTransactionObject.amount = subTransaction.amount;
 		registerTransactionObject.cleared = null;
 
 		// Set references to the other entities that this transaction references
@@ -249,6 +252,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.memo = scheduledTransaction.memo ? scheduledTransaction.memo : "";
 			registerTransactionObject.outflow = scheduledTransaction.amount < 0 ? -scheduledTransaction.amount : 0;
 			registerTransactionObject.inflow = scheduledTransaction.amount > 0 ? scheduledTransaction.amount : 0;
+			registerTransactionObject.amount = scheduledTransaction.amount;
 			registerTransactionObject.cleared = null;
 
 			// Set references to the other entities that this transaction references
@@ -286,6 +290,7 @@ export class RegisterTransactionObject {
 			registerTransactionObject.memo = scheduledSubTransaction.memo ? scheduledSubTransaction.memo : "";
 			registerTransactionObject.outflow = scheduledSubTransaction.amount < 0 ? -scheduledSubTransaction.amount : 0;
 			registerTransactionObject.inflow = scheduledSubTransaction.amount > 0 ? scheduledSubTransaction.amount : 0;
+			registerTransactionObject.amount = scheduledSubTransaction.amount;
 			registerTransactionObject.cleared = null;
 
 			// Set references to the other entities that this transaction references

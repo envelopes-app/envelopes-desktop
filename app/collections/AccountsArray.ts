@@ -46,4 +46,27 @@ export class AccountsArray extends EntitiesArray<IAccount> {
 
 		return accounts;
 	}
+
+	public getSortableIndexForNewAccount():number {
+
+		var sortableIndex = 0;
+		_.forEach(this.internalArray, (account)=>{
+			if(account.sortableIndex > sortableIndex)
+				sortableIndex = account.sortableIndex;
+		});
+
+		// Increment the sortableIndex by 10000
+		sortableIndex += 10000;
+		return sortableIndex;
+	}
+
+
+	protected addEntity(entity:IAccount):void {
+		super.addEntity(entity);
+		this.sortArray();
+	}
+
+	protected sortArray():void {
+		this.internalArray = _.orderBy(this.internalArray, ["sortableIndex"], ["asc"]);
+	}
 }

@@ -81,6 +81,7 @@ export class YNABDataImporter {
 					// Create an account entity and add to the updatedEntities collection
 					accountEntity = EntityFactory.createNewAccount();
 					accountEntity.accountName = accountName;
+					accountEntity.sortableIndex = this.existingEntitiesCollection.accounts.getSortableIndexForNewAccount();
 					// Get the account type that the user selected for this account
 					accountEntity.accountType = this.getAccountType(accountName, accountsList);
 					accountEntity.onBudget = AccountTypes.isRecommendedOnBudget(accountEntity.accountType) ? 1 : 0;

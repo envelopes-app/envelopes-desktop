@@ -179,6 +179,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 			// Update the account entity values from the form controls
 			account.accountName = this.state.accountName;
 			account.accountType = this.state.accountType;
+			account.sortableIndex = this.props.entitiesCollection.accounts.getSortableIndexForNewAccount();
 
 			var currentBalance:number = 0;
 			if(this.state.accountBalance != "")
