@@ -28,19 +28,19 @@ export interface PBudgetDialogState {
 	validationMessage:string;
 }
 
-const LabelStyle = {
+const LabelStyle:React.CSSProperties = {
 	textAlign: "right",
 	paddingRight: "0px"
 }
 
-const OptionContainer = {
+const OptionContainer:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	justifyContent: "space-between",
 	alignItems: "center"
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -48,7 +48,7 @@ const FormControlStyle = {
 	borderRightWidth: '2px',
 }
 
-const ErrorMessageStyle = {
+const ErrorMessageStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#FFFFFF",
 	backgroundColor: "#D33C2D",
@@ -189,7 +189,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 		});
 	};
 
-	private onBudgetNameChange(event:React.SyntheticEvent):void { 
+	private onBudgetNameChange(event:React.FormEvent<any>):void { 
 
 		var updatedBudgetName = (event.target as HTMLInputElement).value;
 		var state = _.assign({}, this.state) as PBudgetDialogState;
@@ -197,7 +197,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 		this.setState(state);
 	}
 
-	private onCurrencySelectionChange(event:React.SyntheticEvent):void {
+	private onCurrencySelectionChange(event:React.FormEvent<any>):void {
 
 		// Get the selected currency index from the selection control
 		var currencyIndex = parseInt((ReactDOM.findDOMNode(this.ctrlCurrency) as any).value);
@@ -212,7 +212,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 		this.setState(state);
 	}
 
-	private onNumberFormatSelectionChange(event:React.SyntheticEvent):void {
+	private onNumberFormatSelectionChange(event:React.FormEvent<any>):void {
 
 		// Get the selected number format from the selection control
 		var numberFormatIndex = parseInt((ReactDOM.findDOMNode(this.ctrlNumberFormat) as any).value);
@@ -250,7 +250,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 		this.setState(state);
 	}
 
-	private onDateFormatSelectionChange(event:React.SyntheticEvent):void {
+	private onDateFormatSelectionChange(event:React.FormEvent<any>):void {
 	
 		// Get the selected date format from the selection control
 		var dateFormat = (ReactDOM.findDOMNode(this.ctrlDateFormat) as any).value;
@@ -435,7 +435,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 
 			return (
 				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="create-budget-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>{dialogTitle}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

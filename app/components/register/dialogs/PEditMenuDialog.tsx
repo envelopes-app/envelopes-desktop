@@ -28,7 +28,7 @@ export interface PEditMenuDialogState {
 	enableMoveToAccountMenu:boolean;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'220px',
 	display: "flex",
@@ -295,7 +295,7 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 							&nbsp;Mark as Cleared
 						</div>
 						<div className={this.state.enableClearUnclearMenus ? "menu-item" : "menu-item-disabled"} onClick={this.unclearSelectedTransactions}>
-							<Glyphicon glyph="copyright-mark" style={{opacity:"0.5"}} />
+							<Glyphicon glyph="copyright-mark" style={{opacity:0.5}} />
 							&nbsp;Mark as Uncleared
 						</div>
 						<div className="menu-item-separator" />

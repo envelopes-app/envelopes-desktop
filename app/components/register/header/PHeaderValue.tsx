@@ -9,30 +9,30 @@ export interface PHeaderValueProps {
 	formattedValue:string;
 }
 
-const HeaderValueContainerStyle = {
+const HeaderValueContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto'
 }
 
-const HeaderValueStyle = {
+const HeaderValueStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	alignItems: 'center',
 }
 
-const LabelStyle = {
+const LabelStyle:React.CSSProperties = {
 	color: '#ffffff',
 	fontStyle: 'italic',
 	fontWeight: 'normal',
 	fontSize: '13px'
 }
 
-const PositiveValueStyle = {
+const PositiveValueStyle:React.CSSProperties = {
 	color: '#57B66D',
 	fontWeight: 'bold',
 	fontSize: '18px'
 }
 
-const NegativeValueStyle = {
+const NegativeValueStyle:React.CSSProperties = {
 	color: '#CA6D64',
 	fontWeight: 'bold',
 	fontSize: '18px'

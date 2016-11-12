@@ -53,7 +53,7 @@ export interface PRegisterDataGridState {
 	componentHeight:number;
 }
 
-const RegisterDataGridContainerStyle = {
+const RegisterDataGridContainerStyle:React.CSSProperties = {
 	flex: '1 1 auto',
 	backgroundColor: '#ffffff'
 }

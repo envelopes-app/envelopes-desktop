@@ -43,7 +43,7 @@ export interface PMonthlyBudgetProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const MonthlyBudgetContainerStyle = {
+const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	minWidth: "600px",
 	backgroundColor: "#FFFFFF",
@@ -56,7 +56,7 @@ const MonthlyBudgetContainerStyle = {
 	overflowY: "scroll"
 }
 
-const MonthlyBudgetSubContainerStyle = {
+const MonthlyBudgetSubContainerStyle:React.CSSProperties = {
 	width: "100%",
 	height: "100%",
 	display: "flex",

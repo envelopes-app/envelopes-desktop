@@ -10,7 +10,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 export interface PBalanceValueProps {
 	dataFormatter:DataFormatter;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	onClick?:(event:React.MouseEvent)=>void;
+	onClick?:(event:React.MouseEvent<any>)=>void;
 }
 
 export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {

@@ -21,7 +21,7 @@ export interface PUpcomingTransactionsState {
 	placement:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'400px'
 }

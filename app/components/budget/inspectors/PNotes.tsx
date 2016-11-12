@@ -14,7 +14,7 @@ export interface PNotesProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const NotesContainerStyle = {
+const NotesContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	width: "100%",
@@ -24,7 +24,7 @@ const NotesContainerStyle = {
 	paddingRight: "10px"
 }
 
-const NotesStyle = {
+const NotesStyle:React.CSSProperties = {
 	width: "100%",
 	border: "none",
 	color: "#588697",
@@ -40,7 +40,7 @@ export class PNotes extends React.Component<PNotesProps, {}> {
 		this.onChange = this.onChange.bind(this);
 	}
 
-	private onChange(event:React.FormEvent):void {
+	private onChange(event:React.FormEvent<any>):void {
 
 		// Create a clone for persisting the values
 		var subCategory = Object.assign({}, this.props.subCategory);

@@ -19,14 +19,14 @@ export interface PApproveRejectDialogState {
 	transaction:ITransaction;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'250px',
 	display: "flex",
 	flexFlow: "column nowrap",
 }
 
-const ButtonStyle = {
+const ButtonStyle:React.CSSProperties = {
 	width: "100%"
 }
 

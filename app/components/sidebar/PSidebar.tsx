@@ -40,23 +40,23 @@ export interface PSidebarState {
 	closedAccountsExpanded:boolean;
 }
 
-const PSidebarStyle = {
+const PSidebarStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	height: "100%",
 	backgroundImage: "linear-gradient(#34aebe, #227e99)"
 };
 
-const PModuleButtonStyle = {
+const PModuleButtonStyle:React.CSSProperties = {
 	flex: "0 0 auto"
 };
 
-const PContainerStyle = {
+const PContainerStyle:React.CSSProperties = {
 	flex: "1 1 100%",
 	overflowY: "scroll"
 }
 
-const ModuleButtonIconStyle = {
+const ModuleButtonIconStyle:React.CSSProperties = {
 	display: 'inline-block',
 	color: 'rgba(0, 0, 0, 0.870588)',
 	fill: 'rgb(255, 255, 255)',

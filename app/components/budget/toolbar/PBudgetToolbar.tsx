@@ -9,7 +9,7 @@ export interface PBudgetToolbarProps {
 	onAddCategoryGroupSelected:(element:HTMLElement)=>void;
 }
 
-const BudgetToolbarContainerStyle = {
+const BudgetToolbarContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	height: '35px',
 	width: '100%',
@@ -18,7 +18,7 @@ const BudgetToolbarContainerStyle = {
 	paddingRight: '10px'
 }
 
-const BudgetToolbarStyle = {
+const BudgetToolbarStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	justifyContent: 'flex-start',
@@ -36,7 +36,7 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 		this.onAddCategoryButtonClick = this.onAddCategoryButtonClick.bind(this);
 	}
 
-	private onAddCategoryButtonClick(event:React.MouseEvent):void {
+	private onAddCategoryButtonClick(event:React.MouseEvent<any>):void {
 
 		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
 		this.props.onAddCategoryGroupSelected(element);

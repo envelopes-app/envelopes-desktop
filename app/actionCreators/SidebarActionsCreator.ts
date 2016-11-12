@@ -1,5 +1,7 @@
 /// <reference path="../_includes.ts" />
 
+import { Dispatch } from 'react-redux';
+
 import * as collections from '../collections';
 import { ActionNames } from '../constants';
 import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state';
@@ -27,7 +29,7 @@ export class SidebarActionsCreator {
 	// ********************************************************************************************
 	public static createNewAccount(account:IAccount, currentBalance:number) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			// Create the starting balance transaction
 			var startingBalancePayee = getState().entitiesCollection.payees.getStartingBalancePayee();
@@ -47,7 +49,7 @@ export class SidebarActionsCreator {
 
 	public static updateExistingAccount(account:IAccount, currentBalance:number) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			// Create the balance adjustment transaction for this account
 			var balanceAdjustmentPayee = getState().entitiesCollection.payees.getManualBalanceAdjustmentPayee();

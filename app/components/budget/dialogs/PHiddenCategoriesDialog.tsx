@@ -21,12 +21,12 @@ export interface PHiddenCategoriesDialogState {
 	placement:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'260px'
 }
 
-const ShowAllButtonStyle = {
+const ShowAllButtonStyle:React.CSSProperties = {
 	flex: "1 1 auto"
 }
 

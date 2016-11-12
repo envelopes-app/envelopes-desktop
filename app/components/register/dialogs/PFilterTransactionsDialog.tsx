@@ -35,35 +35,35 @@ export interface PFilterTransactionsDialogState {
 	showScheduledTransactions:boolean;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'500px'
 }
 
-const TitleStyle = {
+const TitleStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#000000",
 	fontSize: "20px",
 }
 
-const Separator1Style = {
+const Separator1Style:React.CSSProperties = {
 	marginTop: "0px",
 	marginBottom: "8px"
 }
 
-const Separator2Style = {
+const Separator2Style:React.CSSProperties = {
 	marginTop: "8px",
 	marginBottom: "8px",
 }
 
-const SectionContainerStyle = {
+const SectionContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignItems: "center",
 	width: "100%"
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: "#88979d",
 	backgroundColor: "f8f8f8",
 	borderWidth: "2px",
@@ -72,20 +72,20 @@ const FormControlStyle = {
 	height: "30px"
 }
 
-const MonthSelectionFormControlStyle = Object.assign({}, FormControlStyle, {
+const MonthSelectionFormControlStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	width: "25%"
 });
 
-const YearSelectionFormControlStyle = Object.assign({}, FormControlStyle, {
+const YearSelectionFormControlStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	width: "15%"
 });
 
-const CheckBoxTextStyle = {
+const CheckBoxTextStyle:React.CSSProperties = {
 	fontSize: "16px",
 	fontWeight: "normal"
 }
 
-const OkButtonStyle = {
+const OkButtonStyle:React.CSSProperties = {
 	marginLeft: "10px"
 }
 
@@ -162,7 +162,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.hide();
 	}
 
-	private onShowReconciledTransactionsSelectionChange(event:React.SyntheticEvent):void {
+	private onShowReconciledTransactionsSelectionChange(event:React.FormEvent<any>):void {
 
 		var element = event.target as HTMLInputElement;
 		var state = Object.assign({}, this.state) as PFilterTransactionsDialogState;
@@ -170,7 +170,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.setState(state);
 	}
 
-	private onShowScheduledTransactionsSelectionChange(event:React.SyntheticEvent):void {
+	private onShowScheduledTransactionsSelectionChange(event:React.FormEvent<any>):void {
 
 		var element = event.target as HTMLInputElement;
 		var state = Object.assign({}, this.state) as PFilterTransactionsDialogState;
@@ -178,7 +178,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.setState(state);
 	}
 
-	private onFromMonthChange(event:React.SyntheticEvent):void {
+	private onFromMonthChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state) as PFilterTransactionsDialogState;
@@ -187,7 +187,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.setState(state);
 	}
 
-	private onFromYearChange(event:React.SyntheticEvent):void {
+	private onFromYearChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -196,7 +196,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.setState(state);
 	}
 
-	private onToMonthChange(event:React.SyntheticEvent):void {
+	private onToMonthChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state) as PFilterTransactionsDialogState;
@@ -205,7 +205,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 		this.setState(state);
 	}
 
-	private onToYearChange(event:React.SyntheticEvent):void {
+	private onToYearChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);

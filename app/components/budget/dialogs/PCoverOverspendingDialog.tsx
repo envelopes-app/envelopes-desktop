@@ -28,17 +28,17 @@ export interface PCoverOverspendingDialogState {
 	manuallyEnteredCategoryName:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'300px'
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	marginTop: "10px",
 	marginBottom: "10px"
 }
 
-const OkButtonStyle = {
+const OkButtonStyle:React.CSSProperties = {
 	marginLeft: "10px"
 }
 
@@ -221,7 +221,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 			this.focusManager.moveFocusBackward("category");
 	}
 
-	private handleKeyDownOnOkButton(event:KeyboardEvent):void {
+	private handleKeyDownOnOkButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -232,7 +232,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 		}
 	}
 
-	private handleKeyDownOnCancelButton(event:KeyboardEvent):void {
+	private handleKeyDownOnCancelButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();

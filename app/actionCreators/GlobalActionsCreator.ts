@@ -1,5 +1,6 @@
 /// <reference path="../_includes.ts" />
 
+import { Dispatch } from 'react-redux';
 import { DateWithoutTime, TransactionUtilities, Logger } from '../utilities';
 import { PersistenceManager } from '../persistence';
 import { ActionNames } from '../constants';
@@ -52,7 +53,7 @@ export class GlobalActionsCreator {
 	// ********************************************************************************************
 	public static initializeDatabase(refreshDatabase:boolean = false) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			var persistenceManager = PersistenceManager.getInstance();
 			// Initialize the persistence manager. This would create the database if it does 
@@ -75,7 +76,7 @@ export class GlobalActionsCreator {
 
 	public static createBudget(budget:catalogEntities.IBudget) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.createNewBudget(budget)
@@ -93,7 +94,7 @@ export class GlobalActionsCreator {
 
 	public static openBudget(budget:catalogEntities.IBudget) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			var persistenceManager = PersistenceManager.getInstance();
 			return persistenceManager.loadBudget(budget)
@@ -111,7 +112,7 @@ export class GlobalActionsCreator {
 
 	public static syncBudgetDataWithDatabase(updatedEntitiesCollection:ISimpleEntitiesCollection) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			// Get the existing in-memory entities collection from state. This is so that we can
 			// determine in the PersistenceManager which entities being saved are new, and which are
@@ -138,7 +139,7 @@ export class GlobalActionsCreator {
 
 	public static ensureBudgetEntitiesForMonth(month:DateWithoutTime) {
 
-		return function(dispatch:ReactRedux.Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
 
 			// Get the existing in-memory entities collection from state. This is so that we can
 			// determine in the PersistenceManager if the data for the month already exists or not. 

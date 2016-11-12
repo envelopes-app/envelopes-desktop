@@ -23,7 +23,7 @@ export interface PUncategorizedInspectorProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const UncategorizedInspectorContainerStyle = {
+const UncategorizedInspectorContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",
@@ -31,14 +31,14 @@ const UncategorizedInspectorContainerStyle = {
 	color: "#588697",
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	width: "100%",
 	marginTop: "0px",
 	marginBottom: "10px",
 	borderTop: "1px dashed #588697"
 }
 
-const RowStyle = {
+const RowStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: 'row nowrap',
@@ -47,51 +47,51 @@ const RowStyle = {
 	paddingRight: "10px"
 }
 
-const RowItemStyle = {
+const RowItemStyle:React.CSSProperties = {
 	flex: "0 0 auto"
 }
 
-const SpacerStyle = {
+const SpacerStyle:React.CSSProperties = {
 	flex: "1 1 auto"
 }
 
-const CategoryNameStyle = {
+const CategoryNameStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	color: "#003440",
 	fontSize: "22px",
 	fontWeight: "normal"
 }
 
-const CategoryMenuStyle = {
+const CategoryMenuStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	color: "#009CC2",
 }
 
-const CategoryPropertyNameStyle = Object.assign({}, RowItemStyle, {
+const CategoryPropertyNameStyle:React.CSSProperties = Object.assign({}, RowItemStyle, {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#003440"
 });
 
-const CategoryPropertyValueStyle = Object.assign({}, RowItemStyle, {
+const CategoryPropertyValueStyle:React.CSSProperties = Object.assign({}, RowItemStyle, {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#003440"
 });
 
-const CategoryAvailableStyle = Object.assign({}, CategoryPropertyNameStyle, {
+const CategoryAvailableStyle:React.CSSProperties = Object.assign({}, CategoryPropertyNameStyle, {
 	fontWeight: "bold"
 });
 
-const CategoryAvailableValueStyle = Object.assign({}, CategoryPropertyValueStyle, {
+const CategoryAvailableValueStyle:React.CSSProperties = Object.assign({}, CategoryPropertyValueStyle, {
 	fontWeight: "bold"
 });
 
-const PillHeaderRowStyle = Object.assign({}, RowStyle, {
+const PillHeaderRowStyle:React.CSSProperties = Object.assign({}, RowStyle, {
 	paddingTop: "10px"
 });
 
-const PillHeaderStyle = Object.assign({}, RowItemStyle, {
+const PillHeaderStyle:React.CSSProperties = Object.assign({}, RowItemStyle, {
 	width: "100%",
 	backgroundColor: "#FFFFFF",
 	color: "#003440",

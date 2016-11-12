@@ -22,7 +22,7 @@ export interface PRegisterHeaderProps {
 	showReconcileAccountDialog:(element:HTMLElement)=>void;
 }
 
-const RegisterHeaderContainerStyle = {
+const RegisterHeaderContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	height: '70px',
 	width: '100%',
@@ -31,7 +31,7 @@ const RegisterHeaderContainerStyle = {
 	paddingRight: '5px'
 }
 
-const RegisterHeaderStyle = {
+const RegisterHeaderStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	justifyContent: 'flex-start',
@@ -41,14 +41,14 @@ const RegisterHeaderStyle = {
 	paddingRight: '5px'
 }
 
-const SymbolStyle = {
+const SymbolStyle:React.CSSProperties = {
 	color: '#588697',
 	padding: '10px',
 	fontSize: '16px',
 	fontWeight: 'bold'
 }
 
-const ReconcileAccountButtonStyle = {
+const ReconcileAccountButtonStyle:React.CSSProperties = {
 	width: '100px',
 	color: '#009CC2',
 	borderColor: '#009CC2',

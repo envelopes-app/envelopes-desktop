@@ -14,13 +14,13 @@ export interface PTransactionsListProps {
 	transactions:Array<ITransactionObject>;
 }
 
-const TransactionsListContainer = {
+const TransactionsListContainer:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	width: "100%"
 }
 
-const HeaderRow = {
+const HeaderRow:React.CSSProperties = {
 	flex: "0 0 auto",
 	display: "flex",
 	flexFlow: "row nowrap",
@@ -30,7 +30,7 @@ const HeaderRow = {
 	borderBottomStyle: "solid",
 }
 
-const HeaderRowCell = {
+const HeaderRowCell:React.CSSProperties = {
 	flex: "1 0 auto",
 	minWidth: "96px",
 	paddingTop: "3px",
@@ -41,19 +41,19 @@ const HeaderRowCell = {
 	borderRightStyle: "solid"
 }
 
-const HeaderRowDateCell = Object.assign({}, HeaderRowCell, {
+const HeaderRowDateCell:React.CSSProperties = Object.assign({}, HeaderRowCell, {
 	fontWeight: "bold",
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignItems: "center"
 });
 
-const HeaderRowAmountCell = Object.assign({}, HeaderRowCell, {
+const HeaderRowAmountCell:React.CSSProperties = Object.assign({}, HeaderRowCell, {
 	textAlign: "right",
 	borderRightStyle: "none"
 });
 
-const TransactionRow = {
+const TransactionRow:React.CSSProperties = {
 	flex: "0 0 auto",
 	display: "flex",
 	flexFlow: "row nowrap",
@@ -62,7 +62,7 @@ const TransactionRow = {
 	borderBottomStyle: "solid",
 }
 
-const TransactionRowCell = {
+const TransactionRowCell:React.CSSProperties = {
 	flex: "1 0 auto",
 	width: "96px",
 	paddingTop: "5px",
@@ -74,7 +74,7 @@ const TransactionRowCell = {
   	textOverflow: "ellipsis"
 }
 
-const TransactionRowAmountCell = Object.assign({}, TransactionRowCell, {
+const TransactionRowAmountCell:React.CSSProperties = Object.assign({}, TransactionRowCell, {
 	textAlign: "right"
 });
 

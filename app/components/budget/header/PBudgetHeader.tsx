@@ -25,7 +25,7 @@ export interface PBudgetHeaderProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const BudgetHeaderContainerStyle = {
+const BudgetHeaderContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	height: '90px',
 	width: '100%',
@@ -34,7 +34,7 @@ const BudgetHeaderContainerStyle = {
 	paddingRight: '5px'
 }
 
-const BudgetHeaderStyle = {
+const BudgetHeaderStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	justifyContent: 'space-between',
@@ -44,13 +44,13 @@ const BudgetHeaderStyle = {
 	paddingRight: '5px'
 }
 
-const SymbolStyle = {
+const SymbolStyle:React.CSSProperties = {
 	color: '#588697',
 	padding: '10px',
 	fontSize: '16px',
 	fontWeight: 'bold'
 }
-const BlankSpaceStyle = {
+const BlankSpaceStyle:React.CSSProperties = {
 	flex: '1 1 auto'
 }
 

@@ -34,7 +34,7 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 		this.onGlyphClick = this.onGlyphClick.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		if((event.target as any).localName == "div") {
 			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
@@ -42,13 +42,13 @@ export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 		}
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
-	private onGlyphClick(event:MouseEvent):void {
+	private onGlyphClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		if(registerTransactionObject.entityType == "transaction") {

@@ -13,7 +13,7 @@ export interface PMemoInputProps {
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
-const MemoInputStyle = {
+const MemoInputStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -50,7 +50,7 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 		domNode.select();
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		// Tab Key
 		if(event.keyCode == 9) {

@@ -26,13 +26,13 @@ export class PMemoCell extends React.Component<PMemoCellProps, {}> {
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "memo");

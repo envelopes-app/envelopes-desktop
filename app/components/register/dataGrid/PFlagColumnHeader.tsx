@@ -10,7 +10,7 @@ export interface PFlagColumnHeaderProps {
 	columnKey?:string;
 }
 
-const PFlagColumnHeaderStyle = {
+const PFlagColumnHeaderStyle:React.CSSProperties = {
 	fontSize: '14px'
 }
 

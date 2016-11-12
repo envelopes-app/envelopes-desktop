@@ -24,27 +24,27 @@ export interface PReconcileAccountDialogState {
 	account:budgetEntities.IAccount;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'300px',
 	paddingBottom:"10px"
 }
 
-const ControlsContainerStyle = {
+const ControlsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	justifyContent: "center",
 	textAlign: "center"
 }
 
-const InternalContainerStyle = {
+const InternalContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	justifyContent: "center",
 	textAlign: "center"
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: "#88979d",
 	backgroundColor: "f8f8f8",
 	borderWidth: "2px",
@@ -54,11 +54,11 @@ const FormControlStyle = {
 	height: "30px"
 }
 
-const YesButtonStyle = {
+const YesButtonStyle:React.CSSProperties = {
 	width: "90px"
 }
 
-const NoButtonStyle = {
+const NoButtonStyle:React.CSSProperties = {
 	width: "90px",
 	marginLeft: "5px"
 }
@@ -106,7 +106,7 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 		this.setState(state);
 	}
 
-	private onStep2BalanceChange(event:React.SyntheticEvent):void {
+	private onStep2BalanceChange(event:React.FormEvent<any>):void {
 		// Update the value in the state
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -181,7 +181,7 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 		var account = this.state.account;
 		var currentBalance = account.clearedBalance;
 		var dataFormatter = this.props.dataFormatter;
-		var balanceStyle = {
+		var balanceStyle:React.CSSProperties = {
 			fontSize: "32px",
 			fontWeight: "normal",
 			color: currentBalance < 0 ? NegativeValueColor : PositiveValueColor

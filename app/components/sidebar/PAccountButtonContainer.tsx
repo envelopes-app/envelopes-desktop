@@ -13,7 +13,7 @@ export interface PAccountButtonContainerProps {
 	setExpanded: (expanded:boolean)=>void;
 }
 
-const PAccountButtonContainerStyle = {
+const PAccountButtonContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	width: '100%',
@@ -21,7 +21,7 @@ const PAccountButtonContainerStyle = {
 	cursor: 'pointer'
 };
 
-const PAccountButtonContainerButtonStyle = {
+const PAccountButtonContainerButtonStyle:React.CSSProperties = {
 	flex: '1 1 auto',
 	borderRadius: '0px',
 	color: 'white',
@@ -33,13 +33,13 @@ const PAccountButtonContainerButtonStyle = {
 	boxShadow: 'none'
 };
 
-const PAccountButtonContainerValueStyle = {
+const PAccountButtonContainerValueStyle:React.CSSProperties = {
 	color: 'white',
 	fontSize: '12px',
 	fontWeight: 'normal', 
 };
 
-const PAccountButtonContainerValueWithBadgeStyle = {
+const PAccountButtonContainerValueWithBadgeStyle:React.CSSProperties = {
 	flex: '1 1 auto',
 	color: '#D33C2D',
 	fontSize: '12px',

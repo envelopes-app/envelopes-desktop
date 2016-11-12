@@ -19,7 +19,7 @@ export class PSelectionColumnHeader extends React.Component<PSelectionColumnHead
 		this.onChange = this.onChange.bind(this);
 	}
 
-	private onChange(event:React.SyntheticEvent):void {
+	private onChange(event:React.FormEvent<any>):void {
 		
 		var element = event.target as HTMLInputElement;
 		if(element.checked)

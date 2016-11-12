@@ -23,7 +23,7 @@ export interface POpenBudgetDialogState {
 	showModal:boolean;
 }
 
-const ButtonsContainerStyle = {
+const ButtonsContainerStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: "row nowrap"
@@ -104,7 +104,7 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 
 			return (
 				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="open-budget-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>Open a budget</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

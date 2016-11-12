@@ -22,7 +22,7 @@ export interface PAccountClosingDialogState {
 	account:IAccount;
 }
 
-const MessageStyle = {
+const MessageStyle:React.CSSProperties = {
 	fontSize: "14px"
 }
 
@@ -124,7 +124,7 @@ export class PAccountClosingDialog extends React.Component<PAccountClosingDialog
 
 			return (
 				<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="close-account-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>Close Account</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

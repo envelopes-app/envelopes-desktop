@@ -15,7 +15,7 @@ export interface PRegisterToolbarProps {
 	showEditMenuDialog:(element:HTMLElement)=>void;
 }
 
-const RegisterToolbarContainerStyle = {
+const RegisterToolbarContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	height: '35px',
 	width: '100%',
@@ -24,7 +24,7 @@ const RegisterToolbarContainerStyle = {
 	paddingRight: '10px'
 }
 
-const RegisterToolbarStyle = {
+const RegisterToolbarStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	justifyContent: 'flex-start',
@@ -52,7 +52,7 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 		}
 	}
 
-	private showFilterDialog(event:React.MouseEvent):void {
+	private showFilterDialog(event:React.MouseEvent<any>):void {
 		this.props.showFilterDialog(this.filterButton.getRootElement());
 	}
 

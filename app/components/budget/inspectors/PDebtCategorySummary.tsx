@@ -21,7 +21,7 @@ export interface PDebtCategorySummaryProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const DebtCategorySummaryContainerStyle = {
+const DebtCategorySummaryContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	width: "100%",
@@ -31,7 +31,7 @@ const DebtCategorySummaryContainerStyle = {
 	paddingRight: "10px"
 }
 
-const RowStyle = {
+const RowStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: 'row nowrap',
@@ -40,22 +40,22 @@ const RowStyle = {
 	paddingRight: "10px"
 }
 
-const RowItemStyle = {
+const RowItemStyle:React.CSSProperties = {
 	flex: "0 0 auto"
 }
 
-const SpacerStyle = {
+const SpacerStyle:React.CSSProperties = {
 	flex: "1 1 auto"
 }
 
-const CategoryNameStyle = {
+const CategoryNameStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	color: "#003440",
 	fontSize: "22px",
 	fontWeight: "normal"
 }
 
-const CategoryMenuStyle = {
+const CategoryMenuStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	color: "#009CC2",
 	fontSize: "18px",
@@ -63,25 +63,25 @@ const CategoryMenuStyle = {
 	cursor: "pointer"
 }
 
-const CategoryPropertyNameStyle = Object.assign({}, RowItemStyle, {
+const CategoryPropertyNameStyle:React.CSSProperties = Object.assign({}, RowItemStyle, {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#003440"
 });
 
-const CategoryPropertyValueStyle = Object.assign({}, RowItemStyle, {
+const CategoryPropertyValueStyle:React.CSSProperties = Object.assign({}, RowItemStyle, {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#003440"
 });
 
-const CategoryAvailableStyle = Object.assign({}, CategoryPropertyNameStyle, {
+const CategoryAvailableStyle:React.CSSProperties = Object.assign({}, CategoryPropertyNameStyle, {
 	fontSize: "14px",
 	fontWeight: "bold",
 	color: "#003440"
 });
 
-const CategoryAvailableValueStyle = Object.assign({}, CategoryPropertyValueStyle, {
+const CategoryAvailableValueStyle:React.CSSProperties = Object.assign({}, CategoryPropertyValueStyle, {
 	fontSize: "14px",
 	fontWeight: "bold",
 	color: "#003440"
@@ -97,7 +97,7 @@ export class PDebtCategorySummary extends React.Component<PDebtCategorySummaryPr
 		this.onEditClick = this.onEditClick.bind(this);
 	}
 
-	private onEditClick(event:React.MouseEvent):void {
+	private onEditClick(event:React.MouseEvent<any>):void {
 		// Show the dialog for editing the subcategory
 		this.subCategoryEditDialog.show(this.props.subCategory.entityId, this.categoryEditMenu);
 	}

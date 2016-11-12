@@ -25,7 +25,7 @@ export interface PInspectorContainerProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const InspectorContainerStyle = {
+const InspectorContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	minWidth: "340px",
 	width: "340px",

@@ -20,7 +20,7 @@ export interface PPayeeSelectorProps {
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
-const PayeeSelectorStyle = {
+const PayeeSelectorStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -28,7 +28,7 @@ const PayeeSelectorStyle = {
 	borderRightWidth: '2px',
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none', 
 	width:'240px'
 }
@@ -77,14 +77,14 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 		domNode.select();
 	}
 
-	private onChange(event:React.SyntheticEvent) {
+	private onChange(event:React.FormEvent<any>) {
 
 		// Get the entered value from the payee input control and pass to the transaction dialog
 		var value = (event.target as any).value;
 		this.props.setManuallyEnteredPayeeName(value);
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		if(this.props.activeField == "payee" && (event.keyCode == 38 || event.keyCode == 40)) {
 

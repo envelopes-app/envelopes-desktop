@@ -7,7 +7,7 @@ export interface PHeaderAccountNameProps {
 	text:string
 }
 
-const AccountNameContainerStyle = {
+const AccountNameContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	display: 'flex',
 	alignItems: 'center',
@@ -20,7 +20,7 @@ const AccountNameContainerStyle = {
 	marginRight: '20px'
 }
 
-const AccountNameInnerStyle = {
+const AccountNameInnerStyle:React.CSSProperties = {
 	fontSize: '24px',
 	fontWeight: 'normal',
 	color: '#ffffff',

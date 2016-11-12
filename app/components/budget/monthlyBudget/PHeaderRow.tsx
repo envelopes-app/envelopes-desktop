@@ -3,11 +3,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface PHeaderRowProps {
+export interface PHeaderRowProps { }
 
-}
-
-const HeaderRowContainerStyle = {
+const HeaderRowContainerStyle:React.CSSProperties = {
 	height: "25px",
 	width: "100%",
 	display: "flex",
@@ -22,25 +20,25 @@ const HeaderRowContainerStyle = {
 	borderLeftWidth: "0px"
 }
 
-const SelectionColumnStyle = {
+const SelectionColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "25px",
 	paddingLeft: "8px"
 }
 
-const CategoryLabelContainerStyle = {
+const CategoryLabelContainerStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	paddingLeft: "20px"
 }
 
-const LabelContainerStyle = {
+const LabelContainerStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "100px",
 	textAlign: "right",
 	paddingRight: "8px"
 }
 
-const LableStyle = {
+const LableStyle:React.CSSProperties = {
 	fontSize: "11px",
 	fontWeight: "normal",
 	color: "#4D717A",

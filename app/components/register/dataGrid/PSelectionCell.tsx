@@ -28,7 +28,7 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 		this.onSelectionChange = this.onSelectionChange.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		if((event.target as HTMLElement).localName == "div") {
 			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
@@ -36,13 +36,13 @@ export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 		}
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "date");
 	}
 
-	private onSelectionChange(event:React.SyntheticEvent):void {
+	private onSelectionChange(event:React.FormEvent<any>):void {
 		
 		var element = event.target as HTMLInputElement;
 			var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);

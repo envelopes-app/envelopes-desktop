@@ -34,7 +34,7 @@ export interface PMasterCategoryRowState {
 	hoverState:boolean;
 }
 
-const MasterCategoryRowContainerStyle = {
+const MasterCategoryRowContainerStyle:React.CSSProperties = {
 	height: "31px",
 	width: "100%",
 	display: "flex",
@@ -51,18 +51,18 @@ const MasterCategoryRowContainerStyle = {
 	paddingBottom: "3px"
 }
 
-const SelectionColumnStyle = {
+const SelectionColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "25px",
 	paddingLeft: "8px"
 }
 
-const ExpandCollapseColumnStyle = {
+const ExpandCollapseColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "12px"
 }
 
-const CategoryNameColumnStyle = {
+const CategoryNameColumnStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	display: "flex",
 	flexFlow: 'row nowrap',
@@ -70,14 +70,14 @@ const CategoryNameColumnStyle = {
 	paddingLeft: "8px"
 }
 
-const CategoryNameStyle = {
+const CategoryNameStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "bold",
 	color: "#003440",
 	marginBottom: "0px"
 }
 
-const ValueColumnStyle = {
+const ValueColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "100px",
 	color: "#4D717A",
@@ -85,13 +85,13 @@ const ValueColumnStyle = {
 	paddingRight: "8px"
 }
 
-const ValueStyle = {
+const ValueStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	marginBottom: "0px"
 }
 
-const GlyphStyle = {
+const GlyphStyle:React.CSSProperties = {
 	fontSize: "12px",
 	cursor: 'pointer'
 }
@@ -119,7 +119,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.state = {hoverState:false, expanded:true};
 	}
 
-	private onClick(event:React.MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		if((event.target as HTMLElement).localName == "div") {
 			var masterCategory = this.props.masterCategory;
@@ -133,14 +133,14 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		}
 	}
 
-	private onAddSubCategoryClick(event:React.MouseEvent):void {
+	private onAddSubCategoryClick(event:React.MouseEvent<any>):void {
 
 		var masterCategory = this.props.masterCategory;
 		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
 		this.props.showCreateCategoryDialog(masterCategory.entityId, element);
 	}
 
-	private onMoveCategoryUpClick(event:React.MouseEvent):void {
+	private onMoveCategoryUpClick(event:React.MouseEvent<any>):void {
 
 		// Get the master category that is above the master category we are displaying
 		var masterCategory = this.props.masterCategory;
@@ -160,7 +160,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		}
 	}
 
-	private onMoveCategoryDownClick(event:React.MouseEvent):void {
+	private onMoveCategoryDownClick(event:React.MouseEvent<any>):void {
 
 		// Get the master category that is below the master category we are displaying
 		var masterCategory = this.props.masterCategory;
@@ -180,7 +180,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		}
 	}
 	
-	private onCheckBoxSelectionChange(event:React.SyntheticEvent):void {
+	private onCheckBoxSelectionChange(event:React.FormEvent<any>):void {
 
 		var masterCategory = this.props.masterCategory;
 		var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
@@ -210,7 +210,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.setState(state);
 	}
 
-	private onCategoryNameClick(event:React.MouseEvent):void {
+	private onCategoryNameClick(event:React.MouseEvent<any>):void {
 		var masterCategory = this.props.masterCategory;
 		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
 		if(isHiddenMasterCategory)
@@ -219,7 +219,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
 	}
 
-	private onActivityClick(event:React.MouseEvent):void {
+	private onActivityClick(event:React.MouseEvent<any>):void {
 
 		var masterCategory = this.props.masterCategory;
 		if(!masterCategory.internalName)

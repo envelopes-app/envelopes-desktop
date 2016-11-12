@@ -23,7 +23,7 @@ export interface PBulkCategorizeDialogState {
 	categoriesList:Array<objects.ICategoryObject>;
 }
 
-const ScrollableContainerStyle = {
+const ScrollableContainerStyle:React.CSSProperties = {
 	overflowY: "scroll",
 }
 
@@ -185,7 +185,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 
 			return (
 				<Modal show={this.state.showModal} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>Categorize transactions as</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

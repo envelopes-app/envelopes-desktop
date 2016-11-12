@@ -24,12 +24,12 @@ export interface PDefaultCategoryActivityDialogState {
 	transactions:Array<ITransactionObject>;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'520px'
 }
 
-const TitleStyle = {
+const TitleStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#4D717A",
 	fontSize: "24px",

@@ -26,18 +26,18 @@ export interface PCreateCategoryDialogState {
 	placeholder:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'250px'
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: "#88979D",
 	borderWidth: "2px",
 	borderRadius: "3px"
 }
 
-const FormControlErrorStyle = {
+const FormControlErrorStyle:React.CSSProperties = {
 	borderColor: "#D33C2D",
 	borderWidth: "2px",
 	borderTopLeftRadius: "3px",
@@ -46,7 +46,7 @@ const FormControlErrorStyle = {
 	borderBottomRightRadius: "0px"
 }
 
-const ErrorMessageStyle = {
+const ErrorMessageStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#FFFFFF",
 	backgroundColor: "#D33C2D",
@@ -62,12 +62,12 @@ const ErrorMessageStyle = {
 	paddingBottom: "3px"
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	marginTop: "10px",
 	marginBottom: "10px"
 }
 
-const OkButtonStyle = {
+const OkButtonStyle:React.CSSProperties = {
 	marginLeft: "10px"
 }
 
@@ -93,7 +93,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 		};
 	}
 
-	private onChange(event:React.SyntheticEvent):void { 
+	private onChange(event:React.FormEvent<any>):void { 
 
 		var updatedCategoryName = (event.target as HTMLInputElement).value;
 		var state = _.assign({}, this.state) as PCreateCategoryDialogState;

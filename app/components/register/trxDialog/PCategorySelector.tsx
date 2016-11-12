@@ -24,17 +24,17 @@ export interface PCategorySelectorProps {
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
-const CategorySelectorStyle = {
+const CategorySelectorStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderWidth: '2px'
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none', 
 	width:'260px'
 }
 
-const ScrollableContainerStyle = {
+const ScrollableContainerStyle:React.CSSProperties = {
 	overflowY: "scroll",
 }
 
@@ -73,14 +73,14 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 		domNode.select();
 	}
 
-	private onChange(event:React.SyntheticEvent) { 
+	private onChange(event:React.FormEvent<any>) { 
 
 		// Get the entered value from the category input control and pass to the transaction dialog
 		var value = (event.target as any).value;
 		this.props.setManuallyEnteredCategoryName(value);
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		if(this.props.activeField == "category" && (event.keyCode == 38 || event.keyCode == 40)) {
 

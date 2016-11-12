@@ -10,7 +10,7 @@ export interface PModuleButtonProps {
 	onClick?: ()=>void;
 }
 
-const ModuleButtonContainerStyle = {
+const ModuleButtonContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',	
 	height: '70px',
@@ -21,7 +21,7 @@ const ModuleButtonContainerStyle = {
 	backgroundColor: "transparent"
 };
 
-const ModuleButtonLabelStyle = {
+const ModuleButtonLabelStyle:React.CSSProperties = {
 
 	position: 'relative',
 	opacity: 1,

@@ -22,7 +22,7 @@ export interface PCategoryCellProps {
 	selectTransaction:(registerTransactionObject:RegisterTransactionObject, unselectAllOthers:boolean)=>void;
 }
 
-const WarningBadgeStyle = {
+const WarningBadgeStyle:React.CSSProperties = {
 	color: "#E59100",
 	backgroundColor: "#FFEAC7",
 	fontSize: "14px",
@@ -38,13 +38,13 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "category");
@@ -78,7 +78,7 @@ export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 			}
 		}
 
-		var truncatedDivStyle = {
+		var truncatedDivStyle:React.CSSProperties = {
 			width: this.props.width,
 			whiteSpace: "nowrap",
 			overflow: "hidden",

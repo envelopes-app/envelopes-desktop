@@ -17,7 +17,7 @@ export interface PDebtCategoryPaymentsProps {
 
 export interface PDebtCategoryPaymentsState { }
 
-const PaymentsContainerStyle = {
+const PaymentsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	justifyContent: "flex-start",

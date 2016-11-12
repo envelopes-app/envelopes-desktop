@@ -1,6 +1,6 @@
 /// <reference path="../_includes.ts" />
 
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 
 import { PApp } from './PApp';
 import { IImportedAccountObject } from '../interfaces/objects';
@@ -14,7 +14,7 @@ const mapStateToProps = (state:IApplicationState) => {
   	};
 };
 
-const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
+const mapDispatchToProps = (dispatch:Dispatch<IApplicationState>) => {
   	return { 
 		createBudget:(budget:catalogEntities.IBudget) => {
       		dispatch(GlobalActionsCreator.createBudget(budget));

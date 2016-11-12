@@ -14,12 +14,12 @@ export interface PRegisterMessageBarProps {
 	entitiesCollection:IEntitiesCollection;
 }
 
-const RegisterMessageBarContainerStyle = {
+const RegisterMessageBarContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	width: "100%",
 }
 
-const RegisterMessageBarStyle = {
+const RegisterMessageBarStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignItems: "center",
@@ -28,11 +28,11 @@ const RegisterMessageBarStyle = {
 	fontSize: "20px"
 }
 
-const RegisterMessageBarInfoStyle = Object.assign({}, RegisterMessageBarStyle, {
+const RegisterMessageBarInfoStyle:React.CSSProperties = Object.assign({}, RegisterMessageBarStyle, {
 	backgroundColor: "#34ADBD"
 });
 
-const RegisterMessageBarWarningStyle = Object.assign({}, RegisterMessageBarStyle, {
+const RegisterMessageBarWarningStyle:React.CSSProperties = Object.assign({}, RegisterMessageBarStyle, {
 	backgroundColor: "#E59100"
 });
 

@@ -29,19 +29,19 @@ export interface PAccountEditDialogState {
 	accountBalance:number;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none', 
 	width:'400px'
 }
 
-const ButtonsContainerStyle = {
+const ButtonsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",	
 	width: "100%",
 	justifyContent: "space-between"
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -49,12 +49,12 @@ const FormControlStyle = {
 	borderRightWidth: '2px',
 }
 
-const FormControlErrorStyle = Object.assign({}, FormControlStyle, {
+const FormControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	borderBottomLeftRadius: "0px",
 	borderBottomRightRadius: "0px"
 });
 
-const ErrorMessageStyle = {
+const ErrorMessageStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#FFFFFF",
 	backgroundColor: "#D33C2D",
@@ -93,21 +93,21 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		};
 	}
 
-	private onAccountNameChange(event:React.SyntheticEvent):void {
+	private onAccountNameChange(event:React.FormEvent<any>):void {
 
 		var state = Object.assign({}, this.state);
 		state.accountName = (event.target as HTMLInputElement).value;
 		this.setState(state);
 	}
 
-	private onAccountNoteChange(event:React.SyntheticEvent):void {
+	private onAccountNoteChange(event:React.FormEvent<any>):void {
 
 		var state = Object.assign({}, this.state);
 		state.accountNote = (event.target as HTMLInputElement).value;
 		this.setState(state);
 	}
 
-	private onAccountBalanceChange(event:React.SyntheticEvent):void {
+	private onAccountBalanceChange(event:React.FormEvent<any>):void {
 
 		if(this.state.account.closed == 0) {
 			var updatedBalance = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);

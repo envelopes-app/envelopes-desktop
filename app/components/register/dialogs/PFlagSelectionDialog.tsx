@@ -21,7 +21,7 @@ export interface PFlagSelectionDialogState {
 	scheduledTransaction:IScheduledTransaction;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'200px'
 }

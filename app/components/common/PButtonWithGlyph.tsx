@@ -8,22 +8,22 @@ export interface PButtonWithGlyphProps {
 	glyphName:string;
 	showGlyph?:boolean;
 	glyphColor?:string;
-	clickHandler:(event:React.MouseEvent)=>void;
+	clickHandler:(event:React.MouseEvent<any>)=>void;
 }
 
-const PButtonWithGlyphStyle = {
+const PButtonWithGlyphStyle:React.CSSProperties = {
 	color: '#FFFFFF',
 	backgroundColor: '#216FB5',
 	borderColor: '#CCCCCC'
 }
 
-const GlyphStyle = {
-	opacity: "0.5",
+const GlyphStyle:React.CSSProperties = {
+	opacity: 0.5,
 	cursor: "pointer"
 }
 
-const GlyphHoverStyle = {
-	opacity: "1",
+const GlyphHoverStyle:React.CSSProperties = {
+	opacity: 1,
 	cursor: "pointer"
 }
 
@@ -37,7 +37,7 @@ export class PButtonWithGlyph extends React.Component<PButtonWithGlyphProps, {ho
 		this.state = {hoverState:false};
 	}
 
-	private handleClick(event:React.MouseEvent) {
+	private handleClick(event:React.MouseEvent<any>) {
 		event.stopPropagation();
 		this.props.clickHandler(event);
 	}

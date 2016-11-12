@@ -20,14 +20,14 @@ export interface PMonthSelectionState {
 	hoverState:boolean;
 }
 
-const MonthSelectionContainerStyle = {
+const MonthSelectionContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-const MonthSelectionStyle = {
+const MonthSelectionStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	justifyContent: 'center',
@@ -35,7 +35,7 @@ const MonthSelectionStyle = {
 	paddingRight: '5px'
 }
 
-const MonthNavigationButtonStyle = {
+const MonthNavigationButtonStyle:React.CSSProperties = {
 	color: "#23B2CE",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
@@ -45,7 +45,7 @@ const MonthNavigationButtonStyle = {
 	outline: "none"
 }
 
-const MonthNavigationButtonDisabledStyle = {
+const MonthNavigationButtonDisabledStyle:React.CSSProperties = {
 	color: "#598797",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
@@ -56,7 +56,7 @@ const MonthNavigationButtonDisabledStyle = {
 	cursor: "default"
 }
 
-const MonthNavigationMonthNameStyle = {
+const MonthNavigationMonthNameStyle:React.CSSProperties = {
 	color: "#FFFFFF",
 	borderColor: "transparent",
 	backgroundColor: "transparent",
@@ -66,13 +66,13 @@ const MonthNavigationMonthNameStyle = {
 	outline: "none"
 }
 
-const MonthNavigationDropDownGlyphStyle = {
+const MonthNavigationDropDownGlyphStyle:React.CSSProperties = {
 	color: "#23B2CE",
 	backgroundColor: "transparent",
 	fontSize: "16px"
 }
 
-const BlankSpaceStyle = {
+const BlankSpaceStyle:React.CSSProperties = {
 	flex: '1 1 auto'
 }
 

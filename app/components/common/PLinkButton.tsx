@@ -8,30 +8,30 @@ export interface PLinkButtonProps {
 	text: string;
 	glyphName?: string;
 	enabled?:boolean;
-	clickHandler?: (event:React.MouseEvent)=>void;
+	clickHandler?: (event:React.MouseEvent<any>)=>void;
 	showDropDown?:boolean;
 }
 
-const PLinkButtonCommonStyle = {
+const PLinkButtonCommonStyle:React.CSSProperties = {
 	cursor: 'pointer',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-const PLinkButtonDefaultStyle = {
+const PLinkButtonDefaultStyle:React.CSSProperties = {
 	color: '#009cc2'
 }
 
-const PLinkButtonDisabledStyle = {
+const PLinkButtonDisabledStyle:React.CSSProperties = {
 	color: '#009cc2',
-	opacity: "0.5"
+	opacity: 0.5
 }
 
-const PLinkButtonHoverStyle = {
+const PLinkButtonHoverStyle:React.CSSProperties = {
 	color: '#005076'
 }
 
-const PLinkButtonTextStyle = {
+const PLinkButtonTextStyle:React.CSSProperties = {
 	fontSize: '14px',
 	fontWeight: 'normal'
 }
@@ -52,7 +52,7 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 		return this.rootElement;
 	}
 
-	private onClick(event:React.MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		if(this.props.enabled == undefined || this.props.enabled == null || this.props.enabled == true)
 			this.props.clickHandler(event);

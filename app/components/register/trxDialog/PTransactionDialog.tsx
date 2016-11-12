@@ -356,7 +356,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			this.focusManager.moveFocusBackward("inflow");
 	}
 
-	private handleKeyPressedOnSaveAndAddAnotherButton(event:KeyboardEvent):void {
+	private handleKeyPressedOnSaveAndAddAnotherButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -367,7 +367,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		}
 	}
 
-	private handleKeyPressedOnSaveButton(event:KeyboardEvent):void {
+	private handleKeyPressedOnSaveButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -378,7 +378,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		}
 	}
 
-	private handleKeyPressedOnCancelButton(event:KeyboardEvent):void {
+	private handleKeyPressedOnCancelButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -642,7 +642,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 			return (
 				<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>{this.props.dialogTitle}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

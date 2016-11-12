@@ -22,12 +22,12 @@ export interface PMonthSelectionDialogState {
 	showingYear:number;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'233px'
 }
 
-const NavigationButtonsContainerStyle = {
+const NavigationButtonsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",	
 	width: "100%",
@@ -35,18 +35,18 @@ const NavigationButtonsContainerStyle = {
 	alignItems: "center"
 }
 
-const YearNameLabelStyle = {
+const YearNameLabelStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	fontSize: "18px",
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	width: "100%",
 	marginTop: "0px",
 	marginBottom: "10px",
 }
 
-const MonthButtonsContainerStyle = {
+const MonthButtonsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row wrap",	
 	width: "100%"

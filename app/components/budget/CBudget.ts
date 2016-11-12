@@ -1,6 +1,6 @@
 /// <reference path="../../_includes.ts" />
 
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 
 import { DateWithoutTime } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
@@ -17,7 +17,7 @@ const mapStateToProps = (state:IApplicationState) => {
   	};
 };
 
-const mapDispatchToProps = (dispatch:ReactRedux.Dispatch<IApplicationState>) => {
+const mapDispatchToProps = (dispatch:Dispatch<IApplicationState>) => {
   	return {
 		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
       		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));

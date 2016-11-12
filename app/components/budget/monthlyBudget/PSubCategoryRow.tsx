@@ -41,7 +41,7 @@ export interface PSubCategoryRowState {
 	hoverState:boolean;
 }
 
-const SubCategoryRowContainerStyle = {
+const SubCategoryRowContainerStyle:React.CSSProperties = {
 	height: "31px",
 	width: "100%",
 	display: "flex",
@@ -60,25 +60,25 @@ const SubCategoryRowContainerStyle = {
 	paddingBottom: "3px"
 }
 
-const SelectionColumnStyle = {
+const SelectionColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "25px",
 	paddingLeft: "8px"
 }
 
-const CategoryNameColumnStyle = {
+const CategoryNameColumnStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	paddingLeft: "20px"
 }
 
-const ValueColumnStyle = {
+const ValueColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "100px",
 	textAlign: "right",
 	paddingRight: "8px"
 }
 
-const ValueColumnHoverStyle = Object.assign({}, ValueColumnStyle, {
+const ValueColumnHoverStyle:React.CSSProperties = Object.assign({}, ValueColumnStyle, {
 	borderStyle: "solid",
 	borderWidth: "2px",
 	borderRadius: "4px",
@@ -86,7 +86,7 @@ const ValueColumnHoverStyle = Object.assign({}, ValueColumnStyle, {
 	backgroundColor: "#FFFFFF"
 });
 
-const BudgetedValueStyle = {
+const BudgetedValueStyle:React.CSSProperties = {
 	height: "22px",
 	width: "100%",
 	fontSize: "14px",
@@ -104,12 +104,12 @@ const BudgetedValueStyle = {
 	outlineStyle: "none"
 }
 
-const BudgetedValueSelectedStyle = _.assign({}, BudgetedValueStyle, {
+const BudgetedValueSelectedStyle:React.CSSProperties = _.assign({}, BudgetedValueStyle, {
 	color: "#FFFFFF",
 	backgroundColor: "#005A6E"
 });
 
-const BudgetedValueHoverStyle = _.assign({}, BudgetedValueStyle, {
+const BudgetedValueHoverStyle:React.CSSProperties = _.assign({}, BudgetedValueStyle, {
 	color: "#4D717A",
 	backgroundColor: "#FFFFFF"
 });
@@ -139,7 +139,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.state = {hoverState:false, expanded:true};
 	}
 
-	private onClick(event:React.MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		var targetNodeName = (event.target as HTMLElement).localName;
 		if(targetNodeName == "div" || targetNodeName == "input") {
@@ -155,7 +155,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 	}
 
-	private onMoveCategoryUpClick(event:React.MouseEvent):void {
+	private onMoveCategoryUpClick(event:React.MouseEvent<any>):void {
 
 		// Get the subcategory that is above the subcategory we are displaying
 		var subCategory = this.props.subCategory;
@@ -195,7 +195,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 	}
 
-	private onMoveCategoryDownClick(event:React.MouseEvent):void {
+	private onMoveCategoryDownClick(event:React.MouseEvent<any>):void {
 
 		// Get the subcategory that is below the subcategory we are displaying
 		var subCategory = this.props.subCategory;
@@ -235,7 +235,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 	}
 
-	private onCheckBoxSelectionChange(event:React.SyntheticEvent):void {
+	private onCheckBoxSelectionChange(event:React.SyntheticEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
@@ -261,7 +261,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		});
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		// We want the user to move the selection up and down the budget screen using the arrow
 		// keys, and also the tab/shift-tab combination.
@@ -304,12 +304,12 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.setState(state);
 	}
 
-	private onCategoryNameClick(event:React.MouseEvent):void {
+	private onCategoryNameClick(event:React.MouseEvent<any>):void {
 		var subCategory = this.props.subCategory;
 		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
 	}
 
-	private onActivityClick(event:React.MouseEvent):void {
+	private onActivityClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
 		if(subCategory.type == SubCategoryType.Debt)
@@ -318,7 +318,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			this.props.showDefaultSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
 	}
 
-	private onBalanceValueClick(event:React.MouseEvent):void {
+	private onBalanceValueClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;

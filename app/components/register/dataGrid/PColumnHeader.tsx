@@ -18,7 +18,7 @@ export interface PColumnHeaderProps {
 	setRegisterSort:(sortByFields:Array<string>, sortOrders:Array<string>)=>void;
 }
 
-const ColumnHeaderStyle = {
+const ColumnHeaderStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: "row nowrap",
@@ -35,7 +35,7 @@ export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	private handleClick(event:React.MouseEvent):void {
+	private handleClick(event:React.MouseEvent<any>):void {
 
 		// If we are already sorted by this field, then simply flip the sort order
 		if(this.props.fieldName == this.props.sortByField) {

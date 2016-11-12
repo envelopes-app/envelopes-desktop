@@ -31,7 +31,7 @@ interface SelectedCategoryValues {
 	averageSpent:number
 }
 
-const DefaultInspectorContainerStyle = {
+const DefaultInspectorContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",
@@ -40,12 +40,12 @@ const DefaultInspectorContainerStyle = {
 	paddingTop: "10px",
 }
 
-const InspectorHeaderStyle = {
+const InspectorHeaderStyle:React.CSSProperties = {
 	fontSize: "22px",
 	fontWeight: "bold"
 }
 
-const CategoryNamesStyle = {
+const CategoryNamesStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	paddingLeft: "10px",
@@ -53,7 +53,7 @@ const CategoryNamesStyle = {
 	textAlign: "center"
 }
 
-const SectionStyle = {
+const SectionStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",
@@ -61,31 +61,31 @@ const SectionStyle = {
 	width: "100%"
 }
 
-const LabelStyle = {
+const LabelStyle:React.CSSProperties = {
 	fontSize: "12px",
 	fontWeight: "normal"
 }
 
-const ValueStyle = {
+const ValueStyle:React.CSSProperties = {
 	fontSize: "24px",
 	fontWeight: "bold"
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	width: "80%",
 	marginTop: "10px",
 	marginBottom: "10px",
 	borderTop: "1px dashed #588697"
 }
 
-const ListStyle = {
+const ListStyle:React.CSSProperties = {
 	paddingLeft: "20px",
 	paddingRight: "20px",
 	listStyleType: "none",
 	width: "100%"
 }
 
-const ListItemStyle = {
+const ListItemStyle:React.CSSProperties = {
 	width: "100%"
 }
 

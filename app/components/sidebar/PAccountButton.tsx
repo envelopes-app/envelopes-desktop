@@ -11,7 +11,7 @@ import { DataFormatter } from '../../utilities';
 import { IAccount } from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 
-const AccountButtonContainerStyle = {
+const AccountButtonContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',	
 	height: '30px',
@@ -22,7 +22,7 @@ const AccountButtonContainerStyle = {
 	backgroundColor: "transparent"
 };
 
-const AccountButtonLabelStyle = {
+const AccountButtonLabelStyle:React.CSSProperties = {
 
 	fontSize: '16px',
 	fontWeight: 'normal', 
@@ -32,7 +32,7 @@ const AccountButtonLabelStyle = {
 	color: 'white'
 };
 
-const AccountButtonValueStyle = {
+const AccountButtonValueStyle:React.CSSProperties = {
 
 	fontSize: '12px',
 	fontWeight: 'normal', 
@@ -40,7 +40,7 @@ const AccountButtonValueStyle = {
 	color: 'white'
 };
 
-const AccountButtonValueWithBadgeStyle = {
+const AccountButtonValueWithBadgeStyle:React.CSSProperties = {
 
 	fontSize: '12px',
 	fontWeight: 'normal', 

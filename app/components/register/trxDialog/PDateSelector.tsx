@@ -25,7 +25,7 @@ export interface PDateSelectorProps {
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
-const DateSelectorStyle = {
+const DateSelectorStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -33,20 +33,20 @@ const DateSelectorStyle = {
 	borderRightWidth: '2px',
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none'
 }
 
-const RepeatDivStyle = {
+const RepeatDivStyle:React.CSSProperties = {
 	paddingTop:"5px"
 }
 
-const RepeatLabelStyle = {
+const RepeatLabelStyle:React.CSSProperties = {
 	fontSize:"12px", 
 	fontWeight:"bold"
 }
 
-const RepeatSelectStyle = {
+const RepeatSelectStyle:React.CSSProperties = {
 	fontSize:"12px", 
 	fontWeight:"normal",
 	height:"28px"
@@ -75,7 +75,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 		this.setFocus();
 	}
 
-	private onFrequencyChange(event:React.SyntheticEvent):void {
+	private onFrequencyChange(event:React.FormEvent<any>):void {
 		var frequencySelectionNode = (ReactDOM.findDOMNode(this.frequencySelection) as HTMLSelectElement);
 		this.props.setSelectedFrequency(frequencySelectionNode.value);
 		this.setFocus();
@@ -98,7 +98,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 		// an onChage handler needs to be provided, or the field should be set to read-only.
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		if(this.props.activeField == "date" && (event.keyCode >= 37 && event.keyCode <= 40)) {
 

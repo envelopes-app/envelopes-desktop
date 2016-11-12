@@ -25,7 +25,7 @@ export interface PDefaultCategoryInspectorProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const DefaultCategoryInspectorContainerStyle = {
+const DefaultCategoryInspectorContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",

@@ -26,13 +26,13 @@ export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.selectTransaction(registerTransactionObject, true);
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		this.props.editTransaction(registerTransactionObject, "payee");
@@ -46,7 +46,7 @@ export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
 		// Get the transaction for the current row
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		var className:string = registerTransactionObject.getCSSClassName(this.props.selectedTransactionsMap);
-		var truncatedDivStyle = {
+		var truncatedDivStyle:React.CSSProperties = {
 			width: this.props.width,
 			whiteSpace: "nowrap",
 			overflow: "hidden",

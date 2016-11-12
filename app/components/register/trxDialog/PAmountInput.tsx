@@ -18,7 +18,7 @@ export interface PAmountInputProps {
 	handleTabPressedOnInflow:(shiftPressed:boolean)=>void;
 }
 
-const AmountInputStyle = {
+const AmountInputStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -64,7 +64,7 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 		this.props.setAmount(0, outflowAmountParsed);
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		// Tab Key
 		if(event.keyCode == 9) {

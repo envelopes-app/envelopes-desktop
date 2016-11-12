@@ -14,14 +14,14 @@ export interface PMonthAOMProps {
 
 export interface PMonthAOMState { }
 
-const MonthAOMContainerStyle = {
+const MonthAOMContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-const MonthAOMInnerContainerStyle = {
+const MonthAOMInnerContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	alignItems: 'center',
@@ -30,14 +30,14 @@ const MonthAOMInnerContainerStyle = {
 	paddingRight: '5px'
 }
 
-const AOMNumberStyle = {
+const AOMNumberStyle:React.CSSProperties = {
 	color: '#4E7C8C',
 	fontSize: '28px',
 	fontWeight: 'normal',
 	margin: '0px'
 }
 
-const AOMLabelStyle = {
+const AOMLabelStyle:React.CSSProperties = {
 	color: '#FFFFFF',
 	fontSize: '12px',
 	fontWeight: 'normal',

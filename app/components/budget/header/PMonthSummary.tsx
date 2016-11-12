@@ -19,19 +19,19 @@ export interface PMonthSummaryProps {
 
 export interface PMonthSummaryState { }
 
-const MonthSummaryContainerStyle = {
+const MonthSummaryContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px'
 }
 
-const MonthSummaryInnerStyle = {
+const MonthSummaryInnerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 }
 
-const ATBContainerStyle = {
+const ATBContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	alignItems: 'center',
@@ -42,7 +42,7 @@ const ATBContainerStyle = {
 	paddingRight: '10px'
 }
 
-const ATBNumberStyle = {
+const ATBNumberStyle:React.CSSProperties = {
 	color: '#ffffff',
 	fontSize: '28px',
 	fontWeight: 'normal',
@@ -51,14 +51,14 @@ const ATBNumberStyle = {
 	outline: 'none'
 }
 
-const ATBLabelStyle = {
+const ATBLabelStyle:React.CSSProperties = {
 	color: '#003440',
 	fontSize: '14px',
 	fontWeight: 'normal',
 	fontStyle: 'italic'
 }
 
-const SummaryNumbersContainerStyle = {
+const SummaryNumbersContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	alignItems: 'flex-end',
@@ -66,20 +66,20 @@ const SummaryNumbersContainerStyle = {
 	paddingRight: '5px'
 }
 
-const SummaryNumberStyle = {
+const SummaryNumberStyle:React.CSSProperties = {
 	color: '#ffffff',
 	fontSize: '12px',
 	fontWeight: 'bold',
 	margin: '0px'
 }
 
-const SummaryLabelsContainerStyle = {
+const SummaryLabelsContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	alignItems: 'flex-start'
 }
 
-const SummaryLabelStyle = {
+const SummaryLabelStyle:React.CSSProperties = {
 	color: '#ffffff',
 	fontSize: '12px',
 	fontWeight: 'normal',

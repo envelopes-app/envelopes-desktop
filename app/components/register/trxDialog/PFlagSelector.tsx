@@ -18,7 +18,7 @@ export interface PFlagSelectorState {
 	selectedFlag:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none', 
 	width:'240px'
 }
@@ -65,7 +65,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 		this.showPopover();
 	}
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		if(this.state.showPopover == true && event.keyCode == 38 || event.keyCode == 40) {
 

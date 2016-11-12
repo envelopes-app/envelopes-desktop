@@ -5,7 +5,7 @@ import * as React from 'react';
 export interface PSearchInputProps {
 	placeHolder: string;
 	classNames?: Array<string>;
-	clickHandler: (event:React.MouseEvent)=>void;
+	clickHandler: (event:React.MouseEvent<any>)=>void;
 }
 
 export class PSearchInput extends React.Component<PSearchInputProps, {}> {

@@ -18,7 +18,7 @@ export interface PAccountSelectorProps {
 	handleTabPressed:(shiftPressed:boolean)=>void;
 }
 
-const AccountSelectorStyle = {
+const AccountSelectorStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -26,7 +26,7 @@ const AccountSelectorStyle = {
 	borderRightWidth: '2px',
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'240px'
 }
@@ -67,7 +67,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, {}>
 
 	private onChange() { }
 
-	private onKeyDown(event:KeyboardEvent):void {
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		if(this.props.activeField == "account" && (event.keyCode == 38 || event.keyCode == 40)) {
 

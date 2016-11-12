@@ -1,8 +1,0 @@
-{
-  "resolution": "main",
-  "tree": {
-    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/6e064fedee47a32b883ebe419a26dad2b499d0d0/babyparse/babyparse.d.ts",
-    "raw": "registry:dt/babyparse#0.0.0+20160923113729",
-    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/6e064fedee47a32b883ebe419a26dad2b499d0d0/babyparse/babyparse.d.ts"
-  }
-}

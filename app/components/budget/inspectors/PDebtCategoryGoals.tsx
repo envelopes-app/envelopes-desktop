@@ -26,7 +26,7 @@ export interface PDebtCategoryGoalsState {
 	targetBalanceYear:string;
 }
 
-const GoalsContainerStyle = {
+const GoalsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	justifyContent: "flex-start",
@@ -36,34 +36,34 @@ const GoalsContainerStyle = {
 	paddingRight: "10px"
 }
 
-const GoalTypeSelectionContainerStyle = {
+const GoalTypeSelectionContainerStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	paddingLeft: "10px",
 	paddingRight: "10px",
 	paddingBottom: "10px"
 }
 
-const GoalTypeSelectionRadioStyle = {
+const GoalTypeSelectionRadioStyle:React.CSSProperties = {
 	marginTop: "5px",
 	marginBottom: "5px",
 	color: "#588697"
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: "#2FA2B5",
 	borderWidth: "2px",
 	borderRadius: "3px"
 }
 
-const MonthSelectionFormControlStyle = Object.assign({}, FormControlStyle, {
+const MonthSelectionFormControlStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	width: "65%"
 });
 
-const YearSelectionFormControlStyle = Object.assign({}, FormControlStyle, {
+const YearSelectionFormControlStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	width: "32%"
 });
 
-const ButtonsContainerStyle = {
+const ButtonsContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",	
 	alignItems: "center",
@@ -71,18 +71,18 @@ const ButtonsContainerStyle = {
 	justifyContent: "space-between"
 }
 
-const ButtonStyle = {
+const ButtonStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	fontSize:"14px",
 	paddingLeft: "6px",
 	paddingRight: "6px",
 }
 
-const SpacerStyle = {
+const SpacerStyle:React.CSSProperties = {
 	flex: "1 1 auto"
 }
 
-const OkButtonStyle = {
+const OkButtonStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	fontSize:"14px",
 	marginLeft: "10px"
@@ -139,7 +139,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.setState(state);
 	}
 
-	private onTargetBalanceMonthChange(event:React.SyntheticEvent):void {
+	private onTargetBalanceMonthChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -147,7 +147,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.setState(state);
 	}
 
-	private onTargetBalanceYearChange(event:React.SyntheticEvent):void {
+	private onTargetBalanceYearChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -155,7 +155,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.setState(state);
 	}
 
-	private onMonthlyFundingChange(event:React.SyntheticEvent):void {
+	private onMonthlyFundingChange(event:React.FormEvent<any>):void {
 
 		var updatedValue = this.state.monthlyFunding;
 		var target = event.target as HTMLInputElement;
@@ -172,7 +172,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.setState(state);
 	}
 
-	private handleDeleteClicked(event:React.MouseEvent):void {
+	private handleDeleteClicked(event:React.MouseEvent<any>):void {
 
 		// Update the state to hide the goal editor
 		var state = Object.assign({}, this.state);
@@ -197,7 +197,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		}
 	}
 
-	private handleCancelClicked(event:React.MouseEvent):void {
+	private handleCancelClicked(event:React.MouseEvent<any>):void {
 
 		// Update the state to hide the goal editor
 		var state = Object.assign({}, this.state);
@@ -205,7 +205,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.setState(state);
 	}
 
-	private handleOkClicked(event:React.MouseEvent):void {
+	private handleOkClicked(event:React.MouseEvent<any>):void {
 
 		// Update the state to hide the goal editor
 		var state = Object.assign({}, this.state);

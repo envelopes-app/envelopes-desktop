@@ -35,7 +35,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 		this.onGlyphClick = this.onGlyphClick.bind(this);
 	}
 
-	private onClick(event:MouseEvent):void {
+	private onClick(event:React.MouseEvent<any>):void {
 
 		if((event.target as any).localName == "div") {
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
@@ -43,7 +43,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 		}
 	}	
 
-	private onDoubleClick(event:MouseEvent):void {
+	private onDoubleClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		if(
@@ -60,7 +60,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 		}
 	}
 
-	private onGlyphClick(event:MouseEvent):void {
+	private onGlyphClick(event:React.MouseEvent<any>):void {
 
 		var registerTransactionObject = this.props.registerTransactionObjects.getItemAt(this.props.rowIndex);
 		// Show the approve/reject dialog if we were showing the info icon

@@ -12,24 +12,24 @@ export interface PMessageProps {
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget
 }
 
-const MessageContainerStyle = {
+const MessageContainerStyle:React.CSSProperties = {
 	paddingTop: "10px",
 	paddingLeft: "10px",
 	paddingRight: "10px",
 }
 
-const MessageStyle = {
+const MessageStyle:React.CSSProperties = {
 	color: "#003440",
 	borderRadius: "4px",
 	padding: "10px",
 	fontSize: "14px"
 }
 
-const ErrorMessageStyle = Object.assign({}, MessageStyle, {
+const ErrorMessageStyle:React.CSSProperties = Object.assign({}, MessageStyle, {
 	backgroundColor: "#F8E1DF"
 });
 
-const WarningMessageStyle = Object.assign({}, MessageStyle, {
+const WarningMessageStyle:React.CSSProperties = Object.assign({}, MessageStyle, {
 	backgroundColor: "#FBEED8"
 });
 

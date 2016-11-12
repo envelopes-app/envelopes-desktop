@@ -24,7 +24,7 @@ export interface PDebtCategoryInspectorProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const DebtCategoryInspectorContainerStyle = {
+const DebtCategoryInspectorContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",

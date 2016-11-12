@@ -29,7 +29,7 @@ export interface PAccountCreationDialogState {
 	typeValidationMessage:string;
 } 
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
 	borderBottomWidth: '2px',
@@ -37,16 +37,16 @@ const FormControlStyle = {
 	borderRightWidth: '2px',
 }
 
-const FormControlErrorStyle = Object.assign({}, FormControlStyle, {
+const FormControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	borderBottomLeftRadius: "0px",
 	borderBottomRightRadius: "0px"
 });
 
-const FormSelectControlErrorStyle = Object.assign({}, FormControlStyle, {
+const FormSelectControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
 	borderColor: '#D33C2D',
 });
 
-const ErrorMessageStyle = {
+const ErrorMessageStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#FFFFFF",
 	backgroundColor: "#D33C2D",
@@ -85,7 +85,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		};
     }
 
-	private onAccountNameChange(event:React.SyntheticEvent):void {
+	private onAccountNameChange(event:React.FormEvent<any>):void {
 
 		var updatedName = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -93,7 +93,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		this.setState(state);
 	}
 
-	private onAccountTypeChange(event:React.SyntheticEvent):void {
+	private onAccountTypeChange(event:React.FormEvent<any>):void {
 
 		var updatedType = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -101,7 +101,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 		this.setState(state);
 	}
 
-	private onAccountBalanceChange(event:React.SyntheticEvent):void {
+	private onAccountBalanceChange(event:React.FormEvent<any>):void {
 
 		var updatedBalance = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -317,7 +317,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 
 			return (
 				<Modal show={this.state.showModal} animation={true} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-account-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>Add a New Account</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

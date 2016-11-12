@@ -38,7 +38,7 @@ export interface PRegisterState {
 	registersState: SimpleObjectMap<IRegisterState>;
 }
 
-const RegisterContainerStyle = {
+const RegisterContainerStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	height: '100%',

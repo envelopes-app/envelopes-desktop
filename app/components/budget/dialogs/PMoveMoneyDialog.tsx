@@ -28,23 +28,23 @@ export interface PMoveMoneyDialogState {
 	manuallyEnteredCategoryName:string;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'300px'
 }
 
-const FormControlStyle = {
+const FormControlStyle:React.CSSProperties = {
 	borderColor: "#2FA2B5",
 	borderWidth: "2px",
 	borderRadius: "3px"
 }
 
-const HRStyle = {
+const HRStyle:React.CSSProperties = {
 	marginTop: "10px",
 	marginBottom: "10px"
 }
 
-const OkButtonStyle = {
+const OkButtonStyle:React.CSSProperties = {
 	marginLeft: "10px"
 }
 
@@ -133,7 +133,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		this.setFocusOnAmountField();
 	}
 
-	private onAmountChange(event:React.SyntheticEvent):void {
+	private onAmountChange(event:React.FormEvent<any>):void {
 		// Update the value in the state
 		var value = (event.target as HTMLInputElement).value;
 		var numericValue = parseFloat(value);
@@ -240,7 +240,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		this.setState(state);
 	}
 
-	private handleKeyDownOnAmountInput(event:KeyboardEvent):void {
+	private handleKeyDownOnAmountInput(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -259,7 +259,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 			this.focusManager.moveFocusBackward("category");
 	}
 
-	private handleKeyDownOnOkButton(event:KeyboardEvent):void {
+	private handleKeyDownOnOkButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();
@@ -270,7 +270,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		}
 	}
 
-	private handleKeyDownOnCancelButton(event:KeyboardEvent):void {
+	private handleKeyDownOnCancelButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
 			event.preventDefault();

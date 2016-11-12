@@ -41,19 +41,19 @@ export interface PImportYnabDataDialogState {
 	accountsList:Array<IImportedAccountObject>;
 }
 
-const FormControlsContainer = {
+const FormControlsContainer:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignContent: "stretch"
 }
 
-const ButtonsContainerStyle = {
+const ButtonsContainerStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: "row nowrap"
 }
 
-const FileInputStyle = {
+const FileInputStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	borderColor: '#2FA2B5',
 	borderWidth: '2px',
@@ -62,11 +62,11 @@ const FileInputStyle = {
 	borderBottomRightRadius: "0px",
 }
 
-const FileInputErrorStyle = Object.assign({}, FileInputStyle, {
+const FileInputErrorStyle:React.CSSProperties = Object.assign({}, FileInputStyle, {
 	borderBottomLeftRadius: "0px",
 });
 
-const BrowseButtonStyle = {
+const BrowseButtonStyle:React.CSSProperties = {
 	height: '34px',
 	borderWidth: '2px',
 	borderLeftWidth: '1px',
@@ -74,11 +74,11 @@ const BrowseButtonStyle = {
 	borderBottomLeftRadius: "0px",
 }
 
-const BrowseButtonErrorStyle = Object.assign({}, BrowseButtonStyle, {
+const BrowseButtonErrorStyle:React.CSSProperties = Object.assign({}, BrowseButtonStyle, {
 	borderBottomRightRadius: "0px",
 });
 
-const ErrorMessageStyle = {
+const ErrorMessageStyle:React.CSSProperties = {
 	width: "100%",
 	color: "#FFFFFF",
 	backgroundColor: "#D33C2D",
@@ -94,19 +94,19 @@ const ErrorMessageStyle = {
 	paddingBottom: "3px"
 }
 
-const AccountsListContainerStyle = {
+const AccountsListContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap"
 }
 
-const ListItemContainer = {
+const ListItemContainer:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	alignItems: "center",
 	marginBottom: "5px"
 }
 
-const ListHeaderAccountNameLabelStyle = {
+const ListHeaderAccountNameLabelStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#4D717A",
@@ -114,7 +114,7 @@ const ListHeaderAccountNameLabelStyle = {
 	width: "30%"
 }
 
-const ListHeaderAccountTypeLabelStyle = {
+const ListHeaderAccountTypeLabelStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#4D717A",
@@ -122,27 +122,27 @@ const ListHeaderAccountTypeLabelStyle = {
 	width: "70%"
 }
 
-const ListStyle = {
+const ListStyle:React.CSSProperties = {
 	paddingLeft: "0px",
 	maxHeight: "250px",	
 	overflowY: "scroll",
 }
 
-const ListAccountNameStyle = {
+const ListAccountNameStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#4D717A",
 	width: "30%"
 }
 
-const ListAccountTypeStyle = {
+const ListAccountTypeStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "normal",
 	color: "#4D717A",
 	width: "70%"
 }
 
-const AccountTypeInputStyle = {
+const AccountTypeInputStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	borderColor: '#2FA2B5',
 	borderWidth: '2px',
@@ -316,7 +316,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.setState(state);
 	}
 
-	private onAccountTypeChange(accountObj:IImportedAccountObject, event:React.SyntheticEvent):void {
+	private onAccountTypeChange(accountObj:IImportedAccountObject, event:React.FormEvent<any>):void {
 		// Update the accountObj with the selected option
 		accountObj.selectedAccountType = (event.target as HTMLInputElement).value;
 		var state = Object.assign({}, this.state);
@@ -467,7 +467,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 		return (
 			<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="import-ynab-data-dialog">
-				<Modal.Header bsClass="modal-header">
+				<Modal.Header className="modal-header">
 					<Modal.Title>Import YNAB Data</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
@@ -569,7 +569,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		
 		return (
 			<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="import-ynab-data-dialog">
-				<Modal.Header bsClass="modal-header">
+				<Modal.Header className="modal-header">
 					<Modal.Title>Import YNAB Data</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>

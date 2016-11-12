@@ -23,7 +23,7 @@ export interface PMoveToAccountDialogState {
 	accountsList:Array<objects.IAccountObject>;
 }
 
-const PopoverStyle = {
+const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
 	width:'200px'
 }
@@ -154,7 +154,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 
 			return (
 				<Modal show={this.state.showModal} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
-					<Modal.Header bsClass="modal-header">
+					<Modal.Header className="modal-header">
 						<Modal.Title>Move transactions to</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>

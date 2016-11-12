@@ -15,7 +15,7 @@ export interface PDebtCategoryQuickBudgetProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const QuickBudgetContainerStyle = {
+const QuickBudgetContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
 	width: "100%",
@@ -25,7 +25,7 @@ const QuickBudgetContainerStyle = {
 	paddingRight: "10px"
 }
 
-const ListStyle = {
+const ListStyle:React.CSSProperties = {
 	paddingTop: "10px",
 	paddingLeft: "20px",
 	paddingRight: "20px",
@@ -33,7 +33,7 @@ const ListStyle = {
 	width: "100%"
 }
 
-const ListItemStyle = {
+const ListItemStyle:React.CSSProperties = {
 	width: "100%"
 }
 
