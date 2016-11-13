@@ -62,11 +62,13 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				/>
 
 				<PDefaultCategoryQuickBudget
+					dataFormatter={this.props.dataFormatter}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}
 				/>	
 
 				<PDefaultCategoryGoals 
+					dataFormatter={this.props.dataFormatter}
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}

@@ -17,7 +17,7 @@ export interface PBulkCategorizeDialogProps {
 }
 
 export interface PBulkCategorizeDialogState {
-	showModal:boolean;
+	show:boolean;
 	registerState:IRegisterState;
 	selectedCategoryId:string;
 	categoriesList:Array<objects.ICategoryObject>;
@@ -34,7 +34,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 		this.hide = this.hide.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);
 		this.state = {
-			showModal:false,
+			show:false,
 			registerState:null,
 			selectedCategoryId:null,
 			categoriesList:null
@@ -42,14 +42,14 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 	}
 
 	public isShowing():boolean {
-		return this.state.showModal;
+		return this.state.show;
 	}
 	
 	public show(registerState:IRegisterState):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var state = Object.assign({}, this.state) as PBulkCategorizeDialogState;
-		state.showModal = true;
+		state.show = true;
 		state.registerState = registerState;
 		state.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
 		this.setState(state);
@@ -57,7 +57,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 
 	public hide():void {
 		var state = Object.assign({}, this.state) as PBulkCategorizeDialogState;
-		state.showModal = false;
+		state.show = false;
 		state.registerState = null;
 		state.categoriesList = null;
 		this.setState(state);
@@ -169,7 +169,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 
 	public render() {
 
-		if(this.state.showModal) {
+		if(this.state.show) {
 
 			var categoriesList = this.getCategoriesDisplayList();
 			var selectedCategoryName = "";
@@ -184,7 +184,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 			}
 
 			return (
-				<Modal show={this.state.showModal} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
+				<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
 					<Modal.Header className="modal-header">
 						<Modal.Title>Categorize transactions as</Modal.Title>
 					</Modal.Header>

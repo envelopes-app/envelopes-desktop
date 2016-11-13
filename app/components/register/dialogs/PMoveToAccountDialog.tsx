@@ -17,7 +17,7 @@ export interface PMoveToAccountDialogProps {
 }
 
 export interface PMoveToAccountDialogState {
-	showModal:boolean;
+	show:boolean;
 	registerState:IRegisterState;
 	selectedAccountId:string;
 	accountsList:Array<objects.IAccountObject>;
@@ -35,7 +35,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 		this.hide = this.hide.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);
 		this.state = {
-			showModal:false, 
+			show:false, 
 			registerState:null,
 			selectedAccountId:null,
 			accountsList:null
@@ -53,14 +53,14 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 	}
 
 	public isShowing():boolean {
-		return this.state.showModal;
+		return this.state.show;
 	}
 	
 	public show(registerState:IRegisterState):void {
 
 		// Get the subCategory for the passed subCategoryId
 		var state = Object.assign({}, this.state) as PMoveToAccountDialogState;
-		state.showModal = true;
+		state.show = true;
 		state.registerState = registerState;
 		state.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
 		this.setState(state);
@@ -68,7 +68,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 
 	public hide():void {
 		var state = Object.assign({}, this.state) as PMoveToAccountDialogState;
-		state.showModal = false;
+		state.show = false;
 		state.registerState = null;
 		state.selectedAccountId = null;
 		this.setState(state);
@@ -138,7 +138,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 
 	public render() {
 
-		if(this.state.showModal) {
+		if(this.state.show) {
 
 			var accountsList = this.getAccountsDisplayList();
 			var selectedAccountName = "";
@@ -153,7 +153,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 			}
 
 			return (
-				<Modal show={this.state.showModal} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
+				<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
 					<Modal.Header className="modal-header">
 						<Modal.Title>Move transactions to</Modal.Title>
 					</Modal.Header>

@@ -7,11 +7,12 @@ import { Button, Col, ControlLabel, FormGroup, FormControl, Glyphicon, ProgressB
 
 import { PLinkButton } from '../../common/PLinkButton';
 import { SubCategoryGoalType } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDebtCategoryGoalsProps {
+	dataFormatter:DataFormatter;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	// Dispatcher Functions

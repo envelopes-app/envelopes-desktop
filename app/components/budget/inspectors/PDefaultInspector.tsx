@@ -299,9 +299,10 @@ export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {
 		// Get the summary values
 		var totalBudgeted:number = monthlyBudget ? monthlyBudget.budgeted : 0;
 		var totalActivity:number = monthlyBudget ? monthlyBudget.cashOutflows + monthlyBudget.creditOutflows : 0;
-		var totalAvailable:number = monthlyBudget ? monthlyBudget.availableToBudget : 0;
+		var totalAvailable:number = monthlyBudget ? monthlyBudget.balance : 0;
 		var totalInflows:number = monthlyBudget ? monthlyBudget.immediateIncome : 0;
 
+		debugger;
 		// Get the quick budget values
 		var underfundedValue:number = monthlyBudget ? monthlyBudget.overSpent : 0;
 		var budgetedLastMonth:number = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.budgeted : 0;

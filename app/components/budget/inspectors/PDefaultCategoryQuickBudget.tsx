@@ -5,11 +5,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
-import { DateWithoutTime } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PDefaultCategoryQuickBudgetProps {
+	dataFormatter:DataFormatter;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -108,6 +109,7 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 
 	private getQuickBudgetItems(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget):Array<JSX.Element> {
 
+		var dataFormatter = this.props.dataFormatter;
 		// Get the quick budget values
 		var budgetedLastMonthValue:number = monthlySubCategoryBudget.budgetedPreviousMonth ? monthlySubCategoryBudget.budgetedPreviousMonth : 0;
 		var spentLastMonthValue:number = monthlySubCategoryBudget.spentPreviousMonth ? monthlySubCategoryBudget.spentPreviousMonth : 0;
@@ -118,22 +120,22 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 		var quickBudgetItems:Array<JSX.Element> = [
 			<li key="qbBudgetLastMonth" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
-					Budgeted Last Month: {budgetedLastMonthValue}
+					Budgeted Last Month: {dataFormatter.formatCurrency(budgetedLastMonthValue)}
 				</Button>
 			</li>,
 			<li key="qbSpentLastMonth" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
-					Spent Last Month: {spentLastMonthValue}
+					Spent Last Month: {dataFormatter.formatCurrency(spentLastMonthValue)}
 				</Button>
 			</li>,
 			<li key="qbAverageBudgeted" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
-					Average Budgeted: {averageBudgetedValue}
+					Average Budgeted: {dataFormatter.formatCurrency(averageBudgetedValue)}
 				</Button>
 			</li>,
 			<li key="qbAverageSpent" style={ListItemStyle}>
 				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
-					Average Spent: {averageSpentValue}
+					Average Spent: {dataFormatter.formatCurrency(averageSpentValue)}
 				</Button>
 			</li>
 		];
@@ -142,7 +144,7 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 			quickBudgetItems.unshift(
 				<li key="qbUpcoming" style={ListItemStyle}>
 					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
-						Budget for Upcoming: {upcomingTransactions}
+						Budget for Upcoming: {dataFormatter.formatCurrency(upcomingTransactions)}
 					</Button>
 				</li>
 			);

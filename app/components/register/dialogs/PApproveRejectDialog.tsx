@@ -95,8 +95,7 @@ export class PApproveRejectDialog extends React.Component<PApproveRejectDialogPr
 
 	public render() {
 
-		if(this.state.transaction) {
-
+		if(this.state.show) {
 			return (
 				<Overlay key="overlay" rootClose={true} show={this.state.show} placement={this.state.placement} 
 					onHide={this.hide} target={ ()=> ReactDOM.findDOMNode(this.state.target) }>

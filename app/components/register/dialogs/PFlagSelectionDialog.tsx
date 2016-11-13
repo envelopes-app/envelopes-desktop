@@ -123,7 +123,7 @@ export class PFlagSelectionDialog extends React.Component<PFlagSelectionDialogPr
 
 	public render() {
 
-		if(this.state.transaction || this.state.scheduledTransaction) {
+		if(this.state.show) {
 			var flag:string;
 			// Get the transaction/scheduledTransaction from the state, and get the currently set flag from it
 			if(this.state.transaction)

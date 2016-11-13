@@ -62,11 +62,13 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 				/>
 
 				<PDebtCategoryQuickBudget
+					dataFormatter={this.props.dataFormatter}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}
 				/>	
 
 				<PDebtCategoryGoals 
+					dataFormatter={this.props.dataFormatter}
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					updateEntities={this.props.updateEntities}
