@@ -251,8 +251,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 		// Get the value from the budget value input		
 		var budgetedValueInputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
-		var budgetedValue = budgetedValueInputNode.value;
-		
+		var budgetedValueString = budgetedValueInputNode.value;
+		var budgetedValue = this.props.dataFormatter.unformatCurrency(budgetedValueString);
 		// Update the monthlySubCategoryBudget entity with this new value
 		var monthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
 		monthlySubCategoryBudget.budgeted = budgetedValue;
@@ -406,8 +406,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			isSelected = false;
 
 		var subCategoryRowContainerStyle = _.assign({}, SubCategoryRowContainerStyle);
-		var budgetedValueStyle:any = BudgetedValueStyle;
-		var valueColumnStyle:any = ValueColumnStyle;
+		var budgetedValueStyle = BudgetedValueStyle;
+		var valueColumnStyle = ValueColumnStyle;
 
 		if(isSelected) {
 			subCategoryRowContainerStyle["color"] = "#FFFFFF";

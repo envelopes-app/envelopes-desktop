@@ -188,8 +188,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 				if(selectedCategory && selectedCategory.entityId == category.entityId) {
 					categoiresPopoverItem = (
-						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item-selected" 
-							id={category.entityId}>
+						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} 
+								className="categories-dropdown-list-item-selected" id={category.entityId}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
 							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
 						</div>
@@ -197,8 +197,9 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 				}
 				else {
 					categoiresPopoverItem = (
-						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item" 
-							id={category.entityId} onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
+						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} 
+								className="categories-dropdown-list-item" id={category.entityId} 
+								onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
 							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
 						</div>

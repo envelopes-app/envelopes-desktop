@@ -1,6 +1,6 @@
 {
   "name": "enab",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "devDependencies": {
     "autoprefixer": "6.5.3",
@@ -101,7 +101,7 @@
     "material-ui": "0.16.1",
     "moment": "2.16.0",
     "node-uuid": "1.4.7",
-    "numeral": "^1.5.3",
+    "numeral": "1.5.3",
     "react": "15.3.2",
     "react-bootstrap": "0.30.5",
     "react-datepicker": "0.34.0",

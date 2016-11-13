@@ -53,6 +53,8 @@ export interface AppState {
 
 export class PApp extends React.Component<AppProps, AppState> {
   
+	// TODO: When in production mode, log to files instead of console
+	// TODO: Clean log files older then 5 days
 	private budgetDialog:PBudgetDialog;
 	private openBudgetDialog:POpenBudgetDialog;
 	private importYnabDataDialog:PImportYnabDataDialog;
@@ -91,8 +93,20 @@ export class PApp extends React.Component<AppProps, AppState> {
 				state.dataFormatter = dataFormatter;
 				this.setState(state);
 			}
+
+			this.updateAppTitle(activeBudget.budgetName);
 		}
 	} 
+
+	private updateAppTitle(activeBudgetName:string):void {
+
+		var { ipcRenderer } = require('electron');
+		var payload:any = {
+			activeBudgetName: activeBudgetName
+		};
+		// Send the request to the main process
+		ipcRenderer.send("window-title-request", payload);
+	}
 
 	public render() {
 

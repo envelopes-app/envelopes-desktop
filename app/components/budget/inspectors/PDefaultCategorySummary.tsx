@@ -113,7 +113,7 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 		var prevMonthName = prevMonth.getMonthFullName();
 
 		// Get the summary values
-		var cashLeftOver = monthlySubCategoryBudget.balancePreviousMonth ? monthlySubCategoryBudget.balancePreviousMonth : 0;
+		var cashLeftOver = monthlySubCategoryBudget.balancePreviousMonth && monthlySubCategoryBudget.balancePreviousMonth > 0 ? monthlySubCategoryBudget.balancePreviousMonth : 0;
 		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
 		var cashSpending = monthlySubCategoryBudget.cashOutflows;
 		var creditSpending = monthlySubCategoryBudget.creditOutflows;

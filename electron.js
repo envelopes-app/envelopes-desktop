@@ -4,6 +4,7 @@ const { Promise } = require('es6-promise');
 const { app, ipcMain, BrowserWindow, Menu } = require('electron');
 const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus');
 const { initializeDatabaseModule, finalizeDatabaseModule } = require('./electron-database');
+const { initializeWindowModule, finalizeWindowModule } = require('./electron-window');
 
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
@@ -43,8 +44,10 @@ const createWindow = () => {
 	mainWindow.on('closed', () => {
 		// Set the local reference to the main window to null
 		mainWindow = null;
-		// Finalize the database module. We will re-initialize it if we activate.
+		// Finalize all the modules. We will re-initialize it if we activate.
+		finalizeMenusModule();
 		finalizeDatabaseModule();
+		finalizeWindowModule();
 	});
 }
 
@@ -84,6 +87,10 @@ app.on('ready', () => {
 			// Initialize the menu module 
 			initializeMenusModule();
 		})
+		.then(()=>{
+			// Initialize the window module 
+			initializeWindowModule(mainWindow);
+		})
 		.catch(function(error) {
 			console.log(error);
 		});
@@ -109,6 +116,10 @@ app.on('activate', () => {
 			.then(()=>{
 				// Initialize the menu module 
 				initializeMenusModule();
+			})
+			.then(()=>{
+				// Initialize the window module 
+				initializeWindowModule(mainWindow);
 			})
 			.catch(function(error) {
 				console.log(error);

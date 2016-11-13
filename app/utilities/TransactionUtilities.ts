@@ -11,7 +11,6 @@ export class TransactionUtilities {
 
 	public static processTransactions(updatedEntities:ISimpleEntitiesCollection, existingEntities:IEntitiesCollection):void {
 
-		debugger;
 		if(!updatedEntities.transactions || updatedEntities.transactions.length == 0)
 			return;
 
