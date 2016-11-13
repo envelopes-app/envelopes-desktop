@@ -69,6 +69,7 @@ const ModuleButtonIconStyle:React.CSSProperties = {
 
 export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
+	// TODO: Reorder accounts (possibly through a reorder accounts dialog)
 	private accountEditDialog:PAccountEditDialog;
 	private accountCreationDialog:PAccountCreationDialog;
 	private accountClosingDialog:PAccountClosingDialog;

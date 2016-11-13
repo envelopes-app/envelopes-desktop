@@ -53,12 +53,12 @@ const BudgetSubContainerStyle = {
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	// TODO: Select/Unselect all categories
+	// TODO: Expand/Collapse all categories
 	// TODO: When editing budgeted values, show simple number instead of formatted numbers
 	// TODO: Commit values in budgeting cells when cell loses focus
 	// TODO: Budgeted column numbers should be disabled when the budgeted amount is zero.
 	// TODO: Activity column numbers should be disabled when there are is no activity
 	// TODO: In MoveMoneyDialog, category list does not appear when we select category field with mouse.
-	
 
 	private createCategoryDialog:dialogs.PCreateCategoryDialog;
 	private subCategoryEditDialog:dialogs.PSubCategoryEditDialog;

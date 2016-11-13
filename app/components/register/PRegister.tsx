@@ -47,6 +47,11 @@ const RegisterContainerStyle:React.CSSProperties = {
 
 export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
+	// TODO: Add check number to transaction dialog
+	// TODO: Save creation time in sortableIndex columns for transactions, and sort by them when sorting by date
+	// TODO: Delete transaction through delete button on register
+	// TODO: Clear/Unclear transaction through "C" button
+	
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
 	private transactionDialog:PTransactionDialog;

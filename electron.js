@@ -8,8 +8,7 @@ const { initializeWindowModule, finalizeWindowModule } = require('./electron-win
 
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+// Global reference of the window object.
 let mainWindow;
 
 const createWindow = () => {
