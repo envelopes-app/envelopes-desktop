@@ -16,10 +16,16 @@ export interface PTransactionsListProps {
 	transactions:Array<ITransactionObject>;
 }
 
-const TransactionsListContainer:React.CSSProperties = {
+const TransactionsContainer:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "column nowrap",
-	width: "100%"
+	width: "100%",
+	maxHeight: "200px"
+}
+
+const TransactionsListContainer:React.CSSProperties = {
+	flex: "1 1 100%",
+	overflowY: "scroll"
 }
 
 const HeaderRow:React.CSSProperties = {
@@ -134,11 +140,14 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 
 		var headerRow = this.getHeaderRow();
 		var transactionRows = this.getTransactionRows(this.props.transactions);
-		var allRows = [headerRow].concat(transactionRows);
+//		var allRows = [headerRow].concat(transactionRows);
 
 		return (
-			<div style={TransactionsListContainer}>
-				{allRows}
+			<div style={TransactionsContainer}>
+				{headerRow}
+				<div style={TransactionsListContainer}>
+					{transactionRows}
+				</div>
 			</div>
 		);		
 	}

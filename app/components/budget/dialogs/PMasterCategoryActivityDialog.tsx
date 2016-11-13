@@ -92,7 +92,7 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 			if(transaction.isTombstone == 0 && transaction.source != TransactionSources.Matched) {
 
 				var subCategory = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
-				if(subCategory.masterCategoryId == masterCategoryId) {
+				if(subCategory && subCategory.masterCategoryId == masterCategoryId) {
 
 					var account = entitiesCollection.accounts.getEntityById(transaction.accountId);
 					var accountName = account ? account.accountName : "";
@@ -116,6 +116,8 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 			}
 		});
 
+		// Sort the transactions by descending date
+		transactionObjects = _.orderBy(transactionObjects, ["date"], ["desc"]);
 		return transactionObjects;
 	}
 

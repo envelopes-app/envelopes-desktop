@@ -113,6 +113,8 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 			}
 		});
 
+		// Sort the transactions by descending date
+		transactionObjects = _.orderBy(transactionObjects, ["date"], ["desc"]);
 		return transactionObjects;
 	}
 
