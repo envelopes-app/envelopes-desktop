@@ -194,7 +194,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var activeAccount = this.getActiveAccount(this.props.applicationState);
 		var registerState = this.getRegisterStateForAccount(activeAccount);
 
-		_.forEach(registerState.registerTransactionObjectsArray, (registerTransactionObject)=>{
+		_.forEach(registerState.registerTransactionObjectsArray.getAllItems(), (registerTransactionObject)=>{
 
 			var entityId:string;
 			// Select the entityId based on the type of the object
@@ -209,6 +209,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				registerState.selectedTransactionsMap[entityId] = true;
 			}
 		});
+
+		this.updateRegisterState(registerState);
 	}
 
 	private unselectAllTransactions():void {
@@ -220,6 +222,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		// Simply reset the variables that we were using to keep track of selection
 		registerState.selectedTransactions = [];
 		registerState.selectedTransactionsMap = {};
+
+		this.updateRegisterState(registerState);
 	}
 
 	private editTransaction(registerTransactionObject:RegisterTransactionObject, focusOnField:string):void {
