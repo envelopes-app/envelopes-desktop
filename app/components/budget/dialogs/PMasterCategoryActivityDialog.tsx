@@ -7,12 +7,13 @@ import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'rea
 
 import { PTransactionsList } from './PTransactionsList';
 import { TransactionSources } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities/';
+import { DataFormatter, DateWithoutTime } from '../../../utilities/';
 import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PMasterCategoryActivityDialogProps {
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection
 }
 
@@ -103,7 +104,7 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 						entityId: transaction.entityId,
 						isTransaction: true,
 						account: accountName,
-						date: DateWithoutTime.createFromUTCTime(transaction.date).toISOString(),
+						date: transaction.date,
 						payee: payeeName,
 						category: subCategoryName,
 						memo: transaction.memo,
@@ -126,6 +127,7 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 				<Popover id="masterCategoryActivityDialog" style={PopoverStyle}>
 					<div style={TitleStyle}>{this.state.masterCategoryName}</div>
 					<PTransactionsList 
+						dataFormatter={this.props.dataFormatter}
 						showAccountColumn={true}
 						showCategoryColumn={true}
 						transactions={this.state.transactions}

@@ -7,12 +7,13 @@ import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { PTransactionsList } from './PTransactionsList';
 import { TransactionSources } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities/';
+import { DataFormatter, DateWithoutTime } from '../../../utilities/';
 import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PDefaultCategoryActivityDialogProps {
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection
 }
 
@@ -101,7 +102,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 					entityId: transaction.entityId,
 					isTransaction: true,
 					account: accountName,
-					date: DateWithoutTime.createFromUTCTime(transaction.date).toISOString(),
+					date: transaction.date,
 					payee: payeeName,
 					category: subCategoryName,
 					memo: transaction.memo,
@@ -123,6 +124,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 				<Popover id="defaultCategoryActivityDialog" style={PopoverStyle}>
 					<div style={TitleStyle}>{this.state.subCategoryName}</div>
 					<PTransactionsList 
+						dataFormatter={this.props.dataFormatter}
 						showAccountColumn={true}
 						showCategoryColumn={false}
 						transactions={this.state.transactions}

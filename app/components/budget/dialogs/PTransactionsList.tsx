@@ -5,10 +5,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
 import { ITransactionObject } from '../../../interfaces/objects';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PTransactionsListProps {
+	dataFormatter:DataFormatter;
 	showAccountColumn:boolean;
 	showCategoryColumn:boolean;
 	transactions:Array<ITransactionObject>;
@@ -106,18 +108,20 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 	private getTransactionRows(transactions:Array<ITransactionObject>):Array<JSX.Element> {
 
 		var transactionRows:Array<JSX.Element> = [];
-		
+		var dataFormatter = this.props.dataFormatter;
 		_.forEach(transactions, (transaction)=>{
 
+			var date = dataFormatter.formatDate(transaction.date);
+			var transactionAmount = dataFormatter.formatCurrency(transaction.amount);
 			var transactionCells:Array<JSX.Element> = [];
 			if(this.props.showAccountColumn)
 				transactionCells.push(<div key={transaction.entityId + '_1'} style={TransactionRowCell} title={transaction.account}>{transaction.account}</div>);
-			transactionCells.push(<div key={transaction.entityId + '_2'} style={TransactionRowCell} title={transaction.date}>{transaction.date}</div>);
+			transactionCells.push(<div key={transaction.entityId + '_2'} style={TransactionRowCell} title={date}>{date}</div>);
 			transactionCells.push(<div key={transaction.entityId + '_3'} style={TransactionRowCell} title={transaction.payee}>{transaction.payee}</div>);
 			if(this.props.showCategoryColumn)
 				transactionCells.push(<div key={transaction.entityId + '_4'} style={TransactionRowCell} title={transaction.category}>{transaction.category}</div>);
 			transactionCells.push(<div key={transaction.entityId + '_5'} style={TransactionRowCell} title={transaction.memo}>{transaction.memo}</div>);
-			transactionCells.push(<div key={transaction.entityId + '_6'} style={TransactionRowAmountCell} title={transaction.amount.toString()}>{transaction.amount.toString()}</div>);
+			transactionCells.push(<div key={transaction.entityId + '_6'} style={TransactionRowAmountCell} title={transactionAmount}>{transactionAmount}</div>);
 			transactionRows.push(
 				<div key={transaction.entityId} style={TransactionRow}>{transactionCells}</div>
 			);

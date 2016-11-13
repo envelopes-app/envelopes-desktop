@@ -477,16 +477,19 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<dialogs.PDefaultCategoryActivityDialog 
 					ref={(d)=> this.defaultCategoryActivityDialog = d} 
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 				/>
 
 				<dialogs.PDebtCategoryActivityDialog 
 					ref={(d)=> this.debtCategoryActivityDialog = d} 
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 				/>
 
 				<dialogs.PMasterCategoryActivityDialog 
 					ref={(d)=> this.masterCategoryActivityDialog = d} 
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 				/>
 			</div>

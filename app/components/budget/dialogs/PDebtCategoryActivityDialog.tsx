@@ -7,12 +7,13 @@ import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { PTransactionsList } from './PTransactionsList';
 import { TransactionSources } from '../../../constants';
-import { DateWithoutTime } from '../../../utilities/';
+import { DataFormatter, DateWithoutTime } from '../../../utilities/';
 import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PDebtCategoryActivityDialogProps {
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection
 }
 
@@ -96,7 +97,7 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 					entityId: transaction.entityId,
 					isTransaction: true,
 					account: null, // We can set this to null, as we are not displaying this 
-					date: DateWithoutTime.createFromUTCTime(transaction.date).toISOString(),
+					date: transaction.date,
 					payee: payeeName,
 					category: subCategoryName,
 					memo: transaction.memo,
@@ -124,6 +125,7 @@ export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryAc
 				<Popover id="debtCategoryActivityDialog" style={PopoverStyle}>
 					<div style={TitleStyle}>{this.state.subCategoryName}</div>
 					<PTransactionsList 
+						dataFormatter={this.props.dataFormatter}
 						showAccountColumn={false}
 						showCategoryColumn={true}
 						transactions={this.state.transactions}
