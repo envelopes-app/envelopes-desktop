@@ -211,81 +211,84 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 
 	public render() {
 
-		if(!this.state.masterCategory)
+		if(this.state.show) {
+			var isDebtPaymentMasterCategory = (this.state.masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory);
+			var element:JSX.Element;
+			if(this.state.validationState == "error") {
+				element = (
+					<FormGroup key="formgroup">
+						<FormControl type="text" componentClass="input" style={FormControlErrorStyle} 
+							value={this.state.masterCategoryName ? this.state.masterCategoryName : ""}
+							readOnly={isDebtPaymentMasterCategory} 
+							onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
+						/>
+						<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
+					</FormGroup>
+				);
+			}
+			else {
+				element = (
+					<FormGroup key="formgroup">
+						<FormControl type="text" componentClass="input" style={FormControlStyle} 
+							value={this.state.masterCategoryName ? this.state.masterCategoryName : ""} 
+							readOnly={isDebtPaymentMasterCategory} 
+							onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
+						/>
+					</FormGroup>
+				);
+			}
+
+			var buttonsContainer:JSX.Element;
+			if(isDebtPaymentMasterCategory) {
+				// Don't include the "Delete" button for the debt payment master category
+				buttonsContainer = (
+					<div key="buttonsContainer" className="buttons-container">
+						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+							<Glyphicon glyph="eye-open"/>&nbsp;Hide
+						</Button>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+						</Button>
+						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+							OK&nbsp;<Glyphicon glyph="ok-circle"/>
+						</Button>
+					</div>
+				);			
+			}
+			else {
+				buttonsContainer = (
+					<div key="buttonsContainer" className="buttons-container">
+						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+							<Glyphicon glyph="eye-open"/>&nbsp;Hide
+						</Button>
+						<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
+							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
+						</Button>
+						<div className="spacer" />
+						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+						</Button>
+						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+							OK&nbsp;<Glyphicon glyph="ok-circle"/>
+						</Button>
+					</div>
+				);			
+			}
+
+			return (
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="subCategoryEditDialog" style={PopoverStyle}>
+						{element}
+						<hr style={HRStyle} />
+						{buttonsContainer}
+					</Popover>
+				</Overlay>
+			);
+		}
+		else {
 			return <div />;
-
-		var isDebtPaymentMasterCategory = (this.state.masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory);
-		var element:JSX.Element;
-		if(this.state.validationState == "error") {
-			element = (
-				<FormGroup key="formgroup">
-					<FormControl type="text" componentClass="input" style={FormControlErrorStyle} 
-						value={this.state.masterCategoryName ? this.state.masterCategoryName : ""}
-						readOnly={isDebtPaymentMasterCategory} 
-						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
-					/>
-					<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
-				</FormGroup>
-			);
 		}
-		else {
-			element = (
-				<FormGroup key="formgroup">
-					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.masterCategoryName ? this.state.masterCategoryName : ""} 
-						readOnly={isDebtPaymentMasterCategory} 
-						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
-					/>
-				</FormGroup>
-			);
-		}
-
-		var buttonsContainer:JSX.Element;
-		if(isDebtPaymentMasterCategory) {
-			// Don't include the "Delete" button for the debt payment master category
-			buttonsContainer = (
-				<div key="buttonsContainer" className="buttons-container">
-					<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
-						<Glyphicon glyph="eye-open"/>&nbsp;Hide
-					</Button>
-					<div className="spacer" />
-					<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-						Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-					</Button>
-					<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-						OK&nbsp;<Glyphicon glyph="ok-circle"/>
-					</Button>
-				</div>
-			);			
-		}
-		else {
-			buttonsContainer = (
-				<div key="buttonsContainer" className="buttons-container">
-					<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
-						<Glyphicon glyph="eye-open"/>&nbsp;Hide
-					</Button>
-					<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
-						<Glyphicon glyph="ban-circle"/>&nbsp;Delete
-					</Button>
-					<div className="spacer" />
-					<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-						Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-					</Button>
-					<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-						OK&nbsp;<Glyphicon glyph="ok-circle"/>
-					</Button>
-				</div>
-			);			
-		}
-		return (
-			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="subCategoryEditDialog" style={PopoverStyle}>
-					{element}
-					<hr style={HRStyle} />
-					{buttonsContainer}
-				</Popover>
-			</Overlay>
-		);
 	}
 }

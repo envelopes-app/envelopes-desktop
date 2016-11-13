@@ -120,25 +120,30 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 
 	public render() {
 
-		return (
-			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCloseClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="defaultCategoryActivityDialog" style={PopoverStyle}>
-					<div style={TitleStyle}>{this.state.subCategoryName}</div>
-					<PTransactionsList 
-						dataFormatter={this.props.dataFormatter}
-						showAccountColumn={true}
-						showCategoryColumn={false}
-						transactions={this.state.transactions}
-					/>
-					<div className="buttons-container" style={{paddingTop:"10px"}}>
-						<div className="spacer" />
-						<Button className="dialog-primary-button" onClick={this.onCloseClick}>
-							Close&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
-					</div>
-				</Popover>
-			</Overlay>
-		);
+		if(this.state.show) {
+			return (
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.onCloseClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="defaultCategoryActivityDialog" style={PopoverStyle}>
+						<div style={TitleStyle}>{this.state.subCategoryName}</div>
+						<PTransactionsList 
+							dataFormatter={this.props.dataFormatter}
+							showAccountColumn={true}
+							showCategoryColumn={false}
+							transactions={this.state.transactions}
+						/>
+						<div className="buttons-container" style={{paddingTop:"10px"}}>
+							<div className="spacer" />
+							<Button className="dialog-primary-button" onClick={this.onCloseClick}>
+								Close&nbsp;<Glyphicon glyph="ok-circle"/>
+							</Button>
+						</div>
+					</Popover>
+				</Overlay>
+			);
+		}
+		else {
+			return <div />;
+		}
 	}
 }

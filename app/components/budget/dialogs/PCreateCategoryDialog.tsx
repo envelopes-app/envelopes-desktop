@@ -196,45 +196,50 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 
 	public render() {
 
-		var element:JSX.Element;
-		if(this.state.validationState == "error") {
-			element = (
-				<FormGroup key="formgroup">
-					<FormControl type="text" componentClass="input" style={FormControlErrorStyle} 
-						value={this.state.categoryName ? this.state.categoryName : ""} 
-						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
-					/>
-					<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
-				</FormGroup>
+		if(this.state.show) {
+			var element:JSX.Element;
+			if(this.state.validationState == "error") {
+				element = (
+					<FormGroup key="formgroup">
+						<FormControl type="text" componentClass="input" style={FormControlErrorStyle} 
+							value={this.state.categoryName ? this.state.categoryName : ""} 
+							onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
+						/>
+						<label style={ErrorMessageStyle}>{this.state.validationMessage}</label>
+					</FormGroup>
+				);
+			}
+			else {
+				element = (
+					<FormGroup key="formgroup">
+						<FormControl type="text" componentClass="input" style={FormControlStyle} 
+							onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
+							placeholder={this.state.placeholder}
+						/>
+					</FormGroup>
+				);
+			}
+
+			return (
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="createCategoryDialog" style={PopoverStyle}>
+						{element}
+						<hr style={HRStyle} />
+						<div className="buttons-container">
+							<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+							</Button>
+							<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+								OK&nbsp;<Glyphicon glyph="ok-circle"/>
+							</Button>
+						</div>
+					</Popover>
+				</Overlay>
 			);
 		}
 		else {
-			element = (
-				<FormGroup key="formgroup">
-					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						onChange={this.onChange} ref={(c)=>{this.ctrlCategoryName = c;}}	
-						placeholder={this.state.placeholder}
-					/>
-				</FormGroup>
-			);
+			return <div />;
 		}
-
-		return (
-			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="createCategoryDialog" style={PopoverStyle}>
-					{element}
-					<hr style={HRStyle} />
-					<div className="buttons-container">
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
-							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
-					</div>
-				</Popover>
-			</Overlay>
-		);
 	}
 }

@@ -9,9 +9,10 @@ import * as constants from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import * as objects from '../../../interfaces/objects';
 import { IEntitiesCollection } from '../../../interfaces/state';
-import { SimpleObjectMap } from '../../../utilities';
+import { DataFormatter, SimpleObjectMap } from '../../../utilities';
 
 export interface PCategorySelectorProps { 
+	dataFormatter:DataFormatter;
 	activeField:string;
 	selectorLabel:string;
 	selectorLabelPosition?:string;
@@ -165,6 +166,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 		var categoiresPopoverItem;
 		var categoiresPopoverItems = [];
+		var dataFormatter = this.props.dataFormatter;
 		
 		// Get the currently selected category so that we can highlight the corresponding item
 		var selectedCategory = selectedCategoryId ? _.find(this.props.categoriesList, {entityId: selectedCategoryId}) : null;
@@ -189,7 +191,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item-selected" 
 							id={category.entityId}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
-							<label className={availableAmountClassName}>{category.availableAmount}</label>
+							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
 						</div>
 					);
 				}
@@ -198,7 +200,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} className="categories-dropdown-list-item" 
 							id={category.entityId} onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
 							<label className="categories-dropdown-list-categoryname">{category.name}</label>
-							<label className={availableAmountClassName}>{category.availableAmount}</label>
+							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
 						</div>
 					);
 				}

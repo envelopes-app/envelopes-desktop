@@ -458,13 +458,15 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				/>
 
 				<dialogs.PMoveMoneyDialog 
-					ref={(d)=> this.moveMoneyDialog = d} 
+					ref={(d)=> this.moveMoneyDialog = d}
+					dataFormatter={this.state.dataFormatter} 
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>
 
 				<dialogs.PCoverOverspendingDialog 
 					ref={(d)=> this.coverOverspendingDialog = d} 
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
 				/>

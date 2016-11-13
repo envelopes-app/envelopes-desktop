@@ -130,36 +130,41 @@ export class PMonthSelectionDialog extends React.Component<PMonthSelectionDialog
 
 	public render() {
 
-		return (
-			<Overlay show={this.state.show} onHide={this.hide} placement={this.state.placement} 
-				rootClose={true} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="monthSelectionDialog" style={PopoverStyle}>
-					<div style={NavigationButtonsContainerStyle}>
-						<button className="month-navigation-button" onClick={this.handleNavigateBack}>
-							<Glyphicon glyph="circle-arrow-left"/>
-						</button>
-						<label style={YearNameLabelStyle}>{this.state.showingYear}</label>
-						<button className="month-navigation-button" onClick={this.handleNavigateForward}>
-							<Glyphicon glyph="circle-arrow-right"/>
-						</button>
-					</div>
-					<hr style={HRStyle}/>
-					<div style={MonthButtonsContainerStyle}>
-						<button className={this.getClassNameForMonthButton(1)} onClick={this.handleMonthSelection.bind(this, 1)}>Jan</button>
-						<button className={this.getClassNameForMonthButton(2)} onClick={this.handleMonthSelection.bind(this, 2)}>Feb</button>
-						<button className={this.getClassNameForMonthButton(3)} onClick={this.handleMonthSelection.bind(this, 3)}>Mar</button>
-						<button className={this.getClassNameForMonthButton(4)} onClick={this.handleMonthSelection.bind(this, 4)}>Apr</button>
-						<button className={this.getClassNameForMonthButton(5)} onClick={this.handleMonthSelection.bind(this, 5)}>May</button>
-						<button className={this.getClassNameForMonthButton(6)} onClick={this.handleMonthSelection.bind(this, 6)}>Jun</button>
-						<button className={this.getClassNameForMonthButton(7)} onClick={this.handleMonthSelection.bind(this, 7)}>Jul</button>
-						<button className={this.getClassNameForMonthButton(8)} onClick={this.handleMonthSelection.bind(this, 8)}>Aug</button>
-						<button className={this.getClassNameForMonthButton(9)} onClick={this.handleMonthSelection.bind(this, 9)}>Sep</button>
-						<button className={this.getClassNameForMonthButton(10)} onClick={this.handleMonthSelection.bind(this, 10)}>Oct</button>
-						<button className={this.getClassNameForMonthButton(11)} onClick={this.handleMonthSelection.bind(this, 11)}>Nov</button>
-						<button className={this.getClassNameForMonthButton(12)} onClick={this.handleMonthSelection.bind(this, 12)}>Dec</button>
-					</div>
-				</Popover>
-			</Overlay>
-		);
+		if(this.state.show) {
+			return (
+				<Overlay show={this.state.show} onHide={this.hide} placement={this.state.placement} 
+					rootClose={true} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="monthSelectionDialog" style={PopoverStyle}>
+						<div style={NavigationButtonsContainerStyle}>
+							<button className="month-navigation-button" onClick={this.handleNavigateBack}>
+								<Glyphicon glyph="circle-arrow-left"/>
+							</button>
+							<label style={YearNameLabelStyle}>{this.state.showingYear}</label>
+							<button className="month-navigation-button" onClick={this.handleNavigateForward}>
+								<Glyphicon glyph="circle-arrow-right"/>
+							</button>
+						</div>
+						<hr style={HRStyle}/>
+						<div style={MonthButtonsContainerStyle}>
+							<button className={this.getClassNameForMonthButton(1)} onClick={this.handleMonthSelection.bind(this, 1)}>Jan</button>
+							<button className={this.getClassNameForMonthButton(2)} onClick={this.handleMonthSelection.bind(this, 2)}>Feb</button>
+							<button className={this.getClassNameForMonthButton(3)} onClick={this.handleMonthSelection.bind(this, 3)}>Mar</button>
+							<button className={this.getClassNameForMonthButton(4)} onClick={this.handleMonthSelection.bind(this, 4)}>Apr</button>
+							<button className={this.getClassNameForMonthButton(5)} onClick={this.handleMonthSelection.bind(this, 5)}>May</button>
+							<button className={this.getClassNameForMonthButton(6)} onClick={this.handleMonthSelection.bind(this, 6)}>Jun</button>
+							<button className={this.getClassNameForMonthButton(7)} onClick={this.handleMonthSelection.bind(this, 7)}>Jul</button>
+							<button className={this.getClassNameForMonthButton(8)} onClick={this.handleMonthSelection.bind(this, 8)}>Aug</button>
+							<button className={this.getClassNameForMonthButton(9)} onClick={this.handleMonthSelection.bind(this, 9)}>Sep</button>
+							<button className={this.getClassNameForMonthButton(10)} onClick={this.handleMonthSelection.bind(this, 10)}>Oct</button>
+							<button className={this.getClassNameForMonthButton(11)} onClick={this.handleMonthSelection.bind(this, 11)}>Nov</button>
+							<button className={this.getClassNameForMonthButton(12)} onClick={this.handleMonthSelection.bind(this, 12)}>Dec</button>
+						</div>
+					</Popover>
+				</Overlay>
+			);
+		}
+		else {
+			return <div />;
+		}
 	}
 }

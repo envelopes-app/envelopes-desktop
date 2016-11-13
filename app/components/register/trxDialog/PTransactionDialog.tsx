@@ -664,7 +664,8 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 								selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
 								payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
 								setManuallyEnteredPayeeName={this.setManuallyEnteredPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
-							<PCategorySelector ref={(c) => this.categorySelector = c} selectorLabel="Category"
+							<PCategorySelector ref={(c) => this.categorySelector = c} 
+								dataFormatter={this.props.dataFormatter} selectorLabel="Category"
 								activeField={this.state.activeField} setActiveField={this.setActiveField}
 								selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
 								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 

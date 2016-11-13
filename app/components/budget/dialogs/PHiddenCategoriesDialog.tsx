@@ -202,22 +202,27 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 
 	public render() {
 
-		var categoryItems = this.getHiddenCategoryItems();
+		if(this.state.show) {
+			var categoryItems = this.getHiddenCategoryItems();
 
-		return (
-			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.hide} target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="hiddenCategoriesDialog" style={PopoverStyle} title="Click to unhide a category">
-					<li className="hidden-categories-list">
-						{categoryItems}
-					</li>
-					<div className="buttons-container">
-						<Button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
-							Show all hidden categories
-						</Button>
-					</div>
-				</Popover>
-			</Overlay>
-		);
+			return (
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.hide} target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="hiddenCategoriesDialog" style={PopoverStyle} title="Click to unhide a category">
+						<li className="hidden-categories-list">
+							{categoryItems}
+						</li>
+						<div className="buttons-container">
+							<Button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
+								Show all hidden categories
+							</Button>
+						</div>
+					</Popover>
+				</Overlay>
+			);
+		}
+		else {
+			return <div />;
+		}
 	}
 }

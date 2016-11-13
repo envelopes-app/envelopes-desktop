@@ -6,11 +6,12 @@ import { Button, Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Ove
 
 import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { DialogUtilities, DateWithoutTime, FocusManager } from '../../../utilities/';
+import { DataFormatter, DialogUtilities, DateWithoutTime, FocusManager } from '../../../utilities/';
 import { PCategorySelector } from '../../register/trxDialog/PCategorySelector';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
 export interface PCoverOverspendingDialogProps {
+	dataFormatter:DataFormatter;
 	entitiesCollection:IEntitiesCollection
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -245,33 +246,39 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 
 	public render() {
 
-		var categoriesList = this.categoriesList;
+		if(this.state.show) {
+			var categoriesList = this.categoriesList;
 
-		return (
-			<Overlay show={this.state.show} placement={this.state.placement} 
-				rootClose={true} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
-				target={()=> ReactDOM.findDOMNode(this.state.target)}>
-				<Popover id="coverOverspendingDialog" style={PopoverStyle}>
-					<Form>
-						<PCategorySelector ref={(c) => this.categorySelector = c}  activeField={this.state.activeField}
-							selectorLabel="Cover this overspending with:" selectorLabelPosition="top"
-							selectedCategoryId={this.state.fromSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
-							categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
-							setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
-					</Form>
-					<div className="buttons-container">
-						<div className="spacer" />
-						<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
-							onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
-							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b}
-							onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}>
-							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
-					</div>
-				</Popover>
-			</Overlay>
-		);
+			return (
+				<Overlay show={this.state.show} placement={this.state.placement} 
+					rootClose={true} onHide={this.onCancelClick} onEntered={this.onDialogEntered} 
+					target={()=> ReactDOM.findDOMNode(this.state.target)}>
+					<Popover id="coverOverspendingDialog" style={PopoverStyle}>
+						<Form>
+							<PCategorySelector ref={(c) => this.categorySelector = c}  
+								dataFormatter={this.props.dataFormatter} activeField={this.state.activeField}
+								selectorLabel="Cover this overspending with:" selectorLabelPosition="top"
+								selectedCategoryId={this.state.fromSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
+								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
+								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
+						</Form>
+						<div className="buttons-container">
+							<div className="spacer" />
+							<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
+								onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
+								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
+							</Button>
+							<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b}
+								onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}>
+								OK&nbsp;<Glyphicon glyph="ok-circle"/>
+							</Button>
+						</div>
+					</Popover>
+				</Overlay>
+			);
+		}
+		else {
+			return <div />;
+		}
 	}
 }
