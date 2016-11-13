@@ -1,1 +1,1 @@
-/// <reference path="locals/websql/index.d.ts" />
+/// <reference path="./websql/index.d.ts" />
