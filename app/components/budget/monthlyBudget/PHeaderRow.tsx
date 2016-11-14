@@ -3,7 +3,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-export interface PHeaderRowProps { }
+export interface PHeaderRowProps { 
+	selectAllCategories:()=>void;
+	unselectAllCategories:()=>void;
+}
 
 const HeaderRowContainerStyle:React.CSSProperties = {
 	height: "25px",
@@ -47,11 +50,25 @@ const LableStyle:React.CSSProperties = {
 
 export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 
+	constructor(props:PHeaderRowProps) {
+        super(props);
+		this.onChange = this.onChange.bind(this);
+	}
+
+	private onChange(event:React.FormEvent<any>):void {
+		
+		var element = event.target as HTMLInputElement;
+		if(element.checked)
+			this.props.selectAllCategories();
+		else
+			this.props.unselectAllCategories();
+	}
+	
 	public render() {
     	return (
 			<div style={HeaderRowContainerStyle}>
 				<div style={SelectionColumnStyle}>
-					<input type="checkbox" />
+					<input type="checkbox" onChange={this.onChange} />
 				</div>
 				<div style={CategoryLabelContainerStyle}>
 					<label style={LableStyle}>CATEGORY</label>

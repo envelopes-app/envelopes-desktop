@@ -23,6 +23,8 @@ export interface PMonthlyBudgetProps {
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	// Local UI state updation functions
+	selectAllCategories:()=>void;
+	unselectAllCategories:()=>void;
 	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
@@ -232,7 +234,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
     	return (
 			<div style={MonthlyBudgetContainerStyle}>
-				<PHeaderRow />
+				<PHeaderRow 
+					selectAllCategories={this.props.selectAllCategories}
+					unselectAllCategories={this.props.unselectAllCategories}
+				/>
 				<div style={MonthlyBudgetSubContainerStyle}>
 					{masterCategoryRows}
 				</div>

@@ -10,6 +10,7 @@ import { PMonthlyBudget } from './monthlyBudget/PMonthlyBudget';
 import { PInspectorContainer } from './inspectors/PInspectorContainer';
 
 import * as dialogs from './dialogs';
+import { InternalCategories } from '../../constants';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
 import { IDataFormat } from '../../interfaces/formatters';
@@ -52,7 +53,6 @@ const BudgetSubContainerStyle = {
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
-	// TODO: Select/Unselect all categories
 	// TODO: Expand/Collapse all categories
 	// TODO: Activity column numbers should be disabled when there are is no activity
 	// TODO: In MoveMoneyDialog, category list does not appear when we select category field with mouse.
@@ -70,6 +70,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	constructor(props:PBudgetProps) {
         super(props);
 		this.setSelectedMonth = this.setSelectedMonth.bind(this); 
+		this.selectAllCategories = this.selectAllCategories.bind(this);
+		this.unselectAllCategories = this.unselectAllCategories.bind(this);
 		this.selectSubCategory = this.selectSubCategory.bind(this);
 		this.unselectSubCategory = this.unselectSubCategory.bind(this);
 		this.selectMasterCategory = this.selectMasterCategory.bind(this);
@@ -171,10 +173,43 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		return allSelected;
 	}
 
-	private shouldAllCategoriesBeSelected():boolean {
+	private selectAllCategories():void {
 
-		var allSelected:boolean = true;
-		return allSelected;
+		var state = Object.assign({}, this.state) as PBudgetState;
+		state.editingSubCategory = null;
+		state.selectedSubCategories = [];
+		state.selectedSubCategoriesMap = {};
+		state.selectedMasterCategoriesMap = {};
+
+		_.forEach(this.props.entitiesCollection.masterCategories.getAllItems(), (masterCategory)=>{
+			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && 
+				(!masterCategory.internalName || masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory)
+			) {
+				state.selectedMasterCategoriesMap[masterCategory.entityId] = true;
+			}
+		});
+
+		_.forEach(this.props.entitiesCollection.subCategories.getAllItems(), (subCategory)=>{
+			if(subCategory.isTombstone == 0 && subCategory.isHidden == 0 && 
+				!subCategory.internalName &&
+				state.selectedMasterCategoriesMap[subCategory.masterCategoryId] == true
+			) {
+				state.selectedSubCategories.push(subCategory.entityId);
+				state.selectedSubCategoriesMap[subCategory.entityId] = true;
+			}
+		});
+
+		this.setState(state);
+	}
+
+	private unselectAllCategories():void {
+
+		var state = Object.assign({}, this.state) as PBudgetState;
+		state.editingSubCategory = null;
+		state.selectedSubCategories = [];
+		state.selectedSubCategoriesMap = {};
+		state.selectedMasterCategoriesMap = {};
+		this.setState(state);
 	}
 
 	private selectMasterCategory(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean):void {
@@ -232,7 +267,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectNextSubCategoryForEditing():void {
 
-		debugger;
 		var state = Object.assign({}, this.state) as PBudgetState;
 		// Get the sorted list of subcategories
 		var subCategoryIds = this.getSortedCategoryIdsList();
@@ -423,6 +457,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectedSubCategories={this.state.selectedSubCategories}
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
 						selectedMasterCategoriesMap={this.state.selectedMasterCategoriesMap}
+						selectAllCategories={this.selectAllCategories}
+						unselectAllCategories={this.unselectAllCategories}
 						selectSubCategory={this.selectSubCategory}
 						unselectSubCategory={this.unselectSubCategory}
 						selectMasterCategory={this.selectMasterCategory}
