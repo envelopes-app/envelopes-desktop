@@ -78,10 +78,20 @@ export class AccountHelper {
 						this.getCalculationInvalidationQuery(budgetId, null, changedEntity)
 					);
 
-					// Create a "transfer" payee entity for the new account
-					queriesList.push(
-						this.getTransferPayeeCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue())
-					);
+					// Check if we are being passed a transfer payee entity in the changed entities for this account.
+					// If we are not being passed one, then create a transfer payee entity for this account.
+					var transferPayee = null;
+					var transferPayeeName = "Transfer : " + changedEntity.accountName;
+
+					if(changedEntities.payees && changedEntities.payees.length > 0) {
+						transferPayee = _.find(changedEntities.payees, { accountId: changedEntity.entityId, name: transferPayeeName });
+					} 
+
+					if(!transferPayee) {
+						queriesList.push(
+							this.getTransferPayeeCreationQuery(budgetId, changedEntity, budgetKnowledge.getNextValue())
+						);
+					}
 
 					// Check if we are being passed a starting balance transaction entity in the changed entities.
 					// If we are not being passed one, then create a "starting balance" transaction entity for this account.
@@ -102,9 +112,18 @@ export class AccountHelper {
 					// Also queue monthly subcategory budget calculations for the created debt category
 					var isAssetAccount:boolean = AccountTypes.isAssetAccount(changedEntity.accountType);
 					if (changedEntity.onBudget && !isAssetAccount) {
-						queriesList = queriesList.concat(
-							this.getDebtSubCategoryCreationQueries(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
-						);
+
+						// Before creating a debt category, make sure that one is not being passed to us
+						var debtSubCategory = null;
+						if(changedEntities.subCategories && changedEntities.subCategories.length > 0) {
+							debtSubCategory = _.find(changedEntities.subCategories, { accountId: changedEntity.entityId, name: changedEntity.accountName });
+						} 
+
+						if(!debtSubCategory) {
+							queriesList = queriesList.concat(
+								this.getDebtSubCategoryCreationQueries(budgetId, changedEntity, budgetKnowledge.getNextValue(), originalEntities.masterCategories.getDebtPaymentMasterCategory())
+							);
+						}
 					}
 				}
 			});
