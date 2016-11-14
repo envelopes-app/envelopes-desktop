@@ -53,7 +53,7 @@ export class PModuleButton extends React.Component<PModuleButtonProps, {hoverSta
 
   	public render() {
 
-		var moduleButtonContainerStyle = _.assign({}, ModuleButtonContainerStyle);
+		var moduleButtonContainerStyle = Object.assign({}, ModuleButtonContainerStyle);
 
 		var colorValue:string;
 		if(this.props.selected == true)

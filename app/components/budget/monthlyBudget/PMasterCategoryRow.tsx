@@ -193,19 +193,19 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 	}
 
 	private handleMouseEnter() {
-		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		var state = Object.assign({}, this.state) as PMasterCategoryRowState;
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
-		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		var state = Object.assign({}, this.state) as PMasterCategoryRowState;
 		state.hoverState = false;
 		this.setState(state);
 	}
 
 	private onExpandCollapseGlyphClick():void {
-		var state = _.assign({}, this.state) as PMasterCategoryRowState;
+		var state = Object.assign({}, this.state) as PMasterCategoryRowState;
 		state.expanded = !state.expanded;
 		this.setState(state);
 	}
@@ -314,7 +314,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		if(!isSelected)
 			isSelected = false;
 
-		var masterCategoryRowContainerStyle = _.assign({}, MasterCategoryRowContainerStyle);
+		var masterCategoryRowContainerStyle = Object.assign({}, MasterCategoryRowContainerStyle);
 		if(isSelected) {
 			masterCategoryRowContainerStyle["color"] = "#FFFFFF";
 			masterCategoryRowContainerStyle["backgroundColor"] = "#005A6E";

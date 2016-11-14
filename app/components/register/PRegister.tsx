@@ -144,7 +144,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 	private updateRegisterState(registerState:IRegisterState):void {
 
-		var state = _.assign({}, this.state) as PRegisterState;
+		var state = Object.assign({}, this.state) as PRegisterState;
 		state.registersState[registerState.accountId] = registerState;
 		this.setState(state);
 	}
@@ -265,7 +265,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		if(transaction.cleared != ClearedFlag.Reconciled) {
 
 			// Clear, or unclear the transaction, and send it for persistence
-			var updatedTransaction = _.assign({}, transaction) as budgetEntities.ITransaction;
+			var updatedTransaction = Object.assign({}, transaction) as budgetEntities.ITransaction;
 			if(updatedTransaction.cleared == ClearedFlag.Uncleared)
 				updatedTransaction.cleared = ClearedFlag.Cleared;
 			else if(updatedTransaction.cleared == ClearedFlag.Cleared)
@@ -609,7 +609,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var registerTransactionObjectsArray = registerState.registerTransactionObjectsArray;
 		// Update the registerTransactionObjectsArray
 		this.updateRegisterTransactionObjectsArray(registerTransactionObjectsArray, registerState, nextProps.applicationState.entitiesCollection);
-		var state = _.assign({}, this.state) as PRegisterState;
+		var state = Object.assign({}, this.state) as PRegisterState;
 		state.registersState[registerState.accountId] = registerState;
 
 		// If the dataFormat in the active budget has changed, then recreate the dataFormatter.

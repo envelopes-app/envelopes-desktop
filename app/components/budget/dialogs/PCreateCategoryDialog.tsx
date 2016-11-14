@@ -96,7 +96,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 	private onChange(event:React.FormEvent<any>):void { 
 
 		var updatedCategoryName = (event.target as HTMLInputElement).value;
-		var state = _.assign({}, this.state) as PCreateCategoryDialogState;
+		var state = Object.assign({}, this.state) as PCreateCategoryDialogState;
 		state.categoryName = updatedCategoryName;
 		this.setState(state);
 	}
@@ -109,7 +109,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 	// If it is for creating a subcategory, this would be the id for the parent master category.
 	public show(masterCategoryId:string, target:HTMLElement, placement:string = "bottom"):void {
 
-		var state = _.assign({}, this.state) as PCreateCategoryDialogState;
+		var state = Object.assign({}, this.state) as PCreateCategoryDialogState;
 		state.show = true;
 		state.target = target;
 		state.placement = placement;
@@ -121,7 +121,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 	}
 
 	public hide():void {
-		var state = _.assign({}, this.state) as PCreateCategoryDialogState;
+		var state = Object.assign({}, this.state) as PCreateCategoryDialogState;
 		state.show = false;
 		state.validationState = null;
 		state.validationMessage = null;
@@ -154,7 +154,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 			}
 			else {
 				// Set the validation state for the form control
-				var state = _.assign({}, this.state) as PCreateCategoryDialogState;
+				var state = Object.assign({}, this.state) as PCreateCategoryDialogState;
 				state.validationState = "error";
 				state.validationMessage = "This category name already exists.";  
 				this.setState(state);
@@ -181,7 +181,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 			}
 			else {
 				// Set the validation state for the form control
-				var state = _.assign({}, this.state) as PCreateCategoryDialogState;
+				var state = Object.assign({}, this.state) as PCreateCategoryDialogState;
 				state.validationState = "error";
 				state.validationMessage = "This category name already exists.";  
 				this.setState(state);

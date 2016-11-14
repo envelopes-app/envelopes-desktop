@@ -18,7 +18,7 @@ export class PFlagColumnHeader extends React.Component<PFlagColumnHeaderProps, {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, PFlagColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = Object.assign({}, PFlagColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
     	return (
 			<div className="register-header-cell" style={columnHeaderStyle}>

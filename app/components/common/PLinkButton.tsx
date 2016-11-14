@@ -60,14 +60,14 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 
 	private handleMouseEnter() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = false;
 		this.setState(state);
 	}
@@ -76,11 +76,11 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 
 		var style:any;
 		if(this.props.enabled == false)
-			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDisabledStyle);
+			style = Object.assign({}, PLinkButtonCommonStyle, PLinkButtonDisabledStyle);
 		else if(this.state.hoverState) 
-			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonHoverStyle);
+			style = Object.assign({}, PLinkButtonCommonStyle, PLinkButtonHoverStyle);
 		else
-			style = _.assign({}, PLinkButtonCommonStyle, PLinkButtonDefaultStyle);
+			style = Object.assign({}, PLinkButtonCommonStyle, PLinkButtonDefaultStyle);
 
 		var buttonContents:Array<JSX.Element> = [];
 

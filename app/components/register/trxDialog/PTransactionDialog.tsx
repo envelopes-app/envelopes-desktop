@@ -390,31 +390,31 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	}
 
 	private setSelectedAccountId(accountId:string, callback:()=>any = null):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.accountId = accountId;
 		this.setState(state, callback);
 	}
 
 	private setSelectedDate(date:DateWithoutTime, callback:()=>any = null):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.date = date;
 		this.setState(state, callback);
 	}
 
 	private setSelectedFrequency(frequency:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.frequency = frequency;
 		this.setState(state);
 	}
 
 	private setSelectedPayeeId(payeeId:string, callback:()=>any = null):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.payeeId = payeeId;
 		this.setState(state, callback);
 	}
 
 	private setManuallyEnteredPayeeName(payeeName:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.manuallyEnteredPayeeName = payeeName;
 		// When the user starts manually typing in a payeeName, clear the payeeId value
 		state.payeeId = null;
@@ -422,7 +422,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	}
 
 	private setSelectedCategoryId(subCategoryId:string, clearManuallyEnteredCategoryName:boolean = false, callback:()=>any = null):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.subCategoryId = subCategoryId;
 		if(clearManuallyEnteredCategoryName)
 			state.manuallyEnteredCategoryName = null;
@@ -430,7 +430,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	}
 
 	private setManuallyEnteredCategoryName(categoryName:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.manuallyEnteredCategoryName = categoryName;
 		// When the user starts manually typing in a categoryName, clear the categoryId value
 		state.subCategoryId = null;
@@ -438,13 +438,13 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	}
 
 	private setMemo(memo:string):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.memo = memo;
 		this.setState(state);
 	}
 
 	private setAmount(inflowAmount:number, outflowAmount:number):void {
-		var state = _.assign({}, this.state) as PTransactionDialogState;
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.inflowAmount = inflowAmount;
 		state.outflowAmount = outflowAmount;
 		this.setState(state);

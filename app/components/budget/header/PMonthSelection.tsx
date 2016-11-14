@@ -93,14 +93,14 @@ export class PMonthSelection extends React.Component<PMonthSelectionProps, PMont
   
 	private handleMouseEnter() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = false;
 		this.setState(state);
 	}

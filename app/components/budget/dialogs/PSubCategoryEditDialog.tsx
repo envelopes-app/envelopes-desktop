@@ -107,7 +107,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
 		if(subCategory) {
 
-			var state = _.assign({}, this.state) as PSubCategoryEditDialogState;
+			var state = Object.assign({}, this.state) as PSubCategoryEditDialogState;
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
@@ -120,7 +120,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 	}
 
 	public hide():void {
-		var state = _.assign({}, this.state) as PSubCategoryEditDialogState;
+		var state = Object.assign({}, this.state) as PSubCategoryEditDialogState;
 		state.show = false;
 		state.subCategory = null;
 		state.subCategoryName = null;
@@ -132,7 +132,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 	private onChange(event:React.FormEvent<any>):void { 
 
 		var updatedCategoryName = (event.target as HTMLInputElement).value;
-		var state = _.assign({}, this.state) as PSubCategoryEditDialogState;
+		var state = Object.assign({}, this.state) as PSubCategoryEditDialogState;
 		state.subCategoryName = updatedCategoryName;
 		this.setState(state);
 	}
@@ -151,7 +151,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 			});
 		
 			if(index == -1) {
-				var updatedSubCategory = _.assign({}, subCategory) as budgetEntities.ISubCategory;
+				var updatedSubCategory = Object.assign({}, subCategory) as budgetEntities.ISubCategory;
 				// Set the category name and update the entity
 				updatedSubCategory.name = updatedSubCategoryName;
 				var updatedEntities:ISimpleEntitiesCollection = {
@@ -163,7 +163,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 			}
 			else {
 				// Set the validation state for the form control
-				var state = _.assign({}, this.state) as PSubCategoryEditDialogState;
+				var state = Object.assign({}, this.state) as PSubCategoryEditDialogState;
 				state.validationState = "error";
 				state.validationMessage = "This category name already exists.";  
 				this.setState(state);
@@ -184,7 +184,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 
 		// Get the category entity that we are currently editing
 		var subCategory = this.state.subCategory;
-		var updatedSubCategory = _.assign({}, subCategory) as budgetEntities.ISubCategory;
+		var updatedSubCategory = Object.assign({}, subCategory) as budgetEntities.ISubCategory;
 		// Set the hidden flag and update the entity
 		updatedSubCategory.isHidden = 1;
 		var updatedEntities:ISimpleEntitiesCollection = {
@@ -199,7 +199,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 
 		// Get the category entity that we are currently editing
 		var subCategory = this.state.subCategory;
-		var updatedSubCategory = _.assign({}, subCategory) as budgetEntities.ISubCategory;
+		var updatedSubCategory = Object.assign({}, subCategory) as budgetEntities.ISubCategory;
 		// Set the tombstone flag and update the entity
 		updatedSubCategory.isTombstone = 1;
 		var updatedEntities:ISimpleEntitiesCollection = {

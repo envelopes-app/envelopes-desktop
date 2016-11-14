@@ -126,7 +126,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	// *******************************************************************************************************
 	private selectSubCategory(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean):void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
 			state.selectedSubCategories = [];
 			state.selectedSubCategoriesMap = {};
@@ -148,7 +148,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private unselectSubCategory(subCategory:budgetEntities.ISubCategory):void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		// Mark the passed subCategoryId as unselected
 		var index = _.findIndex(state.selectedSubCategories, subCategory.entityId);
 		state.editingSubCategory = null;
@@ -182,7 +182,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectMasterCategory(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean):void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
 			state.editingSubCategory = null;
 			state.selectedSubCategories = [];
@@ -205,7 +205,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private unselectMasterCategory(masterCategory:budgetEntities.IMasterCategory):void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		// Get all the subcategories for this master category and set them as unselected
 		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
@@ -223,7 +223,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectSubCategoryForEditing(subCategoryId:string):void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		state.editingSubCategory = subCategoryId;
 		state.selectedSubCategories = [subCategoryId];
 		state.selectedSubCategoriesMap = {subCategoryId:true};
@@ -233,7 +233,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectNextSubCategoryForEditing():void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		// Get the sorted list of subcategories
 		var subCategoryIds = this.getSortedCategoryIdsList();
 		// If we don't currently have a subcategory being edited, then set the first category
@@ -262,7 +262,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectPreviousSubCategoryForEditing():void {
 
-		var state = _.assign({}, this.state) as PBudgetState;
+		var state = Object.assign({}, this.state) as PBudgetState;
 		// Get the sorted list of subcategories
 		var subCategoryIds = this.getSortedCategoryIdsList();
 		// If we don't currently have a subcategory being edited, then set the first category
@@ -381,7 +381,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				var dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
 				var dataFormatter = new DataFormatter(dataFormat);
 
-				var state = _.assign({}, this.state) as PBudgetState;
+				var state = Object.assign({}, this.state) as PBudgetState;
 				state.dataFormat = activeBudget.dataFormat;
 				state.dataFormatter = dataFormatter;
 				this.setState(state);

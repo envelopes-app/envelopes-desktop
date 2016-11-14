@@ -123,7 +123,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 	public show(account:IAccount, target:HTMLElement, placement:string = "right"):void {
 
-		var state = _.assign({}, this.state) as PAccountEditDialogState;
+		var state = Object.assign({}, this.state) as PAccountEditDialogState;
 		state.show = true;
 		state.target = target;
 		state.placement = placement;
@@ -135,7 +135,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 	}
 
 	public hide():void {
-		var state = _.assign({}, this.state) as PAccountEditDialogState;
+		var state = Object.assign({}, this.state) as PAccountEditDialogState;
 		state.show = false;
 		this.setState(state);
 	}
@@ -172,7 +172,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		// If the account's current balance is zero, we can close it immediately
 		if(account.clearedBalance + account.unclearedBalance == 0) {
 			// Set the closed flag on the account and send it for update
-			var updatedAccount = _.assign({}, account) as IAccount;
+			var updatedAccount = Object.assign({}, account) as IAccount;
 			updatedAccount.closed = 1;
 			this.props.updateEntities({
 				accounts: [updatedAccount]
@@ -191,7 +191,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 		var account = this.state.account;
 		// Set the tombstone flag on the account and send it for update
-		var updatedAccount = _.assign({}, account) as IAccount;
+		var updatedAccount = Object.assign({}, account) as IAccount;
 		updatedAccount.isTombstone = 1;
 		this.props.updateEntities({
 			accounts: [updatedAccount]
@@ -205,7 +205,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 
 		var account = this.state.account;
 		// Set the closed flag on the account to false and send it for update
-		var updatedAccount = _.assign({}, account) as IAccount;
+		var updatedAccount = Object.assign({}, account) as IAccount;
 		updatedAccount.closed = 0;
 		this.props.updateEntities({
 			accounts: [updatedAccount]

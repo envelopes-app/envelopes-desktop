@@ -106,7 +106,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 		var masterCategory = this.props.entitiesCollection.masterCategories.getEntityById(masterCategoryId);
 		if(masterCategory) {
 
-			var state = _.assign({}, this.state) as PMasterCategoryEditDialogState;
+			var state = Object.assign({}, this.state) as PMasterCategoryEditDialogState;
 			state.show = true;
 			state.target = target;
 			state.placement = placement;
@@ -119,7 +119,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 	}
 
 	public hide():void {
-		var state = _.assign({}, this.state) as PMasterCategoryEditDialogState;
+		var state = Object.assign({}, this.state) as PMasterCategoryEditDialogState;
 		state.show = false;
 		state.masterCategory = null;
 		state.masterCategoryName = null;
@@ -131,7 +131,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 	private onChange(event:React.FormEvent<any>):void { 
 
 		var updatedCategoryName = (event.target as HTMLInputElement).value;
-		var state = _.assign({}, this.state) as PMasterCategoryEditDialogState;
+		var state = Object.assign({}, this.state) as PMasterCategoryEditDialogState;
 		state.masterCategoryName = updatedCategoryName;
 		this.setState(state);
 	}
@@ -150,7 +150,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 			});
 		
 			if(index == -1) {
-				var updatedMasterCategory = _.assign({}, masterCategory) as budgetEntities.IMasterCategory;
+				var updatedMasterCategory = Object.assign({}, masterCategory) as budgetEntities.IMasterCategory;
 				// Set the category name and update the entity
 				updatedMasterCategory.name = updatedMasterCategoryName;
 				var updatedEntities:ISimpleEntitiesCollection = {
@@ -162,7 +162,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 			}
 			else {
 				// Set the validation state for the form control
-				var state = _.assign({}, this.state) as PMasterCategoryEditDialogState;
+				var state = Object.assign({}, this.state) as PMasterCategoryEditDialogState;
 				state.validationState = "error";
 				state.validationMessage = "This category name already exists.";  
 				this.setState(state);
@@ -183,7 +183,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 
 		// Get the category entity that we are currently editing
 		var masterCategory = this.state.masterCategory;
-		var updatedMasterCategory = _.assign({}, masterCategory) as budgetEntities.IMasterCategory;
+		var updatedMasterCategory = Object.assign({}, masterCategory) as budgetEntities.IMasterCategory;
 		// Set the hidden flag and update the entity
 		updatedMasterCategory.isHidden = 1;
 		var updatedEntities:ISimpleEntitiesCollection = {
@@ -198,7 +198,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 
 		// Get the category entity that we are currently editing
 		var masterCategory = this.state.masterCategory;
-		var updatedMasterCategory = _.assign({}, masterCategory) as budgetEntities.IMasterCategory;
+		var updatedMasterCategory = Object.assign({}, masterCategory) as budgetEntities.IMasterCategory;
 		// Set the tombstone flag and update the entity
 		updatedMasterCategory.isTombstone = 1;
 		var updatedEntities:ISimpleEntitiesCollection = {

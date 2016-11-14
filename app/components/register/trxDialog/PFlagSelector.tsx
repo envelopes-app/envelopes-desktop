@@ -45,7 +45,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 	public showPopover():void {
 		// If the popover is already showing then we dont need to do anything
 		if(this.state.showPopover == false) {
-			var state:any = _.assign({}, this.state);
+			var state:any = Object.assign({}, this.state);
 			state.showPopover = true;
 			this.setState(state);
 		}
@@ -54,7 +54,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 	public hidePopover():void {
 		// If the popover is already hidden then we dont need to do anything
 		if(this.state.showPopover == true) {
-			var state:any = _.assign({}, this.state);
+			var state:any = Object.assign({}, this.state);
 			state.showPopover = false;
 			this.setState(state);
 		}
@@ -92,7 +92,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 
 			// Get the color corresponding to the index and set it as the selected flag
 			var newFlagColor = this.flagColors[index];
-			var state:any = _.assign({}, this.state);
+			var state:any = Object.assign({}, this.state);
 			state.selectedFlag = newFlagColor;
 			this.setState(state);
 		}
@@ -100,7 +100,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 		else if(event.keyCode == 27) {
 			// If the popover is showing, then hide it.
 			if(this.state.showPopover == true) {
-				var state:any = _.assign({}, this.state);
+				var state:any = Object.assign({}, this.state);
 				state.showPopover = false;
 				this.setState(state);
 			}
@@ -117,7 +117,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 	}
 
 	private setSelectedFlag(flag:string) {
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		if(state.selectedFlag != flag) {
 			// Update the selected flag in the state
 			state.selectedFlag = flag;

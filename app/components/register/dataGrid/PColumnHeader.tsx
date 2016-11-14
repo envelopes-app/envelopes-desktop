@@ -53,7 +53,7 @@ export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, ColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = Object.assign({}, ColumnHeaderStyle, {lineHeight: this.props.height + 'px'});
 
 		if(this.props.fieldName == this.props.sortByField) {
 

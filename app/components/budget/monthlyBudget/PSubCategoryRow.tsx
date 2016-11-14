@@ -7,6 +7,7 @@ import { FormControl } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { PBalanceValue } from './PBalanceValue';
+import { PActivityValue } from './PActivityValue';
 import { InternalCategories, SubCategoryType } from '../../../constants';
 import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -104,12 +105,12 @@ const BudgetedValueStyle:React.CSSProperties = {
 	outlineStyle: "none"
 }
 
-const BudgetedValueSelectedStyle:React.CSSProperties = _.assign({}, BudgetedValueStyle, {
+const BudgetedValueSelectedStyle:React.CSSProperties = Object.assign({}, BudgetedValueStyle, {
 	color: "#FFFFFF",
 	backgroundColor: "#005A6E"
 });
 
-const BudgetedValueHoverStyle:React.CSSProperties = _.assign({}, BudgetedValueStyle, {
+const BudgetedValueHoverStyle:React.CSSProperties = Object.assign({}, BudgetedValueStyle, {
 	color: "#4D717A",
 	backgroundColor: "#FFFFFF"
 });
@@ -134,7 +135,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
-		this.onActivityClick = this.onActivityClick.bind(this);
 		this.onBalanceValueClick = this.onBalanceValueClick.bind(this);
 		this.state = {hoverState:false, expanded:true};
 	}
@@ -293,13 +293,13 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	}
 
 	private handleMouseEnter() {
-		var state = _.assign({}, this.state) as PSubCategoryRowState;
+		var state = Object.assign({}, this.state) as PSubCategoryRowState;
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
-		var state = _.assign({}, this.state) as PSubCategoryRowState;
+		var state = Object.assign({}, this.state) as PSubCategoryRowState;
 		state.hoverState = false;
 		this.setState(state);
 	}
@@ -307,15 +307,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	private onCategoryNameClick(event:React.MouseEvent<any>):void {
 		var subCategory = this.props.subCategory;
 		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
-	}
-
-	private onActivityClick(event:React.MouseEvent<any>):void {
-
-		var subCategory = this.props.subCategory;
-		if(subCategory.type == SubCategoryType.Debt)
-			this.props.showDebtSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
-		else
-			this.props.showDefaultSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
 	}
 
 	private onBalanceValueClick(event:React.MouseEvent<any>):void {
@@ -405,7 +396,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		if(!isSelected)
 			isSelected = false;
 
-		var subCategoryRowContainerStyle = _.assign({}, SubCategoryRowContainerStyle);
+		var subCategoryRowContainerStyle = Object.assign({}, SubCategoryRowContainerStyle);
 		var budgetedValueStyle = BudgetedValueStyle;
 		var valueColumnStyle = ValueColumnStyle;
 
@@ -433,9 +424,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		// Get the JSX for the budgeted value
 		var budgetedValueNode = this.getCategoryBudgetValueNode(subCategory, isUncategorizedCategory, monthlySubCategoryBudget, valueColumnStyle, budgetedValueStyle);
 
-		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
-
-
     	return (
 			<div style={subCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
 					onClick={this.onClick} onKeyDown={this.onKeyDown}>
@@ -444,10 +432,14 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 				</div>
 				{categoryNameNode}
 				{budgetedValueNode}
-				<div style={ValueColumnStyle}>
-					<label className="budget-row-activity" ref={(a)=> this.activityLabel = a} 
-						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
-				</div>
+				<PActivityValue 
+					dataFormatter={dataFormatter}
+					subCategory={subCategory}
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					entitiesCollection={this.props.entitiesCollection}
+					showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
+					showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
+				/>
 				<div style={ValueColumnStyle}>
 					<PBalanceValue 
 						ref={(b)=> this.balanceValue = b}

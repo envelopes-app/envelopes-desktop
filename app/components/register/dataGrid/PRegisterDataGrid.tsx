@@ -82,7 +82,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 	}
 
 	public updateComponentDimensions() {
-		var state = _.assign({}, this.state) as PRegisterDataGridState;
+		var state = Object.assign({}, this.state) as PRegisterDataGridState;
 		var div = ReactDOM.findDOMNode(this.dataGridContainer);
 		state.componentWidth = div.clientWidth;
 		state.componentHeight = div.clientHeight;

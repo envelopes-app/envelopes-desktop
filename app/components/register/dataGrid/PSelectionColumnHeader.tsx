@@ -30,7 +30,7 @@ export class PSelectionColumnHeader extends React.Component<PSelectionColumnHead
 
 	public render() {
 
-		var columnHeaderStyle = _.assign({}, {lineHeight: this.props.height + 'px'});
+		var columnHeaderStyle = Object.assign({}, {lineHeight: this.props.height + 'px'});
     	return (
 			<div className="register-header-cell" style={columnHeaderStyle}>
 				<input style={{marginTop:"0px"}} type='checkbox' onChange={this.onChange} />

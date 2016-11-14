@@ -78,14 +78,14 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 
 	private handleMouseEnter() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
 
-		var state:any = _.assign({}, this.state);
+		var state:any = Object.assign({}, this.state);
 		state.hoverState = false;
 		this.setState(state);
 	}
@@ -100,7 +100,7 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 		var hoverState = (this.state as any).hoverState;
 
 		// Based on the hoverState, set the backgroundColor value for the buttons
-		var accountButtonContainerStyle = _.assign({}, AccountButtonContainerStyle); 
+		var accountButtonContainerStyle = Object.assign({}, AccountButtonContainerStyle); 
 		if(this.props.selected == true)
 			accountButtonContainerStyle["backgroundColor"] = "#00596F";
 		else {

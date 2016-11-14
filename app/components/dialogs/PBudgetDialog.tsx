@@ -192,7 +192,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 	private onBudgetNameChange(event:React.FormEvent<any>):void { 
 
 		var updatedBudgetName = (event.target as HTMLInputElement).value;
-		var state = _.assign({}, this.state) as PBudgetDialogState;
+		var state = Object.assign({}, this.state) as PBudgetDialogState;
 		state.budgetEntity.budgetName = updatedBudgetName;
 		this.setState(state);
 	}

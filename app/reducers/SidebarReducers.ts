@@ -15,7 +15,7 @@ export class SidebarReducers {
 				selectedAccountId: null
 			};
 		else
-			newValue = _.assign({}, previousValue);
+			newValue = Object.assign({}, previousValue);
 
 		switch(action.type) {
 
