@@ -118,8 +118,8 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 			var currentMonth = this.props.currentMonth;
             var monthlyBudgetsArray = this.props.entitiesCollection.monthlyBudgets;
 
-			var monthlBudgetForCurrentMonth = monthlyBudgetsArray.getMonthlyBudgetByMonth(currentMonth.toISOString());
-            var availableToBudgetInCurrentMonth = monthlBudgetForCurrentMonth.availableToBudget;
+			var monthlyBudgetForCurrentMonth = monthlyBudgetsArray.getMonthlyBudgetByMonth(currentMonth.toISOString());
+            var availableToBudgetInCurrentMonth = monthlyBudgetForCurrentMonth.availableToBudget;
             
 			// Calculate the amount that we have budgeted in future months
             var budgetedInFutureMonths = _.reduce(monthlyBudgetsArray.getAllItems(), (totalBudgeted:number, monthlyBudget:budgetEntities.IMonthlyBudget)=>{
@@ -151,25 +151,27 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 
 			var monthlyBudgetForCurrentMonth = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(currentMonth.toISOString());
 			var monthlyBudgetForPrevMonth = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(prevMonth.toISOString());
-			var availableToBudget = monthlyBudgetForCurrentMonth.availableToBudget;
+			var currentMonthAvailableToBudget = monthlyBudgetForCurrentMonth.availableToBudget;
+			var previousMonthAvailableToBudget = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.availableToBudget : 0;
 
 			// The background color needs to be set to red if the ATB value is negative.
 			var atbContainerStyle:any = ATBContainerStyle;
-			if(availableToBudget < 0) {
+			if(currentMonthAvailableToBudget < 0) {
 				atbContainerStyle = Object.assign({}, ATBContainerStyle);
 				atbContainerStyle.backgroundColor = "#D33C2D";
 			}
 
-			var fundsForCurrentMonth = monthlyBudgetForCurrentMonth.immediateIncome;
+			var fundsForCurrentMonth = previousMonthAvailableToBudget + monthlyBudgetForCurrentMonth.immediateIncome + monthlyBudgetForCurrentMonth.additionalToBeBudgeted;
 			var overspentInPrevMonth = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.overSpent : 0;
 			var budgetedInCurrentMonth = monthlyBudgetForCurrentMonth.budgeted;
 			var budgetedInFuture = this.getBudgetedInFuture();
+			var leftToBudget = currentMonthAvailableToBudget - budgetedInFuture;
 
 			return (
 				<div style={MonthSummaryContainerStyle}>
 					<div style={MonthSummaryInnerStyle}>
 						<div style={atbContainerStyle} ref={(d)=> this.atbContainer = d}>
-							<button style={ATBNumberStyle} onClick={this.handleAvailableToBudgetClick}>{dataFormatter.formatCurrency(availableToBudget)}</button>
+							<button style={ATBNumberStyle} onClick={this.handleAvailableToBudgetClick}>{dataFormatter.formatCurrency(leftToBudget)}</button>
 							<label style={ATBLabelStyle}>To be Budgeted</label>
 						</div>
 						<div style={SummaryNumbersContainerStyle}>
