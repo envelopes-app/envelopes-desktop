@@ -27,13 +27,6 @@ export class YNABDataImporter {
 		transactions: []
 	};
 
-	constructor(activeBudget:IBudget, existingEntitiesCollection:IEntitiesCollection, dataFormatter:DataFormatter) {
-
-		this.activeBudget = activeBudget;
-		this.existingEntitiesCollection = existingEntitiesCollection;
-		this.dataFormatter = dataFormatter;
-	}
-
 	// Maps to keep track of entities (by entityId)
 	private accountsMapById:SimpleObjectMap<budgetEntities.IAccount> = {};
 	private payeesMapById:SimpleObjectMap<budgetEntities.IPayee> = {};
@@ -54,6 +47,38 @@ export class YNABDataImporter {
 	private maxTransactionDate = DateWithoutTime.createForCurrentMonth();
 	private minBudgetedMonth = DateWithoutTime.createForCurrentMonth();
 	private maxBudgetedMonth = DateWithoutTime.createForCurrentMonth();
+
+	private masterCategoriesSortableIndex:number;
+	private subCategoriesSortableIndex:SimpleObjectMap<number>;
+
+	constructor(activeBudget:IBudget, existingEntitiesCollection:IEntitiesCollection, dataFormatter:DataFormatter) {
+
+		this.activeBudget = activeBudget;
+		this.existingEntitiesCollection = existingEntitiesCollection;
+		this.dataFormatter = dataFormatter;
+
+		this.masterCategoriesSortableIndex = existingEntitiesCollection.masterCategories.getSortableIndexForNewMasterCategoryInsertion(); 
+		this.subCategoriesSortableIndex = {}; 
+		_.forEach(existingEntitiesCollection.masterCategories.getAllItems(), (masterCategory)=>{
+			this.subCategoriesSortableIndex[masterCategory.entityId] = existingEntitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategory.entityId);
+		});
+	}
+
+	private getNextSortableIndexForMasterCategory():number {
+		let nextSortableIndex = this.masterCategoriesSortableIndex;
+		this.masterCategoriesSortableIndex += 10000;
+		return nextSortableIndex;
+	}	
+
+	private getNextSortableIndexForSubCategory(parentMasterCategoryId:string):number {
+
+		let nextSortableIndex = 0;
+		if(this.subCategoriesSortableIndex[parentMasterCategoryId] != null && this.subCategoriesSortableIndex[parentMasterCategoryId] != undefined)
+			nextSortableIndex = this.subCategoriesSortableIndex[parentMasterCategoryId];
+
+		this.subCategoriesSortableIndex[parentMasterCategoryId] = nextSortableIndex + 10000;
+		return nextSortableIndex;
+	}
 
 	public buildEntitiesList(budgetRows:Array<any>, registerRows:Array<any>, accountsList:Array<IImportedAccountObject>):void {
 
@@ -301,7 +326,7 @@ export class YNABDataImporter {
 					// Create a master category entity and add to the updatedEntities collection
 					masterCategoryEntity = EntityFactory.createNewMasterCategory();
 					masterCategoryEntity.name = masterCategoryName;
-					masterCategoryEntity.sortableIndex = this.existingEntitiesCollection.masterCategories.getSortableIndexForNewMasterCategoryInsertion();
+					masterCategoryEntity.sortableIndex = this.getNextSortableIndexForMasterCategory();
 					this.updatedEntities.masterCategories.push(masterCategoryEntity);
 				}
 
@@ -321,7 +346,7 @@ export class YNABDataImporter {
 					subCategoryEntity = EntityFactory.createNewSubCategory();
 					subCategoryEntity.name = subCategoryName;
 					subCategoryEntity.masterCategoryId = masterCategoryEntity.entityId;
-					subCategoryEntity.sortableIndex = this.existingEntitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategoryEntity.entityId);
+					subCategoryEntity.sortableIndex = this.getNextSortableIndexForSubCategory(masterCategoryEntity.entityId);
 					this.updatedEntities.subCategories.push(subCategoryEntity);
 				}
 
