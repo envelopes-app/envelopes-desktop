@@ -54,9 +54,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	// TODO: Select/Unselect all categories
 	// TODO: Expand/Collapse all categories
-	// TODO: When editing budgeted values, show simple number instead of formatted numbers
-	// TODO: Commit values in budgeting cells when cell loses focus
-	// TODO: Budgeted column numbers should be disabled when the budgeted amount is zero.
 	// TODO: Activity column numbers should be disabled when there are is no activity
 	// TODO: In MoveMoneyDialog, category list does not appear when we select category field with mouse.
 
@@ -221,8 +218,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
-	private selectSubCategoryForEditing(subCategoryId:string):void {
+	private selectSubCategoryForEditing(subCategory:budgetEntities.ISubCategory):void {
 
+		var subCategoryId = subCategory.entityId;
 		var state = Object.assign({}, this.state) as PBudgetState;
 		state.editingSubCategory = subCategoryId;
 		state.selectedSubCategories = [subCategoryId];
@@ -234,6 +232,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	private selectNextSubCategoryForEditing():void {
 
+		debugger;
 		var state = Object.assign({}, this.state) as PBudgetState;
 		// Get the sorted list of subcategories
 		var subCategoryIds = this.getSortedCategoryIdsList();
@@ -243,7 +242,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			state.editingSubCategory = subCategoryIds[0];
 		else {
 			// Find the index of the subcategory currently being edited
-			var index = _.findIndex(subCategoryIds, state.editingSubCategory);
+			var index = _.indexOf(subCategoryIds, state.editingSubCategory);
 			// if the index is for the last item in the list, then set it to zero.
 			// Otherwise increment it to point to next subcategory
 			if(index == subCategoryIds.length - 1)
@@ -254,7 +253,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			var subCategoryId = subCategoryIds[index];
 			state.editingSubCategory = subCategoryId;
 			state.selectedSubCategories = [subCategoryId];
-			state.selectedSubCategoriesMap = {subCategoryId:true};
+			state.selectedSubCategoriesMap = {};
+			state.selectedSubCategoriesMap[subCategoryId] = true;
 			state.selectedMasterCategoriesMap = {};
 		}
 
@@ -272,7 +272,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			state.editingSubCategory = subCategoryIds[0];
 		else {
 			// Find the index of the subcategory currently being edited
-			var index = _.findIndex(subCategoryIds, state.editingSubCategory);
+			var index = _.indexOf(subCategoryIds, state.editingSubCategory);
 			// if the index is for the first item in the list, then set it to the last item.
 			// Otherwise decrement it to point to previous subcategory
 			if(index == 0)
@@ -283,7 +283,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			var subCategoryId = subCategoryIds[index];
 			state.editingSubCategory = subCategoryId;
 			state.selectedSubCategories = [subCategoryId];
-			state.selectedSubCategoriesMap = {subCategoryId:true};
+			state.selectedSubCategoriesMap = {};
+			state.selectedSubCategoriesMap[subCategoryId] = true;
 			state.selectedMasterCategoriesMap = {};
 		}
 

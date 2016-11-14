@@ -15,7 +15,8 @@ export interface PSubCategoryBudgetedValueProps {
 	isEditing:boolean;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	selectSubCategoryForEditing:(subCategoryId:string)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
+	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -81,7 +82,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 	private onClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
-		this.props.selectSubCategoryForEditing(subCategory.entityId);
+		this.props.selectSubCategoryForEditing(subCategory);
 	}
 
 	private onBudgetValueChange(event:React.FormEvent<any>):void {
@@ -95,6 +96,22 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 	}
 
 	private onBlur(event:React.FocusEvent<HTMLInputElement>):void {
+		this.commitValue();
+		this.props.selectSubCategory(this.props.subCategory, true, false);
+	}
+
+	public discardValue():void {
+
+		// Get the budgeted value from monthlySubCategoryBudget entity and replace it in the state
+		let monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		let budgetedValue = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
+		// Convert this from milli dollars to dollars
+		var state = Object.assign({}, this.state);
+		state.budgetedValue = (budgetedValue / 1000).toString();;
+		this.setState(state);
+	}
+
+	public commitValue():void {
 
 		if(this.props.isEditing) {
 			var budgetedValueString = this.state.budgetedValue;
@@ -127,6 +144,8 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 			var state = Object.assign({}, this.state);
 			state.budgetedValue = (budgetedValue / 1000).toString();;
 			this.setState(state);
+
+			this.selectValue();
 		}
 	} 
 
@@ -176,7 +195,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 				return (
 					<div style={budgetedContainerStyle}>
 						<input ref={(a)=> this.budgetedValueInput = a} type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgetedValue)} 
-							onClick={this.onClick} onChange={this.onBudgetValueChange}/>
+							onClick={this.onClick} readOnly={true}/>
 					</div>
 				);
 			}

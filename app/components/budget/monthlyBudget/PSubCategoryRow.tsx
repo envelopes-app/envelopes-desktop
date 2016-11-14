@@ -24,7 +24,7 @@ export interface PSubCategoryRowProps {
 
 	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
-	selectSubCategoryForEditing:(subCategoryId:string)=>void;
+	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
@@ -203,6 +203,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
+		debugger;
 		// We want the user to move the selection up and down the budget screen using the arrow
 		// keys, and also the tab/shift-tab combination.
 		// Also the escape key can be used to cancel the editing state.
@@ -227,7 +228,14 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 		else if(event.keyCode == 27) {
 			// Excape Key
-			this.props.selectSubCategoryForEditing(null);
+			this.budgetedValue.discardValue();
+			this.props.selectSubCategory(this.props.subCategory, true, false);
+			event.stopPropagation();
+		}
+		else if(event.keyCode == 13) {
+			// Enter Key
+			this.budgetedValue.commitValue();
+			this.props.selectSubCategory(this.props.subCategory, true, false);
 			event.stopPropagation();
 		}
 	}
@@ -333,6 +341,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					isEditing={isEditing}
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					selectSubCategory={this.props.selectSubCategory}
 					selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
 					updateEntities={this.props.updateEntities}
 				/>

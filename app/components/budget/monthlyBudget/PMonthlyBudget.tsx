@@ -27,7 +27,7 @@ export interface PMonthlyBudgetProps {
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
-	selectSubCategoryForEditing:(subCategoryId:string)=>void;
+	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
