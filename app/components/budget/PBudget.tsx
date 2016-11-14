@@ -226,7 +226,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var state = Object.assign({}, this.state) as PBudgetState;
 		state.editingSubCategory = subCategoryId;
 		state.selectedSubCategories = [subCategoryId];
-		state.selectedSubCategoriesMap = {subCategoryId:true};
+		state.selectedSubCategoriesMap = {};
+		state.selectedSubCategoriesMap[subCategoryId] = true;
 		state.selectedMasterCategoriesMap = {};
 		this.setState(state);
 	}

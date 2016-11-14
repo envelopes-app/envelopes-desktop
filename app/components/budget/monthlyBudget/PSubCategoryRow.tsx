@@ -6,8 +6,9 @@ import * as ReactDOM from 'react-dom';
 import { FormControl } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
-import { PBalanceValue } from './PBalanceValue';
+import { PBudgetedValue } from './PBudgetedValue';
 import { PActivityValue } from './PActivityValue';
+import { PBalanceValue } from './PBalanceValue';
 import { InternalCategories, SubCategoryType } from '../../../constants';
 import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -72,54 +73,10 @@ const CategoryNameColumnStyle:React.CSSProperties = {
 	paddingLeft: "20px"
 }
 
-const ValueColumnStyle:React.CSSProperties = {
-	flex: "0 0 auto",
-	width: "100px",
-	textAlign: "right",
-	paddingRight: "8px"
-}
-
-const ValueColumnHoverStyle:React.CSSProperties = Object.assign({}, ValueColumnStyle, {
-	borderStyle: "solid",
-	borderWidth: "2px",
-	borderRadius: "4px",
-	borderColor: "#009CC2",
-	backgroundColor: "#FFFFFF"
-});
-
-const BudgetedValueStyle:React.CSSProperties = {
-	height: "22px",
-	width: "100%",
-	fontSize: "14px",
-	fontWeight: "normal",
-	marginBottom: "0px",
-	textAlign: "right",
-	borderStyle: "none",
-	borderWidth: "0px",
-	paddingLeft: "0px",
-	paddingRight: "0px",
-	paddingTop: "0px",
-	paddingBottom: "0px",
-	color: "#4D717A",
-	backgroundColor: "#FFFFFF",
-	outlineStyle: "none"
-}
-
-const BudgetedValueSelectedStyle:React.CSSProperties = Object.assign({}, BudgetedValueStyle, {
-	color: "#FFFFFF",
-	backgroundColor: "#005A6E"
-});
-
-const BudgetedValueHoverStyle:React.CSSProperties = Object.assign({}, BudgetedValueStyle, {
-	color: "#4D717A",
-	backgroundColor: "#FFFFFF"
-});
-
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
-	private activityLabel:HTMLLabelElement;
-	private budgetedValueInput:HTMLInputElement;
+	private budgetedValue:PBudgetedValue;
 	private balanceValue:PBalanceValue;
 	private moveCategoryUpButton:PButtonWithGlyph;
 	private moveCategoryDownButton:PButtonWithGlyph;
@@ -127,7 +84,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	constructor(props:any) {
         super(props);
 		this.onClick = this.onClick.bind(this);
-		this.onBudgetValueChange = this.onBudgetValueChange.bind(this);
 		this.onMoveCategoryUpClick = this.onMoveCategoryUpClick.bind(this);
 		this.onMoveCategoryDownClick = this.onMoveCategoryDownClick.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
@@ -149,8 +105,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 			if(!isSelected) {
 				this.props.selectSubCategory(subCategory, true, targetNodeName == "input");
-				var inputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
-				inputNode.select();
 			}
 		}
 	}
@@ -247,20 +201,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 			this.props.selectSubCategory(subCategory, false, false);
 	}
 
-	private onBudgetValueChange():void {
-
-		// Get the value from the budget value input		
-		var budgetedValueInputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
-		var budgetedValueString = budgetedValueInputNode.value;
-		var budgetedValue = this.props.dataFormatter.unformatCurrency(budgetedValueString);
-		// Update the monthlySubCategoryBudget entity with this new value
-		var monthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
-		monthlySubCategoryBudget.budgeted = budgetedValue;
-		this.props.updateEntities({
-			monthlySubCategoryBudgets: [monthlySubCategoryBudget]
-		});
-	}
-
 	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
 		// We want the user to move the selection up and down the budget screen using the arrow
@@ -352,34 +292,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 	}
 
-	private getCategoryBudgetValueNode(subCategory:budgetEntities.ISubCategory, 
-				isUncategorizedCategory:boolean, 
-				monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget,
-				valueColumnStyle:any,
-				budgetedValueStyle:any
-			):JSX.Element {
-
-		if(isUncategorizedCategory) {
-			return (
-				<div style={valueColumnStyle}>
-					<input type="text" style={budgetedValueStyle} value="-" 
-						ref={(i)=> this.budgetedValueInput = i} readOnly={true} />
-				</div>
-			);
-		}
-		else {
-			var dataFormatter = this.props.dataFormatter;
-			var budgeted = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
-			return (
-				<div style={valueColumnStyle}>
-					<input type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgeted)} 
-						ref={(i)=> this.budgetedValueInput = i}
-						onClick={this.onClick} onChange={this.onBudgetValueChange} />
-				</div>
-			);
-		}
-	}
-
 	public render() {
 
 		var dataFormatter = this.props.dataFormatter;
@@ -392,37 +304,19 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		// Determine the styles for the row based on the state 
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
 		var isSelected = selectedSubCategoriesMap[subCategory.entityId];
-		var isEditing = (this.props.editingSubCategory && subCategory.entityId == this.props.editingSubCategory);
+		var isHovering = this.state.hoverState;
+		var isEditing = (this.props.editingSubCategory != null && subCategory.entityId == this.props.editingSubCategory);
 		if(!isSelected)
 			isSelected = false;
 
 		var subCategoryRowContainerStyle = Object.assign({}, SubCategoryRowContainerStyle);
-		var budgetedValueStyle = BudgetedValueStyle;
-		var valueColumnStyle = ValueColumnStyle;
-
 		if(isSelected) {
 			subCategoryRowContainerStyle["color"] = "#FFFFFF";
 			subCategoryRowContainerStyle["backgroundColor"] = "#005A6E";
-			budgetedValueStyle = BudgetedValueSelectedStyle;
-		}
-
-		if(this.state.hoverState || isEditing) {
-			valueColumnStyle = ValueColumnHoverStyle;
-			budgetedValueStyle = BudgetedValueHoverStyle;
-		}
-		else {
-			if(isSelected)
-				budgetedValueStyle = BudgetedValueSelectedStyle;
-			else {
-				valueColumnStyle = ValueColumnStyle;
-				budgetedValueStyle = BudgetedValueStyle;
-			}
 		}
 
 		// Get the JSX for category name 
 		var categoryNameNode = this.getCategoryNameNode(subCategory, isUncategorizedCategory);
-		// Get the JSX for the budgeted value
-		var budgetedValueNode = this.getCategoryBudgetValueNode(subCategory, isUncategorizedCategory, monthlySubCategoryBudget, valueColumnStyle, budgetedValueStyle);
 
     	return (
 			<div style={subCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
@@ -431,22 +325,33 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				{categoryNameNode}
-				{budgetedValueNode}
-				<PActivityValue 
+				<PBudgetedValue 
+					ref={(b)=> this.budgetedValue = b}
 					dataFormatter={dataFormatter}
+					isSelected={isSelected}
+					isHovering={isHovering}
+					isEditing={isEditing}
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
-					entitiesCollection={this.props.entitiesCollection}
+					selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
+					updateEntities={this.props.updateEntities}
+				/>
+
+				<PActivityValue 
+					dataFormatter={dataFormatter}
+					isSelected={isSelected}
+					subCategory={subCategory}
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
 					showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
 					showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
 				/>
-				<div style={ValueColumnStyle}>
-					<PBalanceValue 
-						ref={(b)=> this.balanceValue = b}
-						dataFormatter={dataFormatter}
-						monthlySubCategoryBudget={monthlySubCategoryBudget}
-						onClick={this.onBalanceValueClick} />
-				</div>
+
+				<PBalanceValue 
+					ref={(b)=> this.balanceValue = b}
+					dataFormatter={dataFormatter}
+					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					onClick={this.onBalanceValueClick}
+				/>
 			</div>
 		);
   	}

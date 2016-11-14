@@ -10,10 +10,23 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 export interface PBalanceValueProps {
 	dataFormatter:DataFormatter;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	onClick?:(event:React.MouseEvent<any>)=>void;
+	onClick?:(event:React.FormEvent<any>)=>void;
+}
+
+const BalanceContainerStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+	width: "100px",
+	textAlign: "right",
+	paddingRight: "8px"
 }
 
 export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
+
+	private balanceValueContainer:HTMLDivElement;
+
+	constructor(props:PBalanceValueProps) {
+        super(props);
+	}
 
 	public render() {
 
@@ -55,14 +68,18 @@ export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
 			}
 		}
 
-		if(!this.props.onClick) {
+		if(this.props.onClick) {
 			return (
-				<Badge className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</Badge>
+				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
+					<Badge className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</Badge>
+				</div>
 			);
 		}
 		else {
 			return (
-				<Badge className={className} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</Badge>
+				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
+					<Badge className={className}>{dataFormatter.formatCurrency(balance)}</Badge>
+				</div>
 			);
 		}
   	}

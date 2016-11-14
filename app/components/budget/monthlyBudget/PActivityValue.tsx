@@ -5,14 +5,13 @@ import * as ReactDOM from 'react-dom';
 
 import { DataFormatter } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
-import { IEntitiesCollection } from '../../../interfaces/state';
 import { SubCategoryType } from '../../../constants';
 
 export interface PActivityValueProps {
 	dataFormatter:DataFormatter;
+	isSelected:boolean;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	entitiesCollection:IEntitiesCollection;
 	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 }
@@ -30,12 +29,18 @@ const ActivityContainerStyle:React.CSSProperties = {
 }
 
 const ActivityValueStyle:React.CSSProperties = {
+	color: "#333333",
 	fontSize: "14px",
 	fontWeight: "normal",
 	marginBottom: "0px"
 } 
 
+const ActivityValueSelectedStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
+	color: "#FFFFFF"
+}); 
+
 const ActivityValueHoverStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
+	color: "#009CC2",
 	textDecoration: "underline",
 	cursor: "pointer"
 }); 
@@ -90,6 +95,8 @@ export class PActivityValue extends React.Component<PActivityValueProps, PActivi
 		var activityValueStyle = ActivityValueStyle;
 		if(this.state.hoverState && this.state.hasActivity)
 			activityValueStyle = ActivityValueHoverStyle;
+		else if(this.props.isSelected)
+			activityValueStyle = ActivityValueSelectedStyle;
 
 		return (
 			<div style={ActivityContainerStyle} onClick={this.onActivityClick}
