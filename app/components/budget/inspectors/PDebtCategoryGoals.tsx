@@ -344,7 +344,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 					<div style={GoalsContainerStyle}>
 						{header}
 						<PLinkButton 
-							text="Create a goal" glyphName="glyphicon-plus-sign" 
+							text="Create a goal" glyphNames={["glyphicon-plus-sign"]} 
 							clickHandler={this.handleCreateGoalClicked} 
 						/>
 					</div>

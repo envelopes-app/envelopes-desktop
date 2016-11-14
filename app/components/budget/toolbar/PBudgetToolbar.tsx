@@ -62,17 +62,17 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 				<div style={BudgetToolbarStyle}>
 					<PLinkButton 
 						ref={(c)=>{this.expandAllButton = c;}}
-						text="Expand All" glyphName="glyphicon-triangle-bottom" 
+						tooltip="Expand all categories" glyphNames={["glyphicon-list", "glyphicon-arrow-down"]} 
 						clickHandler={this.onExpandAllButtonClick} />
 
 					<PLinkButton 
 						ref={(c)=>{this.collapseAllButton = c;}}
-						text="Collapse All" glyphName="glyphicon-triangle-right" 
+						tooltip="Collapse all categories" glyphNames={["glyphicon-list", "glyphicon-arrow-up"]} 
 						clickHandler={this.onCollapseAllButtonClick} />
 
 					<PLinkButton 
 						ref={(c)=>{this.addCategoryButton = c;}}
-						text="Add Category Group" glyphName="glyphicon-plus-sign" 
+						tooltip="Add Category Group" text="Add Category Group" glyphNames={["glyphicon-plus-sign"]} 
 						clickHandler={this.onAddCategoryButtonClick} />
 				</div>
 			</div>

@@ -68,14 +68,14 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 				<div style={RegisterToolbarStyle}>
 					<PLinkButton 
 						text="Add a transaction" 
-						glyphName="glyphicon-plus-sign" 
+						glyphNames={["glyphicon-plus-sign"]} 
 						clickHandler={this.props.onAddTransactionSelected} 
 					/>
 					<PLinkButton 
 						ref={(b)=> this.editButton = b }
 						enabled={selectedTransactionsCount > 0} 
 						text={editButtonText} 
-						glyphName="glyphicon-edit" 
+						glyphNames={["glyphicon-edit"]} 
 						showDropDown={true} 
 						clickHandler={this.showEditMenuDialog} 
 					/>
