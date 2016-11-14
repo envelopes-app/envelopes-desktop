@@ -74,6 +74,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 		this.handleKeyDownOnOkButton = this.handleKeyDownOnOkButton.bind(this);
 		this.handleKeyDownOnCancelButton = this.handleKeyDownOnCancelButton.bind(this);
 		this.onAmountChange = this.onAmountChange.bind(this);
+		this.onAmountToMoveFocus = this.onAmountToMoveFocus.bind(this);
 		this.onOkClick = this.onOkClick.bind(this);
 		this.onCancelClick = this.onCancelClick.bind(this);
 		this.state = {
@@ -131,6 +132,10 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 
 	private onDialogEntered():void {
 		// Set the focus on to the amount field
+		this.setFocusOnAmountField();
+	}
+
+	private onAmountToMoveFocus(event:React.FocusEvent<any>):void {
 		this.setFocusOnAmountField();
 	}
 
@@ -298,7 +303,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 								<Col sm={9}>
 									<FormControl type="text" componentClass="input" style={FormControlStyle} 
 										ref={(c)=>{this.ctrlAmountToMove = c;}} value={dataFormatter.formatCurrency(this.state.amountToMove)} 
-										onChange={this.onAmountChange}	
+										onChange={this.onAmountChange} onFocus={this.onAmountToMoveFocus}
 									/>
 								</Col>
 							</FormGroup>
@@ -308,7 +313,8 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 								selectedCategoryId={this.state.toSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
 								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} 
-								handleTabPressed={this.handleTabPressedOnCategorySelector} />
+								handleTabPressed={this.handleTabPressedOnCategorySelector}
+								setActiveField={this.setActiveField} />
 						</Form>
 						<hr style={HRStyle} />
 						<div className="buttons-container">

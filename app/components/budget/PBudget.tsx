@@ -55,7 +55,6 @@ const BudgetSubContainerStyle = {
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	// TODO: Activity column numbers should be disabled when there are is no activity
-	// TODO: In MoveMoneyDialog, category list does not appear when we select category field with mouse.
 
 	private createCategoryDialog:dialogs.PCreateCategoryDialog;
 	private subCategoryEditDialog:dialogs.PSubCategoryEditDialog;
