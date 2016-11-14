@@ -22,6 +22,7 @@ export interface PMonthlyBudgetProps {
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
+	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	// Local UI state updation functions
 	selectAllCategories:()=>void;
 	unselectAllCategories:()=>void;
@@ -32,6 +33,8 @@ export interface PMonthlyBudgetProps {
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
+	expandMasterCategory:(masterCategoryId:string)=>void;
+	collapseMasterCategory:(masterCategoryId:string)=>void;
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
@@ -118,16 +121,19 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					subCategories={subCategories} 
 					monthlySubCategoryBudgets={monthlySubCategoryBudgets}
 					selectedMasterCategoriesMap={this.props.selectedMasterCategoriesMap}
+					collapsedMasterCategoriesMap={this.props.collapsedMasterCategoriesMap}
 					selectMasterCategory={this.props.selectMasterCategory}
 					unselectMasterCategory={this.props.unselectMasterCategory}
+					expandMasterCategory={this.props.expandMasterCategory}
+					collapseMasterCategory={this.props.collapseMasterCategory}
 					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
 					showCreateCategoryDialog={this.props.showCreateCategoryDialog}
 					showHiddenCategoriesDialog={this.props.showHiddenCategoriesDialog}
 					showMasterCategoryActivityDialog={this.props.showMasterCategoryActivityDialog}
 
 					entitiesCollection={this.props.entitiesCollection}
-					updateEntities={this.props.updateEntities}
-					>
+					updateEntities={this.props.updateEntities}>
+
 					{subCategoryRows}
 				</PMasterCategoryRow>
 		);

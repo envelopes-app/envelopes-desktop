@@ -34,6 +34,7 @@ export interface PBudgetState {
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
+	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
 }
 
 const BudgetContainerStyle = {
@@ -53,7 +54,6 @@ const BudgetSubContainerStyle = {
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
-	// TODO: Expand/Collapse all categories
 	// TODO: Activity column numbers should be disabled when there are is no activity
 	// TODO: In MoveMoneyDialog, category list does not appear when we select category field with mouse.
 
@@ -79,6 +79,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.selectSubCategoryForEditing = this.selectSubCategoryForEditing.bind(this);
 		this.selectNextSubCategoryForEditing = this.selectNextSubCategoryForEditing.bind(this);
 		this.selectPreviousSubCategoryForEditing = this.selectPreviousSubCategoryForEditing.bind(this);
+		this.expandMasterCategory = this.expandMasterCategory.bind(this);
+		this.collapseMasterCategory = this.collapseMasterCategory.bind(this);
+		this.expandAllMasterCategories = this.expandAllMasterCategories.bind(this);
+		this.collapseAllMasterCategories = this.collapseAllMasterCategories.bind(this);
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
 		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
@@ -108,7 +112,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
-			selectedMasterCategoriesMap: {}
+			selectedMasterCategoriesMap: {},
+			collapsedMasterCategoriesMap: {}
 		}
     }
 
@@ -325,6 +330,50 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
+	private expandAllMasterCategories():void {
+
+		var state = Object.assign({}, this.state) as PBudgetState;
+		_.forEach(this.props.entitiesCollection.masterCategories.getAllItems(), (masterCategory)=>{
+
+			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && 
+				(!masterCategory.internalName || masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory)
+			) {
+				state.collapsedMasterCategoriesMap[masterCategory.entityId] = false;
+			}
+		});
+
+		this.setState(state);
+	}
+
+	private collapseAllMasterCategories():void {
+
+		var state = Object.assign({}, this.state) as PBudgetState;
+		_.forEach(this.props.entitiesCollection.masterCategories.getAllItems(), (masterCategory)=>{
+
+			if(masterCategory.isTombstone == 0 && masterCategory.isHidden == 0 && 
+				(!masterCategory.internalName || masterCategory.internalName == InternalCategories.DebtPaymentMasterCategory)
+			) {
+				state.collapsedMasterCategoriesMap[masterCategory.entityId] = true;
+			}
+		});
+
+		this.setState(state);
+	}
+
+	private expandMasterCategory(masterCategoryId:string):void {
+
+		var state = Object.assign({}, this.state) as PBudgetState;
+		state.collapsedMasterCategoriesMap[masterCategoryId] = false;
+		this.setState(state);
+	}
+
+	private collapseMasterCategory(masterCategoryId:string):void {
+
+		var state = Object.assign({}, this.state) as PBudgetState;
+		state.collapsedMasterCategoriesMap[masterCategoryId] = true;
+		this.setState(state);
+	}
+
 	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement):void {
 		// Show the dialog for editing the subcategory
 		this.subCategoryEditDialog.show(subCategoryId, element);
@@ -445,7 +494,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					showMoveMoneyDialog={this.showMoveMoneyDialog}
 					updateEntities={this.props.updateEntities} />
 
-				<PBudgetToolbar onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} />
+				<PBudgetToolbar 
+					expandAllMasterCategories={this.expandAllMasterCategories}
+					collapseAllMasterCategories={this.collapseAllMasterCategories}
+					onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
+				/>
 
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
@@ -457,6 +510,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectedSubCategories={this.state.selectedSubCategories}
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
 						selectedMasterCategoriesMap={this.state.selectedMasterCategoriesMap}
+						collapsedMasterCategoriesMap={this.state.collapsedMasterCategoriesMap}
 						selectAllCategories={this.selectAllCategories}
 						unselectAllCategories={this.unselectAllCategories}
 						selectSubCategory={this.selectSubCategory}
@@ -466,6 +520,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectSubCategoryForEditing={this.selectSubCategoryForEditing}
 						selectNextSubCategoryForEditing={this.selectNextSubCategoryForEditing}
 						selectPreviousSubCategoryForEditing={this.selectPreviousSubCategoryForEditing}
+						expandMasterCategory={this.expandMasterCategory}
+						collapseMasterCategory={this.collapseMasterCategory}
 						showCreateCategoryDialog={this.showCreateCategoryDialog}
 						showSubCategoryEditDialog={this.showSubCategoryEditDialog}
 						showMasterCategoryEditDialog={this.showMasterCategoryEditDialog}

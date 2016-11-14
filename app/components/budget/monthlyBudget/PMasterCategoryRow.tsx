@@ -16,9 +16,12 @@ export interface PMasterCategoryRowProps {
 	subCategories:Array<budgetEntities.ISubCategory>;
 	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
+	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
 
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
+	expandMasterCategory:(masterCategoryId:string)=>void;
+	collapseMasterCategory:(masterCategoryId:string)=>void;
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
@@ -30,7 +33,6 @@ export interface PMasterCategoryRowProps {
 }
 
 export interface PMasterCategoryRowState {
-	expanded:boolean;
 	hoverState:boolean;
 }
 
@@ -130,7 +132,9 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onCategoryNameClick = this.onCategoryNameClick.bind(this);
 		this.onActivityClick = this.onActivityClick.bind(this);
-		this.state = {hoverState:false, expanded:true};
+		this.state = {
+			hoverState:false
+		};
 	}
 
 	private onClick(event:React.MouseEvent<any>):void {
@@ -213,18 +217,26 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 	}
 
 	private handleMouseLeave() {
+
 		var state = Object.assign({}, this.state) as PMasterCategoryRowState;
 		state.hoverState = false;
 		this.setState(state);
 	}
 
 	private onExpandCollapseGlyphClick():void {
-		var state = Object.assign({}, this.state) as PMasterCategoryRowState;
-		state.expanded = !state.expanded;
-		this.setState(state);
+
+		var masterCategory = this.props.masterCategory;
+		var collapsedMasterCategoriesMap = this.props.collapsedMasterCategoriesMap;
+		var isCollapsed = collapsedMasterCategoriesMap[masterCategory.entityId];
+
+		if(isCollapsed)
+			this.props.expandMasterCategory(masterCategory.entityId);
+		else
+			this.props.collapseMasterCategory(masterCategory.entityId);
 	}
 
 	private onCategoryNameClick(event:React.MouseEvent<any>):void {
+
 		var masterCategory = this.props.masterCategory;
 		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
 		if(isHiddenMasterCategory)
@@ -326,10 +338,15 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
 		var selectedMasterCategoriesMap = this.props.selectedMasterCategoriesMap;
 		var isSelected = selectedMasterCategoriesMap[masterCategory.entityId];
-		if(!isSelected)
+		if(isSelected == null || isSelected == undefined)
 			isSelected = false;
 
-		if(this.state.expanded == true) {
+		var collapsedMasterCategoriesMap = this.props.collapsedMasterCategoriesMap;
+		var isCollapsed = collapsedMasterCategoriesMap[masterCategory.entityId];
+		if(isCollapsed == null || isCollapsed == undefined)
+			isCollapsed = false;
+
+		if(isCollapsed == false) {
 			glyphiconClass = "glyphicon glyphicon-triangle-bottom";
 			containerClass = "collapse in";
 		}
