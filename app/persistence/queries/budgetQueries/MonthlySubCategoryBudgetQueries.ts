@@ -47,6 +47,7 @@ export class MonthlySubCategoryBudgetQueries {
 					allSpending,
 					allSpendingSinceLastPayment,
 					additionalToBeBudgeted,
+					transactionsCount,
 					upcomingTransactions,
 					upcomingTransactionsCount,
 					goalTarget,
@@ -56,7 +57,7 @@ export class MonthlySubCategoryBudgetQueries {
 					goalExpectedCompletion,
 					deviceKnowledge,
 					deviceKnowledgeForCalculatedFields
-				) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+				) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			arguments: [
 				dbObject.budgetId,
 				dbObject.entityId,
@@ -85,6 +86,7 @@ export class MonthlySubCategoryBudgetQueries {
 				dbObject.allSpending ? dbObject.allSpending : null,
 				dbObject.allSpendingSinceLastPayment,
 				dbObject.additionalToBeBudgeted ? dbObject.additionalToBeBudgeted : null,
+				dbObject.transactionsCount ? dbObject.transactionsCount : 0,
 				dbObject.upcomingTransactions ? dbObject.upcomingTransactions : null,
 				dbObject.upcomingTransactionsCount ? dbObject.upcomingTransactionsCount : 0,
 				dbObject.goalTarget ? dbObject.goalTarget : null,

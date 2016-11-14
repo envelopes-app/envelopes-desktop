@@ -7,7 +7,7 @@ import { DataFormatter } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { SubCategoryType } from '../../../constants';
 
-export interface PActivityValueProps {
+export interface PSubCategoryActivityValueProps {
 	dataFormatter:DataFormatter;
 	isSelected:boolean;
 	subCategory:budgetEntities.ISubCategory;
@@ -16,9 +16,8 @@ export interface PActivityValueProps {
 	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 }
 
-export interface PActivityValueState {
+export interface PSubCategoryActivityValueState {
 	hoverState:boolean;
-	hasActivity:boolean;
 }
 
 const ActivityContainerStyle:React.CSSProperties = {
@@ -35,6 +34,10 @@ const ActivityValueStyle:React.CSSProperties = {
 	marginBottom: "0px"
 } 
 
+const ActivityValueDisabledStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
+	color: "#CFD5D7"
+}); 
+
 const ActivityValueSelectedStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
 	color: "#FFFFFF"
 }); 
@@ -45,34 +48,28 @@ const ActivityValueHoverStyle:React.CSSProperties = Object.assign({}, ActivityVa
 	cursor: "pointer"
 }); 
 
-export class PActivityValue extends React.Component<PActivityValueProps, PActivityValueState> {
+export class PSubCategoryActivityValue extends React.Component<PSubCategoryActivityValueProps, PSubCategoryActivityValueState> {
 
 	private activityLabel:HTMLLabelElement;
 
-	constructor(props:PActivityValueProps) {
+	constructor(props:PSubCategoryActivityValueProps) {
         super(props);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 		this.onActivityClick = this.onActivityClick.bind(this);
 		this.state = {
-			hoverState: false, 
-			hasActivity: this.hasActivity(props)
+			hoverState: false
 		};
 	}
 
-	private hasActivity(props:PActivityValueProps):boolean {
-
-		return true;
-	}
-
 	private handleMouseEnter() {
-		var state = Object.assign({}, this.state) as PActivityValueState;
+		var state = Object.assign({}, this.state) as PSubCategoryActivityValueState;
 		state.hoverState = true;
 		this.setState(state);
 	}
 
 	private handleMouseLeave() {
-		var state = Object.assign({}, this.state) as PActivityValueState;
+		var state = Object.assign({}, this.state) as PSubCategoryActivityValueState;
 		state.hoverState = false;
 		this.setState(state);
 	}
@@ -93,7 +90,9 @@ export class PActivityValue extends React.Component<PActivityValueProps, PActivi
 		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
 
 		var activityValueStyle = ActivityValueStyle;
-		if(this.state.hoverState && this.state.hasActivity)
+		if(monthlySubCategoryBudget.transactionsCount == 0)
+			activityValueStyle = ActivityValueDisabledStyle;
+		else if(this.state.hoverState)
 			activityValueStyle = ActivityValueHoverStyle;
 		else if(this.props.isSelected)
 			activityValueStyle = ActivityValueSelectedStyle;

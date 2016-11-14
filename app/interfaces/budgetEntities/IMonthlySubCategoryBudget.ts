@@ -26,6 +26,7 @@ export interface IMonthlySubCategoryBudget extends IBudgetEntity {
 	budgetedSpending:number;
 	allSpending:number;
 	allSpendingSinceLastPayment:number;
+	transactionsCount:number;
 	upcomingTransactions:number;
 	upcomingTransactionsCount:number;
 	additionalToBeBudgeted:number;

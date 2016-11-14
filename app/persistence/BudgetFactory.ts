@@ -671,6 +671,7 @@ export class BudgetFactory {
 					allSpending: 0,
 					allSpendingSinceLastPayment: 0,
 					additionalToBeBudgeted: 0,
+					transactionsCount: 0,
 					upcomingTransactions: 0,
 					upcomingTransactionsCount: 0,
 					goalTarget: 0,

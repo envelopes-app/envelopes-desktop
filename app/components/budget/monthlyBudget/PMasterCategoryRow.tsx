@@ -87,9 +87,23 @@ const ValueColumnStyle:React.CSSProperties = {
 
 const ValueStyle:React.CSSProperties = {
 	fontSize: "14px",
-	fontWeight: "normal",
+	fontWeight: "bold",
+	color: "#4D717A",
 	marginBottom: "0px"
 }
+
+const ValueHoverStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
+	color: "#333333"
+});
+
+const ActivityValueStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
+	textDecoration: "underline",
+	cursor: "pointer"
+});
+
+const ActivityValueHoverStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
+	color: "#333333"
+});
 
 const GlyphStyle:React.CSSProperties = {
 	fontSize: "12px",
@@ -297,13 +311,14 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		var glyphiconClass, containerClass:string;
 		var collapseContainerIdentity = "subCategoriesContainer_" + this.props.masterCategory.entityId;
 
-		var budgeted = 0, activity = 0, balance = 0;
+		var budgeted = 0, activity = 0, balance = 0, transactionsCount = 0;
 		_.forEach(this.props.monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
 
 			if(monthlySubCategoryBudget) {
 				budgeted += monthlySubCategoryBudget.budgeted;
 				activity += monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
 				balance += monthlySubCategoryBudget.balance;
+				transactionsCount += monthlySubCategoryBudget.transactionsCount;
 			}
 		});
 
@@ -314,12 +329,6 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		if(!isSelected)
 			isSelected = false;
 
-		var masterCategoryRowContainerStyle = Object.assign({}, MasterCategoryRowContainerStyle);
-		if(isSelected) {
-			masterCategoryRowContainerStyle["color"] = "#FFFFFF";
-			masterCategoryRowContainerStyle["backgroundColor"] = "#005A6E";
-		}
-
 		if(this.state.expanded == true) {
 			glyphiconClass = "glyphicon glyphicon-triangle-bottom";
 			containerClass = "collapse in";
@@ -329,8 +338,36 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			containerClass = "collapse";
 		}
 
-		// Get the JSX for selection colun, expand/collapse column and the category name column 
+		var valueStyle = ValueStyle;
+		if(this.state.hoverState)
+			valueStyle = ValueHoverStyle;
+
+		// Get the JSX for selection column, expand/collapse column and the category name column 
 		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isSelected, glyphiconClass);
+
+		var activityNode:JSX.Element;
+		if(transactionsCount == 0) {
+			// If there are no transactions, then apply the same style to the activty value as the
+			// budgeted and balance values
+			activityNode = (
+				<div style={ValueColumnStyle}>
+					<label style={valueStyle} ref={(a)=> this.activityLabel = a}>{dataFormatter.formatCurrency(activity)}</label>
+				</div>
+			);
+		}
+		else {
+			// Otherwise apply the specific ActivityValueStyle 
+			var activityValueStyle = ActivityValueStyle;
+			if(this.state.hoverState)
+				activityValueStyle = ActivityValueHoverStyle;
+
+			activityNode = (
+				<div style={ValueColumnStyle}>
+					<label style={activityValueStyle} ref={(a)=> this.activityLabel = a}
+						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
+				</div>
+			);
+		}
 
     	return (
 			<div>
@@ -340,14 +377,13 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 					{categoryNameNodes}
 
 					<div style={ValueColumnStyle}>
-						<label style={ValueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
+						<label style={valueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
 					</div>
+
+					{activityNode}
+
 					<div style={ValueColumnStyle}>
-						<label className="budget-row-activity" ref={(a)=> this.activityLabel = a}
-						 	onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
-					</div>
-					<div style={ValueColumnStyle}>
-						<label style={ValueStyle}>{dataFormatter.formatCurrency(balance)}</label>
+						<label style={valueStyle}>{dataFormatter.formatCurrency(balance)}</label>
 					</div>
 				</div>
 				<div className={containerClass} id={collapseContainerIdentity}>

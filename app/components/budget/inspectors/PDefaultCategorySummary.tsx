@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon } from 'react-bootstrap';
 
-import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
+import { PSubCategoryBalanceValue } from '../monthlyBudget/PSubCategoryBalanceValue';
 import { PSubCategoryEditDialog } from '../dialogs';
 import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -174,7 +174,7 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<PBalanceValue 
+					<PSubCategoryBalanceValue 
 						dataFormatter={dataFormatter}
 						monthlySubCategoryBudget={monthlySubCategoryBudget} 
 					/>

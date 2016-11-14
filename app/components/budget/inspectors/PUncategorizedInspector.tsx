@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 
 import { PNotes } from './PNotes';
 import { PMessage } from './PMessage';
-import { PBalanceValue } from '../monthlyBudget/PBalanceValue';
+import { PSubCategoryBalanceValue } from '../monthlyBudget/PSubCategoryBalanceValue';
 import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -167,7 +167,7 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
 					<span style={SpacerStyle}/>
-					<PBalanceValue 
+					<PSubCategoryBalanceValue 
 						dataFormatter={dataFormatter} 
 						monthlySubCategoryBudget={monthlySubCategoryBudget} 
 					/>

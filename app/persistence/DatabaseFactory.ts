@@ -350,6 +350,7 @@ export class DatabaseFactory {
 						'budgetedSpending' NUMERIC,
 						'allSpending' NUMERIC,
 						'allSpendingSinceLastPayment' NUMERIC,
+						'transactionsCount' NUMERIC,
 						'upcomingTransactions' NUMERIC,
 						'upcomingTransactionsCount' NUMERIC,
 						'additionalToBeBudgeted' NUMERIC,

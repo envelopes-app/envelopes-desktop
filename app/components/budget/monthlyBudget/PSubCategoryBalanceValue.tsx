@@ -7,7 +7,7 @@ import { Badge } from 'react-bootstrap';
 import { DataFormatter } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-export interface PBalanceValueProps {
+export interface PSubCategoryBalanceValueProps {
 	dataFormatter:DataFormatter;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	onClick?:(event:React.FormEvent<any>)=>void;
@@ -20,11 +20,11 @@ const BalanceContainerStyle:React.CSSProperties = {
 	paddingRight: "8px"
 }
 
-export class PBalanceValue extends React.Component<PBalanceValueProps, {}> {
+export class PSubCategoryBalanceValue extends React.Component<PSubCategoryBalanceValueProps, {}> {
 
 	private balanceValueContainer:HTMLDivElement;
 
-	constructor(props:PBalanceValueProps) {
+	constructor(props:PSubCategoryBalanceValueProps) {
         super(props);
 	}
 

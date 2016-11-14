@@ -173,6 +173,7 @@ export class EntityFactory {
 				budgetedSpending: 0,
 				allSpending: 0,
 				allSpendingSinceLastPayment: 0,
+				transactionsCount: 0,
 				upcomingTransactions: 0,
 				upcomingTransactionsCount: 0,
 				additionalToBeBudgeted: 0,

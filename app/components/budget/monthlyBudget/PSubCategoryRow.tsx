@@ -6,9 +6,9 @@ import * as ReactDOM from 'react-dom';
 import { FormControl } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
-import { PBudgetedValue } from './PBudgetedValue';
-import { PActivityValue } from './PActivityValue';
-import { PBalanceValue } from './PBalanceValue';
+import { PSubCategoryBudgetedValue } from './PSubCategoryBudgetedValue';
+import { PSubCategoryActivityValue } from './PSubCategoryActivityValue';
+import { PSubCategoryBalanceValue } from './PSubCategoryBalanceValue';
 import { InternalCategories, SubCategoryType } from '../../../constants';
 import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -76,8 +76,8 @@ const CategoryNameColumnStyle:React.CSSProperties = {
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
 	private categoryNameLabel:HTMLLabelElement;
-	private budgetedValue:PBudgetedValue;
-	private balanceValue:PBalanceValue;
+	private budgetedValue:PSubCategoryBudgetedValue;
+	private balanceValue:PSubCategoryBalanceValue;
 	private moveCategoryUpButton:PButtonWithGlyph;
 	private moveCategoryDownButton:PButtonWithGlyph;
 
@@ -325,7 +325,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				{categoryNameNode}
-				<PBudgetedValue 
+				<PSubCategoryBudgetedValue 
 					ref={(b)=> this.budgetedValue = b}
 					dataFormatter={dataFormatter}
 					isSelected={isSelected}
@@ -337,7 +337,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					updateEntities={this.props.updateEntities}
 				/>
 
-				<PActivityValue 
+				<PSubCategoryActivityValue 
 					dataFormatter={dataFormatter}
 					isSelected={isSelected}
 					subCategory={subCategory}
@@ -346,7 +346,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
 				/>
 
-				<PBalanceValue 
+				<PSubCategoryBalanceValue 
 					ref={(b)=> this.balanceValue = b}
 					dataFormatter={dataFormatter}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}

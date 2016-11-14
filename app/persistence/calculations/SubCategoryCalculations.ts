@@ -108,7 +108,7 @@ export class SubCategoryCalculations {
 			query: `
 WITH e_months_categories AS ( 
     SELECT ('mcb/' || strftime('%Y-%m', datetime(m.month_epoch, 'unixepoch')) || '/' || s.entityId) as entityId,
-        m.month, m.month_epoch, s.entityId as subCategoryId, 
+        m.month, m.month_epoch, s.entityId as subCategoryId, COALESCE(COUNT(t.transactionId),0) AS transactionsCount,
         COALESCE(SUM(t.cashAmount),0) AS cashOutflows, COALESCE(SUM(t.creditAmount),0) as creditOutflows,
         -- we will carry SubCategory.isTombtone forward to MonthlySubCategoryBudgets.isTombstone (if SubCategory tombstoned, so will MSCB record)
         s.isTombstone
@@ -415,6 +415,7 @@ WHERE m.subCategoryId IN (${subCategoryIdsINClause})
 		startMonth:DateWithoutTime,
 		monthlySubcategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>){
 			
+			debugger;
 			var previousMonthlySubcategoryBudget:budgetEntities.IMonthlySubCategoryBudget = null;
 			var updatedMonthlySubcategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
 			

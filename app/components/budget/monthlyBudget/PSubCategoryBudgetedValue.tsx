@@ -8,7 +8,7 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { InternalCategories } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
-export interface PBudgetedValueProps {
+export interface PSubCategoryBudgetedValueProps {
 	dataFormatter:DataFormatter;
 	isSelected:boolean;
 	isHovering:boolean;
@@ -20,7 +20,7 @@ export interface PBudgetedValueProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-export interface PBudgetedValueState {
+export interface PSubCategoryBudgetedValueState {
 	budgetedValue:string;
 }
 
@@ -67,11 +67,11 @@ const BudgetedValueHoverStyle:React.CSSProperties = Object.assign({}, BudgetedVa
 	backgroundColor: "#FFFFFF"
 });
 
-export class PBudgetedValue extends React.Component<PBudgetedValueProps, PBudgetedValueState> {
+export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudgetedValueProps, PSubCategoryBudgetedValueState> {
 
 	private budgetedValueInput:HTMLInputElement;
 
-	constructor(props:PBudgetedValueProps) {
+	constructor(props:PSubCategoryBudgetedValueProps) {
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -116,7 +116,7 @@ export class PBudgetedValue extends React.Component<PBudgetedValueProps, PBudget
 		}
 	}
 
-	public componentWillReceiveProps(nextProps:PBudgetedValueProps):void {
+	public componentWillReceiveProps(nextProps:PSubCategoryBudgetedValueProps):void {
 
 		if(!this.props.isEditing && nextProps.isEditing) {
 
@@ -167,8 +167,6 @@ export class PBudgetedValue extends React.Component<PBudgetedValueProps, PBudget
 				);
 			}
 			else {
-				if(subCategory.name == "Groceries")
-					debugger;
 				let budgetedValue = monthlySubCategoryBudget ? monthlySubCategoryBudget.budgeted : 0;
 				// if we are not hovering or editing the value, and the value is zero, then grey it out
 				if(!this.props.isHovering && !this.props.isEditing && budgetedValue == 0) {
