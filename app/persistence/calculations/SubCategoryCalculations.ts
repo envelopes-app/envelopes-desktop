@@ -115,7 +115,7 @@ WITH e_months_categories AS (
     FROM ${monthsVirtualTable} m, 
         Subcategories s
         LEFT JOIN TransactionCalculations t ON t.subcategoryId = s.entityId AND t.month_epoch = m.month_epoch 	 
-    WHERE (?1 = 1 OR s.entityId IN (${subCategoryIdsINClause}))
+    WHERE (s.budgetId = ?1 AND (?2 = 1 OR s.entityId IN (${subCategoryIdsINClause})))
         AND s.isTombstone = 0
         AND COALESCE(s.type,'') != '${SubCategoryType.Debt}'
         -- Split category and transaction parents will be excluded because they don't contribute to calcs
@@ -131,7 +131,7 @@ FROM e_months_categories mc
 	LEFT JOIN MonthlySubCategoryBudgets sc ON sc.entityId = mc.entityId
 ORDER BY mc.subCategoryId, mc.month
 			`,
-			arguments: [includeAllSubCategories]
+			arguments: [budgetId, includeAllSubCategories]
 		};
 	}
         
