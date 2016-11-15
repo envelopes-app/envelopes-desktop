@@ -7,6 +7,7 @@ import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } 
 
 import { PFlagSelector } from './PFlagSelector';
 import { PAccountSelector } from './PAccountSelector';
+import { PCheckNumberInput } from './PCheckNumberInput';
 import { PDateSelector } from './PDateSelector';
 import { PPayeeSelector } from './PPayeeSelector';
 import { PCategorySelector } from './PCategorySelector';
@@ -49,6 +50,7 @@ export interface PTransactionDialogState {
 	payeeId?: string;
 	manuallyEnteredPayeeName?: string;
 	date?: DateWithoutTime;
+	checkNumber?: string;
 	frequency?: string;
 	subCategoryId?: string;
 	manuallyEnteredCategoryName?: string;
@@ -61,6 +63,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private accountSelector:PAccountSelector;
 	private dateSelector:PDateSelector;
+	private checkNumberInput:PCheckNumberInput;
 	private payeeSelector:PPayeeSelector;
 	private categorySelector:PCategorySelector;
 	private memoInput:PMemoInput;
@@ -86,6 +89,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setActiveField = this.setActiveField.bind(this);
 		this.setFocusOnAccountSelector = this.setFocusOnAccountSelector.bind(this);
 		this.setFocusOnDateSelector = this.setFocusOnDateSelector.bind(this);
+		this.setFocusOnCheckNumberInput = this.setFocusOnCheckNumberInput.bind(this);
 		this.setFocusOnPayeeSelector = this.setFocusOnPayeeSelector.bind(this);
 		this.setFocusOnCategorySelector = this.setFocusOnCategorySelector.bind(this);
 		this.setFocusOnMemoInput = this.setFocusOnMemoInput.bind(this);
@@ -96,6 +100,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setFocusOnCancelButton = this.setFocusOnCancelButton.bind(this);
 		this.handleTabPressedOnAccountSelector = this.handleTabPressedOnAccountSelector.bind(this);
 		this.handleTabPressedOnDateSelector = this.handleTabPressedOnDateSelector.bind(this);
+		this.handleTabPressedOnCheckNumberInput = this.handleTabPressedOnCheckNumberInput.bind(this);
 		this.handleTabPressedOnPayeeSelector = this.handleTabPressedOnPayeeSelector.bind(this);
 		this.handleTabPressedOnCategorySelector = this.handleTabPressedOnCategorySelector.bind(this);
 		this.handleTabPressedOnMemoInput = this.handleTabPressedOnMemoInput.bind(this);
@@ -107,6 +112,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 		this.setSelectedAccountId = this.setSelectedAccountId.bind(this);
 		this.setSelectedDate = this.setSelectedDate.bind(this);
+		this.setCheckNumber = this.setCheckNumber.bind(this);
 		this.setSelectedFrequency = this.setSelectedFrequency.bind(this);
 		this.setSelectedPayeeId = this.setSelectedPayeeId.bind(this);
 		this.setManuallyEnteredPayeeName = this.setManuallyEnteredPayeeName.bind(this);
@@ -119,6 +125,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 		this.focusManager.addFocusObject("account", this.setFocusOnAccountSelector);
 		this.focusManager.addFocusObject("date", this.setFocusOnDateSelector);
+		this.focusManager.addFocusObject("checknumber", this.setFocusOnCheckNumberInput);
 		this.focusManager.addFocusObject("payee", this.setFocusOnPayeeSelector);
 		this.focusManager.addFocusObject("category", this.setFocusOnCategorySelector);
 		this.focusManager.addFocusObject("memo", this.setFocusOnMemoInput);
@@ -254,6 +261,11 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.dateSelector.setFocus();
 	}
 
+	private setFocusOnCheckNumberInput():void {
+		this.setActiveField("checknumber");
+		this.checkNumberInput.setFocus();
+	}
+
 	private setFocusOnPayeeSelector():void {
 		this.setActiveField("payee");
 		this.payeeSelector.setFocus();
@@ -308,6 +320,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			this.focusManager.moveFocusForward("date");
 		else
 			this.focusManager.moveFocusBackward("date");
+	}
+
+	private handleTabPressedOnCheckNumberInput(shiftKeyPressed:boolean):void {
+
+		if(!shiftKeyPressed)
+			this.focusManager.moveFocusForward("checknumber");
+		else
+			this.focusManager.moveFocusBackward("checknumber");
 	}
 
 	private handleTabPressedOnPayeeSelector(shiftKeyPressed:boolean):void {
@@ -399,6 +419,12 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		var state = Object.assign({}, this.state) as PTransactionDialogState;
 		state.date = date;
 		this.setState(state, callback);
+	}
+
+	private setCheckNumber(checkNumber:string):void {
+		var state = Object.assign({}, this.state) as PTransactionDialogState;
+		state.checkNumber = checkNumber;
+		this.setState(state);
 	}
 
 	private setSelectedFrequency(frequency:string):void {
@@ -659,6 +685,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 								dataFormatter={this.props.dataFormatter}
 								setSelectedDate={this.setSelectedDate} setSelectedFrequency={this.setSelectedFrequency} 
 								handleTabPressed={this.handleTabPressedOnDateSelector} />
+							<PCheckNumberInput ref={(c) => this.checkNumberInput = c} 
+								activeField={this.state.activeField} setActiveField={this.setActiveField}
+								checkNumber={this.state.checkNumber} setCheckNumber={this.setCheckNumber} handleTabPressed={this.handleTabPressedOnCheckNumberInput} />
 							<PPayeeSelector ref={(c) => this.payeeSelector = c}
 								activeField={this.state.activeField} setActiveField={this.setActiveField}
 								selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
