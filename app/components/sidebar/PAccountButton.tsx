@@ -3,6 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Glyphicon } from 'react-bootstrap';
 
 import { PButtonWithGlyph } from '../common/PButtonWithGlyph';
 import { PAccountEditDialog } from './dialogs/PAccountEditDialog';
@@ -33,7 +34,6 @@ const AccountButtonLabelStyle:React.CSSProperties = {
 };
 
 const AccountButtonValueStyle:React.CSSProperties = {
-
 	fontSize: '12px',
 	fontWeight: 'normal', 
 	textAlign: 'right',
@@ -41,11 +41,36 @@ const AccountButtonValueStyle:React.CSSProperties = {
 };
 
 const AccountButtonValueWithBadgeStyle:React.CSSProperties = {
-
 	fontSize: '12px',
 	fontWeight: 'normal', 
 	color: '#D33C2D',
 	backgroundColor: 'white'
+};
+
+const InfoCountBadgeStyle:React.CSSProperties = {
+	fontSize: '10px',
+	fontWeight: 'normal', 
+	color: '#FFFFFF',
+	backgroundColor: '#009CC2',
+	borderColor: '#FFFFFF',
+	borderWidth: '1px',
+	borderRadius: '5px',
+	borderStyle: 'solid',
+	paddingLeft: '4px',
+	paddingRight: '4px'
+};
+
+const WarningCountBadgeStyle:React.CSSProperties = {
+	fontSize: '10px',
+	fontWeight: 'normal', 
+	color: '#FFFFFF',
+	backgroundColor: '#E59100',
+	borderColor: '#FFFFFF',
+	borderWidth: '1px',
+	borderRadius: '5px',
+	borderStyle: 'solid',
+	paddingLeft: '4px',
+	paddingRight: '4px'
 };
 
 export interface PAccountButtonProps {
@@ -108,10 +133,31 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 				accountButtonContainerStyle["backgroundColor"] = "#1D879B";
 		}
 
-		// If the value is negative, we need to show it with a badge around it
-		var valueNode:JSX.Element;
 		var account = this.props.account;
 		var dataFormatter = this.props.dataFormatter;
+
+		// If there are info or warning counts, then we want to show the information glyph before the account name
+		var counterNode:JSX.Element;
+		if(account.infoCount > 0) {
+			counterNode = (
+				<div style={InfoCountBadgeStyle}>
+					{account.infoCount < 100 ? account.infoCount.toString() : "99+" }
+				</div>
+			);
+		}
+		else if (account.warningCount > 0) {
+			counterNode = (
+				<div style={WarningCountBadgeStyle}>
+					{account.warningCount < 100 ? account.warningCount.toString() : "99+" }
+				</div>
+			);
+		}
+		else {
+			counterNode = <div />;
+		}
+
+		// If the value is negative, we need to show it with a badge around it
+		var valueNode:JSX.Element;
 		var accountBalance = account.clearedBalance + account.unclearedBalance;
 		if(accountBalance < 0)
 			valueNode = <span className="badge" style={AccountButtonValueWithBadgeStyle}>{dataFormatter.formatCurrency(accountBalance)}</span>;
@@ -122,6 +168,7 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 			<div>
 				<div ref={(d)=> this.accountButtonContainer = d} style={accountButtonContainerStyle} 
 					onClick={this.handleClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+					{counterNode}
 					<span style={AccountButtonLabelStyle}>{account.accountName}</span>
 					<PButtonWithGlyph showGlyph={this.state.hoverState} 
 						glyphName="glyphicon-edit" glyphColor="#FFFFFF" clickHandler={this.onAccountEditClick} />

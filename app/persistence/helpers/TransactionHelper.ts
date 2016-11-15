@@ -71,13 +71,14 @@ export class TransactionHelper {
 				!month1.equalsDateWithoutTime(month2) ||
 				originalEntity.amount != updatedEntity.amount ||
 				originalEntity.cleared != updatedEntity.cleared ||
+				originalEntity.accepted != updatedEntity.accepted ||
 				originalEntity.isTombstone != updatedEntity.isTombstone) {
 
 				queries.push(CalculationQueries.getQueueAccountCalculationQuery(budgetId, originalEntity.accountId, month1.toISOString()));
 				queries.push(CalculationQueries.getQueueAccountCalculationQuery(budgetId, updatedEntity.accountId, month2.toISOString()));
 			}
 
-			// Queue transactions calculations for both the accounts of server and device entity, if any values of the transaction
+			// Queue transactions calculations for both the accounts of existing and updated entity, if any values of the transaction
 			// that affect transaction calculations have been changed.
 			if(originalEntity.accountId != updatedEntity.accountId ||
 				!date1.equalsDateWithoutTime(date2) ||
