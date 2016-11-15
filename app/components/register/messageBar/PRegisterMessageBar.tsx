@@ -29,7 +29,7 @@ const RegisterMessageBarStyle:React.CSSProperties = {
 }
 
 const RegisterMessageBarInfoStyle:React.CSSProperties = Object.assign({}, RegisterMessageBarStyle, {
-	backgroundColor: "#34ADBD"
+	backgroundColor: "#009CC2"
 });
 
 const RegisterMessageBarWarningStyle:React.CSSProperties = Object.assign({}, RegisterMessageBarStyle, {

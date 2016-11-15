@@ -19,6 +19,7 @@ export interface PUncategorizedInspectorProps {
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -173,7 +174,12 @@ export class PUncategorizedInspector extends React.Component<PUncategorizedInspe
 					/>
 				</div>
 
-				<PMessage subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget} />
+				<PMessage 
+					dataFormatter={this.props.dataFormatter}
+					subCategory={subCategory} 
+					monthlySubCategoryBudget={monthlySubCategoryBudget} 
+					showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
+				/>
 
 				<div style={PillHeaderRowStyle}>
 					<div style={PillHeaderStyle}>

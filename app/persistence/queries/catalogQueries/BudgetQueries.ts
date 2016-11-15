@@ -45,12 +45,12 @@ export class BudgetQueries {
 
 	public static updateLastAccessedOnForBudget(budgetId:string):IDatabaseQuery {
 
-		var currentDate = DateWithoutTime.createForToday();
+		var currentDate = Date.now();
 		var query:IDatabaseQuery = {
 
 			query: "UPDATE Budgets SET lastAccessedOn = ? WHERE entityId = ?",
 			arguments: [
-				currentDate.getUTCTime(),
+				currentDate,
 				budgetId
 			]
 		};

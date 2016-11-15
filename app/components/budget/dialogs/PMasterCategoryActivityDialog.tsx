@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { PTransactionsList } from './PTransactionsList';
 import { TransactionSources } from '../../../constants';

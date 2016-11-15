@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 
-import { DateWithoutTime } from '../utilities'; 
+import { Logger, DateWithoutTime } from '../utilities'; 
 import { IDatabaseQuery } from '../interfaces/persistence';
 import { IReferenceDataForCalculations, IScheduledTransactionCalculationsResult, ICalculationQueueSummary } from '../interfaces/calculations';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
@@ -62,33 +62,61 @@ export class CalculationsManager {
 		return this.performCalculations(budgetId, budgetKnowledge);
 	}
 	
+	public performScheduledTransactionsCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, forceFullCalcs:boolean = false):Promise<IScheduledTransactionCalculationsResult> {
+
+		if(forceFullCalcs) {
+			Logger.info("CalculationsManager::performScheduledTransactionsCalculations::Performing scheduled transaction calculations for all scheduled transactions.");
+			// Perform Scheduled Transaction Calculations on all the scheduled transactions 
+			return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, DateWithoutTime.createForToday(), null);
+		}
+		else {
+
+			Logger.info("CalculationsManager::performScheduledTransactionsCalculations::Checking if there are any queued scheduled transaction calculations.");
+			// Get the calculation queue summary to check if there are any queued scheduled transaction calculations
+			return this.getCalculationQueueSummary(budgetId, false)
+				.then((calculationQueueSummary:ICalculationQueueSummary)=>{
+
+					if(calculationQueueSummary.scheduledTransactionCalculationIds) {
+
+						Logger.info(`CalculationsManager::performScheduledTransactionsCalculations::Performing scheduled transaction calculations for ${calculationQueueSummary.scheduledTransactionCalculationIds}.`);
+						let scheduledTransactionCalculationIds = calculationQueueSummary.scheduledTransactionCalculationIds.split(",");
+						// Perform queued scheduled transaction calculations
+						return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, DateWithoutTime.createForToday(), scheduledTransactionCalculationIds);
+					}
+					else {
+						Logger.info("CalculationsManager::performScheduledTransactionsCalculations::No queued scheduled transaction calculations were found.");
+						// There are no queued scheduled transactions
+						return Promise.resolve(null);
+					}
+				});
+		}
+	}
+
 	protected performCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, forceFullCalcs:boolean=false):Promise<boolean> {
 
 		var referenceData:IReferenceDataForCalculations;
 			
-		return this.getCalculationQueueSummary(budgetId, forceFullCalcs)
+		return this.performScheduledTransactionsCalculations(budgetId, budgetKnowledge, forceFullCalcs)
+			.then((result:IScheduledTransactionCalculationsResult)=>{
+
+				Logger.info("CalculationsManager::performCalculations::Checking if there are any queued calculations.");
+				// Get the calculation queue summary
+				return this.getCalculationQueueSummary(budgetId, forceFullCalcs);
+			})
 			.then((calculationQueueSummary:ICalculationQueueSummary)=>{
 				
 				var hasPendingCalculations = (calculationQueueSummary.queueCount > 0);
 				if (!hasPendingCalculations) {
+					Logger.info("CalculationsManager::performCalculations::No queued calculations were found.");
 					// There are no pending calculations to run. We can return immediately.
 					return Promise.resolve(true);
 				}
 				else {
+					Logger.info("CalculationsManager::performCalculations::Loading reference data required to perform calculations.");
 					return this.getReferenceDataForCalculations(budgetId, calculationQueueSummary)
 						.then((data:IReferenceDataForCalculations)=>{
 
 							referenceData = data;
-							
-							// Scheduled Transaction Calculations
-							if (referenceData.queuedScheduledTransactionCalculationIds) {
-								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
-								return this.scheduledTransactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, DateWithoutTime.createForToday(), referenceData.queuedScheduledTransactionCalculationIds);
-							} 
-							else
-								return Promise.resolve(null);
-						})
-						.then((result:IScheduledTransactionCalculationsResult)=>{
 							
 							// Transaction Calculations
 							var cacheStartMonth = DateWithoutTime.earliest(referenceData.queuedAccountCalculationsStartMonth, referenceData.queuedSubCategoryCalculationsStartMonth, referenceData.queuedTransactionCalculationsStartMonth);
@@ -96,40 +124,51 @@ export class CalculationsManager {
 								cacheStartMonth = referenceData.firstMonth;   
 							}
 							
+							Logger.info("CalculationsManager::performCalculations::Performing transactions calculations.");
 							return this.transactionCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, referenceData.queuedTransactionCalculationsStartMonth, cacheStartMonth, referenceData.runCalcsThroughMonth);
 						})
 						.then((retVal:any)=>{
 
 							// Account Calculations
 							if (referenceData.queuedAccountCalculationsStartMonth || referenceData.queuedAccountCalculationAccountIds) {
+								Logger.info("CalculationsManager::performCalculations::Performing account calculations.");
 								var startMonth:DateWithoutTime = (referenceData.queuedAccountCalculationsStartMonth || referenceData.firstMonth);
 								return this.accountCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, referenceData.queuedAccountCalculationAccountIds, startMonth, referenceData.runCalcsThroughMonth);
 							} 
-							else
+							else {
+								Logger.info("CalculationsManager::performCalculations::Skipping account calculations.");
 								return Promise.resolve(true);
+							}
 						})
 						.then((retVal:boolean)=>{
 							
 							// SubCategory Calculations
 							if (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.queuedSubCategoryCalculationIds) {
+								Logger.info("CalculationsManager::performCalculations::Performing subcategory calculations.");
 								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
 								return this.subCategoryCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, referenceData.queuedSubCategoryCalculationIds, startMonth, referenceData.runCalcsThroughMonth);
 							} 
-							else
+							else {
+								Logger.info("CalculationsManager::performCalculations::Skipping subcategory calculations.");
 								return Promise.resolve(true);
+							}
 						})
 						.then((retVal:boolean)=>{
 							
 							// Monthly Calculations
 							if (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.queuedSubCategoryCalculationIds) {
+								Logger.info("CalculationsManager::performCalculations::Performing monthly calculations.");
 								var startMonth:DateWithoutTime = (referenceData.queuedSubCategoryCalculationsStartMonth || referenceData.firstMonth);
 								return this.monthlyCalculations.performCalculations(budgetId, budgetKnowledge, referenceData, startMonth, referenceData.runCalcsThroughMonth);
 							} 
-							else
+							else {
+								Logger.info("CalculationsManager::performCalculations::Skipping monthly calculations.");
 								return Promise.resolve(true);
+							}
 						})
 						.then((retVal:boolean)=>{
 							
+							Logger.info("CalculationsManager::performCalculations::Calculations completed. Clearing calculation queue.");
 							return executeSqlQueriesAndSaveKnowledge([
 								// Get the query for clearing the calculation queue
 								CalculationQueries.getClearCalculationQueueQuery(budgetId)

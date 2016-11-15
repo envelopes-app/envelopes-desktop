@@ -4,25 +4,38 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from 'react-bootstrap';
 
+import { DataFormatter } from '../../../utilities';
 import { InternalCategories } from '../../../constants'; 
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMessageProps {
+	dataFormatter:DataFormatter;
 	subCategory:budgetEntities.ISubCategory,
-	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget
+	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
+	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 }
 
 const MessageContainerStyle:React.CSSProperties = {
 	paddingTop: "10px",
 	paddingLeft: "10px",
 	paddingRight: "10px",
+	width: "100%",
 }
 
 const MessageStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "column nowrap",
 	color: "#003440",
-	borderRadius: "4px",
+	borderRadius: "8px",
 	padding: "10px",
 	fontSize: "14px"
+}
+
+const MessageRowStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "row nowrap",
+	width: "100%",
+	justifyContent: "space-between"
 }
 
 const ErrorMessageStyle:React.CSSProperties = Object.assign({}, MessageStyle, {
@@ -33,7 +46,27 @@ const WarningMessageStyle:React.CSSProperties = Object.assign({}, MessageStyle, 
 	backgroundColor: "#FBEED8"
 });
 
+const SuccessMessageStyle:React.CSSProperties = Object.assign({}, MessageStyle, {
+	backgroundColor: "#DCF1E0"
+});
+
+const UpcomingTransactionsCountStyle:React.CSSProperties = {
+	textDecoration: "underline",
+	cursor: "pointer"
+}
+
 export class PMessage extends React.Component<PMessageProps, {}> {
+
+	private upcomingTransactionsRow:HTMLDivElement;
+
+	constructor(props:PMessageProps) {
+        super(props);
+		this.showUpcomingTransactions = this.showUpcomingTransactions.bind(this);
+	}
+
+	private showUpcomingTransactions(event:React.FormEvent<any>):void {
+		this.props.showUpcomingTransactionsDialog(this.props.monthlySubCategoryBudget.entityId, this.upcomingTransactionsRow);
+	}
 
 	// The overspending message could be an error (red colored) message if the overspending is by cash.
 	// It would be a warning message if the overspending is by credit only.
@@ -42,6 +75,7 @@ export class PMessage extends React.Component<PMessageProps, {}> {
 	public render() {
 
 		var element:JSX.Element = <div />;
+		var dataFormatter = this.props.dataFormatter;
 		var subCategory = this.props.subCategory;
 		var isUncategorized = (subCategory.internalName == InternalCategories.UncategorizedSubCategory); 
 
@@ -64,7 +98,7 @@ export class PMessage extends React.Component<PMessageProps, {}> {
 					element = (
 						<div style={MessageContainerStyle}>
 							<div style={ErrorMessageStyle}>
-								Uncategorized cash transactions still affect your budget! Assign them to categories or <span style={{fontWeight:'bold'}}>{-cashOverspending}</span> will be deducted from the amount you have available to budget next month.
+								<span>Uncategorized cash transactions still affect your budget! Assign them to categories or <span style={{fontWeight:'bold'}}>{dataFormatter.formatCurrency(-cashOverspending)}</span> will be deducted from the amount you have available to budget next month.</span>
 							</div>
 						</div>
 					);
@@ -73,7 +107,7 @@ export class PMessage extends React.Component<PMessageProps, {}> {
 					element = (
 						<div style={MessageContainerStyle}>
 							<div style={ErrorMessageStyle}>
-								You've overspent this category by <span style={{fontWeight:'bold'}}>{-cashOverspending}</span>. Cover the overspending from other categories or you can’t trust your budget balances!
+								<span>You've overspent this category by <span style={{fontWeight:'bold'}}>{dataFormatter.formatCurrency(-cashOverspending)}</span>. Cover the overspending from other categories or you can’t trust your budget balances!</span>
 							</div>
 						</div>
 					);
@@ -86,7 +120,7 @@ export class PMessage extends React.Component<PMessageProps, {}> {
 				element = (
 					<div style={MessageContainerStyle}>
 						<div style={WarningMessageStyle}>
-							You've overspent this category by <span style={{fontWeight:'bold'}}>{monthlySubCategoryBudget.balance}</span> with credit. Cover the overspending from other categories to prevent creating debt!
+							<span>You've overspent this category by <span style={{fontWeight:'bold'}}>{dataFormatter.formatCurrency(monthlySubCategoryBudget.balance)}</span> with credit. Cover the overspending from other categories to prevent creating debt!</span>
 						</div>
 					</div>
 				);
@@ -97,15 +131,32 @@ export class PMessage extends React.Component<PMessageProps, {}> {
 			// Lets check the upcoming transactions to make sure we are covered on that front.
 			var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
 			var upcomingTransactionsCount = monthlySubCategoryBudget.upcomingTransactionsCount ? monthlySubCategoryBudget.upcomingTransactionsCount : 0;
+			var upcomingTransactionsValue = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
 			
-			if(upcomingTransactionsCount) {
+			if(upcomingTransactionsCount != 0) {
 				// We have some upcoming transactions. Make sure that our current balance can cover them
 				var balanceAfterUpcoming = monthlySubCategoryBudget.balance + upcomingTransactions; 
-				if(balanceAfterUpcoming < 0) {
-					// Warn the user he needs to budget more in order to cover these upcoming transactions
+				var messageStyle = SuccessMessageStyle;
+				if(balanceAfterUpcoming < 0)
+					messageStyle = WarningMessageStyle;
 
-					// TODO: Once we have Scheduled Transaction creation, complete this.
-				}
+				let upcomingTransactionsCountString = upcomingTransactionsCount == 1 ? "1 Upcoming Transaction" : `${upcomingTransactionsCount} Upcoming Transactions`;
+				var upcomingTransactionsValueString = dataFormatter.formatCurrency(upcomingTransactionsValue);
+
+				element = (
+					<div style={MessageContainerStyle}>
+						<div style={messageStyle}>
+							<div ref={(d)=> this.upcomingTransactionsRow = d} style={MessageRowStyle}>
+								<div style={UpcomingTransactionsCountStyle} onClick={this.showUpcomingTransactions}>{upcomingTransactionsCountString}</div> 
+								<div>{upcomingTransactionsValueString}</div> 
+							</div>
+							<div style={MessageRowStyle}>
+								<div>Available After Upcoming</div> 
+								<div>{dataFormatter.formatCurrency(balanceAfterUpcoming)}</div> 
+							</div>
+						</div>
+					</div>
+				);
 			}
 		}
 

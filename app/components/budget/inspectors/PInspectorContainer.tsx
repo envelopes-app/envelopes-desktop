@@ -20,7 +20,7 @@ export interface PInspectorContainerProps {
 	currentMonth:DateWithoutTime;
 	selectedSubCategories:Array<string>;
 	entitiesCollection:IEntitiesCollection;
-
+	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -66,6 +66,7 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 								subCategoryId={subCategoryId} 
 								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
+								showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
 								updateEntities={this.props.updateEntities}
 							/>;
 			}
@@ -75,6 +76,7 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 								subCategoryId={subCategoryId} 
 								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
+								showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
 								updateEntities={this.props.updateEntities}
 							/>;
 			}

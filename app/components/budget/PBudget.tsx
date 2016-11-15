@@ -65,6 +65,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private defaultCategoryActivityDialog:dialogs.PDefaultCategoryActivityDialog;
 	private debtCategoryActivityDialog:dialogs.PDebtCategoryActivityDialog;
 	private masterCategoryActivityDialog:dialogs.PMasterCategoryActivityDialog;
+	private upcomingTransactionsDialog:dialogs.PUpcomingTransactionsDialog;
 
 	constructor(props:PBudgetProps) {
         super(props);
@@ -91,6 +92,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showDefaultSubCategoryActivityDialog = this.showDefaultSubCategoryActivityDialog.bind(this);
 		this.showDebtSubCategoryActivityDialog = this.showDebtSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
+		this.showUpcomingTransactionsDialog = this.showUpcomingTransactionsDialog.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
 		// If there is not active budget, default the formatter to en_US so that 
@@ -423,6 +425,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.hiddenCategoriesDialog.show(element, placement);
 	}
 
+	private showUpcomingTransactionsDialog(monthlySubCategoryBudgetId:string, element:HTMLElement, placement:string = "left"):void {
+		// Show the dialog for upcoming transactions
+		this.upcomingTransactionsDialog.show(monthlySubCategoryBudgetId, element, placement);
+	}
+
 	private getSortedCategoryIdsList():Array<string> {
 
 		var categoryIdsList:Array<string> = [];
@@ -536,6 +543,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						currentMonth={selectedMonth}
 						selectedSubCategories={this.state.selectedSubCategories}
 						entitiesCollection={this.props.entitiesCollection} 
+						showUpcomingTransactionsDialog={this.showUpcomingTransactionsDialog}
 						updateEntities={this.props.updateEntities}
 					/>
 				</div>
@@ -592,6 +600,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<dialogs.PMasterCategoryActivityDialog 
 					ref={(d)=> this.masterCategoryActivityDialog = d} 
+					dataFormatter={this.state.dataFormatter}
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+
+				<dialogs.PUpcomingTransactionsDialog 
+					ref={(d)=> this.upcomingTransactionsDialog = d} 
 					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
 				/>

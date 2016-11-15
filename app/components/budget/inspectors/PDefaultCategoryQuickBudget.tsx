@@ -46,6 +46,7 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 		this.setBudgetedToSpentLastMonth = this.setBudgetedToSpentLastMonth.bind(this);
 		this.setBudgetedToAverageBudgeted = this.setBudgetedToAverageBudgeted.bind(this);
 		this.setBudgetedToAverageSpent = this.setBudgetedToAverageSpent.bind(this);
+		this.setBudgetedToUpcomingTransactions = this.setBudgetedToUpcomingTransactions.bind(this);
 	}
 
 	private setBudgetedToBudgetedLastMonth():void {
@@ -94,8 +95,10 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		// If the current budgeted value is different from upcomingTransactions, update it
 		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
-		if(upcomingTransactions != monthlySubCategoryBudget.budgeted)
-			this.setBudgetedValue(monthlySubCategoryBudget, upcomingTransactions);
+		// The upcomingTransactions is a negative number, so negate it before comparing to the budgeted value, or
+		// using it to set the budgeted value
+		if(-upcomingTransactions != monthlySubCategoryBudget.budgeted)
+			this.setBudgetedValue(monthlySubCategoryBudget, -upcomingTransactions);
 	}
 
 	private setBudgetedValue(monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget, value:number):void {
@@ -140,11 +143,12 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 			</li>
 		];
 
-		if(upcomingTransactions != 0) {
+		// We only need to be concerned with upcoming transactions if they are outflows
+		if(upcomingTransactions < 0) {
 			quickBudgetItems.unshift(
 				<li key="qbUpcoming" style={ListItemStyle}>
 					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
-						Budget for Upcoming: {dataFormatter.formatCurrency(upcomingTransactions)}
+						Budget for Upcoming: {dataFormatter.formatCurrency(-upcomingTransactions)}
 					</Button>
 				</li>
 			);

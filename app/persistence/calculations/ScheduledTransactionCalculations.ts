@@ -264,7 +264,6 @@ export class ScheduledTransactionCalculations {
 	// *************************************************************************************************************
 	public performCalculations(budgetId:string,
 								budgetKnowledge:BudgetKnowledge,
-								referenceData:IReferenceDataForCalculations,
 								currentDate:DateWithoutTime = null,
 								scheduledTransactionIds:Array<string> = null):Promise<IScheduledTransactionCalculationsResult> {
 

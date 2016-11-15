@@ -14,13 +14,12 @@ import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 
-// TODO: Dialog for viewing Upcoming Transactions
-
 export interface PDefaultCategoryInspectorProps {
 	dataFormatter:DataFormatter;
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -57,8 +56,10 @@ export class PDefaultCategoryInspector extends React.Component<PDefaultCategoryI
 				/>
 
 				<PMessage 
+					dataFormatter={this.props.dataFormatter}
 					subCategory={subCategory} 
 					monthlySubCategoryBudget={monthlySubCategoryBudget} 
+					showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
 				/>
 
 				<PDefaultCategoryQuickBudget
