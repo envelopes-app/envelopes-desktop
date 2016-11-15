@@ -64,6 +64,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 	constructor(props: any) {
         super(props);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.state = { componentWidth:0, componentHeight:0 };
 	}
@@ -109,6 +110,36 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		});
 
 		return showInfoColumn;
+	}
+
+
+	private onKeyDown(event:React.KeyboardEvent<any>):void {
+
+		debugger;
+		// We want the user to move the selection up and down the register screen using the arrow
+		// keys, and also the tab/shift-tab combination.
+		if(event.keyCode == 38) {
+			// Up Arrow Key
+			event.stopPropagation();
+		}
+		else if(event.keyCode == 40) {
+			// Down Arrow Key
+			event.stopPropagation();
+		}
+		else if(event.keyCode == 9) {
+			// Tab Key
+			//if(event.shiftKey) {}
+			//else {}
+			event.stopPropagation();
+		}
+		else if(event.keyCode == 27) {
+			// Excape Key
+			event.stopPropagation();
+		}
+		else if(event.keyCode == 13) {
+			// Enter Key
+			event.stopPropagation();
+		}
 	}
 
 	public render() {
@@ -320,7 +351,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 			}
 
 			return (
-				<div style={RegisterDataGridContainerStyle} ref={(d)=> this.dataGridContainer = d}>
+				<div style={RegisterDataGridContainerStyle} ref={(d)=> this.dataGridContainer = d} onKeyDown={this.onKeyDown}>
 					<Table headerHeight={25} rowHeight={30} 
 						rowsCount={registerTransactionObjects ? registerTransactionObjects.length : 0} 
 						width={this.state.componentWidth} height={this.state.componentHeight}>

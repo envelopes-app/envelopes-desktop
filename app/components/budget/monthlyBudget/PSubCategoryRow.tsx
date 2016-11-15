@@ -203,7 +203,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 
 	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
-		debugger;
 		// We want the user to move the selection up and down the budget screen using the arrow
 		// keys, and also the tab/shift-tab combination.
 		// Also the escape key can be used to cancel the editing state.

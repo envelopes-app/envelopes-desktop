@@ -68,7 +68,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.setRegisterSort = this.setRegisterSort.bind(this);
 		this.updateClearedForTransaction = this.updateClearedForTransaction.bind(this);
 		this.editTransaction = this.editTransaction.bind(this);
-		this.onAddTransactionSelected = this.onAddTransactionSelected.bind(this);
+		this.showTransactionDialog = this.showTransactionDialog.bind(this);
 		this.showFlagSelectionDialog = this.showFlagSelectionDialog.bind(this);
 		this.showFilterTransactionsDialog = this.showFilterTransactionsDialog.bind(this);
 		this.showReconcileAccountDialog = this.showReconcileAccountDialog.bind(this);
@@ -565,10 +565,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.props.updateEntities(changedEntities);
 	}
 
-	// *******************************************************************************************************
-	// Action Handlers for commands in the Regsiter Toolbar
-	// *******************************************************************************************************
-	private onAddTransactionSelected():void {
+	private showTransactionDialog():void {
 
 		// Determine which account we are showing from the sidebar state
 		var accountId:string = null;
@@ -707,7 +704,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PRegisterToolbar 
 					registerState={registerState}
-					onAddTransactionSelected={this.onAddTransactionSelected}
+					onAddTransactionSelected={this.showTransactionDialog}
 					showEditMenu={null}
 					showFilterDialog={this.showFilterTransactionsDialog}
 					showEditMenuDialog={this.showEditMenuDialog}
