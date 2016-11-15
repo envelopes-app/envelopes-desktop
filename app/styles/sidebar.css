@@ -26,7 +26,7 @@
 	opacity: 0.5
 }
 
-.add-account-button {
+.sidebar-button {
 	flex: 0 0 auto;
 	font-size: 18px;
 	color: #FFFFFF;
@@ -36,7 +36,7 @@
 	height: 40px;
 }
 
-.add-account-button:hover {
+.sidebar-button:hover {
 	flex: 0 0 auto;
 	font-size: 18px;
 	color: #FFFFFF;

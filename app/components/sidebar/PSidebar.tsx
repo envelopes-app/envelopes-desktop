@@ -67,6 +67,13 @@ const ModuleButtonIconStyle:React.CSSProperties = {
 	marginRight: '0px'
 }
 
+const PBottomButtonsContainer:React.CSSProperties = {
+	display: 'flex',
+	flexFlow: 'row nowrap',
+	alignItems: "center",
+	width: "100%"
+};
+
 export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
 	// TODO: Reorder accounts (possibly through a reorder accounts dialog)
@@ -292,9 +299,17 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 						{accountButtonContainers}
 					</div>
 
-					<button className="add-account-button" onClick={this.onAddAccountClick}>
-						<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
-					</button>
+					<div style={PBottomButtonsContainer}>
+						<button className="sidebar-button" title="Reorder Accounts">
+							<Glyphicon glyph="retweet"/>
+						</button>
+						<button className="sidebar-button" title="Add Account" style={{flex:"1 1 auto"}} onClick={this.onAddAccountClick}>
+							<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
+						</button>
+						<button className="sidebar-button" title="Collapse Sidebar">
+							<Glyphicon glyph="chevron-left"/>
+						</button>
+					</div>
 
 					<PAccountCreationDialog 
 						ref={(d)=> this.accountCreationDialog = d } 

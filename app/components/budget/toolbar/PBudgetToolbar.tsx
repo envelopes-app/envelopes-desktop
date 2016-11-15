@@ -31,6 +31,7 @@ const BudgetToolbarStyle:React.CSSProperties = {
 
 export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
   
+	private reorderButton:PLinkButton;
 	private expandAllButton:PLinkButton;
 	private collapseAllButton:PLinkButton;
 	private addCategoryButton:PLinkButton;
@@ -74,6 +75,11 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 						ref={(c)=>{this.addCategoryButton = c;}}
 						tooltip="Add Category Group" text="Add Category Group" glyphNames={["glyphicon-plus-sign"]} 
 						clickHandler={this.onAddCategoryButtonClick} />
+
+					<PLinkButton 
+						ref={(c)=>{this.reorderButton = c;}}
+						tooltip="Reorder Categories" text="Reorder Categories" glyphNames={["glyphicon-retweet"]} 
+						clickHandler={null} />
 				</div>
 			</div>
 		);
