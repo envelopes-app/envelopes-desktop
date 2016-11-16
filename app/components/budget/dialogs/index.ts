@@ -7,5 +7,6 @@ export { PMasterCategoryActivityDialog } from './PMasterCategoryActivityDialog';
 export { PMasterCategoryEditDialog } from './PMasterCategoryEditDialog';
 export { PMonthSelectionDialog } from './PMonthSelectionDialog';
 export { PMoveMoneyDialog } from './PMoveMoneyDialog';
+export { PReorderCategoriesDialog } from './PReorderCategoriesDialog';
 export { PSubCategoryEditDialog } from './PSubCategoryEditDialog';
 export { PUpcomingTransactionsDialog } from './PUpcomingTransactionsDialog';

@@ -66,6 +66,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private debtCategoryActivityDialog:dialogs.PDebtCategoryActivityDialog;
 	private masterCategoryActivityDialog:dialogs.PMasterCategoryActivityDialog;
 	private upcomingTransactionsDialog:dialogs.PUpcomingTransactionsDialog;
+	private reorderCategoriesDialog:dialogs.PReorderCategoriesDialog;
 
 	constructor(props:PBudgetProps) {
         super(props);
@@ -93,6 +94,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.showDebtSubCategoryActivityDialog = this.showDebtSubCategoryActivityDialog.bind(this);
 		this.showMasterCategoryActivityDialog = this.showMasterCategoryActivityDialog.bind(this);
 		this.showUpcomingTransactionsDialog = this.showUpcomingTransactionsDialog.bind(this);
+		this.showReorderCategoriesDialog = this.showReorderCategoriesDialog.bind(this);
 		this.onAddCategoryGroupSelected = this.onAddCategoryGroupSelected.bind(this);
 
 		// If there is not active budget, default the formatter to en_US so that 
@@ -430,6 +432,13 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.upcomingTransactionsDialog.show(monthlySubCategoryBudgetId, element, placement);
 	}
 
+	private showReorderCategoriesDialog():void {
+
+		if(this.reorderCategoriesDialog.isShowing() == false) {
+			this.reorderCategoriesDialog.show();
+		}
+	}
+
 	private getSortedCategoryIdsList():Array<string> {
 
 		var categoryIdsList:Array<string> = [];
@@ -504,6 +513,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					expandAllMasterCategories={this.expandAllMasterCategories}
 					collapseAllMasterCategories={this.collapseAllMasterCategories}
 					onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
+					showReorderCategoriesDialog={this.showReorderCategoriesDialog}
 				/>
 
 				<div style={BudgetSubContainerStyle}>
@@ -608,6 +618,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					ref={(d)=> this.upcomingTransactionsDialog = d} 
 					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={this.props.entitiesCollection}
+				/>
+
+				<dialogs.PReorderCategoriesDialog 
+					ref={(d)=> this.reorderCategoriesDialog = d} 
+					entitiesCollection={this.props.entitiesCollection}
+					updateEntities={this.props.updateEntities}
 				/>
 			</div>
 		);

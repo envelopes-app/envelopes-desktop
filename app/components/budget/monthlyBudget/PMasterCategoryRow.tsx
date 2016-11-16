@@ -125,8 +125,6 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		this.onExpandCollapseGlyphClick = this.onExpandCollapseGlyphClick.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onAddSubCategoryClick = this.onAddSubCategoryClick.bind(this);
-		this.onMoveCategoryUpClick = this.onMoveCategoryUpClick.bind(this);
-		this.onMoveCategoryDownClick = this.onMoveCategoryDownClick.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);
@@ -156,46 +154,6 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		var masterCategory = this.props.masterCategory;
 		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
 		this.props.showCreateCategoryDialog(masterCategory.entityId, element);
-	}
-
-	private onMoveCategoryUpClick(event:React.MouseEvent<any>):void {
-
-		// Get the master category that is above the master category we are displaying
-		var masterCategory = this.props.masterCategory;
-		var masterCategoryAbove = this.props.entitiesCollection.masterCategories.getMasterCategoryAbove(masterCategory.entityId);
-		if(masterCategoryAbove) {
-
-			// We are going to swap the sortableIndices of these master categories
-			var masterCategoryClone = Object.assign({}, masterCategory);
-			var masterCategoryAboveClone = Object.assign({}, masterCategoryAbove);
-			// Swap the sortableIndices in the clone objects
-			masterCategoryClone.sortableIndex = masterCategoryAbove.sortableIndex;
-			masterCategoryAboveClone.sortableIndex = masterCategory.sortableIndex;
-			// Send these master categories for persistence
-			this.props.updateEntities({
-				masterCategories: [masterCategoryClone, masterCategoryAboveClone]
-			});
-		}
-	}
-
-	private onMoveCategoryDownClick(event:React.MouseEvent<any>):void {
-
-		// Get the master category that is below the master category we are displaying
-		var masterCategory = this.props.masterCategory;
-		var masterCategoryBelow = this.props.entitiesCollection.masterCategories.getMasterCategoryBelow(masterCategory.entityId);
-		if(masterCategoryBelow) {
-
-			// We are going to swap the sortableIndices of these master categories
-			var masterCategoryClone = Object.assign({}, masterCategory);
-			var masterCategoryBelowClone = Object.assign({}, masterCategoryBelow);
-			// Swap the sortableIndices in the clone objects
-			masterCategoryClone.sortableIndex = masterCategoryBelow.sortableIndex;
-			masterCategoryBelowClone.sortableIndex = masterCategory.sortableIndex;
-			// Send these master categories for persistence
-			this.props.updateEntities({
-				masterCategories: [masterCategoryClone, masterCategoryBelowClone]
-			});
-		}
 	}
 	
 	private onCheckBoxSelectionChange(event:React.FormEvent<any>):void {
@@ -306,12 +264,6 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 					<PButtonWithGlyph showGlyph={this.state.hoverState} 
 						ref={(b)=> this.addCategoryButton = b}
 						glyphName="glyphicon-plus-sign" clickHandler={this.onAddSubCategoryClick} />
-					<PButtonWithGlyph showGlyph={this.state.hoverState} 
-						ref={(b)=> this.moveCategoryUpButton = b}
-						glyphName="glyphicon-arrow-up" clickHandler={this.onMoveCategoryUpClick} />
-					<PButtonWithGlyph showGlyph={this.state.hoverState} 
-						ref={(b)=> this.moveCategoryDownButton = b}
-						glyphName="glyphicon-arrow-down" clickHandler={this.onMoveCategoryDownClick} />
 				</div>
 			]);
 		}

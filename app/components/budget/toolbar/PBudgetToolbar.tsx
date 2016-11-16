@@ -9,6 +9,7 @@ export interface PBudgetToolbarProps {
 	expandAllMasterCategories:()=>void;
 	collapseAllMasterCategories:()=>void;
 	onAddCategoryGroupSelected:(element:HTMLElement)=>void;
+	showReorderCategoriesDialog:()=>void;
 }
 
 const BudgetToolbarContainerStyle:React.CSSProperties = {
@@ -41,6 +42,7 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 		this.onExpandAllButtonClick = this.onExpandAllButtonClick.bind(this);
 		this.onCollapseAllButtonClick = this.onCollapseAllButtonClick.bind(this);
 		this.onAddCategoryButtonClick = this.onAddCategoryButtonClick.bind(this);
+		this.onReorderCategoriesButtonClick = this.onReorderCategoriesButtonClick.bind(this);
 	}
 
 	private onExpandAllButtonClick(event:React.MouseEvent<any>):void {
@@ -55,6 +57,10 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 
 		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
 		this.props.onAddCategoryGroupSelected(element);
+	}
+
+	private onReorderCategoriesButtonClick(event:React.MouseEvent<any>):void {
+		this.props.showReorderCategoriesDialog();
 	}
 
 	public render() {
@@ -79,7 +85,7 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 					<PLinkButton 
 						ref={(c)=>{this.reorderButton = c;}}
 						tooltip="Reorder Categories" text="Reorder Categories" glyphNames={["glyphicon-retweet"]} 
-						clickHandler={null} />
+						clickHandler={this.onReorderCategoriesButtonClick} />
 				</div>
 			</div>
 		);

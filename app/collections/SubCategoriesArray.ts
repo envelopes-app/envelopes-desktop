@@ -171,4 +171,10 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 		
 		return removedSubCategory; 
 	}
+
+	protected getIndexForInsertion(entity:ISubCategory):number {
+
+		var index = _.sortedIndexBy(this.internalArray, entity, "sortableIndex");
+		return index;
+	}
 }

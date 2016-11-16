@@ -17,7 +17,7 @@ const AccountButtonContainerStyle:React.CSSProperties = {
 	flexFlow: 'row nowrap',	
 	height: '30px',
 	top: '0px',
-	paddingLeft: '16px', 
+	paddingLeft: '10px', 
 	alignItems: 'center',
 	cursor: 'pointer',
 	backgroundColor: "transparent"

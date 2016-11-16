@@ -140,7 +140,6 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 
 		var headerRow = this.getHeaderRow();
 		var transactionRows = this.getTransactionRows(this.props.transactions);
-//		var allRows = [headerRow].concat(transactionRows);
 
 		return (
 			<div style={TransactionsContainer}>

@@ -116,4 +116,10 @@ export class MasterCategoriesArray extends EntitiesArray<IMasterCategory> {
 
 		return masterCategoryBelow;		
 	}
+
+	protected getIndexForInsertion(entity:IMasterCategory):number {
+
+		var index = _.sortedIndexBy(this.internalArray, entity, "sortableIndex");
+		return index;
+	}
 }
