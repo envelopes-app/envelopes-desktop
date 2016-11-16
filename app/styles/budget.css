@@ -291,3 +291,15 @@
 	margin-top: -250px;
 	margin-left: -250px;
 }
+
+.reorder-arrow-glyph {
+	color: #003440;
+	opacity: 0.5;
+	cursor: pointer;
+}
+
+.reorder-arrow-glyph:hover {
+	color: #003440;
+	opacity: 1;
+	cursor: pointer;
+}

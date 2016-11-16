@@ -17,7 +17,6 @@ const AccountButtonContainerStyle:React.CSSProperties = {
 	flexFlow: 'row nowrap',	
 	height: '30px',
 	top: '0px',
-	paddingLeft: '10px', 
 	alignItems: 'center',
 	cursor: 'pointer',
 	backgroundColor: "transparent"
@@ -28,7 +27,7 @@ const AccountButtonLabelStyle:React.CSSProperties = {
 	fontSize: '16px',
 	fontWeight: 'normal', 
 	margin: '0px', 
-	paddingLeft: '8px', 
+	paddingLeft: '4px', 
 	paddingRight: '4px', 
 	color: 'white'
 };
@@ -47,31 +46,38 @@ const AccountButtonValueWithBadgeStyle:React.CSSProperties = {
 	backgroundColor: 'white'
 };
 
-const InfoCountBadgeStyle:React.CSSProperties = {
+const BadgeContainerStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end",
+	width: '27px'
+} 
+
+const BaseBadgeStyle:React.CSSProperties = {
 	fontSize: '10px',
 	fontWeight: 'normal', 
 	color: '#FFFFFF',
+}
+
+const InfoCountBadgeStyle = Object.assign({}, BaseBadgeStyle, {
 	backgroundColor: '#009CC2',
 	borderColor: '#FFFFFF',
 	borderWidth: '1px',
 	borderRadius: '5px',
 	borderStyle: 'solid',
-	paddingLeft: '4px',
-	paddingRight: '4px'
-};
+	paddingLeft: '3px',
+	paddingRight: '3px'
+});
 
-const WarningCountBadgeStyle:React.CSSProperties = {
-	fontSize: '10px',
-	fontWeight: 'normal', 
-	color: '#FFFFFF',
+const WarningCountBadgeStyle = Object.assign({}, BaseBadgeStyle, {
 	backgroundColor: '#E59100',
 	borderColor: '#FFFFFF',
 	borderWidth: '1px',
 	borderRadius: '5px',
 	borderStyle: 'solid',
-	paddingLeft: '4px',
-	paddingRight: '4px'
-};
+	paddingLeft: '3px',
+	paddingRight: '3px'
+});
 
 export interface PAccountButtonProps {
 	account:IAccount;
@@ -140,20 +146,24 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
 		var counterNode:JSX.Element;
 		if(account.infoCount > 0) {
 			counterNode = (
-				<div style={InfoCountBadgeStyle}>
-					{account.infoCount < 100 ? account.infoCount.toString() : "99+" }
+				<div style={BadgeContainerStyle}>
+					<div style={InfoCountBadgeStyle}>
+						{account.infoCount < 100 ? account.infoCount.toString() : "99+" }
+					</div>
 				</div>
 			);
 		}
 		else if (account.warningCount > 0) {
 			counterNode = (
-				<div style={WarningCountBadgeStyle}>
-					{account.warningCount < 100 ? account.warningCount.toString() : "99+" }
+				<div style={BadgeContainerStyle}>
+					<div style={WarningCountBadgeStyle}>
+						{account.warningCount < 100 ? account.warningCount.toString() : "99+" }
+					</div>
 				</div>
 			);
 		}
 		else {
-			counterNode = <div />;
+			counterNode = <div style={BadgeContainerStyle} />;
 		}
 
 		// If the value is negative, we need to show it with a badge around it

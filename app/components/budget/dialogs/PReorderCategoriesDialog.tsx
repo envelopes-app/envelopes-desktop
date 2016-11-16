@@ -312,8 +312,8 @@ export class PReorderCategoriesDialog extends React.Component<PReorderCategories
 				<div style={MasterCategoryRowStyle} onClick={this.toggleExpandCollapseForMasterCategory.bind(this, masterCategory.entityId)}>
 					<Glyphicon glyph={glyphIconName} />
 					<span style={MasterCategoryNameStyle}>&nbsp;{masterCategory.name}</span>
-					<Glyphicon glyph="arrow-up" style={{paddingRight:"10px", cursor:"pointer"}} onClick={this.onMoveMasterCategoryUpClick.bind(this, masterCategory)} />
-					<Glyphicon glyph="arrow-down" style={{cursor:"pointer"}} onClick={this.onMoveMasterCategoryDownClick.bind(this, masterCategory)} />
+					<Glyphicon glyph="arrow-up" className="reorder-arrow-glyph" style={{paddingRight:"10px"}} onClick={this.onMoveMasterCategoryUpClick.bind(this, masterCategory)} />
+					<Glyphicon glyph="arrow-down" className="reorder-arrow-glyph" onClick={this.onMoveMasterCategoryDownClick.bind(this, masterCategory)} />
 				</div>
 				<div className={containerClass} style={subCategoriesContainerStyle} id={collapseContainerIdentity}>
 					{subCategoryItems}
@@ -329,9 +329,10 @@ export class PReorderCategoriesDialog extends React.Component<PReorderCategories
 		let subCategoryItem = (
 			<div style={SubCategoryRowStyle} key={subCategory.entityId}>
 				<span style={SubCategoryNameStyle}>{subCategory.name}</span>
-				<Glyphicon glyph="arrow-up" style={{paddingRight:"10px", cursor:"pointer"}} onClick={this.onMoveSubCategoryUpClick.bind(this, subCategory)} />
-				<Glyphicon glyph="arrow-down" style={{cursor:"pointer"}} onClick={this.onMoveSubCategoryDownClick.bind(this, subCategory)} />
-			</div>);
+				<Glyphicon glyph="arrow-up" className="reorder-arrow-glyph" style={{paddingRight:"10px"}} onClick={this.onMoveSubCategoryUpClick.bind(this, subCategory)} />
+				<Glyphicon glyph="arrow-down" className="reorder-arrow-glyph" onClick={this.onMoveSubCategoryDownClick.bind(this, subCategory)} />
+			</div>
+		);
 
 		return subCategoryItem;
 	}

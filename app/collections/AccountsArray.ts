@@ -61,6 +61,48 @@ export class AccountsArray extends EntitiesArray<IAccount> {
 	}
 
 
+	public getAccountAbove(accountId:string):IAccount {
+
+		var referenceAccount = this.getEntityById(accountId);
+		var referenceSortableIndex = referenceAccount.sortableIndex; 
+		var accountAbove:IAccount = null;
+
+		// We want to find the account with highest sortableIndex below the referenceAccount
+		_.forEach(this.internalArray, (account)=>{
+			if(account.isTombstone == 0 && account.closed == 0 && 
+				account.onBudget == referenceAccount.onBudget && 
+				account.entityId != accountId && 
+				account.sortableIndex < referenceSortableIndex) {
+
+				if(!accountAbove || accountAbove.sortableIndex < account.sortableIndex)
+					accountAbove = account;
+			}
+		});
+
+		return accountAbove;		
+	}
+
+	public getAccountBelow(accountId:string):IAccount {
+
+		var referenceAccount = this.getEntityById(accountId);
+		var referenceSortableIndex = referenceAccount.sortableIndex; 
+		var accountBelow:IAccount = null;
+
+		// We want to find the account with lowest sortableIndex above the referenceAccount
+		_.forEach(this.internalArray, (account)=>{
+			if(account.isTombstone == 0 && account.closed == 0 && 
+				account.onBudget == referenceAccount.onBudget && 
+				account.entityId != accountId && 
+				account.sortableIndex > referenceSortableIndex) {
+			
+				if(!accountBelow || accountBelow.sortableIndex > account.sortableIndex)
+					accountBelow = account;
+			}
+		});
+
+		return accountBelow;		
+	}
+
 	protected addEntity(entity:IAccount):void {
 		super.addEntity(entity);
 		this.sortArray();

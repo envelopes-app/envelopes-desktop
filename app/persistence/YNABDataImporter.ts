@@ -48,6 +48,7 @@ export class YNABDataImporter {
 	private minBudgetedMonth = DateWithoutTime.createForCurrentMonth();
 	private maxBudgetedMonth = DateWithoutTime.createForCurrentMonth();
 
+	private accountsSortableIndex:number;
 	private masterCategoriesSortableIndex:number;
 	private subCategoriesSortableIndex:SimpleObjectMap<number>;
 
@@ -57,12 +58,19 @@ export class YNABDataImporter {
 		this.existingEntitiesCollection = existingEntitiesCollection;
 		this.dataFormatter = dataFormatter;
 
+		this.accountsSortableIndex = existingEntitiesCollection.accounts.getSortableIndexForNewAccount(); 
 		this.masterCategoriesSortableIndex = existingEntitiesCollection.masterCategories.getSortableIndexForNewMasterCategoryInsertion(); 
 		this.subCategoriesSortableIndex = {}; 
 		_.forEach(existingEntitiesCollection.masterCategories.getAllItems(), (masterCategory)=>{
 			this.subCategoriesSortableIndex[masterCategory.entityId] = existingEntitiesCollection.subCategories.getSortableIndexForNewSubCategoryInsertionAtBottom(masterCategory.entityId);
 		});
 	}
+
+	private getNextSortableIndexForAccount():number {
+		let nextSortableIndex = this.accountsSortableIndex;
+		this.accountsSortableIndex += 10000;
+		return nextSortableIndex;
+	}	
 
 	private getNextSortableIndexForMasterCategory():number {
 		let nextSortableIndex = this.masterCategoriesSortableIndex;
@@ -106,7 +114,7 @@ export class YNABDataImporter {
 					// Create an account entity and add to the updatedEntities collection
 					accountEntity = EntityFactory.createNewAccount();
 					accountEntity.accountName = accountName;
-					accountEntity.sortableIndex = this.existingEntitiesCollection.accounts.getSortableIndexForNewAccount();
+					accountEntity.sortableIndex = this.getNextSortableIndexForAccount();
 					// Get the account type that the user selected for this account
 					accountEntity.accountType = this.getAccountType(accountName, accountsList);
 					accountEntity.onBudget = AccountTypes.isRecommendedOnBudget(accountEntity.accountType) ? 1 : 0;

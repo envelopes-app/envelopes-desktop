@@ -13,6 +13,7 @@ import { PAccountButton } from './PAccountButton';
 import { PAccountEditDialog } from './dialogs/PAccountEditDialog';
 import { PAccountCreationDialog } from './dialogs/PAccountCreationDialog';
 import { PAccountClosingDialog } from './dialogs/PAccountClosingDialog';
+import { PReorderAccountsDialog } from './dialogs/PReorderAccountsDialog';
 
 import * as collections from '../../collections';
 import { DataFormats, DataFormatter } from '../../utilities';
@@ -76,10 +77,10 @@ const PBottomButtonsContainer:React.CSSProperties = {
 
 export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
   
-	// TODO: Reorder accounts (possibly through a reorder accounts dialog)
 	private accountEditDialog:PAccountEditDialog;
 	private accountCreationDialog:PAccountCreationDialog;
 	private accountClosingDialog:PAccountClosingDialog;
+	private reorderAccountsDialog:PReorderAccountsDialog;
 
 	constructor(props:PSidebarProps) {
         super(props);
@@ -90,6 +91,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
+		this.onReorderAccountsClick = this.onReorderAccountsClick.bind(this);
 		this.showAccountEditDialog = this.showAccountEditDialog.bind(this);
 		this.showAccountClosingDialog = this.showAccountClosingDialog.bind(this);
 		// Default the formatter to en_US so that we have something to work with at startup
@@ -142,7 +144,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.setState(state);
 	}
 
-	private onBudgetSelect() {
+	private onBudgetSelect():void {
 		// If the "Budget" tab is not already the selected tab then
 		if(this.props.sidebarState.selectedTab != "Budget") {
 
@@ -152,7 +154,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		}
 	}
 
-	private onAllAccountsSelect() {
+	private onAllAccountsSelect():void {
 		// If the "Budget" tab is not already the selected tab then
 		if(this.props.sidebarState.selectedTab != "All Accounts") {
 
@@ -162,7 +164,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		}
 	}
 
-	private onAccountSelect(accountId:string) {
+	private onAccountSelect(accountId:string):void {
 
 		// If the selection is not already set to this particular account then
 		if(this.props.sidebarState.selectedTab != "Account" || this.props.sidebarState.selectedAccountId != accountId) {
@@ -172,10 +174,18 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		}
 	}
 
-	private onAddAccountClick() {
+	private onAddAccountClick(event:React.MouseEvent<any>):void {
 
 		if(this.accountCreationDialog.isShowing() == false) {
 			this.accountCreationDialog.show();
+		}
+	}
+
+	private onReorderAccountsClick(event:React.MouseEvent<any>):void {
+
+		var accounts = this.props.entitiesCollection.accounts.getNonTombstonedOpenAccounts();
+		if(accounts.length > 1 && this.reorderAccountsDialog.isShowing() == false) {
+			this.reorderAccountsDialog.show();
 		}
 	}
 
@@ -300,7 +310,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					</div>
 
 					<div style={PBottomButtonsContainer}>
-						<button className="sidebar-button" title="Reorder Accounts">
+						<button className="sidebar-button" title="Reorder Accounts" onClick={this.onReorderAccountsClick}>
 							<Glyphicon glyph="retweet"/>
 						</button>
 						<button className="sidebar-button" title="Add Account" style={{flex:"1 1 auto"}} onClick={this.onAddAccountClick}>
@@ -330,6 +340,12 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 					<PAccountClosingDialog 
 						ref={(d)=> { this.accountClosingDialog = d; }}
 						dataFormatter={this.state.dataFormatter}
+						entitiesCollection={this.props.entitiesCollection}
+						updateEntities={this.props.updateEntities}
+					/>
+
+					<PReorderAccountsDialog 
+						ref={(d)=> { this.reorderAccountsDialog = d; }}
 						entitiesCollection={this.props.entitiesCollection}
 						updateEntities={this.props.updateEntities}
 					/>
