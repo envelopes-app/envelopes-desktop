@@ -51,6 +51,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// TODO: Clear/Unclear transaction through "C" button
 	// TODO: Payee filteration when typing in transaction dialog
 	// TODO: When we delete transactions, selected transactions count is not updated
+	private registerGrid:PRegisterDataGrid;
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
 	private transactionDialog:PTransactionDialog;
@@ -621,6 +622,11 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			}
 		}
 
+		// If the expanded state of the sidebar has changed, then resize the register grid
+		if(this.props.applicationState.sidebarState.expanded != nextProps.applicationState.sidebarState.expanded) {
+			this.registerGrid.updateComponentDimensions();
+		}
+
 		this.setState(state);
 	} 
 
@@ -712,6 +718,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				/>
 
 				<PRegisterDataGrid 
+					ref={(g)=> this.registerGrid = g }
 					accountId={currentAccountId} 
 					isAllAccounts={isAllAccounts}
 					dataFormatter={this.state.dataFormatter} 

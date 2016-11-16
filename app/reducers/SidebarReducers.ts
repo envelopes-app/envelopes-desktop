@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { ISidebarState } from '../interfaces/state';
 import { ActionNames } from '../constants';
-import { SetSelectedTabAction } from '../interfaces/actions';
+import { SetSidebarExpandedAction, SetSelectedTabAction } from '../interfaces/actions';
 
 export class SidebarReducers {
 
@@ -11,6 +11,7 @@ export class SidebarReducers {
 		var newValue:ISidebarState;
 		if(!previousValue)
 			newValue = {
+				expanded: true,
 				selectedTab: "Budget",
 				selectedAccountId: null
 			};
@@ -22,6 +23,10 @@ export class SidebarReducers {
 			case ActionNames.GLOBAL_LOAD_BUDGET_COMPLETED:
 				newValue.selectedTab = "Budget";
 				newValue.selectedAccountId = null;
+				break;
+
+			case ActionNames.SIDEBAR_SET_EXPANDED:
+				newValue.expanded = (action as SetSidebarExpandedAction).expanded;
 				break;
 
 			case ActionNames.SIDEBAR_SET_SELECTED_TAB:

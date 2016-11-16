@@ -18,6 +18,10 @@ const mapStateToProps = (state:IApplicationState) => {
 
 const mapDispatchToProps = (dispatch:Dispatch<IApplicationState>) => {
   	return {
+		setExpanded: (expanded:boolean) => {
+			dispatch(SidebarActionsCreator.setSidebarExpanded(expanded));
+		},  
+
 		setSelectedTab: (selectedTab:string, selectedAccountId:string) => {
 			dispatch(SidebarActionsCreator.setSelectedTab(selectedTab, selectedAccountId));
 		},  

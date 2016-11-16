@@ -9,13 +9,20 @@ import { IAccount, ITransaction, IPayee, ISubCategory } from '../interfaces/budg
 import { GlobalActionsCreator } from './GlobalActionsCreator';
 import { EntityFactory } from '../persistence';
 import { DateWithoutTime } from '../utilities';
-import { SetSelectedTabAction } from '../interfaces/actions';
+import { SetSidebarExpandedAction, SetSelectedTabAction } from '../interfaces/actions';
 
 export class SidebarActionsCreator {
 
 	// ********************************************************************************************
 	// Sync Action Creators
 	// ********************************************************************************************
+	public static setSidebarExpanded(expanded:boolean):SetSidebarExpandedAction {
+		return {
+			type: ActionNames.SIDEBAR_SET_EXPANDED,
+			expanded: expanded
+		};
+	}
+
 	public static setSelectedTab(selectedTab:string, selectedAccountId:string):SetSelectedTabAction {
 		return {
 			type: ActionNames.SIDEBAR_SET_SELECTED_TAB,

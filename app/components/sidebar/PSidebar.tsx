@@ -27,6 +27,7 @@ export interface PSidebarProps {
 	activeBudgetId:string;
 	entitiesCollection:IEntitiesCollection;
 	// Dispatcher Functions
+	setExpanded:(expanded:boolean)=>void;
 	setSelectedTab: (selectedTab:string, selectedAccountId:string)=>void;
 	addAccount: (account:IAccount, currentBalance:number)=>void;
 	updateAccount: (account:IAccount, currentBalance:number)=>void;
@@ -41,11 +42,23 @@ export interface PSidebarState {
 	closedAccountsExpanded:boolean;
 }
 
-const PSidebarStyle:React.CSSProperties = {
+const PSidebarExpandedStyle:React.CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	height: "100%",
+	width: "260px",
 	backgroundImage: "linear-gradient(#34aebe, #227e99)"
+};
+
+const PSidebarCollapsedStyle:React.CSSProperties = {
+	display: 'flex',
+	flexFlow: 'column nowrap',
+	alignItems: 'center',
+	justifyContent: 'center',
+	height: "100%",
+	width: "30px",
+	backgroundImage: "linear-gradient(#34aebe, #227e99)",
+	cursor: "pointer"
 };
 
 const PModuleButtonStyle:React.CSSProperties = {
@@ -92,6 +105,8 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
 		this.onReorderAccountsClick = this.onReorderAccountsClick.bind(this);
+		this.onCollapseClick = this.onCollapseClick.bind(this);
+		this.onExpandClick = this.onExpandClick.bind(this);
 		this.showAccountEditDialog = this.showAccountEditDialog.bind(this);
 		this.showAccountClosingDialog = this.showAccountClosingDialog.bind(this);
 		// Default the formatter to en_US so that we have something to work with at startup
@@ -187,6 +202,14 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		if(accounts.length > 1 && this.reorderAccountsDialog.isShowing() == false) {
 			this.reorderAccountsDialog.show();
 		}
+	}
+
+	private onCollapseClick(event:React.MouseEvent<any>):void {
+		this.props.setExpanded(false);
+	}
+
+	private onExpandClick(event:React.MouseEvent<any>):void {
+		this.props.setExpanded(true);
 	}
 
 	private showAccountEditDialog(account:IAccount, target:HTMLElement):void {
@@ -296,61 +319,70 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 			var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 			var accountButtonContainers:Array<JSX.Element> = this.getAccountButtonContainerNodes();
 
-			return (
-				<div style={PSidebarStyle}>
-					<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
-						<MailOutline style={ModuleButtonIconStyle} />
-					</PModuleButton>
-					<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
-						<AccountBalance style={ModuleButtonIconStyle} />
-					</PModuleButton>
-					<hr className="sidebar-horizontal-rule" />
-					<div style={PContainerStyle}>
-						{accountButtonContainers}
+			if(this.props.sidebarState.expanded) {
+				return (
+					<div style={PSidebarExpandedStyle}>
+						<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
+							<MailOutline style={ModuleButtonIconStyle} />
+						</PModuleButton>
+						<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
+							<AccountBalance style={ModuleButtonIconStyle} />
+						</PModuleButton>
+						<hr className="sidebar-horizontal-rule" />
+						<div style={PContainerStyle}>
+							{accountButtonContainers}
+						</div>
+
+						<div style={PBottomButtonsContainer}>
+							<button className="sidebar-button" title="Reorder Accounts" onClick={this.onReorderAccountsClick}>
+								<Glyphicon glyph="retweet"/>
+							</button>
+							<button className="sidebar-button" title="Add Account" style={{flex:"1 1 auto"}} onClick={this.onAddAccountClick}>
+								<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
+							</button>
+							<button className="sidebar-button" title="Collapse Sidebar" onClick={this.onCollapseClick}>
+								<Glyphicon glyph="chevron-left"/>
+							</button>
+						</div>
+
+						<PAccountCreationDialog 
+							ref={(d)=> this.accountCreationDialog = d } 
+							dataFormatter={this.state.dataFormatter}
+							entitiesCollection={this.props.entitiesCollection}
+							addAccount={this.props.addAccount} 
+						/>
+
+						<PAccountEditDialog 
+							ref={(d)=> { this.accountEditDialog = d; }}
+							dataFormatter={this.state.dataFormatter}
+							entitiesCollection={this.props.entitiesCollection}
+							showAccountClosingDialog={this.showAccountClosingDialog}
+							updateAccount={this.props.updateAccount}
+							updateEntities={this.props.updateEntities}
+						/>
+
+						<PAccountClosingDialog 
+							ref={(d)=> { this.accountClosingDialog = d; }}
+							dataFormatter={this.state.dataFormatter}
+							entitiesCollection={this.props.entitiesCollection}
+							updateEntities={this.props.updateEntities}
+						/>
+
+						<PReorderAccountsDialog 
+							ref={(d)=> { this.reorderAccountsDialog = d; }}
+							entitiesCollection={this.props.entitiesCollection}
+							updateEntities={this.props.updateEntities}
+						/>
 					</div>
-
-					<div style={PBottomButtonsContainer}>
-						<button className="sidebar-button" title="Reorder Accounts" onClick={this.onReorderAccountsClick}>
-							<Glyphicon glyph="retweet"/>
-						</button>
-						<button className="sidebar-button" title="Add Account" style={{flex:"1 1 auto"}} onClick={this.onAddAccountClick}>
-							<Glyphicon glyph="plus-sign"/>&nbsp;Add Account
-						</button>
-						<button className="sidebar-button" title="Collapse Sidebar">
-							<Glyphicon glyph="chevron-left"/>
-						</button>
+				);
+			}
+			else {
+				return (
+					<div style={PSidebarCollapsedStyle} onClick={this.onExpandClick}>
+						<Glyphicon glyph="chevron-right" style={{fontSize:"18px", color:"#FFFFFF"}}/>
 					</div>
-
-					<PAccountCreationDialog 
-						ref={(d)=> this.accountCreationDialog = d } 
-						dataFormatter={this.state.dataFormatter}
-						entitiesCollection={this.props.entitiesCollection}
-						addAccount={this.props.addAccount} 
-					/>
-
-					<PAccountEditDialog 
-						ref={(d)=> { this.accountEditDialog = d; }}
-						dataFormatter={this.state.dataFormatter}
-						entitiesCollection={this.props.entitiesCollection}
-						showAccountClosingDialog={this.showAccountClosingDialog}
-						updateAccount={this.props.updateAccount}
-						updateEntities={this.props.updateEntities}
-					/>
-
-					<PAccountClosingDialog 
-						ref={(d)=> { this.accountClosingDialog = d; }}
-						dataFormatter={this.state.dataFormatter}
-						entitiesCollection={this.props.entitiesCollection}
-						updateEntities={this.props.updateEntities}
-					/>
-
-					<PReorderAccountsDialog 
-						ref={(d)=> { this.reorderAccountsDialog = d; }}
-						entitiesCollection={this.props.entitiesCollection}
-						updateEntities={this.props.updateEntities}
-					/>
-				</div>
-			);
+				);
+			}
 		}
 		else {
 			return <div />;

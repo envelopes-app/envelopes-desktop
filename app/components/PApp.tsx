@@ -29,7 +29,7 @@ const AppStyle = {
 }
 
 const AppSidebarStyle = {
-	flex: "0 0 260px"
+	flex: "0 0 auto"
 }
 
 const AppModuleContainerStyle = {

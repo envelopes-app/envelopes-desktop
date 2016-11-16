@@ -5,4 +5,4 @@ export {
 	EnsureBudgetEntitiesForMonthCompletedAction 
 } from './GlobalActions';
 
-export { SetSelectedTabAction } from './SidebarActions';
+export { SetSidebarExpandedAction,SetSelectedTabAction } from './SidebarActions';
