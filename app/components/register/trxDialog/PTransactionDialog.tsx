@@ -18,7 +18,7 @@ import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { TransactionFlag, TransactionFrequency } from '../../../constants';
 import { EntityFactory } from '../../../persistence';
-import { IEntitiesCollection, ISimpleEntitiesCollection, ITransactionValues } from '../../../interfaces/state';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 import { DataFormatter, DialogUtilities, DateWithoutTime, FocusManager, KeyGenerator, Logger, SimpleObjectMap } from '../../../utilities';
 
 export interface PTransactionDialogProps { 
