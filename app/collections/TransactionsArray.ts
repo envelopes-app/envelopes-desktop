@@ -41,6 +41,15 @@ export class TransactionsArray extends EntitiesArray<ITransaction> {
 		return _.filter(accountTransactions, {subCategoryId: subCategoryId});
 	}
 
+	public hasTransactionsForSubCategory(subCategoryId:string):boolean {
+
+		var subCategoryTransaction = _.find(this.internalArray, (transaction)=>{
+			return (transaction.isTombstone == 0 && transaction.subCategoryId == subCategoryId);
+		});
+
+		return subCategoryTransaction ? true : false;
+	}
+
 	protected addEntity(transaction:ITransaction):void {
 
 		if(!this.transactionsByMonthDictionary)

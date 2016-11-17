@@ -129,6 +129,7 @@ body {
 	font-size: 14px;
 	color: #d33c2d;
 	background-color: #ffffff;
+	opacity: 0.5;
 }
 
 .dialog-warning-button-disabled:hover {
@@ -136,7 +137,16 @@ body {
 	font-size: 14px;
 	color: #d33c2d;
 	background-color: #ffffff;
-	cursor: pointer;
+	opacity: 0.5;
+	cursor: default;
+}
+
+.dialog-warning-button-disabled:focus {
+	flex: 0 0 auto;
+	font-size: 14px;
+	color: #d33c2d;
+	background-color: #ffffff;
+	opacity: 0.5;
 }
 
 /* ************************************************************************************ */

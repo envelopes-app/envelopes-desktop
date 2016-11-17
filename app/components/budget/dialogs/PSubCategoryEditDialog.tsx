@@ -23,6 +23,7 @@ export interface PSubCategoryEditDialogState {
 	validationMessage:string;
 	subCategory:budgetEntities.ISubCategory;
 	subCategoryName:string;
+	allowDelete:boolean;
 }
 
 const PopoverStyle:React.CSSProperties = {
@@ -78,7 +79,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 
 	private ctrlCategoryName:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PSubCategoryEditDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -93,7 +94,8 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 			subCategory:null, 
 			subCategoryName:null, 
 			validationState:null,
-			validationMessage:null
+			validationMessage:null,
+			allowDelete:true
 		};
 	}
 
@@ -107,6 +109,17 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
 		if(subCategory) {
 
+			// Check if this category is being referenced by any transactions or scheduled transactions
+			// If it is, then we are going to disable the delete button for this category.
+			var entitiesCollection = this.props.entitiesCollection;
+			var allowDelete = true;
+			if(
+				entitiesCollection.transactions.hasTransactionsForSubCategory(subCategory.entityId) ||
+				entitiesCollection.scheduledTransactions.hasTransactionsForSubCategory(subCategory.entityId)
+			) {
+				allowDelete = false;
+			}
+
 			var state = Object.assign({}, this.state) as PSubCategoryEditDialogState;
 			state.show = true;
 			state.target = target;
@@ -115,6 +128,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 			state.subCategoryName = subCategory.name;
 			state.validationState = null;
 			state.validationMessage = null;
+			state.allowDelete = allowDelete;
 			this.setState(state);
 		}
 	}
@@ -197,17 +211,19 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 
 	private onDeleteClick():void {
 
-		// Get the category entity that we are currently editing
-		var subCategory = this.state.subCategory;
-		var updatedSubCategory = Object.assign({}, subCategory) as budgetEntities.ISubCategory;
-		// Set the tombstone flag and update the entity
-		updatedSubCategory.isTombstone = 1;
-		var updatedEntities:ISimpleEntitiesCollection = {
-			subCategories: [updatedSubCategory]
-		};
-		this.props.updateEntities(updatedEntities);
-		// Hide the dialog
-		this.hide();
+		if(this.state.allowDelete) {
+			// Get the category entity that we are currently editing
+			var subCategory = this.state.subCategory;
+			var updatedSubCategory = Object.assign({}, subCategory) as budgetEntities.ISubCategory;
+			// Set the tombstone flag and update the entity
+			updatedSubCategory.isTombstone = 1;
+			var updatedEntities:ISimpleEntitiesCollection = {
+				subCategories: [updatedSubCategory]
+			};
+			this.props.updateEntities(updatedEntities);
+			// Hide the dialog
+			this.hide();
+		}
 	}
 
 	public render() {
@@ -263,7 +279,7 @@ export class PSubCategoryEditDialog extends React.Component<PSubCategoryEditDial
 						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
 							<Glyphicon glyph="eye-open"/>&nbsp;Hide
 						</Button>
-						<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
+						<Button className={this.state.allowDelete ? "dialog-warning-button" : "dialog-warning-button-disabled"} onClick={this.onDeleteClick}>
 							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
 						</Button>
 						<div className="spacer" />

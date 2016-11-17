@@ -23,6 +23,7 @@ export interface PMasterCategoryEditDialogState {
 	validationMessage:string;
 	masterCategory:budgetEntities.IMasterCategory;
 	masterCategoryName:string;
+	allowDelete:boolean;
 }
 
 const PopoverStyle:React.CSSProperties = {
@@ -77,7 +78,7 @@ const OkButtonStyle:React.CSSProperties = {
 export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEditDialogProps, PMasterCategoryEditDialogState> {
 	private ctrlCategoryName:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PMasterCategoryEditDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -92,7 +93,8 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 			masterCategory:null, 
 			masterCategoryName:null, 
 			validationState:null,
-			validationMessage:null
+			validationMessage:null,
+			allowDelete:true
 		};
 	}
 
@@ -106,6 +108,23 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 		var masterCategory = this.props.entitiesCollection.masterCategories.getEntityById(masterCategoryId);
 		if(masterCategory) {
 
+			// Check if this category is being referenced by any transactions or scheduled transactions
+			// If it is, then we are going to disable the delete button for this category.
+			var entitiesCollection = this.props.entitiesCollection;
+			var subCategories = entitiesCollection.subCategories.getNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
+			var allowDelete = true;
+
+			_.forEach(subCategories, (subCategory)=>{
+
+				if(
+					entitiesCollection.transactions.hasTransactionsForSubCategory(subCategory.entityId) ||
+					entitiesCollection.scheduledTransactions.hasTransactionsForSubCategory(subCategory.entityId)
+				) {
+					allowDelete = false;
+					return false;
+				}
+			});
+
 			var state = Object.assign({}, this.state) as PMasterCategoryEditDialogState;
 			state.show = true;
 			state.target = target;
@@ -114,6 +133,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 			state.masterCategoryName = masterCategory.name;
 			state.validationState = null;
 			state.validationMessage = null;
+			state.allowDelete = allowDelete;
 			this.setState(state);
 		}
 	}
@@ -196,17 +216,19 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 
 	private onDeleteClick():void {
 
-		// Get the category entity that we are currently editing
-		var masterCategory = this.state.masterCategory;
-		var updatedMasterCategory = Object.assign({}, masterCategory) as budgetEntities.IMasterCategory;
-		// Set the tombstone flag and update the entity
-		updatedMasterCategory.isTombstone = 1;
-		var updatedEntities:ISimpleEntitiesCollection = {
-			masterCategories: [updatedMasterCategory]
-		};
-		this.props.updateEntities(updatedEntities);
-		// Hide the dialog
-		this.hide();
+		if(this.state.allowDelete) {
+			// Get the category entity that we are currently editing
+			var masterCategory = this.state.masterCategory;
+			var updatedMasterCategory = Object.assign({}, masterCategory) as budgetEntities.IMasterCategory;
+			// Set the tombstone flag and update the entity
+			updatedMasterCategory.isTombstone = 1;
+			var updatedEntities:ISimpleEntitiesCollection = {
+				masterCategories: [updatedMasterCategory]
+			};
+			this.props.updateEntities(updatedEntities);
+			// Hide the dialog
+			this.hide();
+		}
 	}
 
 	public render() {
@@ -262,7 +284,7 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
 							<Glyphicon glyph="eye-open"/>&nbsp;Hide
 						</Button>
-						<Button className="dialog-warning-button" onClick={this.onDeleteClick}>
+						<Button className={this.state.allowDelete ? "dialog-warning-button" : "dialog-warning-button-disabled"} onClick={this.onDeleteClick}>
 							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
 						</Button>
 						<div className="spacer" />

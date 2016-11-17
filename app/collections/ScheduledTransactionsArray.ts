@@ -34,6 +34,15 @@ export class ScheduledTransactionsArray extends EntitiesArray<IScheduledTransact
 		return _.filter(accountTransactions, {subCategoryId: subCategoryId});
 	}
 
+	public hasTransactionsForSubCategory(subCategoryId:string):boolean {
+
+		var subCategoryTransaction = _.find(this.internalArray, (scheduledTransaction)=>{
+			return (scheduledTransaction.isTombstone == 0 && scheduledTransaction.subCategoryId == subCategoryId);
+		});
+
+		return subCategoryTransaction ? true : false;
+	}
+
 	protected addEntity(scheduledTransaction:IScheduledTransaction):void {
 
 		if(!this.transactionsByAccountIdDictionary)
