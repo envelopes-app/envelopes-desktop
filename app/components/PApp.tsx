@@ -20,12 +20,12 @@ import { IApplicationState, ISimpleEntitiesCollection } from '../interfaces/stat
 import * as catalogEntities from '../interfaces/catalogEntities';
 
 const AppStyle = {
-  display: "flex",
-  flexFlow: "row nowrap",
-  alignItems: "stretch",
-  position: "absolute",
-  width: "100%",
-  height: "100%"
+	display: "flex",
+	flexFlow: "row nowrap",
+	alignItems: "stretch",
+	position: "absolute",
+	width: "100%",
+	height: "100%"
 }
 
 const AppSidebarStyle = {

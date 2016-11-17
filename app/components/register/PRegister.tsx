@@ -52,6 +52,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// TODO: Delete transaction through delete button on register
 	// TODO: Clear/Unclear transaction through "C" button
 	// TODO: Payee filteration when typing in transaction dialog
+	// TODO: Enter transaction now in edit menu
 	private registerGrid:PRegisterDataGrid;
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
