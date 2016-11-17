@@ -52,7 +52,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// TODO: Delete transaction through delete button on register
 	// TODO: Clear/Unclear transaction through "C" button
 	// TODO: Payee filteration when typing in transaction dialog
-	// TODO: When we delete transactions, selected transactions count is not updated
 	private registerGrid:PRegisterDataGrid;
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
@@ -143,11 +142,10 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				searchPhrase: "",
 				selectedTransactions: [],
 				selectedTransactionsMap: {},
-				registerTransactionObjectsArray: new RegisterTransactionObjectsArray()
+				registerTransactionObjectsArray: null
 			};
 
-			// Populate the registerTransactionObjectsArray with initial  values
-			this.updateRegisterTransactionObjectsArray(registerState.registerTransactionObjectsArray, registerState, this.props.applicationState.entitiesCollection);
+			registerState.registerTransactionObjectsArray = this.buildRegisterTransactionObjectsArray(registerState, this.props.applicationState.entitiesCollection);
 		}
 
 		return registerState;
@@ -361,8 +359,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		}
 	}
 
-	private updateRegisterTransactionObjectsArray(registerTransactionObjectsArray:RegisterTransactionObjectsArray, registerState:IRegisterState, entitiesCollection:IEntitiesCollection):void {
+	private buildRegisterTransactionObjectsArray(registerState:IRegisterState, entitiesCollection:IEntitiesCollection):RegisterTransactionObjectsArray {
 
+		var registerTransactionObjectsArray = new RegisterTransactionObjectsArray();
 		var accountId = registerState.accountId;
 		var isAllAccounts = (registerState.accountId == "All_Accounts");
 		var accountsArray = entitiesCollection.accounts;
@@ -385,27 +384,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					(isAllAccounts || scheduledTransaction.accountId == accountId)
 				);
 
-				// Do we already have a registerTransactionObject in our array against this scheduledTransaction
-				let existingRegisterTransactionObject = registerTransactionObjectsArray.getEntityById(scheduledTransaction.entityId);
+				if(shouldBeIncluded) {
 
-				// If the scheduled transaction should not be included, and it is not already included in the 
-				// registerTransactionObjectsArray, then we don't need to do anything about it.
-				// We do however need to handle the rest of the three cases:-
-				// Case 1: It is already included, but should not be. Remove it.
-				// Case 2: It is not already included, but should be. Add it.
-				// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
-
-				if(existingRegisterTransactionObject && shouldBeIncluded == false) {
-
-					// Case 1: It is already included, but should not be. Remove it.
-					// Remove the registerTransactionObject corresponding to this transaction.
-					// This also removes registerTransactionObject for any subTransactions or 
-					// scheduledSubTransactions if this was a split
-					registerTransactionObjectsArray.removeEntityById(scheduledTransaction.entityId);
-				}
-				else if(!existingRegisterTransactionObject && shouldBeIncluded == true) {
-
-					// Case 2: It is not already included, but should be. Add it.
 					let registerTransactionObject = RegisterTransactionObject.createFromScheduledTransaction(scheduledTransaction, entitiesCollection);
 					if(registerTransactionObject) {
 						registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
@@ -421,35 +401,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 						}
 					}
 				}
-				else if(existingRegisterTransactionObject && shouldBeIncluded == true) {
-
-					// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
-					var isStale = existingRegisterTransactionObject.checkIfObjectIsStale( entitiesCollection );
-					// If it is stale, then create a new one and replace the old registerTransactionObject with the new one
-					if(isStale) {
-						let registerTransactionObject = RegisterTransactionObject.createFromScheduledTransaction(scheduledTransaction, entitiesCollection);
-						if(registerTransactionObject) {
-							registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-							// If this is a split transaction, get the subtransactions for this transaction
-							// and create RegisterTransactionObjects for them as well.
-							if(scheduledTransaction.subCategoryId == splitSubCategoryId) {
-
-								var scheduledSubTransactions = scheduledSubTransactionsArray.getSubTransactionsByTransactionId(scheduledTransaction.entityId);
-								_.forEach(scheduledSubTransactions, (scheduledSubTransaction)=>{
-									let registerTransactionObject = RegisterTransactionObject.createFromScheduledSubTransaction(scheduledSubTransaction, scheduledTransaction, entitiesCollection);
-									registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-								});
-							}
-						}
-					}
-				}
 			});
-		}
-		else {
-			// Start iterating through scheduled transactions, and remove them all from the register.
-			_.forEach(scheduledTransactionsArray.getAllItems(), (scheduledTransaction)=>{
-				registerTransactionObjectsArray.removeEntityById(scheduledTransaction.entityId);
-			});			
 		}
 
 		// Start iterating through transactions month by month, and convert them into RegisterTransactionObjects for displaying in the register.
@@ -466,27 +418,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					(transaction.cleared != ClearedFlag.Reconciled || registerState.filterShowReconciledTransactions) 
 				);
 
-				// Do we already have a registerTransactionObject in our array against this transaction
-				let existingRegisterTransactionObject = registerTransactionObjectsArray.getEntityById(transaction.entityId);
-				
-				// If the transaction should not be included, and it is not already included in the 
-				// registerTransactionObjectsArray, then we don't need to do anything about it.
-				// We do however need to handle the rest of the three cases:-
-				// Case 1: It is already included, but should not be. Remove it.
-				// Case 2: It is not already included, but should be. Add it.
-				// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
+				if(shouldBeIncluded == true) {
 
-				if(existingRegisterTransactionObject && shouldBeIncluded == false) {
-
-					// Case 1: It is already included, but should not be. Remove it.
-					// Remove the registerTransactionObject corresponding to this transaction.
-					// This also removes registerTransactionObject for any subTransactions or 
-					// scheduledSubTransactions if this was a split
-					registerTransactionObjectsArray.removeEntityById(transaction.entityId);
-				}
-				else if(!existingRegisterTransactionObject && shouldBeIncluded == true) {
-
-					// Case 2: It is not already included, but should be. Add it.
 					let registerTransactionObject = RegisterTransactionObject.createFromTransaction(transaction, entitiesCollection);
 					registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
 
@@ -502,29 +435,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 						});
 					} 
 				}
-				else if(existingRegisterTransactionObject && shouldBeIncluded == true) {
-
-					// Case 3. It is already included, and should remain. Make sure it is not stale. If it is, update it.  
-					var isStale = existingRegisterTransactionObject.checkIfObjectIsStale( entitiesCollection );
-					// If it is stale, then create a new one and replace the old registerTransactionObject with the new one
-					if(isStale) {
-
-						let registerTransactionObject = RegisterTransactionObject.createFromTransaction(transaction, entitiesCollection);
-						registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-
-						// If this is a split transaction, get the subtransactions for this transaction
-						// and create RegisterTransactionObjects for them as well.
-						if(transaction.subCategoryId == splitSubCategoryId) {
-
-							var subTransactions = subTransactionsArray.getSubTransactionsByTransactionId(transaction.entityId);
-							_.forEach(subTransactions, (subTransaction)=>{
-
-								let registerTransactionObject = RegisterTransactionObject.createFromSubTransaction(subTransaction, transaction, entitiesCollection);
-								registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-							});
-						} 
-					}
-				}
 			});
 
 			// Move to the next month
@@ -532,6 +442,32 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		}
 
 		registerTransactionObjectsArray.sortArray(registerState.sortByFields, registerState.sortOrders);
+		return registerTransactionObjectsArray;
+	}
+
+	private updateSelectedTransactionsArrayAndMap(registerState:IRegisterState):void {
+
+		var selectedTransactionIds = registerState.selectedTransactions;
+		var selectedTransactionIdsMap = registerState.selectedTransactionsMap;
+		var registerTransactionObjectsArray = registerState.registerTransactionObjectsArray;
+
+		// Create a new array and map object that we are going to replace into the registerState 
+		var newSelectedTransactionIds = new Array<string>();
+		var newSelectedTransactionIdsMap = {};
+
+		// Iterate through all the transactionIds in the existing selectedTransactionIds array, and if we have a registerTransactionObject 
+		// in our array corresponding to that transactionId, then add this transactionId to the new array and map
+		_.forEach(selectedTransactionIds, (transactionId)=>{
+
+			if(registerTransactionObjectsArray.getEntityById(transactionId)) {
+
+				newSelectedTransactionIds.push(transactionId);
+				newSelectedTransactionIdsMap[transactionId] = true;	
+			}
+		});
+
+		registerState.selectedTransactions = newSelectedTransactionIds;
+		registerState.selectedTransactionsMap = newSelectedTransactionIdsMap; 
 	}
 
 	private updateFilterTransactionSettings(timeFrame:string, startDate:DateWithoutTime, endDate:DateWithoutTime, showReconciled:boolean, showScheduled:boolean):void {
@@ -544,8 +480,9 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		registerState.filterEndDate = endDate;
 		registerState.filterShowReconciledTransactions = showReconciled;
 		registerState.filterShowScheduledTransactions = showScheduled;
-		// Update the registerTransactionObjectsArray
-		this.updateRegisterTransactionObjectsArray(registerState.registerTransactionObjectsArray, registerState, this.props.applicationState.entitiesCollection);
+		registerState.registerTransactionObjectsArray = this.buildRegisterTransactionObjectsArray(registerState, this.props.applicationState.entitiesCollection);
+		// Update the selectedTransaction variables in the registerState
+		this.updateSelectedTransactionsArrayAndMap(registerState);
 		this.updateRegisterState(registerState);
 	}
 
@@ -625,9 +562,10 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		// Get the register state for the active account
 		var activeAccount = this.getActiveAccount(nextProps.applicationState);
 		var registerState = this.getRegisterStateForAccount(activeAccount);
-		var registerTransactionObjectsArray = registerState.registerTransactionObjectsArray;
-		// Update the registerTransactionObjectsArray
-		this.updateRegisterTransactionObjectsArray(registerTransactionObjectsArray, registerState, nextProps.applicationState.entitiesCollection);
+		registerState.registerTransactionObjectsArray = this.buildRegisterTransactionObjectsArray(registerState, nextProps.applicationState.entitiesCollection);
+		// Update the selectedTransaction variables in the registerState
+		this.updateSelectedTransactionsArrayAndMap(registerState);
+
 		var state = Object.assign({}, this.state) as PRegisterState;
 		state.registersState[registerState.accountId] = registerState;
 
