@@ -15,6 +15,7 @@ import { PSelectionCell } from './PSelectionCell';
 import { PInfoCell } from './PInfoCell';
 import { PFlagCell } from './PFlagCell';
 import { PDateCell } from './PDateCell';
+import { PCheckNumberCell } from './PCheckNumberCell';
 import { PAccountCell } from './PAccountCell';
 import { PPayeeCell } from './PPayeeCell';
 import { PCategoryCell } from './PCategoryCell';
@@ -147,11 +148,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 		var showDataGrid:boolean = this.state.componentWidth > 0 && this.state.componentHeight > 0;
 		if(showDataGrid) {
 
-			var sortField = this.props.registerState.sortByFields[0];
-			var sortOrder = this.props.registerState.sortOrders[0];
-			var registerTransactionObjects = this.props.registerState.registerTransactionObjectsArray;
+			var registerState = this.props.registerState;
+			var sortField = registerState.sortByFields[0];
+			var sortOrder = registerState.sortOrders[0];
+			var registerTransactionObjects = registerState.registerTransactionObjectsArray;
 
 			var tableColumns = [
+				// Index 0
 				<Column 
 					key="selectionColumn"
 					width={25}
@@ -159,13 +162,14 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PSelectionCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 							unselectTransaction={this.props.unselectTransaction} 
 						/>
 					}
 				/>,
+				// Index 1
 				<Column 
 					key="infoColumn"
 					width={25}
@@ -173,13 +177,14 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PInfoCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 							showApproveRejectDialog={this.props.showApproveRejectDialog}
 						/>
 					}
 				/>,
+				// Index 2
 				<Column 
 					key="flagColumn"
 					width={25}
@@ -187,13 +192,14 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PFlagCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							showFlagSelectionDialog={this.props.showFlagSelectionDialog}
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 3
 				<Column 
 					key="accountColumn"
 					width={100}
@@ -206,12 +212,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PAccountCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 4
 				<Column 
 					key="dateColumn"
 					width={90}
@@ -225,15 +232,36 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 						<PDateCell  
 							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 5
+				<Column 
+					key="checkColumn"
+					width={90}
+					header={
+						<PColumnHeader label="CHECK #" fieldName={RegisterSortField.CheckNumber}
+							sortByField={sortField} sortOrder={sortOrder} 
+							setRegisterSort={this.props.setRegisterSort}
+						/>
+					}
+					cell={
+						<PCheckNumberCell  
+							registerTransactionObjects={registerTransactionObjects}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
+							editTransaction={this.props.editTransaction} 
+							selectTransaction={this.props.selectTransaction} 
+						/>
+					}
+				/>,
+				// Index 6
 				<Column 
 					key="payeeColumn"
 					width={170}
+					flexGrow={1}
 					header={
 						<PColumnHeader label="PAYEE" fieldName={RegisterSortField.Payee}
 							sortByField={sortField} sortOrder={sortOrder} 
@@ -243,15 +271,17 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PPayeeCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 7
 				<Column 
 					key="categoryColumn"
 					width={280}
+					flexGrow={1}
 					header={
 						<PColumnHeader label="CATEGORY" fieldName={RegisterSortField.Category}
 							sortByField={sortField} sortOrder={sortOrder} 
@@ -261,12 +291,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PCategoryCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 8
 				<Column 
 					key="memoColumn"
 					width={170}
@@ -280,12 +311,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PMemoCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 9
 				<Column 
 					key="outflowColumn"
 					width={100}
@@ -299,12 +331,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 						<POutflowCell 
 							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 10
 				<Column 
 					key="inflowColumn"
 					width={100}
@@ -318,12 +351,13 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 						<PInflowCell 
 							dataFormatter={this.props.dataFormatter}
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction} 
 						/>
 					}
 				/>,
+				// Index 11
 				<Column 
 					key="clearedColumn"
 					width={30}
@@ -331,7 +365,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 					cell={
 						<PClearedCell 
 							registerTransactionObjects={registerTransactionObjects}
-							selectedTransactionsMap={this.props.registerState.selectedTransactionsMap}
+							selectedTransactionsMap={registerState.selectedTransactionsMap}
 							editTransaction={this.props.editTransaction} 
 							selectTransaction={this.props.selectTransaction}
 							updateClearedForTransaction={this.props.updateClearedForTransaction} 
@@ -340,14 +374,34 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 				/>
 			];
 
+			if(registerState.showClearedColumn == false) {
+				// Remove the cleared column from the array we created above
+				tableColumns.splice(11, 1); // Start at index 11, remove 1 item
+			}
+
+			if(registerState.showMemoColumn == false) {
+				// Remove the memo column from the array we created above
+				tableColumns.splice(8, 1);
+			}
+
+			if(registerState.showCheckColumn == false) {
+				// Remove the check number column from the array we created above
+				tableColumns.splice(5, 1);
+			}
+
 			if(this.props.isAllAccounts == false) {
 				// Remove the accounts column from the array we created above
-				tableColumns.splice(3, 1); // Start at index 3, remove 1 item
+				tableColumns.splice(3, 1);
+			}
+
+			if(registerState.showFlagColumn == false) {
+				// Remove the flag column from the array we created above
+				tableColumns.splice(2, 1);
 			}
 
 			if(this.showInfoColumn() == false) {
 				// Remove the info column from the array we created above
-				tableColumns.splice(1, 1); // Start at index 1, remove 1 item
+				tableColumns.splice(1, 1);
 			}
 
 			return (

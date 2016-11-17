@@ -13,6 +13,7 @@ export interface PRegisterToolbarProps {
 	showEditMenu:()=>void;
 	showFilterDialog:(element:HTMLElement)=>void;
 	showEditMenuDialog:(element:HTMLElement)=>void;
+	showRegisterSettingsDialog:(element:HTMLElement, placement?:string)=>void;
 }
 
 const RegisterToolbarContainerStyle:React.CSSProperties = {
@@ -37,11 +38,13 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
   
 	private editButton:PLinkButton;
 	private filterButton:PLinkButton;
+	private settingsButton:PLinkButton;
 
   	constructor(props: any) {
         super(props);
 		this.showEditMenuDialog = this.showEditMenuDialog.bind(this);
 		this.showFilterDialog = this.showFilterDialog.bind(this);
+		this.showSettingsDialog = this.showSettingsDialog.bind(this);
     }
 
 	private showEditMenuDialog():void {
@@ -54,6 +57,10 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 
 	private showFilterDialog(event:React.MouseEvent<any>):void {
 		this.props.showFilterDialog(this.filterButton.getRootElement());
+	}
+
+	private showSettingsDialog(event:React.MouseEvent<any>):void {
+		this.props.showRegisterSettingsDialog(this.settingsButton.getRootElement());
 	}
 
 	public render() {
@@ -79,9 +86,16 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 						showDropDown={true} 
 						clickHandler={this.showEditMenuDialog} 
 					/>
+					<PLinkButton 
+						ref={(b)=> this.settingsButton = b }
+						glyphNames={["glyphicon-cog"]}
+						enabled={true} text="Settings" showDropDown={true} 
+						clickHandler={this.showSettingsDialog}
+					/>
 					<div className="spacer" />
 					<PLinkButton 
 						ref={(b)=> this.filterButton = b }
+						glyphNames={["glyphicon-filter"]}
 						enabled={true} text="Filter" showDropDown={true} 
 						clickHandler={this.showFilterDialog} 
 					/>

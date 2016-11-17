@@ -376,6 +376,42 @@
 }
 
 /* ******************************************************************************* */
+/* Styles for the register settings */
+/* ******************************************************************************* */
+.register-settings-dropdown-list {
+	width: 100%;
+	border-style: none;
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.register-settings-dropdown-list-item {
+	width: 100%;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	color: #588697;	
+	font-size: 16px;
+	height: 24px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	cursor: pointer;
+}
+
+.register-settings-dropdown-list-item:hover {
+	width: 100%;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	color: #3e5e6a;	
+	font-size: 16px;
+	height: 24px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	cursor: pointer;
+}
+
+/* ******************************************************************************* */
 /* Styles for bulk categorize dialog */
 /* ******************************************************************************* */
 .bulk-categorize-dialog {

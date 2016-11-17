@@ -15,6 +15,12 @@ export interface IRegisterState {
 	filterStartDate:DateWithoutTime;
 	filterEndDate:DateWithoutTime;
 
+	// Which columns to show in the register
+	showCheckColumn:boolean;
+	showClearedColumn:boolean;
+	showFlagColumn:boolean;
+	showMemoColumn:boolean;
+	
 	searchPhrase:string;
 
 	// Array of transaction ids that are selected
