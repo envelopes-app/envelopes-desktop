@@ -95,7 +95,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 
 			// Up Arrow Key
 			if(event.keyCode == 38) {
-				// Decrement the index to get the previous account
+				// Decrement the index to get the previous payee
 				index--;
 				// If we have gone below 0, go back to the last index
 				if(index < 0)
@@ -103,7 +103,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 			}
 			// Down Arrow Key
 			else if(event.keyCode == 40) {
-				// Increment the index to get the next account
+				// Increment the index to get the next payee
 				index++;
 				// If we have gone above the last index, go back to the first index
 				if(index >= payees.length)
@@ -200,7 +200,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 				// We got back one or more items in the filteredPayeesList, then display the link at the top 
 				// offering to create a new payee by the entered name. Also display the list of filtered payees 
 				// below that.
-				popoverContents = this.getPayeesDisplayList(this.props.payeesList, this.props.selectedPayeeId);
+				popoverContents = this.getPayeesDisplayList(filteredPayeesList, this.props.selectedPayeeId);
 			}
 		}
 		else {
