@@ -259,6 +259,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 								dataFormatter={this.props.dataFormatter} activeField={this.state.activeField}
 								selectorLabel="Cover this overspending with:" selectorLabelPosition="top"
 								selectedCategoryId={this.state.fromSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
+								categoryNotRequired={false}
 								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 						</Form>

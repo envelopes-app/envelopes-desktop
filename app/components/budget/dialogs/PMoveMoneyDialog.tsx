@@ -311,6 +311,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 								dataFormatter={this.props.dataFormatter}
 								activeField={this.state.activeField} selectorLabel="To:"
 								selectedCategoryId={this.state.toSubCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
+								categoryNotRequired={false}
 								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} 
 								handleTabPressed={this.handleTabPressedOnCategorySelector}
