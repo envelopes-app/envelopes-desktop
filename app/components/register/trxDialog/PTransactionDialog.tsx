@@ -86,6 +86,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.close = this.close.bind(this);
 		this.onEntered = this.onEntered.bind(this);
 
+		this.isCategoryNotRequired = this.isCategoryNotRequired.bind(this);
 		this.setActiveField = this.setActiveField.bind(this);
 		this.setFocusOnAccountSelector = this.setFocusOnAccountSelector.bind(this);
 		this.setFocusOnDateSelector = this.setFocusOnDateSelector.bind(this);
@@ -142,6 +143,33 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		setTimeout(function() {
 			focusManager.setFocus(activeFieldOnInitialShow);
 		}, 100);
+	}
+
+	private isCategoryNotRequired():boolean {
+
+		var isTransferAccountOnBudget = false;
+		var accountId = this.state.accountId;
+		var account = this.props.entitiesCollection.accounts.getEntityById(accountId);
+		var isAccountOnbudget = account.onBudget == 1 ? true : false;
+
+		var payeeId = this.state.payeeId;
+		var payee:budgetEntities.IPayee = null;
+		if(payeeId && payeeId != "")
+			payee = this.props.entitiesCollection.payees.getEntityById(payeeId);
+		else
+			return false;
+
+		var transferAccount:budgetEntities.IAccount = null;
+		if(payee && payee.accountId)
+			transferAccount = this.props.entitiesCollection.accounts.getEntityById(payee.accountId);
+		else
+			return false;
+
+		var isTransferAccountOnBudget = false;
+		if(transferAccount && transferAccount.onBudget == 1)
+			isTransferAccountOnBudget = true;
+
+		return isAccountOnbudget && isTransferAccountOnBudget;
 	}
 
 	public showForNewTransaction(accountId:string):void {
@@ -332,8 +360,15 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private handleTabPressedOnPayeeSelector(shiftKeyPressed:boolean):void {
 
-		if(!shiftKeyPressed)
-			this.focusManager.moveFocusForward("payee");
+		if(!shiftKeyPressed) {
+
+			var isCategoryNotRequired = this.isCategoryNotRequired();
+			// If category is not required, then move the focus forward 2 steps		
+			if(isCategoryNotRequired)
+				this.focusManager.moveFocusForward("payee", 2);
+			else
+				this.focusManager.moveFocusForward("payee");
+		}
 		else
 			this.focusManager.moveFocusBackward("payee");
 	}
@@ -357,7 +392,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 				this.focusManager.moveFocusForward("memo");
 		}
 		else
-			this.focusManager.moveFocusBackward("memo");
+		{
+			var isCategoryNotRequired = this.isCategoryNotRequired();
+			// If category is not required, then move the focus forward 2 steps		
+			if(isCategoryNotRequired)
+				this.focusManager.moveFocusBackward("memo", 2);
+			else
+				this.focusManager.moveFocusBackward("memo");
+		}
 	}
 
 	private handleTabPressedOnOutflowInput(shiftKeyPressed:boolean):void {
@@ -603,12 +645,13 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private createNewTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
 
+		var categoryNotRequired = this.isCategoryNotRequired();
 		var transaction = EntityFactory.createNewTransaction();
 		// Set the values in this transaction from the state
 		transaction.accountId = this.state.accountId;
 		transaction.date = this.state.date.getUTCTime();
 		transaction.payeeId = this.state.payeeId;
-		transaction.subCategoryId = this.state.subCategoryId;
+		transaction.subCategoryId = categoryNotRequired ? null : this.state.subCategoryId;
 		transaction.memo = this.state.memo;
 
 		if(this.state.inflowAmount > 0)
@@ -624,13 +667,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private createNewScheduledTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
 
+		var categoryNotRequired = this.isCategoryNotRequired();
 		var scheduledTransaction = EntityFactory.createNewScheduledTransaction();
 		// Set the values in this transaction from the state
 		scheduledTransaction.accountId = this.state.accountId;
 		scheduledTransaction.date = this.state.date.getUTCTime();
 		scheduledTransaction.frequency = this.state.frequency;
 		scheduledTransaction.payeeId = this.state.payeeId;
-		scheduledTransaction.subCategoryId = this.state.subCategoryId;
+		scheduledTransaction.subCategoryId = categoryNotRequired ? null : this.state.subCategoryId;
 		scheduledTransaction.memo = this.state.memo;
 
 		if(this.state.inflowAmount > 0)
@@ -697,7 +741,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 								dataFormatter={this.props.dataFormatter} selectorLabel="Category"
 								activeField={this.state.activeField} setActiveField={this.setActiveField}
 								selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
-								categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
+								categoryNotRequired={this.isCategoryNotRequired()} categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
 								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
 							<PMemoInput ref={(c) => this.memoInput = c} 
 								activeField={this.state.activeField} setActiveField={this.setActiveField}

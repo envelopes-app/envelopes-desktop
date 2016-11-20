@@ -51,9 +51,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// TODO: Import bank transactions
 	// TODO: Delete transaction through delete button on register
 	// TODO: Clear/Unclear transaction through "C" button
-	// TODO: Payee filteration when typing in transaction dialog
 	// TODO: Enter transaction now in edit menu
-	// TODO: In transaction dialog, when making budget to budget transfer, disable category selection
 	private registerGrid:PRegisterDataGrid;
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;

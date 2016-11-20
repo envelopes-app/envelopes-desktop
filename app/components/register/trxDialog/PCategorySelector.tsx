@@ -18,6 +18,7 @@ export interface PCategorySelectorProps {
 	selectorLabelPosition?:string;
 	selectedCategoryId:string;
 	manuallyEnteredCategoryName:string;
+	categoryNotRequired:boolean;
 	categoriesList:Array<objects.ICategoryObject>;
 	setActiveField?:(activeField:string)=>void;
 	setSelectedCategoryId:(subCategoryId:string, clearManuallyEnteredCategoryName?:boolean, callback?:()=>any)=>void;
@@ -246,7 +247,9 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 					</Col>
 					<Col sm={9}>
 						<FormControl ref={(n) => this.categoryInput = n } type="text" componentClass="input" style={CategorySelectorStyle} 
-							onFocus={this.onFocus} onChange={this.onChange} value={categoryValue} />
+							onFocus={this.onFocus} onChange={this.onChange} readOnly={this.props.categoryNotRequired}
+							value={this.props.categoryNotRequired ? "disabled for budget transfers" : categoryValue} 
+							disabled={this.props.categoryNotRequired} />
 						<Overlay show={this.props.activeField == "category"} placement="right" target={ ()=> ReactDOM.findDOMNode(this.categoryInput) }>
 							<Popover id="selectCategoryPopover" style={PopoverStyle} title="Budget Categories">
 								{popoverContents}

@@ -42,16 +42,16 @@ export class FocusManager {
 		}
 	}
 
-	public moveFocusBackward(currentFocusItemName:string):void {
+	public moveFocusBackward(currentFocusItemName:string, stepSize:number = 1):void {
 
 		// Get the index of this item from the focus items list
 		var index = _.indexOf(this.focusItemsList, currentFocusItemName);
 		if(index != -1) {
 
 			// Decrement the index to get the next item in the list
-			index--;
+			index -= 2;
 			// If we have reached the start of the list, then move back to the end
-			if(index == -1)
+			if(index < 0)
 				index = this.focusItemsList.length - 1;
 
 			// Get the name of the new focus item from the Array and set focus on it
