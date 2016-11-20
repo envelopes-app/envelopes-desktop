@@ -58,7 +58,6 @@ export class PApp extends React.Component<AppProps, AppState> {
 	// TODO: Undo/Redo Support
 	// TODO: When in production mode, log to files instead of console
 	// TODO: Clean log files older then 5 days
-	// TODO: Run Scheduled Transactions at startup
 	// TODO: Ensure all indexes are setup for the databases
 	// TODO: Remove subtransactions related code and database tables
 	// TODO: Integration with Payment and Licensing

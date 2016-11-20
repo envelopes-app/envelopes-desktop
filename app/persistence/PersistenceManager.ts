@@ -19,6 +19,7 @@ import { DateWithoutTime, Logger } from '../utilities';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge, setDatabaseReference } from './QueryExecutionUtility';
+import { IScheduledTransactionCalculationsResult } from '../interfaces/calculations';
 
 export class PersistenceManager {
 
@@ -122,6 +123,11 @@ export class PersistenceManager {
 			.then((budgetKnowledge:BudgetKnowledge)=>{
 
 				this.budgetKnowledge = budgetKnowledge;
+				// Run scheduled transaction calculations when opening the budget
+				return this.calculationsManager.performScheduledTransactionCalculations(budget.entityId, budgetKnowledge, true);
+			})
+			.then((retVal:IScheduledTransactionCalculationsResult)=>{
+
 				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 				var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
@@ -163,24 +169,24 @@ export class PersistenceManager {
 		var budgetId = this.activeBudget.entityId;
 		var budgetKnowledge = this.budgetKnowledge;
 
-		Logger.info(`PersistenceManager::Ensure that monthly budget data for the month of '${month.toISOString()}' already exists.'`);
+		Logger.info(`PersistenceManager::Ensure that monthly budget data for the month of '${month.toISOString()}' already exists.`);
 		// Check if we already have data available for this month
 		var monthlySubCategoryBudgetsArray = existingEntitiesCollection.monthlySubCategoryBudgets;
 		var monthlySubCategoryBudgetsForMonth = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(month.toISOString());
 		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0) {
-			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' already exists.'`);
+			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' already exists.`);
 			return Promise.resolve({});
 		}
 		else {
 
-			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' does not exist. Creating now.'`);
+			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' does not exist. Creating now.`);
 			// We did not find monthlySubCategoryBudget entities for this month, so we need to create them
 			var budgetFactory = new BudgetFactory();
 			return budgetFactory.createMonthlyBudgetDataForMonth(budgetId, month, true, budgetKnowledge)
 				.then((retVal:any)=>{
 
 					// Run pending calculations
-					Logger.info(`PersistenceManager::Performing pending calculations.'`);
+					Logger.info(`PersistenceManager::Performing pending calculations.`);
 					return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
 				})
 				.then((retVal:boolean)=>{
@@ -195,6 +201,22 @@ export class PersistenceManager {
 		}
 	}
 
+	public performScheduledTransactionCalculations():Promise<ISimpleEntitiesCollection> {
+
+		Logger.info(`PersistenceManager::Performing calculations for all scheduled transaction.`);
+		var budgetId = this.activeBudget.entityId;
+		var budgetKnowledge = this.budgetKnowledge;
+		return this.calculationsManager.performScheduledTransactionCalculations(budgetId, budgetKnowledge, true)
+			.then((retVal:IScheduledTransactionCalculationsResult)=>{
+				
+				Logger.info(`PersistenceManager::Loading updated data from the database.'`);
+				// Load updated data from the database
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+				return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
+			});
+	}
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************

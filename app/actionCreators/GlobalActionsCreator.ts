@@ -158,4 +158,21 @@ export class GlobalActionsCreator {
 				});
 		};
 	}
+
+	public static performScheduledTransactionCalculations() {
+
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.performScheduledTransactionCalculations()
+				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
+					// dispatch action sync data with database completed
+					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
+		};
+	}
 }

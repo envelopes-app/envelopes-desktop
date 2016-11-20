@@ -62,7 +62,7 @@ export class CalculationsManager {
 		return this.performCalculations(budgetId, budgetKnowledge);
 	}
 	
-	public performScheduledTransactionsCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, forceFullCalcs:boolean = false):Promise<IScheduledTransactionCalculationsResult> {
+	public performScheduledTransactionCalculations(budgetId:string, budgetKnowledge:BudgetKnowledge, forceFullCalcs:boolean = false):Promise<IScheduledTransactionCalculationsResult> {
 
 		if(forceFullCalcs) {
 			Logger.info("CalculationsManager::performScheduledTransactionsCalculations::Performing scheduled transaction calculations for all scheduled transactions.");
@@ -96,7 +96,7 @@ export class CalculationsManager {
 
 		var referenceData:IReferenceDataForCalculations;
 			
-		return this.performScheduledTransactionsCalculations(budgetId, budgetKnowledge, forceFullCalcs)
+		return this.performScheduledTransactionCalculations(budgetId, budgetKnowledge, forceFullCalcs)
 			.then((result:IScheduledTransactionCalculationsResult)=>{
 
 				Logger.info("CalculationsManager::performCalculations::Checking if there are any queued calculations.");
