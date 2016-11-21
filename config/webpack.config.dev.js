@@ -12,8 +12,6 @@ module.exports = {
   entry: [
     require.resolve('webpack/hot/dev-server'),
     require.resolve('./polyfills'),
-    'font-awesome-loader', 
-    'bootstrap-loader',
     path.join(paths.appSrc, 'index')
   ],
   output: {
@@ -24,10 +22,10 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.ts', '.tsx', 'css']
+    extensions: ['', '.js', '.ts', '.tsx', 'css', 'less']
   },
   resolveLoader: {
-    root: paths.ownNodeModules,
+    root: paths.nodeModules,
     moduleTemplates: ['*-loader']
   },
   module: {
@@ -52,12 +50,16 @@ module.exports = {
       }, 
       {
         test: /\.css$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.nodeModules],
         loader: 'style!css!postcss'
       },
-      {
+	  {
+        test: /\.less$/,
+        loader: "style!css!less"
+      },
+	  {
         test: /\.json$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.nodeModules],
         loader: 'json'
       },
       {
@@ -88,7 +90,7 @@ module.exports = {
         test: /bootstrap-sass\/assets\/javascripts\//, 
         loader: 'imports?jQuery=jquery' 
       }
-    ]
+	]
   },
   eslint: {
     configFile: path.join(__dirname, 'eslint.js'),

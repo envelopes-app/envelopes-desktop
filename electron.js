@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const { Promise } = require('es6-promise');
 const { app, ipcMain, BrowserWindow, Menu } = require('electron');
 const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus');
@@ -19,7 +20,11 @@ const createWindow = () => {
 		mainWindow.loadURL('http://localhost:8080/index.html')
 	}
 	else {
-		mainWindow.loadURL('file://' + __dirname + '/build/index.html')
+		mainWindow.loadURL(url.format({
+			pathname: path.join(__dirname, 'index.html'),
+			protocol: 'file:',
+			slashes: true
+		}));
 	}
 	// Open the DevTools if we are in development mode
 	if (process.env.NODE_ENV === 'development') {

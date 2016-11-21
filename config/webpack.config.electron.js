@@ -17,7 +17,7 @@ module.exports = {
 	devtool: 'source-map',
 	target: 'electron-main',
 	entry: [
-		path.join(paths.appSrc, '/../electron.js')
+		'./electron.js'
 	],
 	output: {
 		path: paths.appBuild,
@@ -27,7 +27,7 @@ module.exports = {
 		extensions: ['', '.js']
 	},
 	resolveLoader: {
-		root: paths.ownNodeModules,
+		root: paths.nodeModules,
 		moduleTemplates: ['*-loader']
 	},
 	module: {
@@ -47,12 +47,16 @@ module.exports = {
 			},
 			{
 				test: /\.json$/,
-				include: [paths.appSrc, paths.appNodeModules],
+				include: [paths.appSrc, paths.nodeModules],
 				loader: 'json'
 			},
 		]
 	},
-	eslint: {
+	node: {
+		__dirname: false,
+		__filename: false
+	},
+  	eslint: {
 		configFile: path.join(__dirname, 'eslint.js'),
 		useEslintrc: false
 	},
@@ -69,7 +73,7 @@ module.exports = {
 		),
 		new webpack.DefinePlugin({
 			'process.env': {
-				NODE_ENV: JSON.stringify('development')
+				NODE_ENV: JSON.stringify('production')
 			}
 		})
 	],

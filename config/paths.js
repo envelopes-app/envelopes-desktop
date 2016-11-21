@@ -5,12 +5,11 @@ function resolve(relativePath) {
 }
 
 module.exports = {
+  root: resolve('../'),
   appBuild: resolve('../build'),
   appHtml: resolve('../index.html'),
   appFavicon: resolve('../favicon.ico'),
   appPackageJson: resolve('../package.json'),
   appSrc: resolve('../app'),
-  appNodeModules: resolve('../node_modules'),
-  ownNodeModules: resolve('../node_modules'),
-  bootstrapCSSPath: resolve('../node_modules/bootstrap/dist/css')
+  nodeModules: resolve('../node_modules')
 };

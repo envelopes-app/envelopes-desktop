@@ -8,13 +8,6 @@ var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 var url = require('url');
 var paths = require('./paths');
 
-var homepagePath = require(paths.appPackageJson).homepage;
-var publicPath = homepagePath ? url.parse(homepagePath).pathname : '/';
-if (!publicPath.endsWith('/')) {
-  // Prevents incorrect paths in file-loader
-  publicPath += '/';
-}
-
 var nodeModules = {};
 fs.readdirSync('node_modules')
   .filter(function(x) {
@@ -29,21 +22,19 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     require.resolve('./polyfills'),
-    'font-awesome-loader', 
-    'bootstrap-loader',
-    path.join(paths.appSrc, 'index')
+	path.join(paths.appSrc, 'index')
   ],
   output: {
     path: paths.appBuild,
     filename: '[name].[chunkhash:8].js',
     chunkFilename: '[name].[chunkhash:8].chunk.js',
-    publicPath: publicPath
+    publicPath: './'
   },
   resolve: {
-    extensions: ['', '.js', '.ts', '.tsx', 'css']
+    extensions: ['', '.js', '.ts', '.tsx', 'css', 'less']
   },
   resolveLoader: {
-    root: paths.ownNodeModules,
+    root: paths.nodeModules,
     moduleTemplates: ['*-loader']
   },
   module: {
@@ -68,15 +59,19 @@ module.exports = {
       }, 
       {
         test: /\.css$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.nodeModules],
         // Disable autoprefixer in css-loader itself:
         // https://github.com/webpack/css-loader/issues/281
         // We already have it thanks to postcss.
         loader: ExtractTextPlugin.extract('style', 'css?-autoprefixer!postcss')
       },
+	  {
+        test: /\.less$/,
+        loader: "style!css!less"
+      },
       {
         test: /\.json$/,
-        include: [paths.appSrc, paths.appNodeModules],
+        include: [paths.appSrc, paths.nodeModules],
         loader: 'json'
       },
       {
@@ -102,10 +97,6 @@ module.exports = {
       {
         test: /\.(mp4|webm)$/,
         loader: 'url?limit=10000'
-      },
-      { 
-        test: /bootstrap-sass\/assets\/javascripts\//, 
-        loader: 'imports?jQuery=jquery' 
       }
     ]
   },
@@ -144,7 +135,7 @@ module.exports = {
     new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
+/*    new webpack.optimize.UglifyJsPlugin({
       compress: {
         screw_ie8: true,
         warnings: false
@@ -156,7 +147,7 @@ module.exports = {
         comments: false,
         screw_ie8: true
       }
-    }),
+    }),*/
     new ExtractTextPlugin('[name].[contenthash:8].css')
   ],
   externals: [nodeModules]

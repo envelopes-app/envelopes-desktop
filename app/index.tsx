@@ -7,6 +7,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 
+import '../node_modules/bootstrap/less/bootstrap.less';
 import './styles/index.css';
 import './styles/sidebar.css';
 import './styles/budget.css';
