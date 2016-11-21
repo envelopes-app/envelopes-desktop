@@ -1,6 +1,6 @@
 /// <reference path='../_includes.ts' />
 
-import * as uuid from 'node-uuid';
+import * as uuid from 'uuid';
 import * as _ from 'lodash';
 
 import { Logger } from '../utilities';

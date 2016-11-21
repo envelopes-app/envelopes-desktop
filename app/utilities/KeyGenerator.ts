@@ -1,4 +1,4 @@
-import * as uuid from 'node-uuid';
+import * as uuid from 'uuid';
 
 import { DateWithoutTime } from './DateWithoutTime';
 import * as budgetEntities from '../interfaces/budgetEntities';
