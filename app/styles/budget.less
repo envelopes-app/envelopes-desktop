@@ -117,8 +117,8 @@
 }
 
 // ***************************************************************************************************
-
 /* Styles for Buttons in the Month Selection dialog */
+// ***************************************************************************************************
 .month-navigation-button {
 	flex: 0 0 auto;
 	color: #23B2CE;
@@ -131,14 +131,8 @@
 }
 
 .month-navigation-button:hover {
-	flex: 0 0 auto;
+	&:extend(.month-navigation-button);
 	color: #00596F;
-	border-color: transparent;
-	background-color: transparent;
-	font-size: 22px;
-	padding-left: 6px;
-	padding-right: 6px;
-	outline: none;
 }
 
 .month-button {
@@ -151,30 +145,20 @@
 }
 
 .month-button:hover {
-	width: 50px;
-	height: 40px;
-	border: none;
-	outline: none;
+	&:extend(.month-button);
 	color: #FFFFFF;
 	background-color: #009CC2;
 }
 
 .month-button-disabled {
-	width: 50px;
-	height: 40px;
-	border: none;
-	outline: none;
-	color: #8A999F;
+	&:extend(.month-button);
 	font-style: italic;
+	color: #8A999F;
 	background-color: #FFFFFF;
 	cursor: default;
 }
 
 .month-button-selected {
-	width: 50px;
-	height: 40px;
-	border: none;
-	outline: none;
 	color: #FFFFFF;
 	background-color: #009CC2;
 	cursor: default;
