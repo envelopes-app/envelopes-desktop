@@ -122,24 +122,24 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 
 		var quickBudgetItems:Array<JSX.Element> = [
 			<li key="qbBudgetLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 					Budgeted Last Month: {dataFormatter.formatCurrency(budgetedLastMonthValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbSpentLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
 					Spent Last Month: {dataFormatter.formatCurrency(spentLastMonthValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbAverageBudgeted" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
 					Average Budgeted: {dataFormatter.formatCurrency(averageBudgetedValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbAverageSpent" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
 					Average Spent: {dataFormatter.formatCurrency(averageSpentValue)}
-				</Button>
+				</button>
 			</li>
 		];
 
@@ -147,9 +147,9 @@ export class PDefaultCategoryQuickBudget extends React.Component<PDefaultCategor
 		if(upcomingTransactions < 0) {
 			quickBudgetItems.unshift(
 				<li key="qbUpcoming" style={ListItemStyle}>
-					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
+					<button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
 						Budget for Upcoming: {dataFormatter.formatCurrency(-upcomingTransactions)}
-					</Button>
+					</button>
 				</li>
 			);
 		}

@@ -366,29 +366,29 @@ export class PMultiCategoryInspector extends React.Component<PMultiCategoryInspe
 					<label style={LabelStyle}>QUICK BUDGET</label>
 					<ul style={ListStyle}>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button" onClick={this.setBudgetedToUnderFunded}>
+							<button className="quick-budget-button" onClick={this.setBudgetedToUnderFunded}>
 								Underfunded: {dataFormatter.formatCurrency(-categoryValues.underFunded)}
-							</Button>
+							</button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
+							<button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 								Budgeted Last Month: {dataFormatter.formatCurrency(categoryValues.budgetedLastMonth)}
-							</Button>
+							</button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
+							<button className="quick-budget-button" onClick={this.setBudgetedToSpentLastMonth}>
 								Spent Last Month: {dataFormatter.formatCurrency(-categoryValues.spentLastMonth)}
-							</Button>
+							</button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
+							<button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
 								Average Budgeted: {dataFormatter.formatCurrency(categoryValues.averageBudgeted)}
-							</Button>
+							</button>
 						</li>
 						<li style={ListItemStyle}>
-							<Button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
+							<button className="quick-budget-button" onClick={this.setBudgetedToAverageSpent}>
 								Average Spent: {dataFormatter.formatCurrency(-categoryValues.averageSpent)}
-							</Button>
+							</button>
 						</li>
 					</ul>
 				</div>

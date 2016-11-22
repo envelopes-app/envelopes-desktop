@@ -119,33 +119,33 @@ export class PDebtCategoryQuickBudget extends React.Component<PDebtCategoryQuick
 
 		var quickBudgetItems:Array<JSX.Element> = [
 			<li key="qbBudgetLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToBudgetedLastMonth}>
 					Budgeted Last Month: {dataFormatter.formatCurrency(budgetedLastMonthValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbSpentLastMonth" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToPaidLastMonth}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToPaidLastMonth}>
 					Paid Last Month: {dataFormatter.formatCurrency(spentLastMonthValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbAverageBudgeted" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToAverageBudgeted}>
 					Average Budgeted: {dataFormatter.formatCurrency(averageBudgetedValue)}
-				</Button>
+				</button>
 			</li>,
 			<li key="qbAverageSpent" style={ListItemStyle}>
-				<Button className="quick-budget-button" onClick={this.setBudgetedToAveragePaid}>
+				<button className="quick-budget-button" onClick={this.setBudgetedToAveragePaid}>
 					Average Paid: {dataFormatter.formatCurrency(averageSpentValue)}
-				</Button>
+				</button>
 			</li>
 		];
 
 		if(upcomingTransactions != 0) {
 			quickBudgetItems.unshift(
 				<li key="qbUpcoming" style={ListItemStyle}>
-					<Button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
+					<button className="quick-budget-button" onClick={this.setBudgetedToUpcomingTransactions}>
 						Budget for Upcoming: {dataFormatter.formatCurrency(upcomingTransactions)}
-					</Button>
+					</button>
 				</li>
 			);
 		}
