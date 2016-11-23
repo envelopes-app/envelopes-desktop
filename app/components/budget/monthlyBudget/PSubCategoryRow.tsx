@@ -126,16 +126,19 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		// Also the escape key can be used to cancel the editing state.
 		if(event.keyCode == 38) {
 			// Up Arrow Key
+			this.budgetedValue.commitValue();
 			this.props.selectPreviousSubCategoryForEditing();
 			event.stopPropagation();
 		}
 		else if(event.keyCode == 40) {
 			// Down Arrow Key
+			this.budgetedValue.commitValue();
 			this.props.selectNextSubCategoryForEditing();
 			event.stopPropagation();
 		}
 		else if(event.keyCode == 9) {
 			// Tab Key
+			this.budgetedValue.commitValue();
 			if(event.shiftKey)
 				this.props.selectPreviousSubCategoryForEditing();
 			else
@@ -152,7 +155,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		else if(event.keyCode == 13) {
 			// Enter Key
 			this.budgetedValue.commitValue();
-			this.props.selectSubCategory(this.props.subCategory, true, false);
+			this.props.selectNextSubCategoryForEditing();
 			event.stopPropagation();
 		}
 	}

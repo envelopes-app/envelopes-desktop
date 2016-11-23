@@ -76,6 +76,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
         super(props);
 		this.onBlur = this.onBlur.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.selectValue = this.selectValue.bind(this);
 		this.onBudgetValueChange = this.onBudgetValueChange.bind(this);
 	}
 
@@ -144,10 +145,15 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 			var state = Object.assign({}, this.state);
 			state.budgetedValue = (budgetedValue / 1000).toString();;
 			this.setState(state);
-
-			this.selectValue();
 		}
 	} 
+
+	public componentDidUpdate(prevProps:PSubCategoryBudgetedValueProps, prevState:PSubCategoryBudgetedValueState):void {
+
+		if(this.props.isEditing == true) {
+			this.selectValue();
+		}
+	}
 
 	public render() {
 
@@ -181,7 +187,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 				return (
 					<div style={budgetedContainerStyle}>
 						<input ref={(a)=> this.budgetedValueInput = a} type="text" style={budgetedValueStyle} value={budgetedValue} 
-							onBlur={this.onBlur} onChange={this.onBudgetValueChange} />
+							onBlur={this.onBlur} onChange={this.onBudgetValueChange}  />
 					</div>
 				);
 			}
