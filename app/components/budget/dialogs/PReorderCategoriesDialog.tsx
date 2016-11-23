@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Form, Glyphicon, Modal } from 'react-bootstrap';
+import { Form, Glyphicon, Modal } from 'react-bootstrap';
 
 import { PLinkButton } from '../../common/PLinkButton';
 import { InternalCategories, SubCategoryType } from '../../../constants';
@@ -344,21 +344,21 @@ export class PReorderCategoriesDialog extends React.Component<PReorderCategories
 			var categoryItems = this.getCategoryItems();
 
 			return (
-				<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="reorder-categories-dialog">
-					<Modal.Header className="modal-header">
+				<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+					<Modal.Header>
 						<Modal.Title>Reorder Categories</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Form style={CategoriesContainer}>
+						<div style={CategoriesContainer}>
 							<div>
 								{categoryItems}
 							</div>
-						</Form>
+						</div>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button className="dialog-primary-button" onClick={this.hide}>
+						<button className="dialog-primary-button" onClick={this.hide}>
 							Close&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
+						</button>
 					</Modal.Footer>
 				</Modal>
 			);

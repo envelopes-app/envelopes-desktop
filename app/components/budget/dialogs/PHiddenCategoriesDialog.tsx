@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Overlay, Popover } from 'react-bootstrap';
+import { Overlay, Popover } from 'react-bootstrap';
 
 import { DateWithoutTime } from '../../../utilities/';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -213,9 +213,9 @@ export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDi
 							{categoryItems}
 						</li>
 						<div className="buttons-container">
-							<Button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
+							<button className="dialog-primary-button" style={ShowAllButtonStyle} onClick={this.onUnhideAllClick}>
 								Show all hidden categories
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

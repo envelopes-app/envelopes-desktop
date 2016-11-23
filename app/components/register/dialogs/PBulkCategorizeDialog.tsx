@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, FormControl, Modal, Glyphicon } from 'react-bootstrap';
+import { FormControl, Modal, Glyphicon } from 'react-bootstrap';
 
 import { DialogUtilities } from '../../../utilities';
 import * as objects from '../../../interfaces/objects';
@@ -25,6 +25,13 @@ export interface PBulkCategorizeDialogState {
 
 const ScrollableContainerStyle:React.CSSProperties = {
 	overflowY: "scroll",
+}
+
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialogProps, PBulkCategorizeDialogState> {
@@ -184,25 +191,30 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 			}
 
 			return (
-				<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Categorize transactions as</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<FormControl type="text" componentClass="input"  
-							readOnly={true} value={selectedCategoryName} />
-						<div style={{height:"5px"}} />
-						{categoriesList}
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-secondary-button" onClick={this.hide}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.handleOkClicked}>
-							OK&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="bulk-categorize-dialog">
+					<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
+						<Modal.Header>
+							<Modal.Title>Categorize transactions as</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<FormControl type="text" componentClass="input"  
+								readOnly={true} value={selectedCategoryName} />
+							<div style={{height:"5px"}} />
+							{categoriesList}
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-secondary-button" onClick={this.hide}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button className="dialog-primary-button" onClick={this.handleOkClicked}>
+									OK&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

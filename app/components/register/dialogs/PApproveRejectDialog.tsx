@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { ITransaction } from '../../../interfaces/budgetEntities';
 import { ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -100,13 +100,13 @@ export class PApproveRejectDialog extends React.Component<PApproveRejectDialogPr
 				<Overlay key="overlay" rootClose={true} show={this.state.show} placement={this.state.placement} 
 					onHide={this.hide} target={ ()=> ReactDOM.findDOMNode(this.state.target) }>
 					<Popover id="approveRejectPopover" style={PopoverStyle}>
-						<Button className="dialog-primary-button" style={ButtonStyle} onClick={this.approveTransaction}> 
+						<button className="dialog-primary-button" style={ButtonStyle} onClick={this.approveTransaction}> 
 							<Glyphicon glyph="ok-circle"/>&nbsp;Approve Transaction
-						</Button>
+						</button>
 						<div style={{height:"10px"}} />
-						<Button className="dialog-warning-button" style={ButtonStyle} onClick={this.rejectTransaction}> 
+						<button className="dialog-warning-button" style={ButtonStyle} onClick={this.rejectTransaction}> 
 							<Glyphicon glyph="remove-circle"/>&nbsp;Reject Transaction
-						</Button>
+						</button>
 					</Popover>
 				</Overlay>
 			);

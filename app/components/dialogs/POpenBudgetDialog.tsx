@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Col, Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
+import { Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
 
 import { EntityFactory } from '../../persistence';
 import { DataFormats, DateWithoutTime } from '../../utilities';
@@ -103,27 +103,29 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 			var budgets = this.getBudgetsList();
 
 			return (
-				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="open-budget-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Open a budget</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<ul className="budget-list">
-							{budgets}
-						</ul>
-					</Modal.Body>
-					<Modal.Footer>
-						<div style={ButtonsContainerStyle}>
-							<Button className="dialog-primary-button" onClick={this.create}>
-								Create New Budget&nbsp;<Glyphicon glyph="plus" />
-							</Button>
-							<div className="spacer" />
-							<Button className="dialog-secondary-button" onClick={this.hide}>
-								Close&nbsp;<Glyphicon glyph="remove-sign" />
-							</Button>
-						</div>
-					</Modal.Footer>
-				</Modal>
+				<div className="open-budget-dialog">
+					<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+						<Modal.Header>
+							<Modal.Title>Open a budget</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<ul className="budget-list">
+								{budgets}
+							</ul>
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-primary-button" onClick={this.create}>
+									Create New Budget&nbsp;<Glyphicon glyph="plus" />
+								</button>
+								<div className="spacer" />
+								<button className="dialog-secondary-button" onClick={this.hide}>
+									Close&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else

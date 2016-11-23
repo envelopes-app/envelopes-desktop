@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Form, Glyphicon, Modal } from 'react-bootstrap';
+import { Form, Glyphicon, Modal } from 'react-bootstrap';
 
 import { PLinkButton } from '../../common/PLinkButton'; 
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -197,23 +197,25 @@ export class PReorderAccountsDialog extends React.Component<PReorderAccountsDial
 			var accountItems = this.getAccountItems();
 
 			return (
-				<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="reorder-accounts-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Reorder Accounts</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form style={AccountsContainer}>
-							<div>
-								{accountItems}
-							</div>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-primary-button" onClick={this.hide}>
-							Close&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="reorder-accounts-dialog">
+					<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+						<Modal.Header>
+							<Modal.Title>Reorder Accounts</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form style={AccountsContainer}>
+								<div>
+									{accountItems}
+								</div>
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<button className="dialog-primary-button" onClick={this.hide}>
+								Close&nbsp;<Glyphicon glyph="ok-sign" />
+							</button>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

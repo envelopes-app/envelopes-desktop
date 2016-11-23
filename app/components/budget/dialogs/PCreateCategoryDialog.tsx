@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Overlay, Popover, Button, Glyphicon, FormGroup, FormControl } from 'react-bootstrap';
+import { Overlay, Popover, Glyphicon, FormGroup, FormControl } from 'react-bootstrap';
 
 import { EntityFactory } from '../../../persistence';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -65,10 +65,6 @@ const ErrorMessageStyle:React.CSSProperties = {
 const HRStyle:React.CSSProperties = {
 	marginTop: "10px",
 	marginBottom: "10px"
-}
-
-const OkButtonStyle:React.CSSProperties = {
-	marginLeft: "10px"
 }
 
 export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialogProps, PCreateCategoryDialogState> {
@@ -227,12 +223,13 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 						{element}
 						<hr style={HRStyle} />
 						<div className="buttons-container">
-							<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+							<button className="dialog-secondary-button" onClick={this.onCancelClick}>
 								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-							</Button>
-							<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+							</button>
+							<div style={{width:"8px"}} />
+							<button className="dialog-primary-button" onClick={this.onOkClick}>
 								OK&nbsp;<Glyphicon glyph="ok-circle"/>
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

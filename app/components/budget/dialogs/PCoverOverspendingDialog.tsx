@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -45,8 +45,8 @@ const OkButtonStyle:React.CSSProperties = {
 
 export class PCoverOverspendingDialog extends React.Component<PCoverOverspendingDialogProps, PCoverOverspendingDialogState> {
 
-	private okButton:Button;
-	private cancelButton:Button;
+	private okButton:HTMLButtonElement;
+	private cancelButton:HTMLButtonElement;
 	private categorySelector:PCategorySelector;
 
 	private categoriesList:Array<objects.ICategoryObject>;
@@ -265,14 +265,14 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 						</Form>
 						<div className="buttons-container">
 							<div className="spacer" />
-							<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
+							<button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
 								onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
 								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-							</Button>
-							<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b}
+							</button>
+							<button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b}
 								onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}>
 								OK&nbsp;<Glyphicon glyph="ok-circle"/>
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

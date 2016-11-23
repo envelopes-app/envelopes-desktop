@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Button, Glyphicon, Overlay } from 'react-bootstrap';
+import { Popover, Form, FormGroup, FormControl, HelpBlock, ControlLabel, Glyphicon, Overlay } from 'react-bootstrap';
 
 import { DataFormatter } from '../../../utilities';
 import { IAccount } from '../../../interfaces/budgetEntities';
@@ -29,10 +29,6 @@ export interface PAccountEditDialogState {
 	accountBalance:number;
 }
 
-const PopoverStyle:React.CSSProperties = {
-	maxWidth: 'none', 
-	width:'400px'
-}
 
 const ButtonsContainerStyle:React.CSSProperties = {
 	display: "flex",
@@ -68,6 +64,11 @@ const ErrorMessageStyle:React.CSSProperties = {
 	paddingRight: "8px",
 	paddingTop: "3px",
 	paddingBottom: "3px"
+}
+
+const PopoverStyle:React.CSSProperties = {
+	maxWidth: "none",
+	width: "400px"
 }
 
 export class PAccountEditDialog extends React.Component<PAccountEditDialogProps, PAccountEditDialogState> {
@@ -222,9 +223,9 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		// If the account is open, just show the close account button
 		if(account.closed == 0) {
 			return [
-				<Button key="close-account-button" className="dialog-warning-button" onClick={this.handleCloseAccount}>
+				<button key="close-account-button" className="dialog-warning-button" onClick={this.handleCloseAccount}>
 					<Glyphicon glyph="minus-sign" />&nbsp;Close Account
-				</Button>
+				</button>
 			];
 		}
 		else {
@@ -233,17 +234,17 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 			var transactionCount = this.props.entitiesCollection.transactions.getTransactionsByAccountId(account.entityId).length;
 
 			var buttons = [
-				<Button key="reopen-account-button" className="dialog-secondary-button" onClick={this.handleReopenAccount}>
+				<button key="reopen-account-button" className="dialog-secondary-button" onClick={this.handleReopenAccount}>
 					<Glyphicon glyph="plus-sign" />&nbsp;Reopen
-				</Button>
+				</button>
 			];
 
 			if(transactionCount > 0) {
 				buttons = buttons.concat([
 					<div key="space" style={{width: '8px'}} />,
-					<Button key="delete-account-button" disabled={true} className="dialog-warning-button-disabled">
+					<button key="delete-account-button" disabled={true} className="dialog-warning-button-disabled">
 						<Glyphicon glyph="minus-sign" />&nbsp;Delete
-					</Button>
+					</button>
 				]);
 			}
 			else {
@@ -251,9 +252,9 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 				buttons = buttons.concat([
 					<div key="space" style={{width: '8px'}} />,
 					<div title={tooltip}>
-						<Button key="delete-account-button" className="dialog-warning-button" onClick={this.handleDeleteAccount}>
+						<button key="delete-account-button" className="dialog-warning-button" onClick={this.handleDeleteAccount}>
 							<Glyphicon glyph="minus-sign" />&nbsp;Delete
-						</Button>
+						</button>
 					</div>
 				]);
 			}
@@ -298,13 +299,13 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 						<div className="buttons-container">
 							{actionButtons}
 							<div className="spacer" />
-							<Button className="dialog-secondary-button" onClick={this.handleCancel}>
+							<button className="dialog-secondary-button" onClick={this.handleCancel}>
 								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-							</Button>
+							</button>
 							<div style={{width: '8px'}} />
-							<Button className="dialog-primary-button" onClick={this.handleOk}>
+							<button className="dialog-primary-button" onClick={this.handleOk}>
 								OK&nbsp;<Glyphicon glyph="ok-sign" />
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

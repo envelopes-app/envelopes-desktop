@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Baby from 'babyparse';
-import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
+import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
 import { DataFormatter } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
@@ -50,7 +50,8 @@ const FormControlsContainer:React.CSSProperties = {
 const ButtonsContainerStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
-	flexFlow: "row nowrap"
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 const FileInputStyle:React.CSSProperties = {
@@ -395,9 +396,9 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</ControlLabel>
 					<div style={FormControlsContainer}>
 						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
-						<Button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForBudgetFile}>
+						<button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForBudgetFile}>
 							<Glyphicon glyph="folder-open" />
-						</Button>
+						</button>
 					</div>
 					<label style={ErrorMessageStyle}>{this.state.budgetPathValidationMessage}</label>
 				</FormGroup>
@@ -411,9 +412,9 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</ControlLabel>
 					<div style={FormControlsContainer}>
 						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetPath} readOnly={true} />
-						<Button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForBudgetFile}>
+						<button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForBudgetFile}>
 							<Glyphicon glyph="folder-open" />
-						</Button>
+						</button>
 					</div>
 				</FormGroup>
 			);
@@ -433,9 +434,9 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</ControlLabel>
 					<div style={FormControlsContainer}>
 						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerPath} readOnly={true} />
-						<Button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForRegisterFile}>
+						<button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForRegisterFile}>
 							<Glyphicon glyph="folder-open" />
-						</Button>
+						</button>
 					</div>
 					<label style={ErrorMessageStyle}>{this.state.registerPathValidationMessage}</label>
 				</FormGroup>
@@ -449,9 +450,9 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</ControlLabel>
 					<div style={FormControlsContainer}>
 						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerPath} readOnly={true} />
-						<Button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForRegisterFile}>
+						<button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForRegisterFile}>
 							<Glyphicon glyph="folder-open" />
-						</Button>
+						</button>
 					</div>
 				</FormGroup>
 			);
@@ -466,35 +467,38 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		var registerPath = this.getRegisterCsvPathControl();
 
 		return (
-			<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="import-ynab-data-dialog">
-				<Modal.Header className="modal-header">
-					<Modal.Title>Import YNAB Data</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<div>
-							Before importing your YNAB data, make sure that the date and currency formatting settings in this budget match those of your online YNAB budget. If the settings do not match, the data may not import correctly.
+			<div className="import-ynab-data-dialog">
+				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+					<Modal.Header>
+						<Modal.Title>Import YNAB Data</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<div>
+								Before importing your YNAB data, make sure that the date and currency formatting settings in this budget match those of your online YNAB budget. If the settings do not match, the data may not import correctly.
+							</div>
+							<br />
+							{budgetPath}
+							{registerPath}
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<div style={ButtonsContainerStyle}>
+							<button className="dialog-secondary-button" onClick={this.showBudgetSettings}>
+								Budget Settings&nbsp;<Glyphicon glyph="cog" />
+							</button>
+							<div className="spacer" />
+							<button className="dialog-secondary-button" onClick={this.hide}>
+								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+							</button>
+							<div style={{width:"8px"}}/>
+							<button className="dialog-primary-button" onClick={this.validateStep1}>
+								Next&nbsp;<Glyphicon glyph="ok-sign" />
+							</button>
 						</div>
-						<br />
-						{budgetPath}
-						{registerPath}
-					</Form>
-				</Modal.Body>
-				<Modal.Footer>
-					<div style={ButtonsContainerStyle}>
-						<Button className="dialog-secondary-button" onClick={this.showBudgetSettings}>
-							Budget Settings&nbsp;<Glyphicon glyph="cog" />
-						</Button>
-						<div className="spacer" />
-						<Button className="dialog-secondary-button" onClick={this.hide}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.validateStep1}>
-							Next&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</div>
-				</Modal.Footer>
-			</Modal>
+					</Modal.Footer>
+				</Modal>
+			</div>
 		);
 	}
 
@@ -568,33 +572,38 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		var accountItems = this.getAccountItemControls();
 		
 		return (
-			<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="import-ynab-data-dialog">
-				<Modal.Header className="modal-header">
-					<Modal.Title>Import YNAB Data</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Form>
-						<div style={AccountsListContainerStyle}>
-							<div style={ListItemContainer}>
-								<label style={ListHeaderAccountNameLabelStyle}>ACCOUNT NAME</label>
-								<label style={ListHeaderAccountTypeLabelStyle}>ACCOUNT TYPE</label>
+			<div className="import-ynab-data-dialog">
+				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+					<Modal.Header>
+						<Modal.Title>Import YNAB Data</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<div style={AccountsListContainerStyle}>
+								<div style={ListItemContainer}>
+									<label style={ListHeaderAccountNameLabelStyle}>ACCOUNT NAME</label>
+									<label style={ListHeaderAccountTypeLabelStyle}>ACCOUNT TYPE</label>
+								</div>
+								<hr className="dialog-listitem-separator" />
+								<ul style={ListStyle}>
+									{accountItems}
+								</ul>
 							</div>
-							<hr className="dialog-listitem-separator" />
-							<ul style={ListStyle}>
-								{accountItems}
-							</ul>
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<div style={ButtonsContainerStyle}>
+							<button className="dialog-secondary-button" onClick={this.hide}>
+								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+							</button>
+							<div style={{width:"8px"}}/>
+							<button className="dialog-primary-button" onClick={this.validateStep2}>
+								Import&nbsp;<Glyphicon glyph="ok-sign" />
+							</button>
 						</div>
-					</Form>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button className="dialog-secondary-button" onClick={this.hide}>
-						Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-					</Button>
-					<Button className="dialog-primary-button" onClick={this.validateStep2}>
-						Import&nbsp;<Glyphicon glyph="ok-sign" />
-					</Button>
-				</Modal.Footer>
-			</Modal>
+					</Modal.Footer>
+				</Modal>
+			</div>
 		);
 	}
 

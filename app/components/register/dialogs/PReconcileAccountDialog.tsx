@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Checkbox, ControlLabel, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Checkbox, ControlLabel, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { DataFormatter } from '../../../utilities';
 import { IRegisterState } from '../../../interfaces/state';
@@ -201,12 +201,13 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 				</div>
 			</div>,
 			<div key="step1-buttons" className="buttons-container" style={{justifyContent:"center"}}>
-				<Button className="dialog-primary-button" style={YesButtonStyle} onClick={this.onStep1YesClick}> 
+				<button className="dialog-primary-button" style={YesButtonStyle} onClick={this.onStep1YesClick}> 
 					YES&nbsp;<Glyphicon glyph="ok-circle"/>
-				</Button>
-				<Button className="dialog-primary-button" style={NoButtonStyle} onClick={this.onStep1NoClick}> 
+				</button>
+				<div style={{width:"8px"}} />
+				<button className="dialog-primary-button" style={NoButtonStyle} onClick={this.onStep1NoClick}> 
 					NO&nbsp;<Glyphicon glyph="remove-circle"/>
-				</Button>
+				</button>
 			</div>
 		];
 	}
@@ -223,9 +224,9 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 				<FormControl style={FormControlStyle} componentClass="input" onChange={this.onStep2BalanceChange} />
 			</div>,
 			<div key="step2-buttons" className="buttons-container" style={{justifyContent:"center"}}>
-				<Button className="dialog-primary-button" style={YesButtonStyle} onClick={this.onStep2OkClick}> 
+				<button className="dialog-primary-button" style={YesButtonStyle} onClick={this.onStep2OkClick}> 
 					OK&nbsp;<Glyphicon glyph="ok-circle"/>
-				</Button>
+				</button>
 			</div>
 		];
 	}
@@ -251,9 +252,9 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 				</div>
 			</div>,
 			<div key="step3-buttons" className="buttons-container" style={{justifyContent:"center"}}>
-				<Button className="dialog-primary-button" onClick={this.onStep3CreateAdjustmentAndFinishClick}> 
+				<button className="dialog-primary-button" onClick={this.onStep3CreateAdjustmentAndFinishClick}> 
 					Create Adjustment &amp; Finish
-				</Button>
+				</button>
 			</div>
 		];
 	}
@@ -288,7 +289,9 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 				<Overlay key="overlay" rootClose={true} show={this.state.show} placement={this.state.placement} 
 					onHide={this.hide} target={ ()=> ReactDOM.findDOMNode(this.state.target) }>
 					<Popover id="filterTransactions" style={PopoverStyle}>
-						{dialogContents}
+						<div style={{paddingBottom: "10px"}}>
+							{dialogContents}
+						</div>
 					</Popover>
 				</Overlay>
 			);

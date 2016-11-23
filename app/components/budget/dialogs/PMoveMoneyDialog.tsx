@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Col, ControlLabel, Form, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import * as objects from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -45,14 +45,10 @@ const HRStyle:React.CSSProperties = {
 	marginBottom: "10px"
 }
 
-const OkButtonStyle:React.CSSProperties = {
-	marginLeft: "10px"
-}
-
 export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMoveMoneyDialogState> {
 
-	private okButton:Button;
-	private cancelButton:Button;
+	private okButton:HTMLButtonElement;
+	private cancelButton:HTMLButtonElement;
 	private ctrlAmountToMove:FormControl;
 	private categorySelector:PCategorySelector;
 
@@ -320,14 +316,15 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 						<hr style={HRStyle} />
 						<div className="buttons-container">
 							<div className="spacer" />
-							<Button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
+							<button className="dialog-secondary-button" ref={(b) => this.cancelButton = b}
 								onClick={this.onCancelClick} onKeyDown={this.handleKeyDownOnCancelButton}>
 								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-							</Button>
-							<Button className="dialog-primary-button" style={OkButtonStyle} ref={(b) => this.okButton = b} 
+							</button>
+							<div style={{width:"8px"}} />
+							<button className="dialog-primary-button" ref={(b) => this.okButton = b} 
 								onClick={this.onOkClick} onKeyDown={this.handleKeyDownOnOkButton}> 
 								OK&nbsp;<Glyphicon glyph="ok-circle"/>
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

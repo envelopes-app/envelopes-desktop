@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { FormGroup, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { InternalCategories } from '../../../constants';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -265,35 +265,38 @@ export class PMasterCategoryEditDialog extends React.Component<PMasterCategoryEd
 				// Don't include the "Delete" button for the debt payment master category
 				buttonsContainer = (
 					<div key="buttonsContainer" className="buttons-container">
-						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+						<button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
 							<Glyphicon glyph="eye-open"/>&nbsp;Hide
-						</Button>
+						</button>
 						<div className="spacer" />
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+						<button className="dialog-secondary-button" onClick={this.onCancelClick}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						</button>
+						<div style={{width:"8px"}} />
+						<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
+						</button>
 					</div>
 				);			
 			}
 			else {
 				buttonsContainer = (
 					<div key="buttonsContainer" className="buttons-container">
-						<Button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
+						<button className="dialog-secondary-button" style={HideButtonStyle} onClick={this.onHideClick}>
 							<Glyphicon glyph="eye-open"/>&nbsp;Hide
-						</Button>
-						<Button className={this.state.allowDelete ? "dialog-warning-button" : "dialog-warning-button-disabled"} onClick={this.onDeleteClick}>
+						</button>
+						<div style={{width:"8px"}} />
+						<button className={this.state.allowDelete ? "dialog-warning-button" : "dialog-warning-button-disabled"} onClick={this.onDeleteClick}>
 							<Glyphicon glyph="ban-circle"/>&nbsp;Delete
-						</Button>
+						</button>
 						<div className="spacer" />
-						<Button className="dialog-secondary-button" onClick={this.onCancelClick}>
+						<button className="dialog-secondary-button" onClick={this.onCancelClick}>
 							Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-						</Button>
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
+						</button>
+						<div style={{width:"8px"}} />
+						<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
+						</button>
 					</div>
 				);			
 			}

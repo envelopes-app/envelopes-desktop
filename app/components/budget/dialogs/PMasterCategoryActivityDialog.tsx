@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { PTransactionsList } from './PTransactionsList';
 import { TransactionSources } from '../../../constants';
@@ -137,9 +137,9 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 						/>
 						<div className="buttons-container" style={{paddingTop:"10px"}}>
 							<div className="spacer" />
-							<Button className="dialog-primary-button" onClick={this.onCloseClick}>
+							<button className="dialog-primary-button" onClick={this.onCloseClick}>
 								Close&nbsp;<Glyphicon glyph="ok-circle"/>
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

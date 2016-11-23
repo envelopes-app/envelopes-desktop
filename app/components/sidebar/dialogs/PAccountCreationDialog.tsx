@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
+import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
 import { DataFormatter } from '../../../utilities';
 import { EntityFactory } from '../../../persistence';
@@ -60,6 +60,13 @@ const ErrorMessageStyle:React.CSSProperties = {
 	paddingRight: "8px",
 	paddingTop: "3px",
 	paddingBottom: "3px"
+}
+
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 export class PAccountCreationDialog extends React.Component<PAccountCreationDialogProps, PAccountCreationDialogState> {
@@ -316,26 +323,31 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 			var accountBalanceControl = this.getAccountBalanceControl();
 
 			return (
-				<Modal show={this.state.showModal} animation={true} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-account-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Add a New Account</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form>
-							{accountNameControl}
-							{accountTypeControl}
-							{accountBalanceControl}
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-secondary-button" onClick={this.close}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.save}>
-							Add Account&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="add-account-dialog">
+					<Modal show={this.state.showModal} animation={true} onHide={this.close} backdrop="static" keyboard={false} >
+						<Modal.Header>
+							<Modal.Title>Add a New Account</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form>
+								{accountNameControl}
+								{accountTypeControl}
+								{accountBalanceControl}
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-secondary-button" onClick={this.close}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button className="dialog-primary-button" onClick={this.save}>
+									Add Account&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

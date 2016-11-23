@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
+import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
 import { EntityFactory } from '../../../persistence';
 import { DataFormatter, DateWithoutTime } from '../../../utilities';
@@ -24,6 +24,13 @@ export interface PAccountClosingDialogState {
 
 const MessageStyle:React.CSSProperties = {
 	fontSize: "14px"
+}
+
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 export class PAccountClosingDialog extends React.Component<PAccountClosingDialogProps, PAccountClosingDialogState> {
@@ -123,42 +130,47 @@ export class PAccountClosingDialog extends React.Component<PAccountClosingDialog
 			});
 
 			return (
-				<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="close-account-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Close Account</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form>
-							<div style={MessageStyle}>
-								{message}
+				<div className="close-account-dialog">
+					<Modal show={this.state.show} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+						<Modal.Header>
+							<Modal.Title>Close Account</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form>
+								<div style={MessageStyle}>
+									{message}
+								</div>
+								<br />
+								<FormGroup>
+									<ControlLabel>Transfer Funds:</ControlLabel>
+									<FormControl value={dataFormatter.formatCurrency(accountBalance)} contentEditable={false} onChange={this.onAccountBalanceChange} />
+								</FormGroup>
+								<FormGroup>
+									<ControlLabel>To:</ControlLabel>
+									<FormControl ref={(c)=> { this.ctrlAccountSelection = c; }} componentClass="select" onChange={this.onAccountSelectionChange}>
+										<optgroup label="Budget">
+											{budgetAccountOptions}
+										</optgroup>
+										<optgroup label="Tracking">
+											{trackingAccountOptions}
+										</optgroup>
+									</FormControl>
+								</FormGroup>
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-secondary-button" onClick={this.hide}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button className="dialog-primary-button" onClick={this.transfer}>
+									Transfer Funds&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
 							</div>
-							<br />
-							<FormGroup>
-								<ControlLabel>Transfer Funds:</ControlLabel>
-								<FormControl value={dataFormatter.formatCurrency(accountBalance)} contentEditable={false} onChange={this.onAccountBalanceChange} />
-							</FormGroup>
-							<FormGroup>
-								<ControlLabel>To:</ControlLabel>
-								<FormControl ref={(c)=> { this.ctrlAccountSelection = c; }} componentClass="select" onChange={this.onAccountSelectionChange}>
-									<optgroup label="Budget">
-										{budgetAccountOptions}
-									</optgroup>
-									<optgroup label="Tracking">
-										{trackingAccountOptions}
-									</optgroup>
-								</FormControl>
-							</FormGroup>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-secondary-button" onClick={this.hide}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.transfer}>
-							Transfer Funds&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

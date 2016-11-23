@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Checkbox, ControlLabel, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
+import { Checkbox, ControlLabel, FormControl, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { IRegisterState } from '../../../interfaces/state';
 import { DateWithoutTime } from '../../../utilities';
@@ -350,12 +350,13 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 						<hr style={Separator2Style} />
 						<div className="buttons-container">
 							<div className="spacer" />
-							<Button className="dialog-secondary-button" onClick={this.onCancelClick}> 
+							<button className="dialog-secondary-button" onClick={this.onCancelClick}> 
 								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
-							</Button>
-							<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}> 
+							</button>
+							<div style={{width:"8px"}} />
+							<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}> 
 								OK&nbsp;<Glyphicon glyph="ok-circle"/>
-							</Button>
+							</button>
 						</div>
 					</Popover>
 				</Overlay>

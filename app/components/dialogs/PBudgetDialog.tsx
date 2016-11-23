@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Col, Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
+import { Col, Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
 
 import { EntityFactory } from '../../persistence';
 import { DataFormats, DateWithoutTime } from '../../utilities';
@@ -62,6 +62,13 @@ const ErrorMessageStyle:React.CSSProperties = {
 	paddingRight: "8px",
 	paddingTop: "3px",
 	paddingBottom: "3px"
+}
+
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDialogState> {
@@ -434,28 +441,33 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 			var dateFormatSelectionControl = this.getDateFormatSelectionControl();
 
 			return (
-				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false} dialogClassName="create-budget-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>{dialogTitle}</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form horizontal>
-							{budgetNameControl}
-							{currencySelectionControl}
-							{numberFormatSelectionControl}
-							{currencyPlacementControl}
-							{dateFormatSelectionControl}
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-secondary-button" onClick={this.hide}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.save}>
-							{saveButtonLabel}&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="create-budget-dialog">
+					<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+						<Modal.Header>
+							<Modal.Title>{dialogTitle}</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form horizontal>
+								{budgetNameControl}
+								{currencySelectionControl}
+								{numberFormatSelectionControl}
+								{currencyPlacementControl}
+								{dateFormatSelectionControl}
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-secondary-button" onClick={this.hide}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button className="dialog-primary-button" onClick={this.save}>
+									{saveButtonLabel}&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

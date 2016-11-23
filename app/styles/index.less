@@ -7,6 +7,9 @@ body {
   direction: 'ltr';
 }
 
+/* ************************************************************************************ */
+/* Style for the modal dialogs */ 
+/* ************************************************************************************ */
 .create-budget-dialog {
 	width: 500px;
 	height: 600px;
@@ -42,8 +45,8 @@ body {
 .buttons-container {
 	display: flex;
 	flex-flow: row nowrap;	
+	justify-content: flex-end;
 	width: 100%;
-	justify-content: space-between;
 }
 
 /* This is for providing space between the buttons */
@@ -53,6 +56,7 @@ body {
 
 /* This one is usually used for the OK button */
 .dialog-primary-button {
+	&:extend(.btn);
 	flex: 0 0 auto;
 	font-size: 14px;
 	color: #ffffff;
@@ -61,17 +65,13 @@ body {
 }
 
 .dialog-primary-button:hover {
-	flex: 0 0 auto;
-	font-size: 14px;
-	color: #ffffff;
+	&:extend(.dialog-primary-button);
 	background-color: #005076;	
 	border-color: #005076;	
 }
 
 .dialog-primary-button:focus {
-	flex: 0 0 auto;
-	font-size: 14px;
-	color: #ffffff;
+	&:extend(.dialog-primary-button);
 	background-color: #005076;	
 	border-color: #005076;	
 }
@@ -79,23 +79,23 @@ body {
 /* ************************************************************************************ */
 /* This one is usually used for Cancel, and other buttons on the dialog */
 .dialog-secondary-button {
+	&:extend(.btn);
 	flex: 0 0 auto;
 	font-size: 14px;
 	color: #009cc2;
-	background-color: #ffffff;	
+	background-color: #FFFFFF;	
+	border-color: #CFD5D7;
 }
 
 .dialog-secondary-button:hover {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-secondary-button);
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	
 }
 
 .dialog-secondary-button:focus {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-secondary-button);
 	color: #ffffff;
 	background-color: #005076;	
 	border-color: #005076;	
@@ -104,6 +104,7 @@ body {
 /* ************************************************************************************ */
 /* This one is usually used for Delete on the dialog */
 .dialog-warning-button {
+	&:extend(.btn);
 	flex: 0 0 auto;
 	font-size: 14px;
 	color: #d33c2d;
@@ -111,22 +112,21 @@ body {
 }
 
 .dialog-warning-button:hover {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-warning-button);
 	color: #ffffff;
 	background-color: #890309;
 	border-color: #890309;	
 }
 
 .dialog-warning-button:focus {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-warning-button);
 	color: #ffffff;
 	background-color: #890309;	
 	border-color: #890309;	
 }
 
 .dialog-warning-button-disabled {
+	&:extend(.btn);
 	flex: 0 0 auto;
 	font-size: 14px;
 	color: #d33c2d;
@@ -135,8 +135,7 @@ body {
 }
 
 .dialog-warning-button-disabled:hover {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-warning-button-disabled);
 	color: #d33c2d;
 	background-color: #ffffff;
 	opacity: 0.5;
@@ -144,8 +143,7 @@ body {
 }
 
 .dialog-warning-button-disabled:focus {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-warning-button-disabled);
 	color: #d33c2d;
 	background-color: #ffffff;
 	opacity: 0.5;
@@ -154,7 +152,6 @@ body {
 /* ************************************************************************************ */
 /* Style for the budgets list in open budget dialog */ 
 /* ************************************************************************************ */
-
 .budget-list {
 	width: 100%;
 	max-height: 250px;
@@ -205,6 +202,7 @@ body {
 /* Style for the browse button in import data dialog */ 
 /* ************************************************************************************ */
 .dialog-browse-button {
+	&:extend(.btn);
 	flex: 0 0 auto;
 	font-size: 14px;
 	color: #2FA2B5;
@@ -214,21 +212,15 @@ body {
 }
 
 .dialog-browse-button:hover {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-browse-button);
 	color: #ffffff;
 	background-color: #2FA2B5;	
-	border-color: #2FA2B5;	
-	outline: none;
 }
 
 .dialog-browse-button:focus {
-	flex: 0 0 auto;
-	font-size: 14px;
+	&:extend(.dialog-browse-button);
 	color: #ffffff;
 	background-color: #2FA2B5;	
-	border-color: #2FA2B5;	
-	outline: none;
 }
 
 .dialog-listitem-separator {

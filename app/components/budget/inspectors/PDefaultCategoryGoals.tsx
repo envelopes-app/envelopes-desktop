@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Col, ControlLabel, FormGroup, FormControl, Glyphicon, ProgressBar, Radio } from 'react-bootstrap';
+import { ControlLabel, FormGroup, FormControl, Glyphicon, ProgressBar, Radio } from 'react-bootstrap';
 
 import { PLinkButton } from '../../common/PLinkButton';
 import { SubCategoryGoalType } from '../../../constants';
@@ -429,9 +429,9 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 						<PLinkButton text="Delete" clickHandler={this.handleDeleteClicked} />
 						<PLinkButton text="Cancel" clickHandler={this.handleCancelClicked} />
 						<div style={SpacerStyle} />
-						<Button className="dialog-primary-button" style={OkButtonStyle} onClick={this.handleOkClicked}>
+						<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.handleOkClicked}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
-						</Button>
+						</button>
 					</div>
 				</div>
 			);

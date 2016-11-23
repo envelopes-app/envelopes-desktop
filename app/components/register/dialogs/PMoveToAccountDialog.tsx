@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, FormControl, Modal, Glyphicon } from 'react-bootstrap';
+import { FormControl, Modal, Glyphicon } from 'react-bootstrap';
 
 import { DialogUtilities } from '../../../utilities';
 import * as objects from '../../../interfaces/objects';
@@ -23,9 +23,11 @@ export interface PMoveToAccountDialogState {
 	accountsList:Array<objects.IAccountObject>;
 }
 
-const PopoverStyle:React.CSSProperties = {
-	maxWidth: 'none',
-	width:'200px'
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
 }
 
 export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogProps, PMoveToAccountDialogState> {
@@ -153,25 +155,30 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 			}
 
 			return (
-				<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="bulk-categorize-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>Move transactions to</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<FormControl type="text" componentClass="input"  
-							readOnly={true} value={selectedAccountName} />
-						<div style={{height:"5px"}} />
-						{accountsList}
-					</Modal.Body>
-					<Modal.Footer>
-						<Button className="dialog-secondary-button" onClick={this.hide}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-						<Button className="dialog-primary-button" onClick={this.handleOkClicked}>
-							OK&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="move-to-account-dialog">
+					<Modal show={this.state.show} animation={false} onHide={this.hide} keyboard={false} dialogClassName="move-to-account-dialog">
+						<Modal.Header>
+							<Modal.Title>Move transactions to</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<FormControl type="text" componentClass="input"  
+								readOnly={true} value={selectedAccountName} />
+							<div style={{height:"5px"}} />
+							{accountsList}
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button className="dialog-secondary-button" onClick={this.hide}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button className="dialog-primary-button" onClick={this.handleOkClicked}>
+									OK&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {

@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
+import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
 import { PFlagSelector } from './PFlagSelector';
 import { PAccountSelector } from './PAccountSelector';
@@ -59,6 +59,13 @@ export interface PTransactionDialogState {
 	outflowAmount?: number;
 }
 
+const ButtonsContainerStyle:React.CSSProperties = {
+	width: "100%",
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "flex-end"
+}
+
 export class PTransactionDialog extends React.Component<PTransactionDialogProps, PTransactionDialogState> {
 
 	private accountSelector:PAccountSelector;
@@ -68,9 +75,9 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	private categorySelector:PCategorySelector;
 	private memoInput:PMemoInput;
 	private amountInput:PAmountInput;
-	private saveAndAddAnotherButton:Button;
-	private saveButton:Button;
-	private cancelButton:Button;
+	private saveAndAddAnotherButton:HTMLButtonElement;
+	private saveButton:HTMLButtonElement;
+	private cancelButton:HTMLButtonElement;
 
 	private accountsList:Array<objects.IAccountObject>;
 	private payeesList:Array<objects.IPayeeObject>;
@@ -711,64 +718,70 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			var showFrequencyNeverOption = (this.state.action == "new-transaction");
 
 			return (
-				<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
-					<Modal.Header className="modal-header">
-						<Modal.Title>{this.props.dialogTitle}</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form horizontal>
-							<PAccountSelector ref={(c) => this.accountSelector = c} 
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								selectedAccountId={this.state.accountId} accountsList={this.accountsList} 
-								setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
-							<PDateSelector ref={(c) => this.dateSelector = c} 
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								selectedDate={this.state.date} selectedFrequency={this.state.frequency}
-								showFrequencyControl={showFrequencyControl}
-								showFrequencyNeverOption={showFrequencyNeverOption}
-								dataFormatter={this.props.dataFormatter}
-								setSelectedDate={this.setSelectedDate} setSelectedFrequency={this.setSelectedFrequency} 
-								handleTabPressed={this.handleTabPressedOnDateSelector} />
-							<PCheckNumberInput ref={(c) => this.checkNumberInput = c} 
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								checkNumber={this.state.checkNumber} setCheckNumber={this.setCheckNumber} handleTabPressed={this.handleTabPressedOnCheckNumberInput} />
-							<PPayeeSelector ref={(c) => this.payeeSelector = c}
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
-								payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
-								setManuallyEnteredPayeeName={this.setManuallyEnteredPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
-							<PCategorySelector ref={(c) => this.categorySelector = c} 
-								dataFormatter={this.props.dataFormatter} selectorLabel="Category"
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
-								categoryNotRequired={this.isCategoryNotRequired()} categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
-								setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
-							<PMemoInput ref={(c) => this.memoInput = c} 
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />
-							<PAmountInput ref={(c) => this.amountInput = c} 
-								dataFormatter={this.props.dataFormatter}
-								activeField={this.state.activeField} setActiveField={this.setActiveField}
-								inflowAmount={this.state.inflowAmount} outflowAmount={this.state.outflowAmount} 
-								setAmount={this.setAmount} handleTabPressedOnOutflow={this.handleTabPressedOnOutflowInput} 
-								handleTabPressedOnInflow={this.handleTabPressedOnInflowInput} />
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-primary-button"
-							onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
-							Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-						<Button ref={(c) => this.saveButton = c} className="dialog-primary-button"
-							onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveButton}>
-							Save&nbsp;<Glyphicon glyph="ok-sign" />
-						</Button>
-						<Button ref={(c) => this.cancelButton = c} className="dialog-secondary-button"
-							onClick={this.close} onKeyDown={this.handleKeyPressedOnCancelButton}>
-							Cancel&nbsp;<Glyphicon glyph="remove-sign" />
-						</Button>
-					</Modal.Footer>
-				</Modal>
+				<div className="add-transaction-dialog">
+					<Modal show={this.state.showModal} onEntered={this.onEntered} onHide={this.close} backdrop="static" keyboard={false} dialogClassName="add-transaction-dialog">
+						<Modal.Header>
+							<Modal.Title>{this.props.dialogTitle}</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Form horizontal>
+								<PAccountSelector ref={(c) => this.accountSelector = c} 
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									selectedAccountId={this.state.accountId} accountsList={this.accountsList} 
+									setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
+								<PDateSelector ref={(c) => this.dateSelector = c} 
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									selectedDate={this.state.date} selectedFrequency={this.state.frequency}
+									showFrequencyControl={showFrequencyControl}
+									showFrequencyNeverOption={showFrequencyNeverOption}
+									dataFormatter={this.props.dataFormatter}
+									setSelectedDate={this.setSelectedDate} setSelectedFrequency={this.setSelectedFrequency} 
+									handleTabPressed={this.handleTabPressedOnDateSelector} />
+								<PCheckNumberInput ref={(c) => this.checkNumberInput = c} 
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									checkNumber={this.state.checkNumber} setCheckNumber={this.setCheckNumber} handleTabPressed={this.handleTabPressedOnCheckNumberInput} />
+								<PPayeeSelector ref={(c) => this.payeeSelector = c}
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									selectedPayeeId={this.state.payeeId} manuallyEnteredPayeeName={this.state.manuallyEnteredPayeeName} 
+									payeesList={filteredPayeesList} setSelectedPayeeId={this.setSelectedPayeeId} 
+									setManuallyEnteredPayeeName={this.setManuallyEnteredPayeeName} handleTabPressed={this.handleTabPressedOnPayeeSelector} />
+								<PCategorySelector ref={(c) => this.categorySelector = c} 
+									dataFormatter={this.props.dataFormatter} selectorLabel="Category"
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									selectedCategoryId={this.state.subCategoryId} manuallyEnteredCategoryName={this.state.manuallyEnteredCategoryName} 
+									categoryNotRequired={this.isCategoryNotRequired()} categoriesList={categoriesList} setSelectedCategoryId={this.setSelectedCategoryId} 
+									setManuallyEnteredCategoryName={this.setManuallyEnteredCategoryName} handleTabPressed={this.handleTabPressedOnCategorySelector} />
+								<PMemoInput ref={(c) => this.memoInput = c} 
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									memo={this.state.memo} setMemo={this.setMemo} handleTabPressed={this.handleTabPressedOnMemoInput} />
+								<PAmountInput ref={(c) => this.amountInput = c} 
+									dataFormatter={this.props.dataFormatter}
+									activeField={this.state.activeField} setActiveField={this.setActiveField}
+									inflowAmount={this.state.inflowAmount} outflowAmount={this.state.outflowAmount} 
+									setAmount={this.setAmount} handleTabPressedOnOutflow={this.handleTabPressedOnOutflowInput} 
+									handleTabPressedOnInflow={this.handleTabPressedOnInflowInput} />
+							</Form>
+						</Modal.Body>
+						<Modal.Footer>
+							<div style={ButtonsContainerStyle}>
+								<button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-primary-button"
+									onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
+									Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button ref={(c) => this.saveButton = c} className="dialog-primary-button"
+									onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveButton}>
+									Save&nbsp;<Glyphicon glyph="ok-sign" />
+								</button>
+								<div style={{width:"8px"}} />
+								<button ref={(c) => this.cancelButton = c} className="dialog-secondary-button"
+									onClick={this.close} onKeyDown={this.handleKeyPressedOnCancelButton}>
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
+								</button>
+							</div>
+						</Modal.Footer>
+					</Modal>
+				</div>
 			);
 		}
 		else {
