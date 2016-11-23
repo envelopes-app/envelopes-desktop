@@ -71,14 +71,14 @@ export class PSubCategoryBalanceValue extends React.Component<PSubCategoryBalanc
 		if(this.props.onClick) {
 			return (
 				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
-					<span className={className} style={{cursor:"default"}} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</span>
+					<div className={className} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</div>
 				</div>
 			);
 		}
 		else {
 			return (
 				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
-					<span className={className}>{dataFormatter.formatCurrency(balance)}</span>
+					<div className={className} style={{cursor:"default"}}>{dataFormatter.formatCurrency(balance)}</div>
 				</div>
 			);
 		}
