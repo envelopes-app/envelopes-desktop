@@ -49,6 +49,7 @@ export class PMonthAOM extends React.Component<PMonthAOMProps, PMonthAOMState> {
 	public render() {
 
 		var entitiesCollection = this.props.entitiesCollection;
+		/* Hiding AOM for now.
 		if(entitiesCollection && entitiesCollection.monthlyBudgets) {
 
 			var currentMonth = this.props.currentMonth;
@@ -64,7 +65,7 @@ export class PMonthAOM extends React.Component<PMonthAOMProps, PMonthAOMState> {
 				</div>
 			);
 		}
-		else
-			return <div/>;
+		else */
+		return <div/>;
 	}
 }
