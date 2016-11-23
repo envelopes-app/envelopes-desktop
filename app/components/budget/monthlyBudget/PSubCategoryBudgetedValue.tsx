@@ -117,21 +117,26 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 		if(this.props.isEditing) {
 			var budgetedValueString = this.state.budgetedValue;
 			var budgetedValue = this.props.dataFormatter.unformatCurrency(budgetedValueString);
-			// Update the monthlySubCategoryBudget entity with this new value
-			var updatedMonthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
-			updatedMonthlySubCategoryBudget.budgeted = budgetedValue;
-			this.props.updateEntities({
-				monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
-			});
+			// Update the monthlySubCategoryBudget entity with this new value, if it has changed
+			if(budgetedValue != this.props.monthlySubCategoryBudget.budgeted) {
+				var updatedMonthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
+				updatedMonthlySubCategoryBudget.budgeted = budgetedValue;
+				this.props.updateEntities({
+					monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
+				});
+			}
 		}
 	}
 
 	public selectValue():void {
 
-		if(this.budgetedValueInput) {
-			var inputNode:any = ReactDOM.findDOMNode(this.budgetedValueInput);
-			inputNode.select();
-		}
+		var budgetedValueInput = this.budgetedValueInput;
+		setTimeout(()=>{ 
+			if(budgetedValueInput) {
+				var inputNode:any = ReactDOM.findDOMNode(budgetedValueInput);
+				inputNode.select();
+			}
+		}, 100);
 	}
 
 	public componentWillReceiveProps(nextProps:PSubCategoryBudgetedValueProps):void {
@@ -150,7 +155,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 
 	public componentDidUpdate(prevProps:PSubCategoryBudgetedValueProps, prevState:PSubCategoryBudgetedValueState):void {
 
-		if(this.props.isEditing == true) {
+		if(this.props.isEditing == true && prevProps.isEditing == false) {
 			this.selectValue();
 		}
 	}
@@ -200,7 +205,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 				
 				return (
 					<div style={budgetedContainerStyle}>
-						<input ref={(a)=> this.budgetedValueInput = a} type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgetedValue)} 
+						<input type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgetedValue)} 
 							onClick={this.onClick} readOnly={true}/>
 					</div>
 				);

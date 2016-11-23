@@ -138,13 +138,13 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 		else if(event.keyCode == 9) {
 			// Tab Key
+			event.stopPropagation();
 			this.budgetedValue.commitValue();
 			if(event.shiftKey)
 				this.props.selectPreviousSubCategoryForEditing();
 			else
 				this.props.selectNextSubCategoryForEditing();
 
-			event.stopPropagation();
 		}
 		else if(event.keyCode == 27) {
 			// Excape Key
