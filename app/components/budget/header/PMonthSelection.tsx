@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Glyphicon } from 'react-bootstrap';
 
 import { PMonthSelectionDialog } from '../dialogs/PMonthSelectionDialog';
 import { DateWithoutTime } from '../../../utilities';
