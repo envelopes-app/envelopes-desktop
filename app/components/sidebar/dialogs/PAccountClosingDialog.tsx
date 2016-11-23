@@ -26,13 +26,6 @@ const MessageStyle:React.CSSProperties = {
 	fontSize: "14px"
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PAccountClosingDialog extends React.Component<PAccountClosingDialogProps, PAccountClosingDialogState> {
 
 	private ctrlAccountSelection:FormControl;
@@ -159,7 +152,7 @@ export class PAccountClosingDialog extends React.Component<PAccountClosingDialog
 							</Form>
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-secondary-button" onClick={this.hide}>
 									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>

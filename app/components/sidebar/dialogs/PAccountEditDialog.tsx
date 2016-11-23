@@ -29,14 +29,6 @@ export interface PAccountEditDialogState {
 	accountBalance:number;
 }
 
-
-const ButtonsContainerStyle:React.CSSProperties = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	width: "100%",
-	justifyContent: "space-between"
-}
-
 const FormControlStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
 	borderTopWidth: '2px',
@@ -302,7 +294,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 							<button className="dialog-secondary-button" onClick={this.handleCancel}>
 								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 							</button>
-							<div style={{width: '8px'}} />
+							<div style={{width:'8px'}} />
 							<button className="dialog-primary-button" onClick={this.handleOk}>
 								OK&nbsp;<Glyphicon glyph="ok-sign" />
 							</button>

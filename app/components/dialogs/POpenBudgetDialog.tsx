@@ -23,12 +23,6 @@ export interface POpenBudgetDialogState {
 	showModal:boolean;
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap"
-}
-
 export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, POpenBudgetDialogState> {
 
 	constructor(props: any) {
@@ -114,7 +108,7 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 							</ul>
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-primary-button" onClick={this.create}>
 									Create New Budget&nbsp;<Glyphicon glyph="plus" />
 								</button>

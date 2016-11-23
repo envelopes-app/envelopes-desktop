@@ -47,13 +47,6 @@ const FormControlsContainer:React.CSSProperties = {
 	alignContent: "stretch"
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 const FileInputStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	borderColor: '#2FA2B5',
@@ -483,7 +476,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<div style={ButtonsContainerStyle}>
+						<div className="buttons-container">
 							<button className="dialog-secondary-button" onClick={this.showBudgetSettings}>
 								Budget Settings&nbsp;<Glyphicon glyph="cog" />
 							</button>
@@ -592,7 +585,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<div style={ButtonsContainerStyle}>
+						<div className="buttons-container">
 							<button className="dialog-secondary-button" onClick={this.hide}>
 								Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 							</button>

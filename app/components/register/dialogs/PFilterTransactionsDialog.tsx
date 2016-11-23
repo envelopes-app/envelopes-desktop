@@ -85,10 +85,6 @@ const CheckBoxTextStyle:React.CSSProperties = {
 	fontWeight: "normal"
 }
 
-const OkButtonStyle:React.CSSProperties = {
-	marginLeft: "10px"
-}
-
 export class PFilterTransactionsDialog extends React.Component<PFilterTransactionsDialogProps, PFilterTransactionsDialogState> {
 
 	constructor(props: any) {
@@ -354,7 +350,7 @@ export class PFilterTransactionsDialog extends React.Component<PFilterTransactio
 								Cancel&nbsp;<Glyphicon glyph="remove-circle"/>
 							</button>
 							<div style={{width:"8px"}} />
-							<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.onOkClick}> 
+							<button className="dialog-primary-button" onClick={this.onOkClick}> 
 								OK&nbsp;<Glyphicon glyph="ok-circle"/>
 							</button>
 						</div>

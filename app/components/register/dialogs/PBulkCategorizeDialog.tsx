@@ -27,13 +27,6 @@ const ScrollableContainerStyle:React.CSSProperties = {
 	overflowY: "scroll",
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialogProps, PBulkCategorizeDialogState> {
 
 	constructor(props: any) {
@@ -203,7 +196,7 @@ export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialog
 							{categoriesList}
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-secondary-button" onClick={this.hide}>
 									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>

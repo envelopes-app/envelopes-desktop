@@ -44,10 +44,6 @@ const RowItemStyle:React.CSSProperties = {
 	flex: "0 0 auto"
 }
 
-const SpacerStyle:React.CSSProperties = {
-	flex: "1 1 auto"
-}
-
 const CategoryNameStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	color: "#003440",
@@ -143,7 +139,7 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 			<div style={DefaultCategorySummaryContainerStyle}>
 				<div style={RowStyle}>
 					<label style={CategoryNameStyle}>{subCategory.name}</label>
-					<div style={SpacerStyle}/>
+					<div className="spacer" />
 					<div style={CategoryMenuStyle} onClick={this.onEditClick} ref={(d)=> this.categoryEditMenu = d}>
 						<Glyphicon glyph="cog" />&nbsp;Edit
 					</div>
@@ -152,28 +148,28 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 				<hr className="inspector-horizontal-rule" />
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Left Over from {prevMonthName}</label>
-					<span style={SpacerStyle}/>
+					<div className="spacer" />
 					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashLeftOver)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Budgeted This Month</label>
-					<span style={SpacerStyle}/>
+					<div className="spacer" />
 					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(budgetedThisMonth)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Cash Spending</label>
-					<span style={SpacerStyle}/>
+					<div className="spacer" />
 					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(cashSpending)}</label>
 				</div>
 				<div style={RowStyle}>
 					<label style={CategoryPropertyNameStyle}>Credit Spending</label>
-					<span style={SpacerStyle}/>
+					<div className="spacer" />
 					<label style={CategoryPropertyValueStyle}>{dataFormatter.formatCurrency(creditSpending)}</label>
 				</div>
 				<hr className="inspector-horizontal-rule" />
 				<div style={RowStyle}>
 					<label style={categoryAvailableStyle}>Available</label>
-					<span style={SpacerStyle}/>
+					<div className="spacer" />
 					<PSubCategoryBalanceValue 
 						dataFormatter={dataFormatter}
 						monthlySubCategoryBudget={monthlySubCategoryBudget} 

@@ -64,31 +64,6 @@ const YearSelectionFormControlStyle:React.CSSProperties = Object.assign({}, Form
 	width: "32%"
 });
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	display: "flex",
-	flexFlow: "row nowrap",	
-	alignItems: "center",
-	width: "100%",
-	justifyContent: "space-between"
-}
-
-const ButtonStyle:React.CSSProperties = {
-	flex: "0 0 auto",
-	fontSize:"14px",
-	paddingLeft: "6px",
-	paddingRight: "6px",
-}
-
-const SpacerStyle:React.CSSProperties = {
-	flex: "1 1 auto"
-}
-
-const OkButtonStyle:React.CSSProperties = {
-	flex: "0 0 auto",
-	fontSize:"14px",
-	marginLeft: "10px"
-}
-
 export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps, PDebtCategoryGoalsState> {
 
 	constructor(props:any) {
@@ -381,11 +356,12 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 					<hr className="inspector-horizontal-rule" />
 					{editor}
 					<hr className="inspector-horizontal-rule" />
-					<div style={ButtonsContainerStyle}>
+					<div className="buttons-container">
 						<PLinkButton text="Delete" clickHandler={this.handleDeleteClicked} />
+						<div style={{width:"8px"}} />
 						<PLinkButton text="Cancel" clickHandler={this.handleCancelClicked} />
-						<div style={SpacerStyle} />
-						<button className="dialog-primary-button" style={OkButtonStyle} onClick={this.handleOkClicked}>
+						<div className="spacer" />
+						<button className="dialog-primary-button" onClick={this.handleOkClicked}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>
 						</button>
 					</div>

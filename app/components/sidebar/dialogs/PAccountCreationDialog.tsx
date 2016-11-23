@@ -62,13 +62,6 @@ const ErrorMessageStyle:React.CSSProperties = {
 	paddingBottom: "3px"
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PAccountCreationDialog extends React.Component<PAccountCreationDialogProps, PAccountCreationDialogState> {
 
 	constructor(props: any) {
@@ -336,7 +329,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 							</Form>
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-secondary-button" onClick={this.close}>
 									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>

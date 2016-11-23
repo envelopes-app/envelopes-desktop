@@ -64,13 +64,6 @@ const ErrorMessageStyle:React.CSSProperties = {
 	paddingBottom: "3px"
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDialogState> {
 
 	private ctrlBudgetName:FormControl;
@@ -456,7 +449,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 							</Form>
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-secondary-button" onClick={this.hide}>
 									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>

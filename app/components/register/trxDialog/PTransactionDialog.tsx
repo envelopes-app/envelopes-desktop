@@ -59,13 +59,6 @@ export interface PTransactionDialogState {
 	outflowAmount?: number;
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PTransactionDialog extends React.Component<PTransactionDialogProps, PTransactionDialogState> {
 
 	private accountSelector:PAccountSelector;
@@ -763,7 +756,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 							</Form>
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-primary-button"
 									onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
 									Save and add another&nbsp;<Glyphicon glyph="ok-sign" />

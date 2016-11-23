@@ -23,13 +23,6 @@ export interface PMoveToAccountDialogState {
 	accountsList:Array<objects.IAccountObject>;
 }
 
-const ButtonsContainerStyle:React.CSSProperties = {
-	width: "100%",
-	display: "flex",
-	flexFlow: "row nowrap",
-	justifyContent: "flex-end"
-}
-
 export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogProps, PMoveToAccountDialogState> {
 
 	constructor(props: any) {
@@ -167,7 +160,7 @@ export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogPr
 							{accountsList}
 						</Modal.Body>
 						<Modal.Footer>
-							<div style={ButtonsContainerStyle}>
+							<div className="buttons-container">
 								<button className="dialog-secondary-button" onClick={this.hide}>
 									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>
