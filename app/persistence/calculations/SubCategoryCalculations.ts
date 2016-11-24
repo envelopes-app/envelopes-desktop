@@ -217,7 +217,6 @@ WITH e_liability_accounts AS (
             GROUP BY accountId, month_epoch
         ) lastPayments ON t.accountId = lastPayments.accountId AND t.month_epoch = lastPayments.month_epoch
     WHERE t.accountId IN (SELECT accountId FROM e_liability_accounts)
-        AND t.isSplit = 0
         AND (t.isPayeeStartingBalance = 0 OR t.isImmediateIncomeSubCategory = 0)
     GROUP BY t.month_epoch, t.accountId
 ), e_months_debt_categories AS ( 

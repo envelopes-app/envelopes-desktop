@@ -463,9 +463,6 @@ export class DatabaseFactory {
 				query: `CREATE TABLE IF NOT EXISTS TransactionCalculations(
 							'budgetId' VARCHAR NOT NULL,
 							'transactionId' VARCHAR,
-							'subTransactionId' VARCHAR,
-							'isTransaction' BOOLEAN,
-							'isSubTransaction' BOOLEAN,
 							'date' DATETIME,
 							'month_epoch' NUMERIC,
 							'amount' NUMERIC,
@@ -477,7 +474,6 @@ export class DatabaseFactory {
 							'payeeId' VARCHAR,
 							'isCleared' BOOLEAN,
 							'isAccepted' BOOLEAN,
-							'isSplit' BOOLEAN,
 							'isUncategorized' BOOLEAN,
 							'isPayeeStartingBalance' BOOLEAN,
 							'isImmediateIncomeSubCategory' BOOLEAN,

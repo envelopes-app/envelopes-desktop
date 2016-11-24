@@ -43,9 +43,9 @@ export class AccountCalculations {
 			query: `
 WITH e_accounts_monthly AS (
 SELECT m.month, m.month_epoch, a.entityId as accountId,
-	COALESCE(SUM(CASE WHEN t.isTransaction = 1 AND (t.isCleared = 1 OR t.isReconciled = 1) THEN amount ELSE 0 END), 0) as clearedBalance,
-	COALESCE(SUM(CASE WHEN t.isTransaction = 1 AND (t.isCleared = 0 AND t.isReconciled = 0) THEN amount ELSE 0 END), 0) as unclearedBalance,
-	COALESCE(SUM(CASE WHEN t.isTransaction = 1 AND t.isAccepted = 0 AND t.isReconciled = 0 THEN 1 ELSE 0 END), 0) as infoCount,
+	COALESCE(SUM(CASE WHEN t.isCleared = 1 OR t.isReconciled = 1 THEN amount ELSE 0 END), 0) as clearedBalance,
+	COALESCE(SUM(CASE WHEN t.isCleared = 0 AND t.isReconciled = 0 THEN amount ELSE 0 END), 0) as unclearedBalance,
+	COALESCE(SUM(CASE WHEN t.isAccepted = 0 AND t.isReconciled = 0 THEN 1 ELSE 0 END), 0) as infoCount,
 	COALESCE(SUM(CASE WHEN t.affectsBudget = 1 AND t.amount <> 0 AND t.isUncategorized = 1 THEN 1 ELSE 0 END), 0) as warningCount,
 	COALESCE(SUM(CASE WHEN t.affectsBudget = 1 AND t.isUncategorized = 0 AND isTransferAccountOnBudget = 1 THEN 1 ELSE 0 END), 0) as errorCount
 FROM ${monthsVirtualTable} m,

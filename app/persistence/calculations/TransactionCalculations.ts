@@ -77,7 +77,7 @@ export class TransactionCalculations {
 		return {
 			name: "transactions",
 			query: `WITH e_transactions AS (
-						SELECT t.accountId, t.entityId as transactionId, NULL as subTransactionId, 1 as isTransaction, 0 as isSubTransaction, COALESCE(t.subcategoryId, '${uncategorizedSubCategoryId}') as subCategoryId,
+						SELECT t.accountId, t.entityId as transactionId, COALESCE(t.subcategoryId, '${uncategorizedSubCategoryId}') as subCategoryId,
 							t.date, t.amount, t.cashAmount, t.creditAmount, t.subCategoryCreditAmountPreceding, NULL sortableIndex
 						FROM Transactions t
 						WHERE t.budgetId = ?1
@@ -86,11 +86,8 @@ export class TransactionCalculations {
 						AND t.date >= ?2
 						AND COALESCE(T.source,'') IN (${TransactionQueries.TransactionSourcesINClause})
 					)
-					SELECT *, 0 as isSplit
-					FROM (
-						SELECT * FROM e_transactions
-					) ts
-					ORDER BY ts.accountId, ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableIndex`,
+					SELECT * FROM e_transactions
+					ORDER BY accountId, date, amount, transactionId, sortableIndex`,
 			arguments: [budgetId, startMonth.getUTCTime()]
 		};
 	}
@@ -130,8 +127,7 @@ export class TransactionCalculations {
 			name: "TransactionCalculations",
 			query: `
 WITH e_transactions AS (
- SELECT t.entityId as transactionId, NULL as subTransactionId, 1 as isTransaction, 0 as isSubTransaction,
-	NULL as parentTransactionId, t.transferAccountId, t.date, t.amount, t.cashAmount, t.creditAmount, t.subCategoryCreditAmountPreceding, t.accountId, COALESCE(t.subCategoryId, '${uncategorizedSubCategoryId}') as subCategoryId, t.payeeId,
+ SELECT t.entityId as transactionId, t.transferAccountId, t.date, t.amount, t.cashAmount, t.creditAmount, t.subCategoryCreditAmountPreceding, t.accountId, COALESCE(t.subCategoryId, '${uncategorizedSubCategoryId}') as subCategoryId, t.payeeId,
 	CASE WHEN t.cleared = '${ClearedFlag.Cleared}' THEN 1 ELSE 0 END as isCleared,
     CASE WHEN t.cleared = '${ClearedFlag.Reconciled}' THEN 1 ELSE 0 END as isReconciled, 
     t.accepted as isAccepted,
@@ -143,11 +139,10 @@ WITH e_transactions AS (
     AND COALESCE(T.source,'') IN (${TransactionQueries.TransactionSourcesINClause})
 )
 INSERT INTO TransactionCalculations
-SELECT ?1 as budgetId, ts.transactionId, ts.subTransactionId, ts.isTransaction, ts.isSubTransaction, 
+SELECT ?1 as budgetId, ts.transactionId, 
     ts.date, CAST(strftime('%s', date(datetime(ts.date * 0.001, 'unixepoch'),'start of month')) as NUMERIC) as month_epoch,
     ts.amount, ts.cashAmount, ts.creditAmount, ts.subCategoryCreditAmountPreceding, ts.accountId, ts.subCategoryId, ts.payeeId, 
     ts.isCleared, ts.isAccepted,
-	0 as isSplit,
     CASE WHEN ts.subCategoryId = '${uncategorizedSubCategoryId}' THEN 1 ELSE 0 END as isUncategorized,
     CASE WHEN ts.payeeId = '${startingBalancePayeeId}' THEN 1 ELSE 0 END as isPayeeStartingBalance,
     CASE WHEN ts.subCategoryId = '${immediateIncomeSubCategoryId}' THEN 1 ELSE 0 END as isImmediateIncomeSubCategory,
@@ -162,7 +157,7 @@ FROM (
 ) ts
 INNER JOIN Accounts a ON a.entityId = ts.accountId
 LEFT JOIN Accounts ta ON ta.entityId = ts.transferAccountId
-ORDER BY ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableIndex
+ORDER BY ts.date, ts.amount, ts.transactionId, ts.sortableIndex
                 `,
                 arguments: [budgetId, startMonth.getUTCTime()]
             };
@@ -243,7 +238,7 @@ ORDER BY ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableI
 		// Iterate through all the transactions, and update their cash and credit amounts
 			
 		// NOTE: The following code ASSUMES data.transactions are ordered by: 
-		//    (date, amount, transactionId, isSubTransaction, sortableIndex)
+		//    (date, amount, transactionId, sortableIndex)
 				
 		_.forEach(accountTransactions, (transaction:ICalculationTransactionAmount)=>{
 
