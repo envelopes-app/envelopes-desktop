@@ -6,7 +6,6 @@ export { IMonthlySubCategoryBudget } from './IMonthlySubCategoryBudget';
 export { IPayee } from './IPayee';
 export { IPayeeLocation } from './IPayeeLocation';
 export { IPayeeRenameCondition } from './IPayeeRenameCondition';
-export { IScheduledSubTransaction } from './IScheduledSubTransaction';
 export { IScheduledTransaction } from './IScheduledTransaction';
 export { ISetting } from './ISetting';
 export { ISubCategory } from './ISubCategory';

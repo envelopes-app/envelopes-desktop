@@ -12,7 +12,6 @@ export interface IScheduledTransactionCalculationsData {
 	// Collections for Entities. Do not load any scheduled transactions that are themselves tombstoned, or
 	// belong to an account that is tombstoned, or has been closed.
 	scheduledTransactions: Array<budgetEntities.IScheduledTransaction>;
-	scheduledSubTransactions: Array<budgetEntities.IScheduledSubTransaction>;
 
 	// Account Payee Id's stored in a map by their account id. We need these so that
 	// we can create transfer transactions.

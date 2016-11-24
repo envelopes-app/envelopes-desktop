@@ -12,7 +12,7 @@ import { ISimpleEntitiesCollection } from '../../interfaces/state';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from '../QueryExecutionUtility';
 import { IReferenceDataForCalculations, IScheduledTransactionCalculationsData, IScheduledTransactionCalculationsResult } from '../../interfaces/calculations';
 import { BudgetDateQueries, CalculationQueries } from '../queries/miscQueries';
-import { AccountQueries, TransactionQueries, SubTransactionQueries, ScheduledTransactionQueries, ScheduledSubTransactionQueries, PayeeQueries, SubCategoryQueries, MonthlySubCategoryBudgetQueries } from '../queries/budgetQueries';
+import { AccountQueries, TransactionQueries, SubTransactionQueries, ScheduledTransactionQueries, PayeeQueries, SubCategoryQueries, MonthlySubCategoryBudgetQueries } from '../queries/budgetQueries';
 
 export class ScheduledTransactionCalculations {
 
@@ -26,7 +26,6 @@ export class ScheduledTransactionCalculations {
 		var queriesList:Array<IDatabaseQuery> = [
 			AccountQueries.getAllAccounts(budgetId),
 			ScheduledTransactionQueries.getAllScheduledTransactions(budgetId),
-			ScheduledSubTransactionQueries.getAllScheduledSubTransactions(budgetId),
 			BudgetDateQueries.getFirstAndLastBudgetMonthQuery(budgetId),
 			PayeeQueries.getTransferPayees(budgetId),
 			SubCategoryQueries.getAllSubCategories(budgetId),
@@ -346,12 +345,6 @@ export class ScheduledTransactionCalculations {
 			scheduledTransactionsMap[scheduledTransaction.entityId] = scheduledTransaction;
 		});
 
-		// Build a multi-map of scheduled sub-transactions by scheduled transaction id
-		var scheduledSubTransactionsMap = new MultiDictionary<string, budgetEntities.IScheduledSubTransaction>();
-		_.forEach(data.scheduledSubTransactions, function(scheduledSubTransaction:budgetEntities.IScheduledSubTransaction) {
-			scheduledSubTransactionsMap.setValue(scheduledSubTransaction.scheduledTransactionId, scheduledSubTransaction);
-		});
-
 		// Iterate through all the passed scheduled transaction ids
 		_.forEach(scheduledTransactionIds, (scheduledTransactionId:string)=>{
 
@@ -369,10 +362,8 @@ export class ScheduledTransactionCalculations {
 				// to the end of the upcomingInstanceDates array.
 				upcomingInstanceDates = this.calculateUpcomingInstanceDates(scheduledTransaction, upcomingInstanceDates, currentDate, endDate);
 
-				// Get the scheduled sub-transactions, if any, for this scheduled transaction
-				var subTransactions = scheduledSubTransactionsMap.getValue(scheduledTransaction.entityId);
 				// Check if there are any overdue dates in this scheduled transaction for which we need to generate transactions
-				this.generatePendingTransactions(budgetId, scheduledTransaction, subTransactions, upcomingInstanceDates, currentDate, data, calculationResults, useTodaysDateForGeneratedTransactions);
+				this.generatePendingTransactions(budgetId, scheduledTransaction, upcomingInstanceDates, currentDate, data, calculationResults, useTodaysDateForGeneratedTransactions);
 
 				// Serialize the list of upcoming instance dates into a string and update the entity with them.
 				// Only update the entity if the list has actually changed or the entity has been tombstoned.
@@ -388,7 +379,7 @@ export class ScheduledTransactionCalculations {
 
 		// Re-calculate the upcoming transactions starting from the current month upto the end month
 		var upcomingTransactionResults:Array<{monthlySubCategoryBudgetId:string, upcomingTransactions:number, upcomingTransactionsCount:number}>;
-		upcomingTransactionResults = this.calculateUpcomingTransactions(budgetId, scheduledSubTransactionsMap, data, endDate);
+		upcomingTransactionResults = this.calculateUpcomingTransactions(budgetId, data, endDate);
 
 		// Persist the updated data
 		return this.saveData(budgetId, calculationResults, upcomingTransactionResults, budgetKnowledge, createUndoChangeSet)
@@ -599,7 +590,6 @@ export class ScheduledTransactionCalculations {
 	// ***************************************************************************************************
 	private generatePendingTransactions(budgetId:string,
 										scheduledTransaction:budgetEntities.IScheduledTransaction,
-										scheduledSubTransactions:Array<budgetEntities.IScheduledSubTransaction>,
 										upcomingInstanceDates:Array<DateWithoutTime>,
 										currentDate:DateWithoutTime,
 										data:IScheduledTransactionCalculationsData,
@@ -622,12 +612,12 @@ export class ScheduledTransactionCalculations {
 			if(useTodaysDateForGeneratedTransactions) {
 
 				// Generate transaction for this date and add them to the changed entities collection
-				this.createTransaction(budgetId, scheduledTransaction, scheduledSubTransactions, todaysDate, data, calculationResults);
+				this.createTransaction(budgetId, scheduledTransaction, todaysDate, data, calculationResults);
 			}
 			else {
 
 				// Generate transaction for this date and add them to the changed entities collection
-				this.createTransaction(budgetId, scheduledTransaction, scheduledSubTransactions, upcomingInstanceDate, data, calculationResults);
+				this.createTransaction(budgetId, scheduledTransaction, upcomingInstanceDate, data, calculationResults);
 			}
 
 			datesToRemove++;
@@ -648,7 +638,6 @@ export class ScheduledTransactionCalculations {
 
 	private createTransaction(budgetId:string,
 									scheduledTransaction:budgetEntities.IScheduledTransaction,
-									scheduledSubTransactions:Array<budgetEntities.IScheduledSubTransaction>,
 									date:DateWithoutTime,
 									data:IScheduledTransactionCalculationsData,
 									calculationResults:IScheduledTransactionCalculationsResult):void {
@@ -707,75 +696,12 @@ export class ScheduledTransactionCalculations {
 
 		// Get the transaction database object from this transaction entity and save it in the calculation results
 		calculationResults.transactions.push( transaction );
-
-		if(scheduledSubTransactions) {
-
-			// If any scheduled subs transfer to another account, ensure they have a sortableIndex because we use it for deterministic ID.
-			var anyTransferSubsWithoutSortableIndex =  _.filter(scheduledSubTransactions, (sub:budgetEntities.IScheduledSubTransaction) => {
-				return sub.transferAccountId && sub.sortableIndex == null;
-			});
-
-			if (anyTransferSubsWithoutSortableIndex) {
-				var sortedSubsById = _.sortBy(scheduledSubTransactions, (sub)=>{ return sub.entityId; });
-				for (var i = 0; i < sortedSubsById.length; i++) {
-					sortedSubsById[i].sortableIndex = i;
-				}
-			}
-
-			// If there are any scheduled sub-transactions, then create sub-transactions corresponding to them
-			_.forEach(scheduledSubTransactions, (scheduledSubTransaction:budgetEntities.IScheduledSubTransaction)=> {
-
-				var subTransaction = EntityFactory.createNewSubTransaction(budgetId);
-				// Note: a deterministic ID not needed for subtransactions since splits are handled in groups with parent
-				subTransaction.transactionId = transactionEntityId;
-				subTransaction.payeeId = scheduledSubTransaction.payeeId;
-				subTransaction.subCategoryId = scheduledSubTransaction.subCategoryId;
-				subTransaction.memo = scheduledSubTransaction.memo;
-				subTransaction.amount = scheduledSubTransaction.amount;
-				subTransaction.transferAccountId = scheduledSubTransaction.transferAccountId;
-				subTransaction.sortableIndex = scheduledSubTransaction.sortableIndex;
-
-				if(scheduledSubTransaction.transferAccountId) {
-
-					var payeeIdForTransferTransaction:string = data.payeesMapByAccountId[scheduledTransaction.accountId];
-
-					// We also need to create the other side of this transfer subtransaction
-					var subTransactionTransferTransaction = EntityFactory.createNewTransaction(budgetId);
-					subTransactionTransferTransaction.accountId = scheduledSubTransaction.transferAccountId;
-					subTransactionTransferTransaction.date = date.getUTCTime();
-					// We need to use a deterministic transfer transaction ID because a scheduled transaction could be fired
-					// from multiple clients and we need to ensure it does not get duplicated.
-					var subTransactionTransferTransactionEntityId:string = KeyGenerator.getScheduledSubTransactionTransferTransactionId(scheduledTransaction, date, scheduledSubTransaction.sortableIndex);
-					subTransactionTransferTransaction.entityId = subTransactionTransferTransactionEntityId;
-
-					// Copy the rest of the values from the scheduled transaction into this transaction entity
-					subTransactionTransferTransaction.payeeId = payeeIdForTransferTransaction;
-					subTransactionTransferTransaction.memo = scheduledSubTransaction.memo;
-					subTransactionTransferTransaction.amount = -(scheduledSubTransaction.amount);
-					subTransactionTransferTransaction.cleared = ClearedFlag.Uncleared;
-					subTransactionTransferTransaction.accepted = 0;
-					subTransactionTransferTransaction.transferAccountId = scheduledTransaction.accountId;
-					subTransactionTransferTransaction.transferSubTransactionId = subTransaction.entityId;
-					subTransactionTransferTransaction.scheduledTransactionId = scheduledTransaction.entityId;
-
-					// Get the transaction database object from this transfer transaction entity and save it in the calculation results
-					calculationResults.transactions.push( subTransactionTransferTransaction );
-
-					// Also update the transferTransactionId value on the transaction entity
-					subTransaction.transferTransactionId = subTransactionTransferTransaction.entityId;
-				}
-
-				// Get the sub-transaction database object from this entity and save it in the calculation results
-				calculationResults.subTransactions.push(subTransaction);
-			});
-		}
 	}
 
 	// ***************************************************************************************************
 	// Method for calculating upcoming transactions for monthly subcategories
 	// ***************************************************************************************************
 	private calculateUpcomingTransactions(budgetId:string,
-											scheduledSubTransactionsMap:MultiDictionary<string, budgetEntities.IScheduledSubTransaction>,
 											data:IScheduledTransactionCalculationsData,
 											endMonth:DateWithoutTime):Array<{monthlySubCategoryBudgetId:string, upcomingTransactions:number, upcomingTransactionsCount:number}> {
 
@@ -867,28 +793,10 @@ export class ScheduledTransactionCalculations {
 						// Is this upcoming instance date within the month that we are processing?
 						if (month.equalsByMonth(upcomingInstanceDate)) {
 
-							if (scheduledTransaction.subCategoryId == data.splitSubCategoryId) {
-
-								// Get the scheduled sub-transactions for this scheduled transaction and process those
-								var scheduledSubTransactions = scheduledSubTransactionsMap.getValue(scheduledTransaction.entityId);
-								if (scheduledSubTransactions && scheduledSubTransactions.length > 0) {
-
-									_.forEach(scheduledSubTransactions, (scheduledSubTransaction:budgetEntities.IScheduledSubTransaction)=> {
-
-										if (scheduledSubTransaction.isTombstone == 1) { /* Ignore */ }
-										else if (scheduledSubTransaction.subCategoryId) {
-											addUpcomingTransactionAmountForCategory(scheduledSubTransaction.amount, scheduledSubTransaction.subCategoryId);
-										}
-										else if (!scheduledSubTransaction.subCategoryId) {
-											addUpcomingTransactionAmountForCategory(scheduledSubTransaction.amount, data.uncategorizedSubCategoryId);
-										}
-									});
-								}
-							}
-							else if (scheduledTransaction.subCategoryId) {
+							if(scheduledTransaction.subCategoryId) {
 								addUpcomingTransactionAmountForCategory(scheduledTransaction.amount, scheduledTransaction.subCategoryId);
 							}
-							else if (!scheduledTransaction.subCategoryId) {
+							else if(!scheduledTransaction.subCategoryId) {
 								addUpcomingTransactionAmountForCategory(scheduledTransaction.amount, data.uncategorizedSubCategoryId);
 							}
 						}

@@ -11,7 +11,6 @@ export { PayeesArray } from './PayeesArray';
 export { PayeeLocationsArray } from './PayeeLocationsArray';
 export { PayeeRenameConditionsArray } from './PayeeRenameConditionsArray';
 export { RegisterTransactionObjectsArray } from './RegisterTransactionObjectsArray';
-export { ScheduledSubTransactionsArray } from './ScheduledSubTransactionsArray';
 export { ScheduledTransactionsArray } from './ScheduledTransactionsArray';
 export { SettingsArray } from './SettingsArray';
 export { SubCategoriesArray } from './SubCategoriesArray';

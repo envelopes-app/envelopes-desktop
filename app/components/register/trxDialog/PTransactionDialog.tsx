@@ -37,9 +37,8 @@ export interface PTransactionDialogState {
 	// If we are editing a transaction, it will be in the following two state variables
 	transaction?: budgetEntities.ITransaction;
 	subTransaction?: Array<budgetEntities.ISubTransaction>;
-	// If we are editing a scheduled transaction, it will be in the following two state variables
+	// If we are editing a scheduled transaction, it will be in the following state variable
 	scheduledTransaction?: budgetEntities.IScheduledTransaction;
-	scheduledSubTransaction?: Array<budgetEntities.IScheduledSubTransaction>;
 	// This is for managing the focus in the dialog
 	activeFieldOnInitialShow:string;
 	activeField:string;

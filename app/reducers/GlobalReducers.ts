@@ -95,7 +95,6 @@ export class GlobalReducers {
 		newValue.payees = new collections.PayeesArray(action.entities.payees);
 		newValue.payeeLocations = new collections.PayeeLocationsArray(action.entities.payeeLocations);
 		newValue.payeeRenameConditions = new collections.PayeeRenameConditionsArray(action.entities.payeeRenameConditions);
-		newValue.scheduledSubTransactions = new collections.ScheduledSubTransactionsArray(action.entities.scheduledSubTransactions);
 		newValue.scheduledTransactions = new collections.ScheduledTransactionsArray(action.entities.scheduledTransactions);
 		newValue.settings = new collections.SettingsArray(action.entities.settings);
 		newValue.subCategories = new collections.SubCategoriesArray(action.entities.subCategories);
@@ -115,7 +114,6 @@ export class GlobalReducers {
 		GlobalReducers.updateCollectionArray(newValue.payees, action.entities.payees);
 		GlobalReducers.updateCollectionArray(newValue.payeeLocations, action.entities.payeeLocations);
 		GlobalReducers.updateCollectionArray(newValue.payeeRenameConditions, action.entities.payeeRenameConditions);
-		GlobalReducers.updateCollectionArray(newValue.scheduledSubTransactions, action.entities.scheduledSubTransactions);
 		GlobalReducers.updateCollectionArray(newValue.scheduledTransactions, action.entities.scheduledTransactions);
 		GlobalReducers.updateCollectionArray(newValue.settings, action.entities.settings);
 		GlobalReducers.updateCollectionArray(newValue.subCategories, action.entities.subCategories);

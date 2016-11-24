@@ -53,7 +53,6 @@ export class PersistenceManager {
 	private payeeHelper = new persistenceHelpers.PayeeHelper();
 	private payeeLocationHelper = new persistenceHelpers.PayeeLocationHelper();
 	private payeeRenameConditionHelper = new persistenceHelpers.PayeeRenameConditionHelper();
-	private scheduledSubTransactionHelper = new persistenceHelpers.ScheduledSubTransactionHelper();
 	private scheduledTransactionHelper = new persistenceHelpers.ScheduledTransactionHelper();
 	private settingHelper = new persistenceHelpers.SettingHelper();
 	private subCategoryHelper = new persistenceHelpers.SubCategoryHelper();
@@ -353,7 +352,6 @@ export class PersistenceManager {
 			this.payeeHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.payeeLocationHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.payeeRenameConditionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
-			this.scheduledSubTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.scheduledTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.settingHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.subCategoryHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
@@ -381,7 +379,6 @@ export class PersistenceManager {
 			budgetQueries.PayeeQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.PayeeLocationQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.PayeeRenameConditionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
-			budgetQueries.ScheduledSubTransactionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.ScheduledTransactionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.SettingQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.SubCategoryQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),

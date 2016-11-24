@@ -381,21 +381,6 @@ export class DatabaseFactory {
 				arguments: []
 			},
 			{
-				query: `CREATE TABLE IF NOT EXISTS 'ScheduledSubTransactions' (
-						'budgetId' VARCHAR NOT NULL,
-						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'isTombstone' BOOL NOT NULL,
-						'scheduledTransactionId' VARCHAR NOT NULL,
-						'payeeId' VARCHAR,
-						'subCategoryId' VARCHAR,
-						'amount' NUMERIC NOT NULL,
-						'memo' VARCHAR,
-						'transferAccountId' VARCHAR,
-						'sortableIndex' NUMERIC,
-						'deviceKnowledge' NUMERIC NOT NULL)`,
-				arguments: []
-			},
-			{
 				query: `CREATE TABLE IF NOT EXISTS 'ScheduledTransactions' (
 						'budgetId' VARCHAR NOT NULL,
 						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
@@ -585,7 +570,6 @@ export class DatabaseFactory {
 			{query: "DROP TABLE IF EXISTS 'Payees'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'PayeeLocations'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'PayeeRenameConditions'", arguments: []},
-			{query: "DROP TABLE IF EXISTS 'ScheduledSubTransactions'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'ScheduledTransactions'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'Settings'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'SubCategories'", arguments: []},

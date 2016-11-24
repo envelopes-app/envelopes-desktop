@@ -16,7 +16,6 @@ export interface IEntitiesCollection {
 	payees?:collections.PayeesArray;
 	payeeLocations?:collections.PayeeLocationsArray;
 	payeeRenameConditions?:collections.PayeeRenameConditionsArray;
-	scheduledSubTransactions?:collections.ScheduledSubTransactionsArray;
 	scheduledTransactions?:collections.ScheduledTransactionsArray;
 	settings?:collections.SettingsArray;
 	subCategories?:collections.SubCategoriesArray;
@@ -36,7 +35,6 @@ export interface ISimpleEntitiesCollection {
 	payees?:Array<budgetEntities.IPayee>;
 	payeeLocations?:Array<budgetEntities.IPayeeLocation>;
 	payeeRenameConditions?:Array<budgetEntities.IPayeeRenameCondition>;
-	scheduledSubTransactions?:Array<budgetEntities.IScheduledSubTransaction>;
 	scheduledTransactions?:Array<budgetEntities.IScheduledTransaction>;
 	settings?:Array<budgetEntities.ISetting>;
 	subCategories?:Array<budgetEntities.ISubCategory>;

@@ -6,7 +6,6 @@ export { MonthlySubCategoryBudgetQueries } from './MonthlySubCategoryBudgetQueri
 export { PayeeLocationQueries } from './PayeeLocationQueries';
 export { PayeeQueries } from './PayeeQueries';
 export { PayeeRenameConditionQueries } from './PayeeRenameConditionQueries';
-export { ScheduledSubTransactionQueries } from './ScheduledSubTransactionQueries';
 export { ScheduledTransactionQueries } from './ScheduledTransactionQueries';
 export { SettingQueries } from './SettingQueries';
 export { SubCategoryQueries } from './SubCategoryQueries';

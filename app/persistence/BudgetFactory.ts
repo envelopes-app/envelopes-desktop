@@ -138,7 +138,6 @@ export class BudgetFactory {
 		queriesList.push(budgetQueries.PayeeLocationQueries.getAllPayeeLocations(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.PayeeQueries.getAllPayees(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.PayeeRenameConditionQueries.getAllPayeeRenameConditions(budgetIdOfOriginalBudget));
-		queriesList.push(budgetQueries.ScheduledSubTransactionQueries.getAllScheduledSubTransactions(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.ScheduledTransactionQueries.getAllScheduledTransactions(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.SettingQueries.getAllSettings(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.SubCategoryQueries.getAllSubCategories(budgetIdOfOriginalBudget));
@@ -246,16 +245,6 @@ export class BudgetFactory {
 					scheduledTransaction.payeeId = entityIdsMap[scheduledTransaction.payeeId];
 					scheduledTransaction.subCategoryId = entityIdsMap[scheduledTransaction.subCategoryId];
 					scheduledTransaction.transferAccountId = entityIdsMap[scheduledTransaction.transferAccountId];
-				});
-
-				// Iterate through the scheduled sub-transaction entities and clone them
-				cloningFunction(result.scheduledSubTransactions, budgetQueries.ScheduledSubTransactionQueries.insertDatabaseObject, (scheduledSubTransaction:budgetEntities.IScheduledSubTransaction)=>{
-
-					// Lookup and replace the old ids with the new ids from the map
-					scheduledSubTransaction.scheduledTransactionId = entityIdsMap[scheduledSubTransaction.scheduledTransactionId];
-					scheduledSubTransaction.payeeId = entityIdsMap[scheduledSubTransaction.payeeId];
-					scheduledSubTransaction.subCategoryId = entityIdsMap[scheduledSubTransaction.subCategoryId];
-					scheduledSubTransaction.transferAccountId = entityIdsMap[scheduledSubTransaction.transferAccountId];
 				});
 
 				// Iterate through the transaction entities and clone them

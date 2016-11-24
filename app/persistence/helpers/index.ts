@@ -8,7 +8,6 @@ export { MonthlySubCategoryBudgetHelper } from './MonthlySubCategoryBudgetHelper
 export { PayeeHelper } from './PayeeHelper';
 export { PayeeLocationHelper } from './PayeeLocationHelper';
 export { PayeeRenameConditionHelper } from './PayeeRenameConditionHelper';
-export { ScheduledSubTransactionHelper } from './ScheduledSubTransactionHelper';
 export { ScheduledTransactionHelper } from './ScheduledTransactionHelper';
 export { SettingHelper } from './SettingHelper';
 export { SubCategoryHelper } from './SubCategoryHelper';

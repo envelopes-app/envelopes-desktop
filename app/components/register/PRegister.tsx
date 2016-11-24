@@ -368,7 +368,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var transactionsArray = entitiesCollection.transactions;
 		var subTransactionsArray = entitiesCollection.subTransactions;
 		var scheduledTransactionsArray = entitiesCollection.scheduledTransactions;
-		var scheduledSubTransactionsArray = entitiesCollection.scheduledSubTransactions;
 		var startDate = registerState.filterStartDate;
 		var endDate = registerState.filterEndDate;
 		var splitSubCategoryId = entitiesCollection.subCategories.getSplitSubCategory().entityId;
@@ -389,16 +388,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					let registerTransactionObject = RegisterTransactionObject.createFromScheduledTransaction(scheduledTransaction, entitiesCollection);
 					if(registerTransactionObject) {
 						registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-						// If this is a split transaction, get the subtransactions for this scheduled transaction
-						// and create RegisterTransactionObjects for them as well.
-						if(scheduledTransaction.subCategoryId == splitSubCategoryId) {
-
-							var scheduledSubTransactions = scheduledSubTransactionsArray.getSubTransactionsByTransactionId(scheduledTransaction.entityId);
-							_.forEach(scheduledSubTransactions, (scheduledSubTransaction)=>{
-								let registerTransactionObject = RegisterTransactionObject.createFromScheduledSubTransaction(scheduledSubTransaction, scheduledTransaction, entitiesCollection);
-								registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-							});
-						}
 					}
 				}
 			});
