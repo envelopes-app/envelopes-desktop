@@ -2,7 +2,6 @@ export { BudgetHelper } from './BudgetHelper';
 export { GlobalSettingHelper } from './GlobalSettingHelper';
 
 export { AccountHelper } from './AccountHelper';
-export { AccountMappingHelper } from './AccountMappingHelper';
 export { MasterCategoryHelper } from './MasterCategoryHelper';
 export { MonthlyBudgetHelper } from './MonthlyBudgetHelper';
 export { MonthlySubCategoryBudgetHelper } from './MonthlySubCategoryBudgetHelper';

@@ -263,23 +263,6 @@ export class DatabaseFactory {
 				arguments: []
 			},
 			{
-				query: `CREATE TABLE IF NOT EXISTS 'AccountMappings' (
-						'budgetId' VARCHAR NOT NULL,
-						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'isTombstone' BOOL NOT NULL,
-						'accountId' VARCHAR NOT NULL,
-						'fid' VARCHAR,
-						'shortenedAccountId' VARCHAR,
-						'hash' VARCHAR,
-						'salt' VARCHAR,
-						'dateSequence' VARCHAR,
-						'shouldFlipPayeesMemos' BOOL NOT NULL DEFAULT 0,
-						'shouldImportMemos' BOOL NOT NULL DEFAULT 0,
-						'skipImport' BOOL NOT NULL DEFAULT 0,
-						'deviceKnowledge' NUMERIC NOT NULL)`,
-				arguments: []
-			},
-			{
 				query: `CREATE TABLE IF NOT EXISTS 'MasterCategories' (
 						'budgetId' VARCHAR NOT NULL,
 						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
@@ -594,7 +577,6 @@ export class DatabaseFactory {
 			{query: "DROP TABLE IF EXISTS 'GlobalSettings'", arguments: []},
 
 			{query: "DROP TABLE IF EXISTS 'Accounts'", arguments: []},
-			{query: "DROP TABLE IF EXISTS 'AccountMappings'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'MasterCategories'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'MonthlyBudgets'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'MonthlyBudgetCalculations'", arguments: []},

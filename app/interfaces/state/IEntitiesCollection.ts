@@ -10,7 +10,6 @@ export interface IEntitiesCollection {
 	
 	// Arrays to save all budget entities by their types
 	accounts?:collections.AccountsArray;
-	accountMappings?:collections.AccountMappingsArray;
 	masterCategories?:collections.MasterCategoriesArray;
 	monthlyBudgets?:collections.MonthlyBudgetsArray;
 	monthlySubCategoryBudgets?:collections.MonthlySubCategoryBudgetsArray;
@@ -31,7 +30,6 @@ export interface ISimpleEntitiesCollection {
 	globalSettings?:Array<catalogEntities.IGlobalSetting>;
 
 	accounts?:Array<budgetEntities.IAccount>;
-	accountMappings?:Array<budgetEntities.IAccountMapping>;
 	masterCategories?:Array<budgetEntities.IMasterCategory>;
 	monthlyBudgets?:Array<budgetEntities.IMonthlyBudget>;
 	monthlySubCategoryBudgets?:Array<budgetEntities.IMonthlySubCategoryBudget>;

@@ -130,7 +130,6 @@ export class BudgetFactory {
 
 		// Let's first load all the entities for this budget
 		queriesList.push(catalogQueries.BudgetQueries.findBudgetById(budgetIdOfOriginalBudget));
-		queriesList.push(budgetQueries.AccountMappingQueries.getAllAccountMappings(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.AccountQueries.getAllAccounts(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.AccountQueries.getAllAccountMonthlyCalculations(budgetIdOfOriginalBudget));
 		queriesList.push(budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetIdOfOriginalBudget));
@@ -212,13 +211,6 @@ export class BudgetFactory {
 
 				// Iterate through the account entities and clone them
 				cloningFunction(result.accounts, budgetQueries.AccountQueries.insertDatabaseObject);
-
-				// Iterate through the accounts mapping entities and clone them
-				cloningFunction(result.accountMappings, budgetQueries.AccountMappingQueries.insertDatabaseObject, (accountMapping:budgetEntities.IAccountMapping)=>{
-
-					// Lookup and replace the old account id with the new id from the map
-					accountMapping.accountId = entityIdsMap[accountMapping.accountId];
-				});
 
 				// Iterate through the payee entities and clone them
 				cloningFunction(result.payees, budgetQueries.PayeeQueries.insertDatabaseObject, (payee:budgetEntities.IPayee)=>{

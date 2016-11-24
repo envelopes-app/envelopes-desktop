@@ -1,5 +1,4 @@
 export { IAccount } from './IAccount';
-export { IAccountMapping } from './IAccountMapping';
 export { IAccountMonthlyCalculation } from './IAccountMonthlyCalculation';
 export { IMasterCategory } from './IMasterCategory';
 export { IMonthlyBudget } from './IMonthlyBudget';

@@ -47,7 +47,6 @@ export class PersistenceManager {
 	private globalSettingHelper = new persistenceHelpers.GlobalSettingHelper();
 
 	private accountHelper = new persistenceHelpers.AccountHelper();
-	private accountMappingHelper = new persistenceHelpers.AccountMappingHelper();
 	private masterCategoryHelper = new persistenceHelpers.MasterCategoryHelper();
 	private monthlyBudgetHelper = new persistenceHelpers.MonthlyBudgetHelper();
 	private monthlySubCategoryBudgetHelper = new persistenceHelpers.MonthlySubCategoryBudgetHelper();
@@ -348,7 +347,6 @@ export class PersistenceManager {
 			
 			// Get the Data Persistence Queries for saving the budget entities
 			this.accountHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
-			this.accountMappingHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.masterCategoryHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.monthlyBudgetHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.monthlySubCategoryBudgetHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
@@ -377,7 +375,6 @@ export class PersistenceManager {
 			catalogQueries.BudgetQueries.loadDatabaseObject(catalogDeviceKnowledge),
 			catalogQueries.GlobalSettingQueries.loadDatabaseObject(catalogDeviceKnowledge),
 			budgetQueries.AccountQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
-			budgetQueries.AccountMappingQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.MasterCategoryQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.MonthlyBudgetQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.MonthlySubCategoryBudgetQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
