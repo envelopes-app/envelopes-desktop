@@ -62,10 +62,7 @@ export class ScheduledTransactionCalculations {
 				result.userSubCategoryIds = [];
 				_.forEach(result.subCategories, (subCategory:budgetEntities.ISubCategory)=>{
 
-					if(subCategory.internalName == InternalCategories.SplitSubCategory)
-						result.splitSubCategoryId = subCategory.entityId;
-
-					else if(subCategory.internalName == InternalCategories.UncategorizedSubCategory)
+					if(subCategory.internalName == InternalCategories.UncategorizedSubCategory)
 						result.uncategorizedSubCategoryId = subCategory.entityId;
 					
 					else if(subCategory.type == SubCategoryType.Default || subCategory.type == SubCategoryType.Debt)

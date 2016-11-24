@@ -23,7 +23,7 @@ export class TransactionCalculations {
 
             var queryList:Array<IDatabaseQuery> = [
                 this.getAccountBalancesAtStartOfMonth(budgetId, startMonth),
-                this.fetchTransactionAmountsForCalculations(budgetId, startMonth, referenceData.uncategorizedSubCategoryId, referenceData.splitSubCategoryId),
+                this.fetchTransactionAmountsForCalculations(budgetId, startMonth, referenceData.uncategorizedSubCategoryId),
             ];
             
             // These are data read queries. No need to persist the budget knowledge values.
@@ -50,7 +50,7 @@ export class TransactionCalculations {
 
 		return executeSqlQueries([
 			this.clearTransactionCalculationsTable(budgetId),
-			this.populateTransactionCalculationsTable(budgetId, startMonth, referenceData.splitSubCategoryId, referenceData.uncategorizedSubCategoryId, referenceData.startingBalancePayeeId, referenceData.immediateIncomeSubCategoryId)
+			this.populateTransactionCalculationsTable(budgetId, startMonth, referenceData.uncategorizedSubCategoryId, referenceData.startingBalancePayeeId, referenceData.immediateIncomeSubCategoryId)
 		]);
 	}
 	        
@@ -72,7 +72,7 @@ export class TransactionCalculations {
 	}
         
 	private fetchTransactionAmountsForCalculations(budgetId:string, 
-			startMonth:DateWithoutTime, uncategorizedSubCategoryId:string, splitSubCategoryId:string):IDatabaseQuery {
+			startMonth:DateWithoutTime, uncategorizedSubCategoryId:string):IDatabaseQuery {
 		
 		return {
 			name: "transactions",
@@ -86,7 +86,7 @@ export class TransactionCalculations {
 						AND t.date >= ?2
 						AND COALESCE(T.source,'') IN (${TransactionQueries.TransactionSourcesINClause})
 					)
-					SELECT *, CASE WHEN ts.subcategoryId = '${splitSubCategoryId}' THEN 1 ELSE 0 END as isSplit
+					SELECT *, 0 as isSplit
 					FROM (
 						SELECT * FROM e_transactions
 					) ts
@@ -124,7 +124,7 @@ export class TransactionCalculations {
 	}
 	
 	private populateTransactionCalculationsTable(budgetId:string, startMonth:DateWithoutTime,
-		splitSubCategoryId:string, uncategorizedSubCategoryId:string, startingBalancePayeeId:string, immediateIncomeSubCategoryId:string):IDatabaseQuery {
+		uncategorizedSubCategoryId:string, startingBalancePayeeId:string, immediateIncomeSubCategoryId:string):IDatabaseQuery {
 
 		return {
 			name: "TransactionCalculations",
@@ -147,7 +147,7 @@ SELECT ?1 as budgetId, ts.transactionId, ts.subTransactionId, ts.isTransaction, 
     ts.date, CAST(strftime('%s', date(datetime(ts.date * 0.001, 'unixepoch'),'start of month')) as NUMERIC) as month_epoch,
     ts.amount, ts.cashAmount, ts.creditAmount, ts.subCategoryCreditAmountPreceding, ts.accountId, ts.subCategoryId, ts.payeeId, 
     ts.isCleared, ts.isAccepted,
-	CASE WHEN ts.subCategoryId = '${splitSubCategoryId}' THEN 1 ELSE 0 END as isSplit,
+	0 as isSplit,
     CASE WHEN ts.subCategoryId = '${uncategorizedSubCategoryId}' THEN 1 ELSE 0 END as isUncategorized,
     CASE WHEN ts.payeeId = '${startingBalancePayeeId}' THEN 1 ELSE 0 END as isPayeeStartingBalance,
     CASE WHEN ts.subCategoryId = '${immediateIncomeSubCategoryId}' THEN 1 ELSE 0 END as isImmediateIncomeSubCategory,

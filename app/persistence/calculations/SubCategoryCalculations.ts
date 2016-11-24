@@ -30,7 +30,7 @@ export class SubCategoryCalculations {
 		}
 			
 		return executeSqlQueries([
-			this.fetchMonthlyDefaultAndInternalSubcategoriesForCalculations(budgetId, subCategoryIds, referenceData.splitSubCategoryId, referenceData.runFullCalculations, adjustedStartMonth, endMonth)
+			this.fetchMonthlyDefaultAndInternalSubcategoriesForCalculations(budgetId, subCategoryIds, referenceData.runFullCalculations, adjustedStartMonth, endMonth)
 		]);
 	}
 	
@@ -82,7 +82,7 @@ export class SubCategoryCalculations {
 	}
         
 	private fetchMonthlyDefaultAndInternalSubcategoriesForCalculations(budgetId:string, 
-		subCategoryIds:string[], splitSubCategoryId:string, isFullCalcs:boolean,
+		subCategoryIds:string[], isFullCalcs:boolean,
 		startMonth:DateWithoutTime, endMonth:DateWithoutTime):IDatabaseQuery {
 		
 		var subCategoryIdsINClause = "";
@@ -118,8 +118,6 @@ WITH e_months_categories AS (
     WHERE (s.budgetId = ?1 AND (?2 = 1 OR s.entityId IN (${subCategoryIdsINClause})))
         AND s.isTombstone = 0
         AND COALESCE(s.type,'') != '${SubCategoryType.Debt}'
-        -- Split category and transaction parents will be excluded because they don't contribute to calcs
-        AND s.entityId != '${splitSubCategoryId}' AND COALESCE(t.isSplit,0) = 0
     GROUP BY m.month_epoch, s.entityId
 )
 SELECT mc.*,

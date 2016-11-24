@@ -238,7 +238,6 @@ export class CalculationsManager {
 				result.paymentCategoriesMap = _.keyBy<budgetEntities.ISubCategory>(result.paymentCategories, 'accountId');
 				
 				var referenceIdsForCalculations = (<any>result).referenceIds[0];
-				result.splitSubCategoryId = referenceIdsForCalculations.splitSubCategoryId;
 				result.uncategorizedSubCategoryId = referenceIdsForCalculations.uncategorizedSubCategoryId;
 				result.immediateIncomeSubCategoryId = referenceIdsForCalculations.immediateIncomeSubCategoryId;;
 				result.startingBalancePayeeId = referenceIdsForCalculations.startingBalancePayeeId;

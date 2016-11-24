@@ -52,14 +52,6 @@ export class RegisterTransactionObject {
 			return `${this.refMasterCategory.name}: ${this.refSubCategory.name}`;
 		}
 	}
-
-	public get isSplit():boolean {
-
-		if(this.refSubCategory && this.refSubCategory.internalName == InternalCategories.SplitSubCategory)
-			return true;
-
-		return false;
-	}
 	// ****************************************************************************************************
 	// Utility Methods
 	// ****************************************************************************************************

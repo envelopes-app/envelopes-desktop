@@ -95,9 +95,7 @@ export class BudgetFactory {
 				var query:IDatabaseQuery;
 				var queriesList:Array<IDatabaseQuery> = [];
 				var subCategories:Array<budgetEntities.ISubCategory> = result.subCategories;
-				var subCategoryIds:Array<string>  = _.map(_.filter(subCategories, (subCategory)=>{
-					return subCategory.internalName != InternalCategories.SplitSubCategory;
-				}), "entityId") as Array<string>;
+				var subCategoryIds:Array<string>  = _.map(subCategories, "entityId") as Array<string>;
 
 				var query = this.createMonthlyBudgetForMonth(budgetId, month, referenceData, budgetKnowledge);
 				if(query)
@@ -400,28 +398,6 @@ export class BudgetFactory {
 			sortableIndex: 10000,
 			pinnedIndex: null,
 			name: InternalCategoryNames.ImmediateIncomeSubCategory,
-			type: null,
-			note: null,
-			isHidden: 0,
-			goalType: null,
-			goalCreationMonth:null,
-			targetBalance:null,
-			targetBalanceMonth:null,
-			monthlyFunding:null,
-			deviceKnowledge: budgetKnowledge.getNextValue()
-		}));
-
-		// Create the split subcategory
-		queriesList = queriesList.concat(budgetQueries.SubCategoryQueries.insertDatabaseObject({
-			budgetId: budgetId,
-			entityId: splitSubCategoryId,
-			isTombstone: 0,
-			masterCategoryId: internalMasterCategoryId,
-			accountId: null,
-			internalName: InternalCategories.SplitSubCategory,
-			sortableIndex: 30000,
-			pinnedIndex: null,
-			name: InternalCategoryNames.SplitSubCategory,
 			type: null,
 			note: null,
 			isHidden: 0,

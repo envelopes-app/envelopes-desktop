@@ -369,7 +369,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var scheduledTransactionsArray = entitiesCollection.scheduledTransactions;
 		var startDate = registerState.filterStartDate;
 		var endDate = registerState.filterEndDate;
-		var splitSubCategoryId = entitiesCollection.subCategories.getSplitSubCategory().entityId;
 
 		if(registerState.filterShowScheduledTransactions) {
 			// Start iterating through scheduled transactions, and convert them into 

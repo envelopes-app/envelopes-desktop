@@ -122,15 +122,6 @@ export class SubCategoryQueries {
 		};
 	}
 
-	public static getSplitSubCategory(budgetId:string):IDatabaseQuery {
-
-		return {
-			name: "subCategories",
-			query: "Select * FROM SubCategories WHERE budgetId = ? AND internalName = ?",
-			arguments: [budgetId, InternalCategories.SplitSubCategory]
-		};
-	}
-
 	public static getImmediateIncomeSubCategory(budgetId:string):IDatabaseQuery {
 
 		return {

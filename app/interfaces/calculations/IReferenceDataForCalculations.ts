@@ -21,7 +21,6 @@ export interface IReferenceDataForCalculations {
 	
 	accountBalanacesByAccountId:_.Dictionary<number>;
 	
-	splitSubCategoryId:string;
 	uncategorizedSubCategoryId:string;
 	immediateIncomeSubCategoryId:string;
 	startingBalancePayeeId:string;

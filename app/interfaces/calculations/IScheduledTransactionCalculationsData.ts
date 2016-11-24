@@ -23,7 +23,6 @@ export interface IScheduledTransactionCalculationsData {
 	// Data related to upcoming transactions loaded from the monthly subcategory budgets table
 	monthlySubCategoryBudgets:Array<{entityId:string, month:string, upcomingTransactions:number, upcomingTransactionsCount:number}>;
 	
-	splitSubCategoryId:string;
 	uncategorizedSubCategoryId:string;
 	// This array contains the ids for all default/debt subcategories
 	userSubCategoryIds:Array<string>;

@@ -8,7 +8,6 @@ import { InternalCategories } from '../constants';
 export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 	private immediateIncomeSubCategory:ISubCategory;
-	private splitSubCategory:ISubCategory;
 	private uncategorizedSubCategory:ISubCategory;
 	private hiddenSubCategories:Array<ISubCategory> = [];
 
@@ -20,8 +19,6 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 			if(subCategory.internalName == InternalCategories.ImmediateIncomeSubCategory)
 				this.immediateIncomeSubCategory = subCategory;
-			else if(subCategory.internalName == InternalCategories.SplitSubCategory)
-				this.splitSubCategory = subCategory;
 			else if(subCategory.internalName == InternalCategories.UncategorizedSubCategory)
 				this.uncategorizedSubCategory = subCategory;
 
@@ -32,10 +29,6 @@ export class SubCategoriesArray extends EntitiesArray<ISubCategory> {
 
 	public getImmediateIncomeSubCategory():ISubCategory {
 		return this.immediateIncomeSubCategory;
-	}
-
-	public getSplitSubCategory():ISubCategory {
-		return this.splitSubCategory;
 	}
 
 	public getUncategorizedSubCategory():ISubCategory {

@@ -16,9 +16,7 @@ export class CommonQueries {
 
 			var entityTypeToTableMapping = new SimpleObjectMap<string>();
 			entityTypeToTableMapping[CatalogEntityType.Budget] = "Budgets";
-			entityTypeToTableMapping[CatalogEntityType.User] = "Users";
-			entityTypeToTableMapping[CatalogEntityType.UserBudget] = "UserBudgets";
-			entityTypeToTableMapping[CatalogEntityType.UserSetting] = "UserSettings";
+			entityTypeToTableMapping[CatalogEntityType.GlobalSetting] = "GlobalSettings";
 
 			entityTypeToTableMapping[BudgetEntityType.Account] = "Accounts";
 			entityTypeToTableMapping[BudgetEntityType.MasterCategory] = "MasterCategories";
@@ -135,8 +133,7 @@ export class CommonQueries {
 		return {
 			name: "referenceIds",
 			query: `
-SELECT splitSubCategoryId, uncategorizedSubCategoryId, immediateIncomeSubCategoryId, startingBalancePayeeId FROM
-(SELECT entityId as splitSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.SplitSubCategory}'),
+SELECT uncategorizedSubCategoryId, immediateIncomeSubCategoryId, startingBalancePayeeId FROM
 (SELECT entityId as uncategorizedSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.UncategorizedSubCategory}'),
 (SELECT entityId as immediateIncomeSubCategoryId FROM SubCategories WHERE budgetId = ?1 AND internalName = '${InternalCategories.ImmediateIncomeSubCategory}'),
 (SELECT entityId as startingBalancePayeeId FROM Payees WHERE budgetId = ?1 AND internalName = '${InternalPayees.StartingBalance}')
