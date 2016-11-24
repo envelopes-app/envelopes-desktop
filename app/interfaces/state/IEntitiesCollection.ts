@@ -19,7 +19,6 @@ export interface IEntitiesCollection {
 	scheduledTransactions?:collections.ScheduledTransactionsArray;
 	settings?:collections.SettingsArray;
 	subCategories?:collections.SubCategoriesArray;
-	subTransactions?:collections.SubTransactionsArray;
 	transactions?:collections.TransactionsArray;
 }
 
@@ -38,6 +37,5 @@ export interface ISimpleEntitiesCollection {
 	scheduledTransactions?:Array<budgetEntities.IScheduledTransaction>;
 	settings?:Array<budgetEntities.ISetting>;
 	subCategories?:Array<budgetEntities.ISubCategory>;
-	subTransactions?:Array<budgetEntities.ISubTransaction>;
 	transactions?:Array<budgetEntities.ITransaction>;
 }

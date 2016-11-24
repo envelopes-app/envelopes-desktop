@@ -11,5 +11,4 @@ export { PayeeRenameConditionHelper } from './PayeeRenameConditionHelper';
 export { ScheduledTransactionHelper } from './ScheduledTransactionHelper';
 export { SettingHelper } from './SettingHelper';
 export { SubCategoryHelper } from './SubCategoryHelper';
-export { SubTransactionHelper } from './SubTransactionHelper';
 export { TransactionHelper } from './TransactionHelper';

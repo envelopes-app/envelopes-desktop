@@ -14,5 +14,4 @@ export { RegisterTransactionObjectsArray } from './RegisterTransactionObjectsArr
 export { ScheduledTransactionsArray } from './ScheduledTransactionsArray';
 export { SettingsArray } from './SettingsArray';
 export { SubCategoriesArray } from './SubCategoriesArray';
-export { SubTransactionsArray } from './SubTransactionsArray';
 export { TransactionsArray } from './TransactionsArray';

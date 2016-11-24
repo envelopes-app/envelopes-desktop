@@ -12,7 +12,7 @@ import { ISimpleEntitiesCollection } from '../../interfaces/state';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from '../QueryExecutionUtility';
 import { IReferenceDataForCalculations, IScheduledTransactionCalculationsData, IScheduledTransactionCalculationsResult } from '../../interfaces/calculations';
 import { BudgetDateQueries, CalculationQueries } from '../queries/miscQueries';
-import { AccountQueries, TransactionQueries, SubTransactionQueries, ScheduledTransactionQueries, PayeeQueries, SubCategoryQueries, MonthlySubCategoryBudgetQueries } from '../queries/budgetQueries';
+import { AccountQueries, TransactionQueries, ScheduledTransactionQueries, PayeeQueries, SubCategoryQueries, MonthlySubCategoryBudgetQueries } from '../queries/budgetQueries';
 
 export class ScheduledTransactionCalculations {
 
@@ -113,13 +113,7 @@ export class ScheduledTransactionCalculations {
 
 				// Iterate through the transactions and create queries for persisting them
 				_.forEach(updatedEntities.transactions, (transaction:budgetEntities.ITransaction)=>{
-
-					// Get the sub-transactions, if any, corresponding to this transaction
-					var subTransactions = _.filter(updatedEntities.subTransactions, (subTransaction:budgetEntities.ISubTransaction)=>{
-						return (subTransaction.transactionId == transaction.entityId);
-					});
-
-					queryList = queryList.concat( this.insertTransactions(transaction, subTransactions, budgetKnowledge) );
+					queryList = queryList.concat( this.insertTransactions(transaction, budgetKnowledge) );
 				});
 
 				// Create queries for updating the upcomingTransaction values in monthly subcategory budgets
@@ -152,9 +146,7 @@ export class ScheduledTransactionCalculations {
 			});
 	}
 
-	private insertTransactions(transaction:budgetEntities.ITransaction,
-										subTransactions:Array<budgetEntities.ISubTransaction>,
-										budgetKnowledge:BudgetKnowledge):Array<IDatabaseQuery> {
+	private insertTransactions(transaction:budgetEntities.ITransaction, budgetKnowledge:BudgetKnowledge):Array<IDatabaseQuery> {
 
 		var queryList:Array<IDatabaseQuery> = [];
 		// Insert the transaction object
@@ -168,26 +160,8 @@ export class ScheduledTransactionCalculations {
 		// Queue an account and transaction calculation for the account that this belongs to
 		queryList.push(CalculationQueries.getQueueAccountCalculationQuery(transaction.budgetId, transaction.accountId, date.toISOString()));
 		queryList.push(CalculationQueries.getQueueTransactionCalculationQuery(transaction.budgetId, transaction.accountId, date.toISOString()));
-
-		if(!subTransactions || subTransactions.length == 0) {
-
-			// This is not a split transaction. Queue a monthly budget calculation for this.
-			queryList.push(CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(transaction.budgetId, transaction.subCategoryId, date.toISOString()));
-		}
-		else {
-			// Iterate through the individual sub-transactions and insert them into database.
-			// Also queue monthly budget calculations for them.
-			_.forEach(subTransactions, (subTransaction:budgetEntities.ISubTransaction)=>{
-
-				// Insert the sub-transaction object
-				subTransaction.deviceKnowledge = budgetKnowledge.getNextValue();
-				queryList.push(SubTransactionQueries.insertDatabaseObject(subTransaction));
-
-				// Queue a monthly budget calculation.
-				queryList.push(CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(subTransaction.budgetId, subTransaction.subCategoryId, date.toISOString()));
-			});
-		}
-
+		// Also queue a monthly budget calculation for this.
+		queryList.push(CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(transaction.budgetId, transaction.subCategoryId, date.toISOString()));
 		return queryList;
 	}
 
@@ -210,15 +184,6 @@ export class ScheduledTransactionCalculations {
 			});
 		});
 
-		_.forEach(updatedEntities.subTransactions, (subTransaction:budgetEntities.ISubTransaction)=>{
-
-			queryList.push({
-				name:"subTransactionIds",
-				query: "SELECT entityId FROM SubTransactions WHERE budgetId = ?1 AND entityId LIKE ?2",
-				arguments: [subTransaction.budgetId, subTransaction.entityId + "%"]
-			});
-		});
-
 		return executeSqlQueries(queryList)
 			.then((result:any)=>{
 
@@ -236,22 +201,6 @@ export class ScheduledTransactionCalculations {
 					}
 
 					transaction.entityId = entityId;
-				});
-
-				// Iterate through all the sub-transaction, and for each sub-transaction make sure that we don't have
-				// an entityId collision.
-				_.forEach(updatedEntities.subTransactions, (subTransaction:budgetEntities.ISubTransaction)=>{
-
-					var entityId = subTransaction.entityId;
-					var numberToAppend = 0;
-
-					while( _.findIndex(result.subTransactionIds, {'entityId':entityId}) != -1 ) {
-
-						entityId = subTransaction.entityId + "_" + numberToAppend;
-						numberToAppend++;
-					}
-
-					subTransaction.entityId = entityId;
 				});
 
 				return true;
@@ -321,7 +270,6 @@ export class ScheduledTransactionCalculations {
 		var calculationResults:IScheduledTransactionCalculationsResult = {
 			database_rows_affected: 0,
 			transactions: [],
-			subTransactions: [],
 			scheduledTransactions: []
 		};
 

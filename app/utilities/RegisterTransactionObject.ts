@@ -11,7 +11,6 @@ export class RegisterTransactionObject {
 
 	public entityType:string;
 	public refTransaction:budgetEntities.ITransaction;
-	public refSubTransaction:budgetEntities.ISubTransaction;
 	public refScheduledTransaction:budgetEntities.IScheduledTransaction;
 	public refAccount:budgetEntities.IAccount;
 	public refPayee:budgetEntities.IPayee;
@@ -46,9 +45,6 @@ export class RegisterTransactionObject {
 
 		if(!this.refSubCategory)
 			return "";
-		else if(this.refSubCategory.internalName == InternalCategories.SplitSubCategory) {
-			return "Split (Multiple Categories)...";
-		}
 		else if(this.refSubCategory.internalName == InternalCategories.ImmediateIncomeSubCategory) {
 			return "Inflow: To be Budgeted";
 		}
@@ -71,7 +67,7 @@ export class RegisterTransactionObject {
 
 		var selected:boolean = false;
 		var selectedValue:boolean;
-		if(this.entityType == "transaction" || this.entityType == "subTransaction")
+		if(this.entityType == "transaction")
 			selectedValue = selectedTransactionsMap[this.refTransaction.entityId];
 		else 
 			selectedValue = selectedTransactionsMap[this.refScheduledTransaction.entityId];
@@ -84,7 +80,7 @@ export class RegisterTransactionObject {
 
 	public isAccepted():boolean {
 
-		if(this.entityType == "transaction" || this.entityType == "subTransaction")
+		if(this.entityType == "transaction")
 			return (this.refTransaction.accepted == 1);
 
 		return true;
@@ -118,12 +114,6 @@ export class RegisterTransactionObject {
 			var transaction1 = this.refTransaction;
 			var transaction2 = entitiesCollection.transactions.getEntityById(transaction1.entityId);
 			if(transaction1 !== transaction2)
-				return true;
-		}
-		else if(this.entityType == "subTransaction") {
-			var subTransaction1 = this.refSubTransaction;
-			var subTransaction2 = entitiesCollection.subTransactions.getEntityById(subTransaction1.entityId);
-			if(subTransaction1 !== subTransaction2)
 				return true;
 		}
 		else if(this.entityType == "scheduledTransaction") {
@@ -184,38 +174,6 @@ export class RegisterTransactionObject {
 		registerTransactionObject.inflow = transaction.amount > 0 ? transaction.amount : 0;
 		registerTransactionObject.amount = transaction.amount;
 		registerTransactionObject.cleared = transaction.cleared;
-
-		// Set references to the other entities that this transaction references
-		registerTransactionObject.refAccount = account;
-		registerTransactionObject.refPayee = payee;
-		registerTransactionObject.refSubCategory = subCategory;
-		registerTransactionObject.refMasterCategory = masterCategory;
-		registerTransactionObject.refTransferAccount = transferAccount;
-		return registerTransactionObject;
-	}
- 
-	public static createFromSubTransaction(subTransaction:budgetEntities.ISubTransaction, transaction:budgetEntities.ITransaction, entitiesCollection:IEntitiesCollection):RegisterTransactionObject {
-
-		var account = entitiesCollection.accounts.getEntityById(transaction.accountId);
-		var payee = subTransaction.payeeId ? entitiesCollection.payees.getEntityById(subTransaction.payeeId) : null;
-		var subCategory = subTransaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(subTransaction.subCategoryId) : null;
-		var masterCategory = subCategory ? entitiesCollection.masterCategories.getEntityById(subCategory.masterCategoryId) : null;
-		var transferAccount = subTransaction.transferAccountId ? entitiesCollection.accounts.getEntityById(subTransaction.transferAccountId) : null;
-
-		var registerTransactionObject = new RegisterTransactionObject();
-		registerTransactionObject.entityType = "subTransaction";
-		registerTransactionObject.refTransaction = transaction;
-		registerTransactionObject.refSubTransaction = subTransaction;
-		registerTransactionObject.entityId = subTransaction.entityId;
-		registerTransactionObject.parentEntityId = transaction.entityId;
-		registerTransactionObject.date = DateWithoutTime.createFromUTCTime(transaction.date);
-		registerTransactionObject.checkNumber = transaction.checkNumber ? transaction.checkNumber : "";
-		registerTransactionObject.flag = null;
-		registerTransactionObject.memo = subTransaction.memo ? subTransaction.memo : "";
-		registerTransactionObject.outflow = subTransaction.amount < 0 ? -subTransaction.amount : 0;
-		registerTransactionObject.inflow = subTransaction.amount > 0 ? subTransaction.amount : 0;
-		registerTransactionObject.amount = subTransaction.amount;
-		registerTransactionObject.cleared = null;
 
 		// Set references to the other entities that this transaction references
 		registerTransactionObject.refAccount = account;

@@ -34,9 +34,8 @@ export interface PTransactionDialogProps {
 export interface PTransactionDialogState {
 	showModal: boolean;
 	action: string; // new-transaction/existing-transaction/existing-scheduled-transaction 
-	// If we are editing a transaction, it will be in the following two state variables
+	// If we are editing a transaction, it will be in the following state variable
 	transaction?: budgetEntities.ITransaction;
-	subTransaction?: Array<budgetEntities.ISubTransaction>;
 	// If we are editing a scheduled transaction, it will be in the following state variable
 	scheduledTransaction?: budgetEntities.IScheduledTransaction;
 	// This is for managing the focus in the dialog

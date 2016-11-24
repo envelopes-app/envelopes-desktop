@@ -366,7 +366,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		var isAllAccounts = (registerState.accountId == "All_Accounts");
 		var accountsArray = entitiesCollection.accounts;
 		var transactionsArray = entitiesCollection.transactions;
-		var subTransactionsArray = entitiesCollection.subTransactions;
 		var scheduledTransactionsArray = entitiesCollection.scheduledTransactions;
 		var startDate = registerState.filterStartDate;
 		var endDate = registerState.filterEndDate;
@@ -408,21 +407,8 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				);
 
 				if(shouldBeIncluded == true) {
-
 					let registerTransactionObject = RegisterTransactionObject.createFromTransaction(transaction, entitiesCollection);
 					registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-
-					// If this is a split transaction, get the subtransactions for this transaction
-					// and create RegisterTransactionObjects for them as well.
-					if(transaction.subCategoryId == splitSubCategoryId) {
-
-						var subTransactions = subTransactionsArray.getSubTransactionsByTransactionId(transaction.entityId);
-						_.forEach(subTransactions, (subTransaction)=>{
-
-							let registerTransactionObject = RegisterTransactionObject.createFromSubTransaction(subTransaction, transaction, entitiesCollection);
-							registerTransactionObjectsArray.addOrReplaceEntity(registerTransactionObject);
-						});
-					} 
 				}
 			});
 

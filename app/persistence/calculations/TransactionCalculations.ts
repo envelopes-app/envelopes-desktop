@@ -89,13 +89,6 @@ export class TransactionCalculations {
 					SELECT *, CASE WHEN ts.subcategoryId = '${splitSubCategoryId}' THEN 1 ELSE 0 END as isSplit
 					FROM (
 						SELECT * FROM e_transactions
-						UNION
-						SELECT t.accountId, st.transactionId, st.entityId as subTransactionId, 0 as isTransaction, 1 as isSubTransaction,
-						COALESCE(st.subCategoryId, '${uncategorizedSubCategoryId}') as subCategoryId, t.date, st.amount, st.cashAmount, st.creditAmount, st.subCategoryCreditAmountPreceding, st.sortableIndex
-						FROM SubTransactions st
-							INNER JOIN Transactions t ON st.transactionId = t.entityId
-						WHERE st.transactionId IN (SELECT transactionId FROM e_transactions)
-							AND st.isTombstone = 0
 					) ts
 					ORDER BY ts.accountId, ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableIndex`,
 			arguments: [budgetId, startMonth.getUTCTime()]
@@ -105,7 +98,7 @@ export class TransactionCalculations {
 	private updateTransactionAmounts(budgetId:string, transaction:ICalculationTransactionAmount, deviceKnowledge:number):IDatabaseQuery {
 			
 		return {
-			query: `UPDATE ${transaction.isTransaction ? "Transactions" : "SubTransactions" }  
+			query: `UPDATE Transactions
 						SET cashAmount = ?,
 						creditAmount = ?,
 						subCategoryCreditAmountPreceding = ?,
@@ -117,7 +110,7 @@ export class TransactionCalculations {
 				transaction.subCategoryCreditAmountPreceding,
 				deviceKnowledge,
 				budgetId,
-				(transaction.isTransaction ? transaction.transactionId : transaction.subTransactionId)
+				transaction.transactionId
 			]
 		};
 	}
@@ -142,7 +135,7 @@ WITH e_transactions AS (
 	CASE WHEN t.cleared = '${ClearedFlag.Cleared}' THEN 1 ELSE 0 END as isCleared,
     CASE WHEN t.cleared = '${ClearedFlag.Reconciled}' THEN 1 ELSE 0 END as isReconciled, 
     t.accepted as isAccepted,
-	NULL as sortableIndex, transferTransactionId, transferSubTransactionId
+	NULL as sortableIndex, transferTransactionId
  FROM Transactions t
  WHERE t.budgetId = ?1
     AND t.date >= ?2
@@ -163,20 +156,9 @@ SELECT ?1 as budgetId, ts.transactionId, ts.subTransactionId, ts.isTransaction, 
 	ta.onBudget as isTransferAccountOnBudget,
     CASE WHEN ta.entityId IS NULL THEN NULL WHEN ta.accountType NOT IN (${TransactionQueries.TransactionLiabilityAccountTypesINClause}) THEN 1 ELSE 0 END as isTransferAccountAsset,
 	CASE WHEN a.accountType IN (${TransactionQueries.TransactionLiabilityAccountTypesINClause}) THEN 1 ELSE 0 END as isLiabilityAccount, 
-    transferTransactionId, transferSubTransactionId, ts.isReconciled
+    transferTransactionId, ts.isReconciled
 FROM (
 	SELECT * FROM e_transactions
-	UNION
-	SELECT st.transactionId, st.entityId as subTransactionId, 0 as isTransaction, 1 as isSubTransaction,
-	st.transactionId as parentTransactionId, st.transferAccountId, t.date as date, st.amount, st.cashAmount, st.creditAmount, st.subCategoryCreditAmountPreceding, t.accountId, COALESCE(st.subCategoryId, '${uncategorizedSubCategoryId}') as subCategoryId, st.payeeId,
-	CASE WHEN t.cleared = '${ClearedFlag.Cleared}' THEN 1 ELSE 0 END as isCleared,
-    CASE WHEN t.cleared = '${ClearedFlag.Reconciled}' THEN 1 ELSE 0 END as isReconciled,
-    NULL as isAccepted, st.sortableIndex,
-    st.transferTransactionId, NULL as transferSubTransactionId
-	FROM SubTransactions st
-		INNER JOIN Transactions t ON st.transactionId = t.entityId
-	WHERE st.transactionId IN (SELECT transactionId FROM e_transactions)
-		AND st.isTombstone = 0
 ) ts
 INNER JOIN Accounts a ON a.entityId = ts.accountId
 LEFT JOIN Accounts ta ON ta.entityId = ts.transferAccountId
@@ -271,17 +253,12 @@ ORDER BY ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableI
 				var calculatedCreditAmount:number = 0;
 				
 				// calculatedSubcategoryCreditPrecedingAmount: The total credit outflows preceeding a transaction in a given budget month.  This
-				//    is used during during payment category calculations (see: MobileSubCategoryCalculations::fetchMonthlyPaymentCategoriesForCalculations)
+				//    is used during during payment category calculations (see: SubCategoryCalculations::fetchMonthlyPaymentCategoriesForCalculations)
 				//    to determine [un]BudgetedCreditOutflows for a particular subcategory.
 				var calculatedSubcategoryCreditPrecedingAmount:number = 0;
 				
 				var currentAccountBalance:number = null;
-				if (transaction.isTransaction){
-					currentAccountBalance = rollingAccountBalance;
-				} else if (transaction.isSubTransaction) {
-					// this is a sub-transaction so pull the account balance before the parent hit the account
-					currentAccountBalance = accountBalanceBeforeSplitParents[transaction.transactionId];
-				}
+				currentAccountBalance = rollingAccountBalance;
 				
 				var isLiabilityAccount:boolean = !AccountTypes.isAssetAccount(account.accountType);
 				if(isLiabilityAccount) {                        
@@ -305,16 +282,8 @@ ORDER BY ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableI
 					calculatedCreditAmount = 0;
 				}
 				
-				if (transaction.isTransaction) {
-					// If this is a split, keep track of account balance before transaction hit
-					// so we can use it to calculate sub-transaction cash/credit.
-					if (transaction.isSplit) {
-						accountBalanceBeforeSplitParents[transaction.transactionId] = currentAccountBalance;
-					}
-				
-					// Increment the rollingAccountBalance by the amount of the transaction
-					rollingAccountBalance = (currentAccountBalance + transaction.amount);
-				}
+				// Increment the rollingAccountBalance by the amount of the transaction
+				rollingAccountBalance = (currentAccountBalance + transaction.amount);
 				
 				if (transaction.subCategoryId) {
 					// Increment the rollingSubcategoryCreditOutflows by the amount of the transaction
@@ -341,7 +310,7 @@ ORDER BY ts.date, ts.amount, ts.transactionId, ts.isSubTransaction, ts.sortableI
 					transaction.subCategoryCreditAmountPreceding = calculatedSubcategoryCreditPrecedingAmount;
 					
 					updatedTransactions.push(transaction);
-					}
+				}
 			});
 		
 		//update reference data accountBalanacesByAccountId so we have the latest for other calcs 

@@ -98,7 +98,6 @@ export class GlobalReducers {
 		newValue.scheduledTransactions = new collections.ScheduledTransactionsArray(action.entities.scheduledTransactions);
 		newValue.settings = new collections.SettingsArray(action.entities.settings);
 		newValue.subCategories = new collections.SubCategoriesArray(action.entities.subCategories);
-		newValue.subTransactions = new collections.SubTransactionsArray(action.entities.subTransactions);
 		newValue.transactions = new collections.TransactionsArray(action.entities.transactions);
 	}
 
@@ -117,7 +116,6 @@ export class GlobalReducers {
 		GlobalReducers.updateCollectionArray(newValue.scheduledTransactions, action.entities.scheduledTransactions);
 		GlobalReducers.updateCollectionArray(newValue.settings, action.entities.settings);
 		GlobalReducers.updateCollectionArray(newValue.subCategories, action.entities.subCategories);
-		GlobalReducers.updateCollectionArray(newValue.subTransactions, action.entities.subTransactions);
 		GlobalReducers.updateCollectionArray(newValue.transactions, action.entities.transactions);
 	}
 

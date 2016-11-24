@@ -9,5 +9,4 @@ export { PayeeRenameConditionQueries } from './PayeeRenameConditionQueries';
 export { ScheduledTransactionQueries } from './ScheduledTransactionQueries';
 export { SettingQueries } from './SettingQueries';
 export { SubCategoryQueries } from './SubCategoryQueries';
-export { SubTransactionQueries } from './SubTransactionQueries';
 export { TransactionQueries } from './TransactionQueries';

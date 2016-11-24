@@ -21,18 +21,15 @@ export class CommonQueries {
 			entityTypeToTableMapping[CatalogEntityType.UserSetting] = "UserSettings";
 
 			entityTypeToTableMapping[BudgetEntityType.Account] = "Accounts";
-			entityTypeToTableMapping[BudgetEntityType.AccountMapping] = "AccountMappings";
 			entityTypeToTableMapping[BudgetEntityType.MasterCategory] = "MasterCategories";
 			entityTypeToTableMapping[BudgetEntityType.MonthlyBudget] = "MonthlyBudgets";
 			entityTypeToTableMapping[BudgetEntityType.MonthlySubCategoryBudget] = "MonthlySubCategoryBudgets";
 			entityTypeToTableMapping[BudgetEntityType.Payee] = "Payees";
 			entityTypeToTableMapping[BudgetEntityType.PayeeLocation] = "PayeeLocations";
 			entityTypeToTableMapping[BudgetEntityType.PayeeRenameCondition] = "PayeeRenameConditions";
-			entityTypeToTableMapping[BudgetEntityType.ScheduledSubTransaction] = "ScheduledSubTransactions";
 			entityTypeToTableMapping[BudgetEntityType.ScheduledTransaction] = "ScheduledTransactions";
 			entityTypeToTableMapping[BudgetEntityType.Setting] = "Settings";
 			entityTypeToTableMapping[BudgetEntityType.SubCategory] = "SubCategories";
-			entityTypeToTableMapping[BudgetEntityType.SubTransaction] = "SubTransactions";
 			entityTypeToTableMapping[BudgetEntityType.Transaction] = "Transactions";
 			CommonQueries.entityTypeToTableMapping = entityTypeToTableMapping;
 		}

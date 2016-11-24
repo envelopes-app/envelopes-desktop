@@ -176,39 +176,37 @@ export class MonthlySubCategoryBudgetQueries {
 		return {
 			name: "monthlySubCategoryBudgets",
 			query: `
--- ?1 is the budget id
--- ?2 is the subCategoryId
--- ?3 is the month in the form of 2016-01-01
+				-- ?1 is the budget id
+				-- ?2 is the subCategoryId
+				-- ?3 is the month in the form of 2016-01-01
 
-SELECT 
-MSCB.*,
-ACC.clearedBalance + ACC.unclearedBalance as dbt_accountBalance,
-SQ.lastPaymentDate as dbt_lastPaymentDate,
-SQ.lastPaymentAmount as dbt_lastPaymentAmount,
-SC.accountId as dbt_accountId
-FROM SubCategories SC 
-LEFT JOIN MonthlySubCategoryBudgets MSCB
-ON MSCB.subCategoryId = SC.entityId
-LEFT JOIN Accounts ACC
-ON ACC.entityId = SC.accountId
-LEFT JOIN
-(
-SELECT
-MAX(date) as lastPaymentDate,
-amount as lastPaymentAmount,
-accountId
-FROM
-Transactions TR 
-WHERE 
-budgetId = ?1 AND isTombstone = 0 AND amount > 0 AND (transferTransactionId IS NOT NULL OR transferSubTransactionId IS NOT NULL) 
-GROUP BY
-accountId
-) AS SQ
-ON SQ.accountId = SC.accountId
-
-WHERE MSCB.budgetId = ?1
-AND MSCB.subCategoryId = ?2
-AND MSCB.month = ?3
+				SELECT MSCB.*,
+					ACC.clearedBalance + ACC.unclearedBalance as dbt_accountBalance,
+					SQ.lastPaymentDate as dbt_lastPaymentDate,
+					SQ.lastPaymentAmount as dbt_lastPaymentAmount,
+					SC.accountId as dbt_accountId
+				FROM SubCategories SC 
+				LEFT JOIN MonthlySubCategoryBudgets MSCB
+				ON MSCB.subCategoryId = SC.entityId
+				LEFT JOIN Accounts ACC
+				ON ACC.entityId = SC.accountId
+				LEFT JOIN
+				(
+					SELECT
+					MAX(date) as lastPaymentDate,
+					amount as lastPaymentAmount,
+					accountId
+					FROM
+					Transactions TR 
+					WHERE 
+					budgetId = ?1 AND isTombstone = 0 AND amount > 0 AND transferTransactionId IS NOT NULL 
+					GROUP BY
+					accountId
+				) AS SQ
+				ON SQ.accountId = SC.accountId
+				WHERE MSCB.budgetId = ?1
+				AND MSCB.subCategoryId = ?2
+				AND MSCB.month = ?3
 			`,              
 			arguments: [budgetId, subCategoryId, monthString]
 		};

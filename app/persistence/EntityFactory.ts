@@ -189,31 +189,6 @@ export class EntityFactory {
 		return monthlySubCategoryBudget;
 	}
 
-	public static createNewSubTransaction(budgetId:string = null):budgetEntities.ISubTransaction {
-
-		var subTransaction:budgetEntities.ISubTransaction = {
-			budgetId: budgetId,
-			entityId: KeyGenerator.generateUUID(),
-			isTombstone: 0,
-			transactionId: null,
-			payeeId: null,
-			subCategoryId: null,
-			amount: 0,
-			memo: null,
-			transferAccountId: null,
-			transferTransactionId: null,
-			sortableIndex: 0,
-
-			cashAmount: 0,
-			creditAmount: 0,
-			subCategoryCreditAmountPreceding: 0,
-			deviceKnowledge: 0,
-			deviceKnowledgeForCalculatedFields: 0
-		};
-
-		return subTransaction;
-	}
-
 	public static createNewScheduledTransaction(budgetId:string = null):budgetEntities.IScheduledTransaction {
 
 		var scheduledTransaction:budgetEntities.IScheduledTransaction = {
@@ -257,12 +232,9 @@ export class EntityFactory {
 			source: null,
 			transferAccountId: null,
 			transferTransactionId: null,
-			transferSubTransactionId: null,
 			scheduledTransactionId: null,
 			matchedTransactionId: null,
 			importId: null,
-			importedPayee: null,
-			importedDate: null,
 			cashAmount: 0,
 			creditAmount: 0,
 			subCategoryCreditAmountPreceding: 0,

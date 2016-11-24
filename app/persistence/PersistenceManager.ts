@@ -56,7 +56,6 @@ export class PersistenceManager {
 	private scheduledTransactionHelper = new persistenceHelpers.ScheduledTransactionHelper();
 	private settingHelper = new persistenceHelpers.SettingHelper();
 	private subCategoryHelper = new persistenceHelpers.SubCategoryHelper();
-	private subTransactionHelper = new persistenceHelpers.SubTransactionHelper();
 	private transactionHelper = new persistenceHelpers.TransactionHelper();
 
 	public initialize(refreshDatabaseAtStartup:boolean = false):Promise<boolean> {
@@ -355,7 +354,6 @@ export class PersistenceManager {
 			this.scheduledTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.settingHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.subCategoryHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
-			this.subTransactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge),
 			this.transactionHelper.getPersistenceQueries(budgetId, entitiesCollection, existingEntitiesCollection, budgetKnowledge)
 		)
 
@@ -382,7 +380,6 @@ export class PersistenceManager {
 			budgetQueries.ScheduledTransactionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.SettingQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.SubCategoryQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
-			budgetQueries.SubTransactionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.TransactionQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			// Also load the knowledge values that are in the database
 			miscQueries.KnowledgeValueQueries.getLoadCatalogKnowledgeValueQuery(),

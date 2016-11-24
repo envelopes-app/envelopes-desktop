@@ -16,12 +16,9 @@ export interface ITransaction extends IBudgetEntity {
 	source:string;
 	transferAccountId:string;
 	transferTransactionId:string;
-	transferSubTransactionId:string;
 	scheduledTransactionId:string;
 	matchedTransactionId:string;
 	importId:string;
-	importedPayee:string;
-	importedDate:number;
 
 	cashAmount:number;
 	creditAmount:number;

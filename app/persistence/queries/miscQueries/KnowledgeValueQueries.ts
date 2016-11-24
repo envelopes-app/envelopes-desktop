@@ -63,18 +63,15 @@ export class KnowledgeValueQueries {
 			query: `SELECT MAX(deviceKnowledge) as deviceKnowledge FROM (
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Accounts WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMonthlyCalculations WHERE budgetId = ?1 UNION ALL
-				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM AccountMappings WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MasterCategories WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlyBudgets WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM MonthlySubCategoryBudgets WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Payees WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeLocations WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM PayeeRenameConditions WHERE budgetId = ?1 UNION ALL
-				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledSubTransactions WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM ScheduledTransactions WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Settings WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubCategories WHERE budgetId = ?1 UNION ALL
-				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM SubTransactions WHERE budgetId = ?1 UNION ALL
 				SELECT COALESCE(MAX(deviceKnowledge), 0) as deviceKnowledge FROM Transactions WHERE budgetId = ?1
 			)`,
 			arguments: [budgetId]

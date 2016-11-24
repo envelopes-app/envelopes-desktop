@@ -9,5 +9,4 @@ export { IPayeeRenameCondition } from './IPayeeRenameCondition';
 export { IScheduledTransaction } from './IScheduledTransaction';
 export { ISetting } from './ISetting';
 export { ISubCategory } from './ISubCategory';
-export { ISubTransaction } from './ISubTransaction';
 export { ITransaction } from './ITransaction';

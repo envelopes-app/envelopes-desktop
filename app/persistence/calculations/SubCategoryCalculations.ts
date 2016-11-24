@@ -209,7 +209,6 @@ WITH e_liability_accounts AS (
     INNER JOIN MonthlySubCategoryBudgets c 
         ON c.entityId = ('mcb/' || strftime('%Y-%m', datetime(t.month_epoch, 'unixepoch')) || '/' || t.subCategoryId)
     LEFT JOIN TransactionCalculations tt ON t.transferTransactionId = tt.transactionId
-    LEFT JOIN TransactionCalculations tst ON t.transferSubTransactionId  = tst.subtransactionId
     LEFT JOIN (
             -- Last payments by liability account
             SELECT accountId, month_epoch, MAX(rowid) as lastPayment_rowid
@@ -415,7 +414,6 @@ WHERE m.subCategoryId IN (${subCategoryIdsINClause})
 		startMonth:DateWithoutTime,
 		monthlySubcategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>){
 			
-			debugger;
 			var previousMonthlySubcategoryBudget:budgetEntities.IMonthlySubCategoryBudget = null;
 			var updatedMonthlySubcategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
 			
