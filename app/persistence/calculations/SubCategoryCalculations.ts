@@ -191,10 +191,10 @@ WITH e_liability_accounts AS (
             -- add cash amount of incoming on-budget transfers and outgoing transfers to asset accounts
               COALESCE(SUM(CASE WHEN t.isTransferAccountOnBudget = 1 AND (t.amount > 0 OR t.isTransferAccountAsset = 1) THEN t.cashAmount ELSE 0 END),0)
             -- add cash portion of inflow on *receiving* side here because only the liability account (sending) side will be interated through
-            + COALESCE(SUM(CASE WHEN t.isTransferAccountOnBudget = 1 AND t.amount < 0 AND t.isTransferAccountAsset = 1 THEN COALESCE(tt.cashAmount,tst.cashAmount,0) ELSE 0 END),0) 
+            + COALESCE(SUM(CASE WHEN t.isTransferAccountOnBudget = 1 AND t.amount < 0 AND t.isTransferAccountAsset = 1 THEN COALESCE(tt.cashAmount,0) ELSE 0 END),0) 
         ,0) as additionalToBeBudgeted,
         -- payment_activity: payments received during the month
-        COALESCE(SUM(CASE WHEN t.isTransferAccountOnBudget = 1 AND t.amount > 0 THEN COALESCE(tt.cashAmount,tst.cashAmount,0) ELSE 0 END),0) as paymentActivity,
+        COALESCE(SUM(CASE WHEN t.isTransferAccountOnBudget = 1 AND t.amount > 0 THEN COALESCE(tt.cashAmount,0) ELSE 0 END),0) as paymentActivity,
         -- all_spending_since_last_payment: all_spending since last payment (if no payment or spending this month, this will be NULL)
         COALESCE(SUM(CASE WHEN (t.rowid > lastPayments.lastPayment_rowid AND (t.transferAccountId IS NULL OR t.isTransferAccountOnBudget = 0 OR t.amount < 0)) THEN t.creditAmount ELSE NULL END),
             CASE 

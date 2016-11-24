@@ -185,6 +185,15 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 			if(this.state.accountBalance != "")
 				currentBalance = this.props.dataFormatter.unformatCurrency(this.state.accountBalance);
 
+			// If the account is of liability type, and the balance provided is positive, then make it negative
+			var isAssetAccount = AccountTypes.isAssetAccount(account.accountType);
+			if(!isAssetAccount && currentBalance > 0) {
+
+				// Change this to negative balance unless the user explicitly specified a '+'
+				if(this.state.accountBalance.charAt(0) != '+')
+					currentBalance = -currentBalance; 
+			}
+
 			// Call the addAccount method to create the account entity
 			this.props.addAccount(account, currentBalance);
 			// Close the modal dialog
