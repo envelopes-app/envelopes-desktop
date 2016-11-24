@@ -15,7 +15,7 @@ import * as budgetQueries from './queries/budgetQueries';
 import * as persistenceHelpers from './helpers';
 import * as miscQueries from './queries/miscQueries';
 import { IDatabaseQuery } from '../interfaces/persistence';
-import { DateWithoutTime, Logger } from '../utilities';
+import { DateWithoutTime, Logger, KeyGenerator } from '../utilities';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../interfaces/state/IEntitiesCollection';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge, setDatabaseReference } from './QueryExecutionUtility';
@@ -37,6 +37,7 @@ export class PersistenceManager {
 	};
 	// ************************************************************************************************
 
+	private deviceId:string;
 	private catalogKnowledge:CatalogKnowledge;
 	private budgetKnowledge:BudgetKnowledge;
 	private activeBudget:catalogEntities.IBudget;
@@ -75,11 +76,19 @@ export class PersistenceManager {
 		var databaseFactory = new DatabaseFactory();
 		return databaseFactory.createDatabase(refreshDatabaseAtStartup)
 			.then((retVal:boolean)=>{
+
 				// Load the catalog knowledge values from the database
 				return this.loadCatalogKnowledgeValuesFromDatabase();
 			})
 			.then((catalogKnowledge:CatalogKnowledge)=>{
+
 				this.catalogKnowledge = catalogKnowledge;
+				// Get the deviceId from the database
+				return this.getDeviceInformation(catalogKnowledge);
+			})
+			.then((deviceId:string)=>{
+
+				this.deviceId = deviceId;
 				return true;
 			});
 	}
@@ -220,6 +229,42 @@ export class PersistenceManager {
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************
+	private getDeviceInformation(catalogKnowledge:CatalogKnowledge):Promise<string> {
+
+		var queryList:Array<IDatabaseQuery> = [
+			{name: "device", query: "SELECT * FROM GlobalSettings WHERE settingName = 'deviceId';", arguments: [] }
+		];
+
+		return executeSqlQueries(queryList)
+			.then((result:any) => {
+
+				var deviceRows:Array<any> = result.device;
+				if(deviceRows && deviceRows.length > 0 && deviceRows[0].settingValue != null) {
+
+					// We already have a device object. Get the deviceId from that and return
+					return deviceRows[0].settingValue;
+				}
+				else {
+
+					// We need to insert a row into the database for the device
+					var deviceId:string = KeyGenerator.generateUUID();
+					queryList = [ 
+						{query: "REPLACE INTO GlobalSettings VALUES (?,?,?)", arguments: ["deviceId", deviceId, catalogKnowledge.getNextValue()]} 
+					];
+					return executeSqlQueries(queryList)
+						.then((result:any) => {
+
+							return deviceId;
+						});
+				}
+			})
+			.catch((error:Error) => {
+
+				Logger.error(error);
+				return null;
+			});
+	}
+
 	private loadCatalogKnowledgeValuesFromDatabase():Promise<CatalogKnowledge> {
 
 		var queryList:Array<IDatabaseQuery> = [

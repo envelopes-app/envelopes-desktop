@@ -215,8 +215,7 @@ export class DatabaseFactory {
 			},
 			{
 				query: `CREATE TABLE IF NOT EXISTS 'GlobalSettings' (
-						'entityId' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
-						'settingName' VARCHAR NOT NULL,
+						'settingName' VARCHAR PRIMARY KEY NOT NULL UNIQUE,
 						'settingValue' VARCHAR NOT NULL,
 						'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []
@@ -556,8 +555,12 @@ export class DatabaseFactory {
 			{query: "CREATE INDEX IF NOT EXISTS 'SubTransactions_index_01' ON SubTransactions (budgetId, isTombstone, subCategoryId, transactionId, transferAccountId)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'MasterCategories_index_01' ON MasterCategories (budgetId, isTombstone)", arguments: []},
 			{query: "CREATE INDEX IF NOT EXISTS 'SubCategories_index_01' ON SubCategories (budgetId, isTombstone)", arguments: []},
-			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_1' ON TransactionCalculations (subCategoryId, month_epoch);`, arguments: []},
-			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_2' ON TransactionCalculations (accountId, month_epoch);`, arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_01' ON TransactionCalculations (subCategoryId, month_epoch);`, arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_02' ON TransactionCalculations (accountId, month_epoch);`, arguments: []},
+			{query: "CREATE INDEX IF NOT EXISTS 'MonthlySubCategoryBudgets_index_01' ON MonthlySubCategoryBudgets (budgetId, month, subCategoryId)", arguments: []},
+			{query: "CREATE INDEX IF NOT EXISTS 'MonthlySubCategoryBudgets_index_02' ON MonthlySubCategoryBudgets (subCategoryId)", arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_03' ON TransactionCalculations (transactionId);`, arguments: []},
+			{query: `CREATE INDEX IF NOT EXISTS 'TransactionCalculations_index_04' ON TransactionCalculations (subTransactionId);`, arguments: []},
 
 			// ********************************************************************************************
 			// Insert the required data
@@ -576,6 +579,12 @@ export class DatabaseFactory {
 			{query: "DROP INDEX IF EXISTS 'SubTransactions_index_01'", arguments: []},
 			{query: "DROP INDEX IF EXISTS 'MasterCategories_index_01'", arguments: []},
 			{query: "DROP INDEX IF EXISTS 'SubCategories_index_01'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'TransactionCalculations_index_01'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'TransactionCalculations_index_02'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'TransactionCalculations_index_03'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'TransactionCalculations_index_04'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'MonthlySubCategoryBudgets_index_01'", arguments: []},
+			{query: "DROP INDEX IF EXISTS 'MonthlySubCategoryBudgets_index_02'", arguments: []},
 
 			{query: "DROP TABLE IF EXISTS 'VersionInfo'", arguments: []},
 			{query: "DROP TABLE IF EXISTS 'CatalogKnowledge'", arguments: []},
