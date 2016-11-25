@@ -44,16 +44,6 @@ const BudgetHeaderStyle:React.CSSProperties = {
 	paddingRight: '5px'
 }
 
-const SymbolStyle:React.CSSProperties = {
-	color: '#588697',
-	padding: '10px',
-	fontSize: '16px',
-	fontWeight: 'bold'
-}
-const BlankSpaceStyle:React.CSSProperties = {
-	flex: '1 1 auto'
-}
-
 export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
   
 	public render() {
