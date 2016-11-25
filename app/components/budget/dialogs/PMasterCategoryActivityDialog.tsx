@@ -102,7 +102,6 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 					
 					var transactionObject:ITransactionObject = {
 						entityId: transaction.entityId,
-						isTransaction: true,
 						account: accountName,
 						date: transaction.date,
 						payee: payeeName,

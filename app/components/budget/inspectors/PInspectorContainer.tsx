@@ -86,6 +86,7 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 								subCategoryId={subCategoryId} 
 								currentMonth={this.props.currentMonth} 
 								entitiesCollection={this.props.entitiesCollection} 
+								showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
 								updateEntities={this.props.updateEntities}	
 							/>;
 		}

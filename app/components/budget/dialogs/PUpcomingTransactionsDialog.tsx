@@ -116,7 +116,6 @@ export class PUpcomingTransactionsDialog extends React.Component<PUpcomingTransa
 						if(upcomingInstanceDate.equalsByMonth(month)) {
 							var transactionObject:ITransactionObject = {
 								entityId: KeyGenerator.getScheduledTransactionTransactionId(scheduledTransaction, upcomingInstanceDate),
-								isTransaction: true,
 								account: accountName,
 								date: upcomingInstanceDate.getUTCTime(),
 								payee: payeeName,

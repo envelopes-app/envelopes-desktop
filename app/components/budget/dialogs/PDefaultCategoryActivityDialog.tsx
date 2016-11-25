@@ -100,7 +100,6 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 				
 				var transactionObject:ITransactionObject = {
 					entityId: transaction.entityId,
-					isTransaction: true,
 					account: accountName,
 					date: transaction.date,
 					payee: payeeName,

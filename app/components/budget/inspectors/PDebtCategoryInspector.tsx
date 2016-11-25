@@ -19,6 +19,7 @@ export interface PDebtCategoryInspectorProps {
 	subCategoryId:string;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
+	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -52,6 +53,13 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 					monthlySubCategoryBudget={monthlySubCategoryBudget} 
 					entitiesCollection={this.props.entitiesCollection}
 					updateEntities={this.props.updateEntities}
+				/>
+
+				<PMessage 
+					dataFormatter={this.props.dataFormatter}
+					subCategory={subCategory} 
+					monthlySubCategoryBudget={monthlySubCategoryBudget} 
+					showUpcomingTransactionsDialog={this.props.showUpcomingTransactionsDialog}
 				/>
 
 				<PDebtCategoryPayments
