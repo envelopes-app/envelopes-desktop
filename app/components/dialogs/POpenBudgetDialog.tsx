@@ -3,24 +3,33 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Modal, Form, FormGroup, FormControl, ControlLabel, Radio, Glyphicon } from 'react-bootstrap';
+import { Modal, Glyphicon } from 'react-bootstrap';
 
 import { EntityFactory } from '../../persistence';
-import { DataFormats, DateWithoutTime } from '../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../utilities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface POpenBudgetDialogProps { 
+	dataFormatter:DataFormatter;
 	activeBudgetId:string;
-	entitiesCollection:IEntitiesCollection
+	entitiesCollection:IEntitiesCollection;
 
 	showCreateNewBudgetDialog:()=>void;
 	// Dispatcher Functions
+	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
 }
 
 export interface POpenBudgetDialogState {
 	showModal:boolean;
+	budgetIdForDeletion:string;
+}
+
+const BudgetNameContainer:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "column nowrap",
+	flex: "0 0 auto"
 }
 
 export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, POpenBudgetDialogState> {
@@ -31,13 +40,17 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 		this.hide = this.hide.bind(this);
 		this.create = this.create.bind(this);
         this.state = { 
-			showModal: false
+			showModal: false,
+			budgetIdForDeletion: null
 		};
     }
 
 	private hide():void {
 		// Hide the modal, and set the account in state to null
-		this.setState({ showModal:false });
+		this.setState({ 
+			showModal:false,
+			budgetIdForDeletion: null
+		});
 	};
 
 	public isShowing():boolean {
@@ -47,7 +60,8 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 	public show():void {
 
 		this.setState({ 
-			showModal: true
+			showModal: true,
+			budgetIdForDeletion: null
 		});
 	};
 
@@ -65,25 +79,78 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 		this.hide();
 	}
 
+	private setBudgetIdForDeletion(budgetId:string):void {
+
+		var state = Object.assign({}, this.state);
+		state.budgetIdForDeletion = budgetId;
+		this.setState(state);
+	}
+
+	private deleteBudget(budgetId:string):void {
+
+		// Get the budget entity corresponding to this entity
+		var budget = this.props.entitiesCollection.budgets.getEntityById(budgetId);
+		var budgetClone = Object.assign({}, budget);
+		budgetClone.isTombstone = 1;
+		this.props.updateEntities({
+			budgets: [budgetClone]
+		});
+
+		var state = Object.assign({}, this.state);
+		state.budgetIdForDeletion = null;
+		this.setState(state);
+	}
+
+	private cancelDeletionConfirmation():void {
+
+		var state = Object.assign({}, this.state);
+		state.budgetIdForDeletion = null;
+		this.setState(state);
+	}	
+
 	private getBudgetsList():Array<JSX.Element> {
 
 		var budgets:Array<JSX.Element> = [];
+		var dataFormatter = this.props.dataFormatter;
 
 		_.forEach(this.props.entitiesCollection.budgets.getAllItems(), (budget)=>{
 
 			// If this is not the currently active budget, add it to the list
 			if(budget.isTombstone == 0 && budget.entityId != this.props.activeBudgetId) {
 				
-				var lastAccessedOn = "";
-				if(budget.lastAccessedOn)
-					lastAccessedOn = DateWithoutTime.createFromUTCTime(budget.lastAccessedOn).toISOString();
+				if(budget.entityId != this.state.budgetIdForDeletion) {
+					var lastAccessedOn = "";
+					if(budget.lastAccessedOn)
+						lastAccessedOn = dataFormatter.formatDate(budget.lastAccessedOn);
 
-				budgets.push(
-					<div key={budget.entityId} className="budget-list-item" onClick={this.openBudget.bind(this, budget.entityId)}>
-						<label className="budget-list-item-budgetname">{budget.budgetName}</label>
-						<label className="budget-list-item-lastaccessedon">last accessed on {lastAccessedOn}</label>
-					</div>
-				);
+					budgets.push(
+						<div key={budget.entityId} className="budget-list-item">
+							<div style={BudgetNameContainer} onClick={this.openBudget.bind(this, budget.entityId)}>
+								<label className="budget-list-item-budgetname">{budget.budgetName}</label>
+								<label className="budget-list-item-lastaccessedon">last accessed on {lastAccessedOn}</label>
+							</div>
+							<div className="spacer" />
+							<Glyphicon glyph="trash" className="budget-list-item-deleteglyph" onClick={this.setBudgetIdForDeletion.bind(this, budget.entityId)} />
+						</div>
+					);
+				}
+				else {
+					budgets.push(
+						<div key={budget.entityId} className="budget-list-item-delete-confirmation">
+							<label className="budget-list-item-delete-message">
+								Are you sure you want to delete "{budget.budgetName}"?
+							</label>
+							<div className="spacer" />
+							<button className="dialog-warning-button" onClick={this.cancelDeletionConfirmation.bind(this)}>
+								Cancel
+							</button>
+							<div style={{width:"8px"}} />
+							<button className="dialog-warning-button" onClick={this.deleteBudget.bind(this, budget.entityId)}>
+								Delete
+							</button>
+						</div>
+					);
+				}
 			}
 		});
 
@@ -103,9 +170,11 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 							<Modal.Title>Open a budget</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
-							<ul className="budget-list">
-								{budgets}
-							</ul>
+							<div>
+								<ul className="budget-list">
+									{budgets}
+								</ul>
+							</div>
 						</Modal.Body>
 						<Modal.Footer>
 							<div className="buttons-container">
@@ -114,7 +183,7 @@ export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, P
 								</button>
 								<div className="spacer" />
 								<button className="dialog-secondary-button" onClick={this.hide}>
-									Close&nbsp;<Glyphicon glyph="remove-sign" />
+									Cancel&nbsp;<Glyphicon glyph="remove-sign" />
 								</button>
 							</div>
 						</Modal.Footer>

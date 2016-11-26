@@ -143,9 +143,11 @@ export class PApp extends React.Component<AppProps, AppState> {
 
 					<POpenBudgetDialog 
 						ref={(d)=> this.openBudgetDialog = d }
+						dataFormatter={this.state.dataFormatter}
 						activeBudgetId={this.props.applicationState.activeBudgetId}
 						entitiesCollection={this.props.applicationState.entitiesCollection}
 						showCreateNewBudgetDialog={this.handleCreateNewBudgetMessage}
+						updateEntities={this.props.updateEntities}
 						openBudget={this.props.openBudget}
 					/>
 
