@@ -49,7 +49,7 @@ export class FocusManager {
 		if(index != -1) {
 
 			// Decrement the index to get the next item in the list
-			index -= 2;
+			index -= stepSize;
 			// If we have reached the start of the list, then move back to the end
 			if(index < 0)
 				index = this.focusItemsList.length - 1;

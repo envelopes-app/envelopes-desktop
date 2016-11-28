@@ -115,11 +115,15 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 	}
 
 	private onAccountBalanceFocus(event:React.FocusEvent<any>):void {
-
+		var state = Object.assign({}, this.state);
+		state.accountBalanceHasFocus = true;
+		this.setState(state);
 	}
 
 	private onAccountBalanceBlur(event:React.FocusEvent<any>):void {
-
+		var state = Object.assign({}, this.state);
+		state.accountBalanceHasFocus = false;
+		this.setState(state);
 	}
 
 	public isShowing():boolean {
@@ -136,6 +140,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		state.accountName = account.accountName;
 		state.accountBalance = account.clearedBalance + account.unclearedBalance;
 		state.accountNote = account.note ? account.note : "";		
+		state.accountBalanceHasFocus = false;
 		this.setState(state);
 	}
 
@@ -288,7 +293,7 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Today's Balance:</ControlLabel>
-								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} style={FormControlStyle} 
+								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance, this.state.accountBalanceHasFocus)} style={FormControlStyle} 
 								 	onChange={this.onAccountBalanceChange} onFocus={this.onAccountBalanceFocus} onBlur={this.onAccountBalanceBlur} />
 								<HelpBlock>An adjustment transaction will be created automatically if you change this amount.</HelpBlock>
 							</FormGroup>

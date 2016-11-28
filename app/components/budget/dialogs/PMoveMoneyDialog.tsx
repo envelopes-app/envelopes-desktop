@@ -272,6 +272,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 	private handleKeyDownOnCancelButton(event:React.KeyboardEvent<any>):void {
 
 		if(event.keyCode == 9) {
+			debugger;
 			event.preventDefault();
 			if(!event.shiftKey)
 				this.focusManager.moveFocusForward("cancel");
@@ -298,7 +299,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 								</Col>
 								<Col sm={9}>
 									<FormControl type="text" componentClass="input" style={FormControlStyle} 
-										ref={(c)=>{this.ctrlAmountToMove = c;}} value={dataFormatter.formatCurrency(this.state.amountToMove)} 
+										ref={(c)=>{this.ctrlAmountToMove = c;}} value={dataFormatter.formatCurrency(this.state.amountToMove, (this.state.activeField == 'amount'))} 
 										onChange={this.onAmountChange} onFocus={this.onAmountToMoveFocus}
 									/>
 								</Col>

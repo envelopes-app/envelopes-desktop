@@ -74,8 +74,14 @@ export class DataFormatter {
 
 	// Given a milli-number, convert it to a formatted number string as specified by the number format
 	// in the active budget
-	public formatCurrency(value:number):string {
-		var formattedString = numeral(value/1000).format(this.currencyFormatString);
+	public formatCurrency(value:number, showAsPlainNumber:boolean = false):string {
+		var formattedString:string;
+
+		if(showAsPlainNumber)
+			formattedString = (value/1000).toString();
+		else
+			formattedString = numeral(value/1000).format(this.currencyFormatString);
+
 		return formattedString;
 	}
 

@@ -108,12 +108,12 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 				</Col>
 				<Col sm={9} style={{display:"flex", flexFlow: 'row nowrap', alignItems: 'baseline'}}>
 					<FormControl ref={(n) => this.outflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onFocus={this.onInflowFocus} onChange={this.onOutflowChange} value={dataFormatter.formatCurrency(this.props.outflowAmount)} />
+						onFocus={this.onOutflowFocus} onChange={this.onOutflowChange} value={dataFormatter.formatCurrency(this.props.outflowAmount, (this.props.activeField == 'outflow'))} />
 					<label className="control-label" style={{paddingLeft: 15, paddingRight: 15}}>
 						Inflow
 					</label>
 					<FormControl ref={(n) => this.inflowInput = n } type="text" componentClass="input" style={AmountInputStyle} 
-						onFocus={this.onOutflowFocus} onChange={this.onInflowChange} value={dataFormatter.formatCurrency(this.props.inflowAmount)} />
+						onFocus={this.onInflowFocus} onChange={this.onInflowChange} value={dataFormatter.formatCurrency(this.props.inflowAmount, (this.props.activeField == 'inflow'))} />
 				</Col>
 			</FormGroup>
 		);
