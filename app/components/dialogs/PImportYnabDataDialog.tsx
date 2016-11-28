@@ -147,7 +147,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 	private ctrlBudgetCsvPath:FormControl;
 	private ctrlRegisterCsvPath:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PImportYnabDataDialogProps) {
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);

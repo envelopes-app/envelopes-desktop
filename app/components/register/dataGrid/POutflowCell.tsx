@@ -21,7 +21,7 @@ export interface POutflowCellProps {
 
 export class POutflowCell extends React.Component<POutflowCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:POutflowCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

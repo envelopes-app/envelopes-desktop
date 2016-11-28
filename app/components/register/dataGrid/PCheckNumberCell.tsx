@@ -20,7 +20,7 @@ export interface PCheckNumberCellProps {
 
 export class PCheckNumberCell extends React.Component<PCheckNumberCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PCheckNumberCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

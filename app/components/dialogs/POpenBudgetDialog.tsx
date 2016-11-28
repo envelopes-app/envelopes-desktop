@@ -34,7 +34,7 @@ const BudgetNameContainer:React.CSSProperties = {
 
 export class POpenBudgetDialog extends React.Component<POpenBudgetDialogProps, POpenBudgetDialogState> {
 
-	constructor(props: any) {
+	constructor(props:POpenBudgetDialogProps) {
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);

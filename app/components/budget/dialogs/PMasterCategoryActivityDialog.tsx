@@ -38,7 +38,7 @@ const TitleStyle:React.CSSProperties = {
 
 export class PMasterCategoryActivityDialog extends React.Component<PMasterCategoryActivityDialogProps, PMasterCategoryActivityDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PMasterCategoryActivityDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onCloseClick = this.onCloseClick.bind(this);

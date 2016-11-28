@@ -90,7 +90,7 @@ const ListItemStyle:React.CSSProperties = {
 
 export class PMultiCategoryInspector extends React.Component<PMultiCategoryInspectorProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PMultiCategoryInspectorProps) {
         super(props);
 		this.setBudgetedToUnderFunded = this.setBudgetedToUnderFunded.bind(this);
 		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);

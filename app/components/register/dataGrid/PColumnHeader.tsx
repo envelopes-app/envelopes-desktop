@@ -30,7 +30,7 @@ const ColumnHeaderStyle:React.CSSProperties = {
 
 export class PColumnHeader extends React.Component<PColumnHeaderProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PColumnHeaderProps) {
         super(props);
 		this.handleClick = this.handleClick.bind(this);
 	}

@@ -120,7 +120,7 @@ const HorizontalSeparator:React.CSSProperties = {
 }
 export class PDebtCategoryActivityDialog extends React.Component<PDebtCategoryActivityDialogProps, PDebtCategoryActivityDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PDebtCategoryActivityDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onCloseClick = this.onCloseClick.bind(this);

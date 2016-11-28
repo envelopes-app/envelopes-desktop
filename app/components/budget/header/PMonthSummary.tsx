@@ -91,7 +91,7 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 
 	private atbContainer:HTMLDivElement;
 
-	constructor(props: any) {
+	constructor(props:PMonthSummaryProps) {
         super(props);
 		this.handleAvailableToBudgetClick = this.handleAvailableToBudgetClick.bind(this);
 	}

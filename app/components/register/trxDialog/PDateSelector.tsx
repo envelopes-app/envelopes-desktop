@@ -60,7 +60,7 @@ export class PDateSelector extends React.Component<PDateSelectorProps, {}> {
 	private minDate = new DateWithoutTime(2000, 0, 1);
 	private maxDate = DateWithoutTime.createForCurrentMonth().addYears(5);
 
-	constructor(props: any) {
+	constructor(props:PDateSelectorProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

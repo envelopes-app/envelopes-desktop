@@ -88,7 +88,7 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 	private categoryEditMenu:HTMLDivElement;
 	private subCategoryEditDialog:PSubCategoryEditDialog;
 
-	constructor(props: any) {
+	constructor(props:PDefaultCategorySummaryProps) {
         super(props);
 		this.onEditClick = this.onEditClick.bind(this);
 	}

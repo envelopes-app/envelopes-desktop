@@ -46,7 +46,7 @@ export class PPayeeSelector extends React.Component<PPayeeSelectorProps, {}> {
 
 	private payeeInput:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PPayeeSelectorProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

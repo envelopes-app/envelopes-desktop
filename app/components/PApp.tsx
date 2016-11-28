@@ -63,7 +63,7 @@ export class PApp extends React.Component<AppProps, AppState> {
 	private openBudgetDialog:POpenBudgetDialog;
 	private importYnabDataDialog:PImportYnabDataDialog;
 
-	constructor(props:any) {
+	constructor(props:AppProps) {
 		super(props);
 
 		this.startListeningForMessages = this.startListeningForMessages.bind(this);

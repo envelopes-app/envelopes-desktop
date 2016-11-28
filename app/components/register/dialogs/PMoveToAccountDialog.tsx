@@ -25,7 +25,7 @@ export interface PMoveToAccountDialogState {
 
 export class PMoveToAccountDialog extends React.Component<PMoveToAccountDialogProps, PMoveToAccountDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PMoveToAccountDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);

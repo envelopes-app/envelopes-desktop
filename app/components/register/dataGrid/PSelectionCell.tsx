@@ -21,7 +21,7 @@ export interface PSelectionCellProps {
 
 export class PSelectionCell extends React.Component<PSelectionCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PSelectionCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

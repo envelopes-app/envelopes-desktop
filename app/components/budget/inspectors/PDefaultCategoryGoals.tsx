@@ -67,7 +67,7 @@ const YearSelectionFormControlStyle:React.CSSProperties = Object.assign({}, Form
 
 export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoalsProps, PDefaultCategoryGoalsState> {
 
-	constructor(props:any) {
+	constructor(props:PDefaultCategoryGoalsProps) {
         super(props);
 		this.handleCreateGoalClicked = this.handleCreateGoalClicked.bind(this);
 		this.onGoalTypeSelectionChange = this.onGoalTypeSelectionChange.bind(this);

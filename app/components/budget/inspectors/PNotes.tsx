@@ -35,7 +35,7 @@ const NotesStyle:React.CSSProperties = {
 
 export class PNotes extends React.Component<PNotesProps, {}> {
 
-	constructor(props:any) {
+	constructor(props:PNotesProps) {
         super(props);
 		this.onChange = this.onChange.bind(this);
 	}

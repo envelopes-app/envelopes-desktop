@@ -41,7 +41,7 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 
 	private rootElement:HTMLDivElement;
 
-	constructor(props: any) {
+	constructor(props:PLinkButtonProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);

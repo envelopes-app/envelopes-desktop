@@ -30,7 +30,7 @@ export class PFlagCell extends React.Component<PFlagCellProps, {}> {
 	private flagContainer:HTMLDivElement;
 	private flagGlyph:Glyphicon;
 
-	constructor(props: any) {
+	constructor(props:PFlagCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

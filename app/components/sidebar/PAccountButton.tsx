@@ -94,7 +94,7 @@ export class PAccountButton extends React.Component<PAccountButtonProps, {hoverS
   
 	private accountButtonContainer:HTMLDivElement;
 
-	constructor(props: any) {
+	constructor(props:PAccountButtonProps) {
         super(props);
 		this.handleClick = this.handleClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);

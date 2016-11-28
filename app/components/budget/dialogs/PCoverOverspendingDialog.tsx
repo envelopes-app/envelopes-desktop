@@ -52,7 +52,7 @@ export class PCoverOverspendingDialog extends React.Component<PCoverOverspending
 	private categoriesList:Array<objects.ICategoryObject>;
 	private focusManager:FocusManager = new FocusManager(); 
 
-	constructor(props: any) {
+	constructor(props:PCoverOverspendingDialogProps) {
         super(props);
 		this.setActiveField = this.setActiveField.bind(this);
 		this.setFocusOnCategorySelector = this.setFocusOnCategorySelector.bind(this);

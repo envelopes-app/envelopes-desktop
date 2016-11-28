@@ -31,7 +31,7 @@ export class PAmountInput extends React.Component<PAmountInputProps, {}> {
 	private inflowInput:FormControl;
 	private outflowInput:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PAmountInputProps) {
         super(props);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onInflowFocus = this.onInflowFocus.bind(this);

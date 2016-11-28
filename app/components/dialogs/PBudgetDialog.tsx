@@ -71,7 +71,7 @@ export class PBudgetDialog extends React.Component<PBudgetDialogProps, PBudgetDi
 	private ctrlNumberFormat:FormControl;
 	private ctrlDateFormat:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PBudgetDialogProps) {
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);

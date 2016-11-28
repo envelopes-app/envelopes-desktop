@@ -32,7 +32,7 @@ const WarningBadgeStyle:React.CSSProperties = {
 
 export class PCategoryCell extends React.Component<PCategoryCellProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PCategoryCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

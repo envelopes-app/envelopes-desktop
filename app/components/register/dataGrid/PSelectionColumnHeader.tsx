@@ -14,7 +14,7 @@ export interface PSelectionColumnHeaderProps {
 
 export class PSelectionColumnHeader extends React.Component<PSelectionColumnHeaderProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PSelectionColumnHeaderProps) {
         super(props);
 		this.onChange = this.onChange.bind(this);
 	}

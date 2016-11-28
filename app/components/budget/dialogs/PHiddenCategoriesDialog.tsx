@@ -32,7 +32,7 @@ const ShowAllButtonStyle:React.CSSProperties = {
 
 export class PHiddenCategoriesDialog extends React.Component<PHiddenCategoriesDialogProps, PHiddenCategoriesDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PHiddenCategoriesDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onUnhideSubCategory = this.onUnhideSubCategory.bind(this);

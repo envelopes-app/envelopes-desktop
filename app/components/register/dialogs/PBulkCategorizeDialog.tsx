@@ -29,7 +29,7 @@ const ScrollableContainerStyle:React.CSSProperties = {
 
 export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialogProps, PBulkCategorizeDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PBulkCategorizeDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);

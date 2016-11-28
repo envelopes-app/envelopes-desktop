@@ -120,7 +120,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 	private moveCategoryUpButton:PButtonWithGlyph;
 	private moveCategoryDownButton:PButtonWithGlyph;
 
-	constructor(props: any) {
+	constructor(props:PMasterCategoryRowProps) {
         super(props);
 		this.onExpandCollapseGlyphClick = this.onExpandCollapseGlyphClick.bind(this);
 		this.onClick = this.onClick.bind(this);

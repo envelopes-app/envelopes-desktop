@@ -68,7 +68,7 @@ const NegativeValueColor = "#CA6D64";
 
 export class PReconcileAccountDialog extends React.Component<PReconcileAccountDialogProps, PReconcileAccountDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PReconcileAccountDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onStep1YesClick = this.onStep1YesClick.bind(this);

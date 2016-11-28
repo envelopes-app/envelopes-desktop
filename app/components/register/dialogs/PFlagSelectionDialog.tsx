@@ -28,7 +28,7 @@ const PopoverStyle:React.CSSProperties = {
 
 export class PFlagSelectionDialog extends React.Component<PFlagSelectionDialogProps, PFlagSelectionDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PFlagSelectionDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.state = {

@@ -25,7 +25,7 @@ export class PCheckNumberInput extends React.Component<PCheckNumberInputProps, {
 
 	private checkNumberInput:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PCheckNumberInputProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

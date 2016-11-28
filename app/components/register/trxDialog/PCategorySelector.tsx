@@ -45,7 +45,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 	private categoryInput:FormControl;
 	private categoryItemRefsMap:SimpleObjectMap<HTMLElement> = {};
 
-	constructor(props: any) {
+	constructor(props:PCategorySelectorProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

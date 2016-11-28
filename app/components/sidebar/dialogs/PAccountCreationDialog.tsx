@@ -64,7 +64,7 @@ const ErrorMessageStyle:React.CSSProperties = {
 
 export class PAccountCreationDialog extends React.Component<PAccountCreationDialogProps, PAccountCreationDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PAccountCreationDialogProps) {
         super(props);
 		this.show = this.show.bind(this);
 		this.save = this.save.bind(this);

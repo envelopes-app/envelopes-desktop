@@ -29,7 +29,7 @@ const GlyphHoverStyle:React.CSSProperties = {
 
 export class PButtonWithGlyph extends React.Component<PButtonWithGlyphProps, {hoverState:boolean}> {
 
-	constructor(props: any) {
+	constructor(props:PButtonWithGlyphProps) {
         super(props);
 		this.handleClick = this.handleClick.bind(this);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);

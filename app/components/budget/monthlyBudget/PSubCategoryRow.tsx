@@ -81,7 +81,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	private moveCategoryUpButton:PButtonWithGlyph;
 	private moveCategoryDownButton:PButtonWithGlyph;
 
-	constructor(props:any) {
+	constructor(props:PSubCategoryRowProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onCheckBoxSelectionChange = this.onCheckBoxSelectionChange.bind(this);

@@ -36,7 +36,7 @@ const ModuleButtonLabelStyle:React.CSSProperties = {
 
 export class PModuleButton extends React.Component<PModuleButtonProps, {hoverState:boolean}> {
   
-	constructor(props: any) {
+	constructor(props:PModuleButtonProps) {
         super(props);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);

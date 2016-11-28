@@ -25,7 +25,7 @@ export class PMemoInput extends React.Component<PMemoInputProps, {}> {
 
 	private memoInput:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PMemoInputProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

@@ -32,7 +32,7 @@ const ButtonStyle:React.CSSProperties = {
 
 export class PApproveRejectDialog extends React.Component<PApproveRejectDialogProps, PApproveRejectDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PApproveRejectDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.approveTransaction = this.approveTransaction.bind(this);

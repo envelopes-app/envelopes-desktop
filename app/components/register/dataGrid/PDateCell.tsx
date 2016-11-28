@@ -21,7 +21,7 @@ export interface PDateCellProps {
 
 export class PDateCell extends React.Component<PDateCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PDateCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

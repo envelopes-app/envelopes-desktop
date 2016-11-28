@@ -27,6 +27,7 @@ export interface PAccountEditDialogState {
 	accountName:string;
 	accountNote:string;
 	accountBalance:number;
+	accountBalanceHasFocus:boolean;
 }
 
 const FormControlStyle:React.CSSProperties = {
@@ -65,11 +66,13 @@ const PopoverStyle:React.CSSProperties = {
 
 export class PAccountEditDialog extends React.Component<PAccountEditDialogProps, PAccountEditDialogState> {
   
-	constructor(props: any) {
+	constructor(props:PAccountEditDialogProps) {
         super(props);
 		this.onAccountNameChange = this.onAccountNameChange.bind(this);
 		this.onAccountNoteChange = this.onAccountNoteChange.bind(this);
 		this.onAccountBalanceChange = this.onAccountBalanceChange.bind(this);
+		this.onAccountBalanceFocus = this.onAccountBalanceFocus.bind(this);
+		this.onAccountBalanceBlur = this.onAccountBalanceBlur.bind(this);
 		this.handleOk = this.handleOk.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleCloseAccount = this.handleCloseAccount.bind(this);
@@ -82,7 +85,8 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 			account: null,
 			accountName: null,
 			accountNote: null,
-			accountBalance: 0
+			accountBalance: 0,
+			accountBalanceHasFocus: false
 		};
 	}
 
@@ -108,6 +112,14 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 			state.accountBalance = updatedBalance;
 			this.setState(state);
 		}
+	}
+
+	private onAccountBalanceFocus(event:React.FocusEvent<any>):void {
+
+	}
+
+	private onAccountBalanceBlur(event:React.FocusEvent<any>):void {
+
 	}
 
 	public isShowing():boolean {
@@ -276,7 +288,8 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 							</FormGroup>
 							<FormGroup>
 								<ControlLabel>Today's Balance:</ControlLabel>
-								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} onChange={this.onAccountBalanceChange} style={FormControlStyle} />
+								<FormControl type="text" value={dataFormatter.formatCurrency(this.state.accountBalance)} style={FormControlStyle} 
+								 	onChange={this.onAccountBalanceChange} onFocus={this.onAccountBalanceFocus} onBlur={this.onAccountBalanceBlur} />
 								<HelpBlock>An adjustment transaction will be created automatically if you change this amount.</HelpBlock>
 							</FormGroup>
 							<FormGroup>

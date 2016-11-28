@@ -20,7 +20,7 @@ export interface PAccountCellProps {
 
 export class PAccountCell extends React.Component<PAccountCellProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PAccountCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

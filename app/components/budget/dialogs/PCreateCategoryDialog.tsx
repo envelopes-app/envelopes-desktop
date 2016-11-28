@@ -71,7 +71,7 @@ export class PCreateCategoryDialog extends React.Component<PCreateCategoryDialog
 
 	private ctrlCategoryName:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PCreateCategoryDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onChange = this.onChange.bind(this);

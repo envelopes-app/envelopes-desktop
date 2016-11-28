@@ -39,7 +39,7 @@ const ListItemStyle:React.CSSProperties = {
 
 export class PDebtCategoryQuickBudget extends React.Component<PDebtCategoryQuickBudgetProps, {}> {
 
-	constructor(props:any) {
+	constructor(props:PDebtCategoryQuickBudgetProps) {
         super(props);
 		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);
 		this.setBudgetedToPaidLastMonth = this.setBudgetedToPaidLastMonth.bind(this);

@@ -21,7 +21,7 @@ export interface PInflowCellProps {
 
 export class PInflowCell extends React.Component<PInflowCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PInflowCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

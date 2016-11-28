@@ -63,7 +63,7 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
   
 	private reconcileButton:HTMLButtonElement;
 
-  	constructor(props: any) {
+  	constructor(props:PRegisterHeaderProps) {
         super(props);
 		this.onReconcileAccountClick = this.onReconcileAccountClick.bind(this);
     }

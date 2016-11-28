@@ -87,7 +87,7 @@ const CheckBoxTextStyle:React.CSSProperties = {
 
 export class PFilterTransactionsDialog extends React.Component<PFilterTransactionsDialogProps, PFilterTransactionsDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PFilterTransactionsDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onShowReconciledTransactionsSelectionChange = this.onShowReconciledTransactionsSelectionChange.bind(this);

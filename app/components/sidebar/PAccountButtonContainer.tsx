@@ -49,7 +49,7 @@ const PAccountButtonContainerValueWithBadgeStyle:React.CSSProperties = {
 
 export class PAccountButtonContainer extends React.Component<PAccountButtonContainerProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PAccountButtonContainerProps) {
         super(props);
 		this.handleClick = this.handleClick.bind(this);
 	}

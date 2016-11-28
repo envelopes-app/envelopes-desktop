@@ -37,7 +37,7 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 	private collapseAllButton:PLinkButton;
 	private addCategoryButton:PLinkButton;
 
-	constructor(props: any) {
+	constructor(props:PBudgetToolbarProps) {
         super(props);
 		this.onExpandAllButtonClick = this.onExpandAllButtonClick.bind(this);
 		this.onCollapseAllButtonClick = this.onCollapseAllButtonClick.bind(this);

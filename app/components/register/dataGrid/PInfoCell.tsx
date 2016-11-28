@@ -28,7 +28,7 @@ export class PInfoCell extends React.Component<PInfoCellProps, {}> {
 	
 	private infoContainer:HTMLDivElement;
 
-	constructor(props: any) {
+	constructor(props:PInfoCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

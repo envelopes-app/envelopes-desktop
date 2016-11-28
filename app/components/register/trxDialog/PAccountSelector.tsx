@@ -35,7 +35,7 @@ export class PAccountSelector extends React.Component<PAccountSelectorProps, {}>
 
 	private accountInput:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PAccountSelectorProps) {
         super(props);
 		this.onFocus = this.onFocus.bind(this);
 		this.onChange = this.onChange.bind(this);

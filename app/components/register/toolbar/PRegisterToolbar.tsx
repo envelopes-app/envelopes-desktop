@@ -40,7 +40,7 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 	private filterButton:PLinkButton;
 	private settingsButton:PLinkButton;
 
-  	constructor(props: any) {
+  	constructor(props:PRegisterToolbarProps) {
         super(props);
 		this.showEditMenuDialog = this.showEditMenuDialog.bind(this);
 		this.showFilterDialog = this.showFilterDialog.bind(this);

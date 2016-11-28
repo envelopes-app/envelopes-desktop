@@ -64,7 +64,7 @@ const ListItemStyle:React.CSSProperties = {
 
 export class PDefaultInspector extends React.Component<PDefaultInspectorProps, {}> {
 
-	constructor(props: any) {
+	constructor(props:PDefaultInspectorProps) {
         super(props);
 		this.setBudgetedToUnderFunded = this.setBudgetedToUnderFunded.bind(this);
 		this.setBudgetedToBudgetedLastMonth = this.setBudgetedToBudgetedLastMonth.bind(this);

@@ -30,7 +30,7 @@ export class PAccountClosingDialog extends React.Component<PAccountClosingDialog
 
 	private ctrlAccountSelection:FormControl;
 
-	constructor(props: any) {
+	constructor(props:PAccountClosingDialogProps) {
         super(props);
         this.state = { show: false, account: null };
 		this.show = this.show.bind(this);

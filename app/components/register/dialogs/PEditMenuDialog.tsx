@@ -40,7 +40,7 @@ const PopoverStyle:React.CSSProperties = {
 
 export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEditMenuDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PEditMenuDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.clearSelectedTransactions = this.clearSelectedTransactions.bind(this);

@@ -88,7 +88,7 @@ export class PDebtCategorySummary extends React.Component<PDebtCategorySummaryPr
 	private categoryEditMenu:HTMLDivElement;
 	private subCategoryEditDialog:PSubCategoryEditDialog;
 
-	constructor(props: any) {
+	constructor(props:PDebtCategorySummaryProps) {
         super(props);
 		this.onEditClick = this.onEditClick.bind(this);
 	}

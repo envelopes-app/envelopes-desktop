@@ -54,7 +54,7 @@ const MonthButtonsContainerStyle:React.CSSProperties = {
 
 export class PMonthSelectionDialog extends React.Component<PMonthSelectionDialogProps, PMonthSelectionDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PMonthSelectionDialogProps) {
         super(props);
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);

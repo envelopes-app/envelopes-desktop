@@ -20,7 +20,7 @@ export interface PMemoCellProps {
 
 export class PMemoCell extends React.Component<PMemoCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PMemoCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

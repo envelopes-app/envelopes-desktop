@@ -81,7 +81,7 @@ export class PMonthSelection extends React.Component<PMonthSelectionProps, PMont
 	private monthNameButton:HTMLButtonElement;
 	private monthSelectionDialog:PMonthSelectionDialog;
 
-	constructor(props: any) {
+	constructor(props:PMonthSelectionProps) {
         super(props);
 		this.handleMouseEnter = this.handleMouseEnter.bind(this);
 		this.handleMouseLeave = this.handleMouseLeave.bind(this);

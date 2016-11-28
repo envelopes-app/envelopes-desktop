@@ -20,7 +20,7 @@ export interface PPayeeCellProps {
 
 export class PPayeeCell extends React.Component<PPayeeCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PPayeeCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

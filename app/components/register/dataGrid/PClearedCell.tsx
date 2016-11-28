@@ -27,7 +27,7 @@ const ClearedColor = "#16A336";
 
 export class PClearedCell extends React.Component<PClearedCellProps, {}> {
 	
-	constructor(props: any) {
+	constructor(props:PClearedCellProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);

@@ -28,7 +28,7 @@ export class PFlagSelector extends React.Component<PFlagSelectorProps, PFlagSele
 	private flagInput:HTMLDivElement;
 	private flagColors:Array<string> = ['None', 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple'];
 
-	constructor(props:any) {
+	constructor(props:PFlagSelectorProps) {
         super(props);
 		this.onClick = this.onClick.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);

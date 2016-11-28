@@ -24,7 +24,7 @@ const PopoverStyle:React.CSSProperties = {
 
 export class PRegisterSettingsDialog extends React.Component<PRegisterSettingsDialogProps, PRegisterSettingsDialogState> {
 
-	constructor(props: any) {
+	constructor(props:PRegisterSettingsDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
 		this.onShowCheckColumnChange = this.onShowCheckColumnChange.bind(this);

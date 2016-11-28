@@ -55,7 +55,7 @@ export class PMoveMoneyDialog extends React.Component<PMoveMoneyDialogProps, PMo
 	private categoriesList:Array<objects.ICategoryObject>;
 	private focusManager:FocusManager = new FocusManager(); 
 
-	constructor(props: any) {
+	constructor(props:PMoveMoneyDialogProps) {
         super(props);
 		this.setActiveField = this.setActiveField.bind(this);
 		this.setFocusOnAmountField = this.setFocusOnAmountField.bind(this);

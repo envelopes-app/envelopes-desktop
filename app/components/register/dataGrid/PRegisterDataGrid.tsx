@@ -63,7 +63,7 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
   
 	private dataGridContainer:HTMLDivElement;
 
-	constructor(props: any) {
+	constructor(props:PRegisterDataGridProps) {
         super(props);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.handleWindowResize = this.handleWindowResize.bind(this);

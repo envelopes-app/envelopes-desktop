@@ -75,7 +75,7 @@ const ProgressBarMessageStyle:React.CSSProperties = {
 
 export class PDebtCategoryPayments extends React.Component<PDebtCategoryPaymentsProps, PDebtCategoryPaymentsState> {
 
-	constructor(props:any) {
+	constructor(props:PDebtCategoryPaymentsProps) {
         super(props);
 	}
 

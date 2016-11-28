@@ -75,7 +75,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	private categoriesList:Array<objects.ICategoryObject>;
 	private focusManager:FocusManager = new FocusManager(); 
 	 
-	constructor(props: any) {
+	constructor(props:PTransactionDialogProps) {
         super(props);
 		this.showForNewTransaction = this.showForNewTransaction.bind(this);
 		this.showForExistingTransaction = this.showForExistingTransaction.bind(this);
