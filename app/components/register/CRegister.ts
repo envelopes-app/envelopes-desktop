@@ -16,6 +16,9 @@ const mapStateToProps = (state:IApplicationState) => {
 
 const mapDispatchToProps = (dispatch:Dispatch<IApplicationState>) => {
   	return {
+		enterScheduledTransactionNow:(scheduledTransactionIds:Array<string>) => {
+      		dispatch(GlobalActionsCreator.enterScheduledTransactionNow(scheduledTransactionIds));
+		},
 		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
       		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
 		}

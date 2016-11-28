@@ -223,6 +223,23 @@ export class PersistenceManager {
 				return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
 			});
 	}
+
+	public generateUpcomingTransactionsNow(scheduledTransactionIds:Array<string>):Promise<ISimpleEntitiesCollection> {
+
+		Logger.info(`PersistenceManager::Generating upcoming transactions for selected scheduled transactions now.`);
+		var budgetId = this.activeBudget.entityId;
+		var budgetKnowledge = this.budgetKnowledge;
+		return this.calculationsManager.scheduledTransactionCalculations.generateUpcomingTransactionNow(budgetId, budgetKnowledge, scheduledTransactionIds)
+			.then((retVal:IScheduledTransactionCalculationsResult)=>{
+				
+				Logger.info(`PersistenceManager::Loading updated data from the database.'`);
+				// Load updated data from the database
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+				return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
+			});
+	}
 	// ************************************************************************************************
 	// Internal/Utility Methods
 	// ************************************************************************************************

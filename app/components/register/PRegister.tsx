@@ -30,6 +30,7 @@ export interface PRegisterProps {
 	// State Variables
 	applicationState: IApplicationState;
 	// Dispatcher Functions
+	enterScheduledTransactionNow:(scheduledTransactionIds:Array<string>)=>void;
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
@@ -51,7 +52,6 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	// TODO: Import bank transactions
 	// TODO: Delete transaction through delete button on register
 	// TODO: Clear/Unclear transaction through "C" button
-	// TODO: Enter transaction now in edit menu
 	private registerGrid:PRegisterDataGrid;
 	private flagSelectionDialog:PFlagSelectionDialog;
 	private filterTransactionsDialog:PFilterTransactionsDialog;
@@ -698,6 +698,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 					entitiesCollection={entitiesCollection}
 					showBulkCategorizeDialog={this.showBulkCategorizeDialog}
 					showMoveToAccountDialog={this.showMoveToAccountDialog}
+					enterScheduledTransactionNow={this.props.enterScheduledTransactionNow}
 					updateEntities={this.props.updateEntities}
 				/>
 

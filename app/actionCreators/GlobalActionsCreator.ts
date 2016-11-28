@@ -175,4 +175,21 @@ export class GlobalActionsCreator {
 				});
 		};
 	}
+
+	public static enterScheduledTransactionNow(scheduledTransactionIds:Array<string>) {
+
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.generateUpcomingTransactionsNow(scheduledTransactionIds)
+				.then((updatedEntitiesFromStorage:ISimpleEntitiesCollection)=>{
+					// dispatch action sync data with database completed
+					dispatch(GlobalActionsCreator.SyncDataWithDatabaseCompleted(updatedEntitiesFromStorage));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
+		};
+	}
 }

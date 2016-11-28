@@ -15,6 +15,7 @@ export interface PEditMenuDialogProps {
 	showBulkCategorizeDialog:()=>void;
 	showMoveToAccountDialog:()=>void;
 	// Dispatcher Functions
+	enterScheduledTransactionNow:(scheduledTransactionIds:Array<string>)=>void;
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
@@ -26,6 +27,7 @@ export interface PEditMenuDialogState {
 	enableClearUnclearMenus:boolean;
 	enableApproveRejectMenus:boolean;
 	enableMoveToAccountMenu:boolean;
+	enableEnterNowMenu:boolean;
 }
 
 const PopoverStyle:React.CSSProperties = {
@@ -48,6 +50,7 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		this.deleteSelectedTransactions = this.deleteSelectedTransactions.bind(this);
 		this.showBulkCategorizeDialog = this.showBulkCategorizeDialog.bind(this);
 		this.showMoveToAccountDialog = this.showMoveToAccountDialog.bind(this);
+		this.enterScheduledTransactionsNow = this.enterScheduledTransactionsNow.bind(this);
 		this.state = {
 			show:false, 
 			target:null, 
@@ -55,7 +58,8 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 			selectedTransactionIds:null,
 			enableClearUnclearMenus:false,
 			enableApproveRejectMenus:false,
-			enableMoveToAccountMenu:false
+			enableMoveToAccountMenu:false,
+			enableEnterNowMenu:false
 		};
 	}
 
@@ -73,7 +77,7 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		state.selectedTransactionIds = selectedTransactionIds;
 		state.enableApproveRejectMenus = this.getEnableApproveRejectMenus(selectedTransactionIds);
 		state.enableClearUnclearMenus = this.getEnableClearUnclearMenus(selectedTransactionIds);
-		state.enableMoveToAccountMenu = this.getEnableMoveToAccountMenu();
+		state.enableEnterNowMenu = this.getEnableEnterNowMenu(selectedTransactionIds);
 		state.enableMoveToAccountMenu = this.getEnableMoveToAccountMenu();
 		this.setState(state);
 	}
@@ -118,6 +122,26 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 
 			var transaction = entitiesCollection.transactions.getEntityById(transactionId);
 			if(transaction) {
+				retVal = true;
+				return false;
+			}
+		});
+
+		return retVal;
+	}
+
+	private getEnableEnterNowMenu(selectedTransactionIds:Array<string>):boolean {
+
+		var retVal = false;
+		// In order to enable the enter now menu, we should have atleast one Scheduled Transaction
+		// within the selected transactions.
+		// Note: The selectedTransactionIds contains ids for both transactions and scheduled transactions.
+		// So we are looking for atleast one id that belongs to a scheduled transaction.
+		var entitiesCollection = this.props.entitiesCollection;
+		_.forEach(selectedTransactionIds, (scheduledTransactionId)=>{
+
+			var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(scheduledTransactionId);
+			if(scheduledTransaction) {
 				retVal = true;
 				return false;
 			}
@@ -270,6 +294,24 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 		this.hide();
 	}
 	
+	private enterScheduledTransactionsNow():void {
+
+		var scheduledTransactionIds:Array<string> = [];
+		var entitiesCollection = this.props.entitiesCollection;
+		// Iterate through the selected transaction Ids and build an array of just those transactionIds
+		// that are for scheduled transactions.
+		var selectedTransactionIds = this.state.selectedTransactionIds;
+		_.forEach(selectedTransactionIds, (transactionId)=>{
+
+			var scheduledTransaction = entitiesCollection.scheduledTransactions.getEntityById(transactionId);
+			if(scheduledTransaction)
+				scheduledTransactionIds.push(transactionId);
+		});
+
+		this.hide();
+		this.props.enterScheduledTransactionNow(scheduledTransactionIds);
+	}
+
 	public showBulkCategorizeDialog():void {
 
 		this.hide();
@@ -306,6 +348,11 @@ export class PEditMenuDialog extends React.Component<PEditMenuDialogProps, PEdit
 						<div className={this.state.enableApproveRejectMenus ? "menu-item" : "menu-item-disabled"} onClick={this.rejectSelectedTransactions}>
 							<Glyphicon glyph="minus-sign" />
 							&nbsp;Reject
+						</div>
+						<div className="menu-item-separator" />
+						<div className={this.state.enableEnterNowMenu ? "menu-item" : "menu-item-disabled"} onClick={this.enterScheduledTransactionsNow}>
+							<Glyphicon glyph="time" />
+							&nbsp;Enter Now
 						</div>
 						<div className="menu-item-separator" />
 						<div className="menu-item" onClick={this.showBulkCategorizeDialog}>
