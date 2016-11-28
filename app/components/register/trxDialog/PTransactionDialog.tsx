@@ -541,6 +541,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			transaction.payeeId = this.state.payeeId;
 			transaction.subCategoryId = this.state.subCategoryId;
 			transaction.memo = this.state.memo;
+			transaction.accepted = 1;
 
 			if(this.state.inflowAmount > 0)
 				transaction.amount = this.state.inflowAmount;

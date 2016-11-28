@@ -231,8 +231,13 @@ export class PersistenceManager {
 		var budgetKnowledge = this.budgetKnowledge;
 		return this.calculationsManager.scheduledTransactionCalculations.generateUpcomingTransactionNow(budgetId, budgetKnowledge, scheduledTransactionIds)
 			.then((retVal:IScheduledTransactionCalculationsResult)=>{
-				
-				Logger.info(`PersistenceManager::Loading updated data from the database.'`);
+
+				Logger.info(`PersistenceManager::Running pending calculations.`);
+				return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
+			})
+			.then((retVal:boolean)=>{
+
+				Logger.info(`PersistenceManager::Loading updated data from the database.`);
 				// Load updated data from the database
 				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
