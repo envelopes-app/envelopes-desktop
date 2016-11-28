@@ -39,8 +39,9 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 		var subCategoryId = this.props.subCategoryId;
 		var currentMonth = this.props.currentMonth;
 		var entitiesCollection = this.props.entitiesCollection;
-		// Get the subCategory and monthlySubCategoryBudget entity from the entitiesCollection
+		// Get the account, subCategory and monthlySubCategoryBudget entity from the entitiesCollection
 		var subCategory = entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var account = entitiesCollection.accounts.getEntityById(subCategory.accountId);
 		var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, currentMonth.toISOString());
 
 		return (
@@ -63,9 +64,10 @@ export class PDebtCategoryInspector extends React.Component<PDebtCategoryInspect
 				/>
 
 				<PDebtCategoryPayments
+					dataFormatter={this.props.dataFormatter}
+					account={account}
 					subCategory={subCategory}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
-					updateEntities={this.props.updateEntities}
 				/>
 
 				<PDebtCategoryQuickBudget
