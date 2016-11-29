@@ -635,17 +635,8 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 		// If the subCategory or the monthlySubCategoryBudget entity changes, update the values in the state.
 		if(this.props.subCategory !== nextProps.subCategory || this.props.monthlySubCategoryBudget != nextProps.monthlySubCategoryBudget) {
-
-			var subCategory = nextProps.subCategory;
-			var targetBalanceMonth = subCategory.targetBalanceMonth ? DateWithoutTime.createFromISOString(subCategory.targetBalanceMonth) : DateWithoutTime.createForCurrentMonth();
-
 			var state = Object.assign({}, this.state);
 			state.showEditor = false;
-			state.goalType = subCategory.goalType ? subCategory.goalType : SubCategoryGoalType.TargetBalance;
-			state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding : 0;
-			state.targetBalance = subCategory.targetBalance ? subCategory.targetBalance : 0;
-			state.targetBalanceMonth = targetBalanceMonth.getMonth().toString();
-			state.targetBalanceYear = targetBalanceMonth.getYear().toString();
 			this.setState(state);
 		}
 	} 
@@ -672,12 +663,12 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 				);
 			}
 			else {
-				debugger;
 				// Show the goal progress
+				// Note: When viewing goals, use values directly from the entities in the props.
 				var viewer:JSX.Element;
-				if(this.state.goalType == SubCategoryGoalType.TargetBalance)
+				if(subCategory.goalType == SubCategoryGoalType.TargetBalance)
 					viewer = this.getGoalViewerForTargetBalance();
-				else if(this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate)
+				else if(subCategory.goalType == SubCategoryGoalType.TargetBalanceOnDate)
 					viewer = this.getGoalViewerForTargetBalanceOnDate();
 				else
 					viewer = this.getGoalViewerForMonthlyFunding();
@@ -692,6 +683,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		}
 		else {
 			// Show the Goals Editor
+			// Use values from the state when editing instead of from the entities in the props.
 			var editor:JSX.Element;
 			if(this.state.goalType == SubCategoryGoalType.TargetBalance)
 				editor = this.getGoalEditorForTargetBalance();
