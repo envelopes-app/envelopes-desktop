@@ -179,7 +179,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
 		this.state = {
 			showEditor: false,
-			goalType: SubCategoryGoalType.TargetBalance,
+			goalType: null,
 			monthlyFunding: 0,
 			targetBalance: 0,
 			targetBalanceMonth: currentMonth.getMonth().toString(),
@@ -277,10 +277,8 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	}
 
 	private handleEditClicked(event:React.MouseEvent<any>):void {
-
-		var state = Object.assign({}, this.state);
-		state.showEditor = true;
-		this.setState(state);
+		// Switching to show the editor
+		this.showEditor();
 	}
 
 	private handleDeleteClicked(event:React.MouseEvent<any>):void {
@@ -391,9 +389,10 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	private getGoalEditorForTargetBalance():JSX.Element {
 
 		var dataFormatter = this.props.dataFormatter;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var targetBalance = dataFormatter.formatCurrency(this.state.targetBalance, this.state.targetBalanceHasFocus);
 		return (
-			<div>
+			<div key={monthlySubCategoryBudget.entityId + "_targetBalanceEditor"}>
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Balance:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
@@ -408,6 +407,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	private getGoalEditorForTargetBalanceOnDate():JSX.Element {
 
 		var dataFormatter = this.props.dataFormatter;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var targetBalance = dataFormatter.formatCurrency(this.state.targetBalance, this.state.targetBalanceHasFocus);
 		var yearOptions:Array<JSX.Element> = [];
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
@@ -417,7 +417,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		}
 
 		return (
-			<div>
+			<div key={monthlySubCategoryBudget.entityId + "_targetBalanceOnDateEditor"}>
 				<FormGroup>
 					<ControlLabel>Target Balance:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
@@ -456,13 +456,14 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 	private getGoalEditorForMonthlyFunding():JSX.Element {
 
 		var dataFormatter = this.props.dataFormatter;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var monthlyFunding = dataFormatter.formatCurrency(this.state.monthlyFunding, this.state.monthlyFundingHasFocus);
 		return (
-			<div>
+			<div key={monthlySubCategoryBudget.entityId + "_monthlyFundingEditor"}>
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Budgeted Amount:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.monthlyFunding} onChange={this.onMonthlyFundingChange}
+						value={monthlyFunding} onChange={this.onMonthlyFundingChange}
 						onFocus={this.onMonthlyFundingFocus} onBlur={this.onMonthlyFundingBlur}
 					/>
 				</FormGroup>
@@ -475,17 +476,19 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var dataFormatter = this.props.dataFormatter;
 		var subCategory = this.props.subCategory;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var currentMonth = DateWithoutTime.createFromISOString(monthlySubCategoryBudget.month);
+		var goalCreationMonth = DateWithoutTime.createFromISOString(subCategory.goalCreationMonth);
 		var target = subCategory.targetBalance;
 		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
 		var overallBudgeted = monthlySubCategoryBudget.goalOverallFunded;
 		var overallLeft = monthlySubCategoryBudget.goalOverallLeft;
 		var completed = monthlySubCategoryBudget.goalOverallFunded;
-		var percentageCompleted = Math.round(completed / target * 100); 
+		var percentageCompleted = (target != 0 && target >= completed) ? Math.round(completed / target * 100) : 100; 
 		var percentageCompletedString = percentageCompleted.toString() + "%";
 
 		// Did we budget some money this month towards the goal target 
 		var messageNodes:Array<JSX.Element> = [];
-		if(budgetedThisMonth > 0) {
+		if(goalCreationMonth.isAfter(currentMonth) == false && budgetedThisMonth > 0) {
 			messageNodes = [
 				<hr key="separator" className="inspector-horizontal-rule" />,
 				<label key="message" style={ProgressMessageStyle}>If you budget <strong>{dataFormatter.formatCurrency(budgetedThisMonth)}</strong> each month, you will reach your <strong>{dataFormatter.formatCurrency(target)}</strong> goal in {monthlySubCategoryBudget.goalExpectedCompletion} months.</label>
@@ -493,7 +496,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		}
 
 		var progressView = (
-			<div style={ProgressViewContainerStyle}>
+			<div key={monthlySubCategoryBudget.entityId + "_targetBalanceView"} style={ProgressViewContainerStyle}>
 				<label style={ProgressPercentageGreenLabelStyle}>{percentageCompleted}% COMPLETED</label>
 				<div className="progress" style={ProgressBarStyle}>
 					<div className="progress-bar" role="progressbar" style={{width: percentageCompletedString, backgroundColor: GreenColor}} />
@@ -517,13 +520,135 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 	private getGoalViewerForTargetBalanceOnDate():JSX.Element {
 
-		return null;
+		var dataFormatter = this.props.dataFormatter;
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var currentMonth = DateWithoutTime.createFromISOString(monthlySubCategoryBudget.month);
+		var goalCreationMonth = DateWithoutTime.createFromISOString(subCategory.goalCreationMonth);
+		var target = subCategory.targetBalance;
+		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
+		var overallBudgeted = monthlySubCategoryBudget.goalOverallFunded;
+		var overallLeft = monthlySubCategoryBudget.goalOverallLeft;
+		var completed = monthlySubCategoryBudget.goalOverallFunded;
+		var percentageCompleted = (target != 0 && target >= completed) ? Math.round(completed / target * 100) : 100; 
+		var percentageCompletedString = percentageCompleted.toString() + "%";
+		var currentMonthUnderFunded = monthlySubCategoryBudget.goalUnderFunded;
+
+		var messageNodes:Array<JSX.Element> = [];
+		if(goalCreationMonth.isAfter(currentMonth) == false) {
+
+			if(currentMonthUnderFunded > 0) {
+				messageNodes = [
+					<hr key="separator" className="inspector-horizontal-rule" />,
+					<label key="message" style={ProgressMessageStyle}>Budget <strong>{dataFormatter.formatCurrency(currentMonthUnderFunded)}</strong> more to stay on track towards reaching your <strong>{dataFormatter.formatCurrency(target)}</strong> goal.</label>
+				];
+			}
+			else {
+				var targetBalanceMonth = DateWithoutTime.createFromISOString(subCategory.targetBalanceMonth);
+				messageNodes = [
+					<hr key="separator" className="inspector-horizontal-rule" />,
+					<label key="message" style={ProgressMessageStyle}>You're on track to reach your <strong>{dataFormatter.formatCurrency(target)}</strong> goal by {targetBalanceMonth.format("MMMM")} of {targetBalanceMonth.format("YYYY")}.</label>
+				];
+			}
+		}
+
+		var progressView = (
+			<div key={monthlySubCategoryBudget.entityId + "_targetBalanceOndateView"} style={ProgressViewContainerStyle}>
+				<label style={ProgressPercentageGreenLabelStyle}>{percentageCompleted}% COMPLETED</label>
+				<div className="progress" style={ProgressBarStyle}>
+					<div className="progress-bar" role="progressbar" style={{width: percentageCompletedString, backgroundColor: GreenColor}} />
+				</div>
+				<div style={ProgressSummaryContainerStyle}>
+					<div style={ProgressSummaryLeftItemsStyle}>
+						<label style={ProgressSummaryLeftItemLabelStyle}>BUDGETED</label>
+						<label style={ProgressSummaryLeftItemValueStyle}>{dataFormatter.formatCurrency(overallBudgeted)}</label>
+					</div>
+					<div style={ProgressSummaryRightItemsStyle}>
+						<label style={ProgressSummaryRightItemLabelStyle}>TO GO</label>
+						<label style={ProgressSummaryRightItemValueStyle}>{dataFormatter.formatCurrency(overallLeft)}</label>
+					</div>
+				</div>
+				{messageNodes}
+			</div>
+		);
+
+		return progressView;
 	}
 
 	private getGoalViewerForMonthlyFunding():JSX.Element {
 
-		return null;
+		var dataFormatter = this.props.dataFormatter;
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var currentMonth = DateWithoutTime.createFromISOString(monthlySubCategoryBudget.month);
+		var goalCreationMonth = DateWithoutTime.createFromISOString(subCategory.goalCreationMonth);
+		var target = subCategory.monthlyFunding;
+		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
+		var overallBudgeted = monthlySubCategoryBudget.goalOverallFunded;
+		var overallLeft = monthlySubCategoryBudget.goalOverallLeft;
+		var completed = monthlySubCategoryBudget.goalOverallFunded;
+		var percentageCompleted = (target != 0 && target >= completed) ? Math.round(completed / target * 100) : 100; 
+		var percentageCompletedString = percentageCompleted.toString() + "%";
+		var currentMonthUnderFunded = monthlySubCategoryBudget.goalUnderFunded;
+
+		var messageNodes:Array<JSX.Element> = [];
+		if(goalCreationMonth.isAfter(currentMonth) == false) {
+
+			if(currentMonthUnderFunded > 0) {
+				messageNodes = [
+					<hr key="separator" className="inspector-horizontal-rule" />,
+					<label key="message" style={ProgressMessageStyle}>Budget <strong>{dataFormatter.formatCurrency(currentMonthUnderFunded)}</strong> more to reach your <strong>{dataFormatter.formatCurrency(target)}</strong> monthly goal.</label>
+				];
+			}
+			else {
+				messageNodes = [
+					<hr key="separator" className="inspector-horizontal-rule" />,
+					<label key="message" style={ProgressMessageStyle}>You've reached your <strong>{dataFormatter.formatCurrency(target)}</strong> goal for the month.</label>
+				];
+			}
+		}
+
+		var progressView = (
+			<div key={monthlySubCategoryBudget.entityId + "_monthlyFundingView"} style={ProgressViewContainerStyle}>
+				<label style={ProgressPercentageGreenLabelStyle}>{percentageCompleted}% COMPLETED</label>
+				<div className="progress" style={ProgressBarStyle}>
+					<div className="progress-bar" role="progressbar" style={{width: percentageCompletedString, backgroundColor: GreenColor}} />
+				</div>
+				<div style={ProgressSummaryContainerStyle}>
+					<div style={ProgressSummaryLeftItemsStyle}>
+						<label style={ProgressSummaryLeftItemLabelStyle}>BUDGETED</label>
+						<label style={ProgressSummaryLeftItemValueStyle}>{dataFormatter.formatCurrency(overallBudgeted)}</label>
+					</div>
+					<div style={ProgressSummaryRightItemsStyle}>
+						<label style={ProgressSummaryRightItemLabelStyle}>TO GO</label>
+						<label style={ProgressSummaryRightItemValueStyle}>{dataFormatter.formatCurrency(overallLeft)}</label>
+					</div>
+				</div>
+				{messageNodes}
+			</div>
+		);
+
+		return progressView;
 	}
+
+	public componentWillReceiveProps(nextProps:PDefaultCategoryGoalsProps):void {
+
+		// If the subCategory or the monthlySubCategoryBudget entity changes, update the values in the state.
+		if(this.props.subCategory !== nextProps.subCategory || this.props.monthlySubCategoryBudget != nextProps.monthlySubCategoryBudget) {
+
+			var subCategory = nextProps.subCategory;
+			var targetBalanceMonth = subCategory.targetBalanceMonth ? DateWithoutTime.createFromISOString(subCategory.targetBalanceMonth) : DateWithoutTime.createForCurrentMonth();
+
+			var state = Object.assign({}, this.state);
+			state.showEditor = false;
+			state.goalType = subCategory.goalType ? subCategory.goalType : SubCategoryGoalType.TargetBalance;
+			state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding : 0;
+			state.targetBalance = subCategory.targetBalance ? subCategory.targetBalance : 0;
+			state.targetBalanceMonth = targetBalanceMonth.getMonth().toString();
+			state.targetBalanceYear = targetBalanceMonth.getYear().toString();
+			this.setState(state);
+		}
+	} 
 
 	public render() {
 
@@ -547,6 +672,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 				);
 			}
 			else {
+				debugger;
 				// Show the goal progress
 				var viewer:JSX.Element;
 				if(this.state.goalType == SubCategoryGoalType.TargetBalance)

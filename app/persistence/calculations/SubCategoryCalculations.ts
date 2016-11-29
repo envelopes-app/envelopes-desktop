@@ -513,8 +513,16 @@ WHERE m.subCategoryId IN (${subCategoryIdsINClause})
 		if(subCategory.goalCreationMonth) {
 
 			var goalCreationMonth = DateWithoutTime.createFromISOString(subCategory.goalCreationMonth);
-			if(currentMonth.isBefore(goalCreationMonth))
+			if(currentMonth.isBefore(goalCreationMonth)) {
+
+				// Null out all the goal related values
+				monthlySubcategoryBudget.goalOverallFunded = 0;
+				monthlySubcategoryBudget.goalTarget = 0;
+				monthlySubcategoryBudget.goalUnderFunded = 0;
+				monthlySubcategoryBudget.goalOverallLeft = 0;
+				monthlySubcategoryBudget.goalExpectedCompletion = 0;
 				return;
+			}
 		}
 
 		if(subCategory.goalType == SubCategoryGoalType.MonthlyFunding) {
