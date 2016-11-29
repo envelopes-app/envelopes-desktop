@@ -190,10 +190,11 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 
 		// Get the subcategory entity
 		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		// We are going to update all the goal related values in the subcategory
 		var subCategoryClone = Object.assign({}, subCategory);
 		subCategoryClone.goalType = this.state.goalType;
-		subCategoryClone.goalCreationMonth = DateWithoutTime.createForCurrentMonth().toISOString();
+		subCategoryClone.goalCreationMonth = monthlySubCategoryBudget.month;
 
 		if(this.state.goalType == SubCategoryGoalType.MonthlyFunding) {
 			subCategoryClone.monthlyFunding = this.state.monthlyFunding ? Number.parseInt(this.state.monthlyFunding) : 0;
@@ -289,7 +290,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 			goalsHeader = (
 				<div className="inspector-section-header">
 					<span>GOALS</span>
-					<PLinkButton text="Edit" />
+					<PLinkButton text="Edit" enabled={true} />
 				</div>
 			);
 		}
@@ -320,7 +321,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 						{header}
 						<PLinkButton 
 							text="Create a goal" glyphNames={["glyphicon-plus-sign"]} 
-							clickHandler={this.handleCreateGoalClicked} 
+							enabled={true} clickHandler={this.handleCreateGoalClicked} 
 						/>
 					</div>
 				);
@@ -357,9 +358,9 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 					{editor}
 					<hr className="inspector-horizontal-rule" />
 					<div className="buttons-container">
-						<PLinkButton text="Delete" clickHandler={this.handleDeleteClicked} />
+						<PLinkButton text="Delete" enabled={true} clickHandler={this.handleDeleteClicked} />
 						<div style={{width:"8px"}} />
-						<PLinkButton text="Cancel" clickHandler={this.handleCancelClicked} />
+						<PLinkButton text="Cancel" enabled={true} clickHandler={this.handleCancelClicked} />
 						<div className="spacer" />
 						<button className="dialog-primary-button" onClick={this.handleOkClicked}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>

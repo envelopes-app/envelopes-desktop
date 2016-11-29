@@ -90,7 +90,7 @@ export class PSubCategoryActivityValue extends React.Component<PSubCategoryActiv
 		var activity = monthlySubCategoryBudget ? monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows : 0;
 
 		var activityValueStyle = ActivityValueStyle;
-		if(monthlySubCategoryBudget.transactionsCount == 0)
+		if(!monthlySubCategoryBudget || monthlySubCategoryBudget.transactionsCount == 0)
 			activityValueStyle = ActivityValueDisabledStyle;
 		else if(this.state.hoverState)
 			activityValueStyle = ActivityValueHoverStyle;

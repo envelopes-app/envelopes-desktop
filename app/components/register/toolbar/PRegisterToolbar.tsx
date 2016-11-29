@@ -74,7 +74,7 @@ export class PRegisterToolbar extends React.Component<PRegisterToolbarProps, {}>
 			<div style={RegisterToolbarContainerStyle}>
 				<div style={RegisterToolbarStyle}>
 					<PLinkButton 
-						text="Add a transaction" 
+						enabled={true} text="Add a transaction" 
 						glyphNames={["glyphicon-plus-sign"]} 
 						clickHandler={this.props.onAddTransactionSelected} 
 					/>

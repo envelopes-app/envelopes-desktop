@@ -116,7 +116,6 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 
 	private onKeyDown(event:React.KeyboardEvent<any>):void {
 
-		debugger;
 		// We want the user to move the selection up and down the register screen using the arrow
 		// keys, and also the tab/shift-tab combination.
 		if(event.keyCode == 38) {

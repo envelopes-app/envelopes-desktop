@@ -22,11 +22,16 @@ export interface PDefaultCategoryGoalsProps {
 export interface PDefaultCategoryGoalsState {
 	showEditor:boolean;
 	goalType:string;
-	monthlyFunding:string;
-	targetBalance:string;
+	monthlyFunding:number;
+	targetBalance:number;
 	targetBalanceMonth:string;
 	targetBalanceYear:string;
+	targetBalanceHasFocus:boolean;
+	monthlyFundingHasFocus:boolean;
 }
+
+const OrangeColor = "#E59100";
+const GreenColor = "#16A336";
 
 const GoalsContainerStyle:React.CSSProperties = {
 	display: "flex",
@@ -65,6 +70,93 @@ const YearSelectionFormControlStyle:React.CSSProperties = Object.assign({}, Form
 	width: "32%"
 });
 
+const ProgressViewContainerStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "column nowrap",
+	justifyContent: "flex-start",
+	width: "100%",
+}
+
+const ProgressBarStyle:React.CSSProperties = {
+	height: "10px",
+	marginBottom: "10px",
+	backgroundColor: "#FFFFFF"
+}
+
+const ProgressPercentageLabelStyle:React.CSSProperties = {
+	fontSize: "20px",
+	color: "#003440",
+	width: "100%",
+	textAlign: "center",
+	marginTop: "10px",
+	marginBottom: "10px"
+}
+
+const ProgressPercentageGreenLabelStyle:React.CSSProperties = Object.assign({}, ProgressPercentageLabelStyle, {
+	color: GreenColor
+});
+
+const ProgressPercentageOrangeLabelStyle:React.CSSProperties = Object.assign({}, ProgressPercentageLabelStyle, {
+	color: OrangeColor
+});
+
+const ProgressSummaryContainerStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "row nowrap",
+	justifyContent: "space-between",
+	width: "100%",
+	marginBottom: "10px"
+}
+
+const ProgressSummaryLeftItemsStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "column nowrap",
+	alignItems: "flex-start",
+}
+
+const ProgressSummaryLeftItemLabelStyle:React.CSSProperties = {
+	fontSize: "14px",
+	fontStyle: "italic",
+	fontWeight: "normal",
+	color: "#003440",
+	width: "100%",
+	textAlign: "left",
+	marginBottom: "0px"
+}
+
+const ProgressSummaryLeftItemValueStyle:React.CSSProperties = Object.assign({}, ProgressSummaryLeftItemLabelStyle, {
+	fontWeight: "bold"
+});
+
+const ProgressSummaryRightItemsStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "column nowrap",
+	alignItems: "flex-end",
+}
+
+const ProgressSummaryRightItemLabelStyle:React.CSSProperties = {
+	fontSize: "14px",
+	fontStyle: "italic",
+	fontWeight: "normal",
+	color: "#003440",
+	width: "100%",
+	textAlign: "right",
+	marginBottom: "0px"
+}
+
+const ProgressSummaryRightItemValueStyle:React.CSSProperties = Object.assign({}, ProgressSummaryRightItemLabelStyle, {
+	fontWeight: "bold"
+});
+
+const ProgressMessageStyle:React.CSSProperties = {
+	fontSize: "14px",
+	fontStyle: "italic",
+	fontWeight: "normal",
+	color: "#003440",
+	width: "100%",
+	textAlign: "left"
+}
+
 export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoalsProps, PDefaultCategoryGoalsState> {
 
 	constructor(props:PDefaultCategoryGoalsProps) {
@@ -72,9 +164,14 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		this.handleCreateGoalClicked = this.handleCreateGoalClicked.bind(this);
 		this.onGoalTypeSelectionChange = this.onGoalTypeSelectionChange.bind(this);
 		this.onTargetBalanceChange = this.onTargetBalanceChange.bind(this);
+		this.onTargetBalanceFocus = this.onTargetBalanceFocus.bind(this);
+		this.onTargetBalanceBlur = this.onTargetBalanceBlur.bind(this);
 		this.onTargetBalanceMonthChange = this.onTargetBalanceMonthChange.bind(this);
 		this.onTargetBalanceYearChange = this.onTargetBalanceYearChange.bind(this);
 		this.onMonthlyFundingChange = this.onMonthlyFundingChange.bind(this);
+		this.onMonthlyFundingFocus = this.onMonthlyFundingFocus.bind(this);
+		this.onMonthlyFundingBlur = this.onMonthlyFundingBlur.bind(this);
+		this.handleEditClicked = this.handleEditClicked.bind(this);
 		this.handleDeleteClicked = this.handleDeleteClicked.bind(this);
 		this.handleCancelClicked = this.handleCancelClicked.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);
@@ -83,10 +180,12 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		this.state = {
 			showEditor: false,
 			goalType: SubCategoryGoalType.TargetBalance,
-			monthlyFunding: "",
-			targetBalance: "",
+			monthlyFunding: 0,
+			targetBalance: 0,
 			targetBalanceMonth: currentMonth.getMonth().toString(),
-			targetBalanceYear: currentMonth.getYear().toString()
+			targetBalanceYear: currentMonth.getYear().toString(),
+			targetBalanceHasFocus: false,
+			monthlyFundingHasFocus: false
 		};
 	}
 
@@ -99,8 +198,8 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var state = Object.assign({}, this.state);
 		state.showEditor = true;
 		state.goalType = subCategory.goalType ? subCategory.goalType : SubCategoryGoalType.TargetBalance;
-		state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding.toString() : "";
-		state.targetBalance = subCategory.targetBalance ? subCategory.targetBalance.toString() : "";
+		state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding : 0;
+		state.targetBalance = subCategory.targetBalance ? subCategory.targetBalance : 0;
 		state.targetBalanceMonth = targetBalanceMonth.getMonth().toString();
 		state.targetBalanceYear = targetBalanceMonth.getYear().toString();
 		this.setState(state);
@@ -121,21 +220,25 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 	private onTargetBalanceChange(event:React.FormEvent<any>):void {
 
-		var updatedValue = this.state.targetBalance;
-		var target = event.target as HTMLInputElement;
-		if(target.value == "")
-			updatedValue = "";
-		else {
-			var parsedValue = Number.parseInt(target.value);
-			if(!isNaN(parsedValue))
-				updatedValue = parsedValue.toString();
-		}
-
 		var state = Object.assign({}, this.state);
-		state.targetBalance = updatedValue;
+		state.targetBalance = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
 		this.setState(state);
 	}
 
+	private onTargetBalanceFocus(event:React.FocusEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.targetBalanceHasFocus = true;
+		this.setState(state);
+	}
+
+	private onTargetBalanceBlur(event:React.FocusEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.targetBalanceHasFocus = false;
+		this.setState(state);
+	}
+	
 	private onTargetBalanceMonthChange(event:React.FormEvent<any>):void {
 
 		var value = (event.target as HTMLInputElement).value;
@@ -154,18 +257,29 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 	private onMonthlyFundingChange(event:React.FormEvent<any>):void {
 
-		var updatedValue = this.state.monthlyFunding;
-		var target = event.target as HTMLInputElement;
-		if(target.value == "")
-			updatedValue = "";
-		else {
-			var parsedValue = Number.parseInt(target.value);
-			if(!isNaN(parsedValue))
-				updatedValue = parsedValue.toString();
-		}
+		var state = Object.assign({}, this.state);
+		state.monthlyFunding = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
+		this.setState(state);
+	}
+
+	private onMonthlyFundingFocus(event:React.FocusEvent<any>):void {
 
 		var state = Object.assign({}, this.state);
-		state.monthlyFunding = updatedValue;
+		state.monthlyFundingHasFocus = true;
+		this.setState(state);
+	}
+
+	private onMonthlyFundingBlur(event:React.FocusEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.monthlyFundingHasFocus = false;
+		this.setState(state);
+	}
+
+	private handleEditClicked(event:React.MouseEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.showEditor = true;
 		this.setState(state);
 	}
 
@@ -209,15 +323,17 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		state.showEditor = false;
 		this.setState(state);
 
+		var dataFormatter = this.props.dataFormatter;
 		// Get the subcategory entity
 		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		// We are going to update all the goal related values in the subcategory
 		var subCategoryClone = Object.assign({}, subCategory);
 		subCategoryClone.goalType = this.state.goalType;
-		subCategoryClone.goalCreationMonth = DateWithoutTime.createForCurrentMonth().toISOString();
+		subCategoryClone.goalCreationMonth = monthlySubCategoryBudget.month;
 
 		if(this.state.goalType == SubCategoryGoalType.MonthlyFunding) {
-			subCategoryClone.monthlyFunding = this.state.monthlyFunding ? Number.parseInt(this.state.monthlyFunding) : 0;
+			subCategoryClone.monthlyFunding = this.state.monthlyFunding;
 		}
 		else {
 			subCategoryClone.monthlyFunding = null;
@@ -225,7 +341,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 		if(this.state.goalType == SubCategoryGoalType.TargetBalance || 
 			this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate) {
-			subCategoryClone.targetBalance = this.state.targetBalance ? Number.parseInt(this.state.targetBalance) : 0;
+			subCategoryClone.targetBalance = this.state.targetBalance;
 		}
 		else {
 			subCategoryClone.targetBalance = null;
@@ -247,22 +363,52 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 
 	}
 	
-	private getGoalValuesContainerForTargetBalance():JSX.Element {
+	private getGoalsHeader(subCategory:budgetEntities.ISubCategory):JSX.Element {
 
+		var goalsHeader:JSX.Element;
+
+		// Only show the edit link in the header if we have a goal defined, and we are 
+		// not currently showing the editor.
+		if(subCategory.goalType && this.state.showEditor == false) {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					<span>GOALS</span>
+					<PLinkButton text="Edit" enabled={true} clickHandler={this.handleEditClicked} />
+				</div>
+			);
+		}
+		else {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					GOALS
+				</div>
+			);
+		}
+
+		return goalsHeader;
+	}
+
+	private getGoalEditorForTargetBalance():JSX.Element {
+
+		var dataFormatter = this.props.dataFormatter;
+		var targetBalance = dataFormatter.formatCurrency(this.state.targetBalance, this.state.targetBalanceHasFocus);
 		return (
 			<div>
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Balance:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.targetBalance} onChange={this.onTargetBalanceChange}
+						value={targetBalance} onChange={this.onTargetBalanceChange}
+						onFocus={this.onTargetBalanceFocus} onBlur={this.onTargetBalanceBlur}
 					/>
 				</FormGroup>
 			</div>
 		);
 	}
 	
-	private getGoalValuesContainerForTargetBalanceOnDate():JSX.Element {
+	private getGoalEditorForTargetBalanceOnDate():JSX.Element {
 
+		var dataFormatter = this.props.dataFormatter;
+		var targetBalance = dataFormatter.formatCurrency(this.state.targetBalance, this.state.targetBalanceHasFocus);
 		var yearOptions:Array<JSX.Element> = [];
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
 		for(var i = currentMonth.getYear(), j = 0; j < 20; i++,j++) {
@@ -275,7 +421,8 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 				<FormGroup>
 					<ControlLabel>Target Balance:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.targetBalance} onChange={this.onTargetBalanceChange}
+						value={targetBalance} onChange={this.onTargetBalanceChange}
+						onFocus={this.onTargetBalanceFocus} onBlur={this.onTargetBalanceBlur}
 					/>
 				</FormGroup>
 				<FormGroup>
@@ -306,43 +453,76 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		);
 	}
 	
-	private getGoalValuesContainerForMonthlyFunding():JSX.Element {
+	private getGoalEditorForMonthlyFunding():JSX.Element {
 
+		var dataFormatter = this.props.dataFormatter;
+		var monthlyFunding = dataFormatter.formatCurrency(this.state.monthlyFunding, this.state.monthlyFundingHasFocus);
 		return (
 			<div>
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Budgeted Amount:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
 						value={this.state.monthlyFunding} onChange={this.onMonthlyFundingChange}
+						onFocus={this.onMonthlyFundingFocus} onBlur={this.onMonthlyFundingBlur}
 					/>
 				</FormGroup>
 			</div>
 		);
 	}
 
-	private getGoalsHeader(subCategory:budgetEntities.ISubCategory):JSX.Element {
+	private getGoalViewerForTargetBalance():JSX.Element {
 
-		var goalsHeader:JSX.Element;
+		var dataFormatter = this.props.dataFormatter;
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var target = subCategory.targetBalance;
+		var budgetedThisMonth = monthlySubCategoryBudget.budgeted;
+		var overallBudgeted = monthlySubCategoryBudget.goalOverallFunded;
+		var overallLeft = monthlySubCategoryBudget.goalOverallLeft;
+		var completed = monthlySubCategoryBudget.goalOverallFunded;
+		var percentageCompleted = Math.round(completed / target * 100); 
+		var percentageCompletedString = percentageCompleted.toString() + "%";
 
-		// Only show the edit link in the header if we have a goal defined, and we are 
-		// not currently showing the editor.
-		if(subCategory.goalType && this.state.showEditor == false) {
-			goalsHeader = (
-				<div className="inspector-section-header">
-					<span>GOALS</span>
-					<PLinkButton text="Edit" />
-				</div>
-			);
+		// Did we budget some money this month towards the goal target 
+		var messageNodes:Array<JSX.Element> = [];
+		if(budgetedThisMonth > 0) {
+			messageNodes = [
+				<hr key="separator" className="inspector-horizontal-rule" />,
+				<label key="message" style={ProgressMessageStyle}>If you budget <strong>{dataFormatter.formatCurrency(budgetedThisMonth)}</strong> each month, you will reach your <strong>{dataFormatter.formatCurrency(target)}</strong> goal in {monthlySubCategoryBudget.goalExpectedCompletion} months.</label>
+			]
 		}
-		else {
-			goalsHeader = (
-				<div className="inspector-section-header">
-					GOALS
-				</div>
-			);
-		}
 
-		return goalsHeader;
+		var progressView = (
+			<div style={ProgressViewContainerStyle}>
+				<label style={ProgressPercentageGreenLabelStyle}>{percentageCompleted}% COMPLETED</label>
+				<div className="progress" style={ProgressBarStyle}>
+					<div className="progress-bar" role="progressbar" style={{width: percentageCompletedString, backgroundColor: GreenColor}} />
+				</div>
+				<div style={ProgressSummaryContainerStyle}>
+					<div style={ProgressSummaryLeftItemsStyle}>
+						<label style={ProgressSummaryLeftItemLabelStyle}>BUDGETED</label>
+						<label style={ProgressSummaryLeftItemValueStyle}>{dataFormatter.formatCurrency(overallBudgeted)}</label>
+					</div>
+					<div style={ProgressSummaryRightItemsStyle}>
+						<label style={ProgressSummaryRightItemLabelStyle}>TO GO</label>
+						<label style={ProgressSummaryRightItemValueStyle}>{dataFormatter.formatCurrency(overallLeft)}</label>
+					</div>
+				</div>
+				{messageNodes}
+			</div>
+		);
+
+		return progressView;
+	}
+
+	private getGoalViewerForTargetBalanceOnDate():JSX.Element {
+
+		return null;
+	}
+
+	private getGoalViewerForMonthlyFunding():JSX.Element {
+
+		return null;
 	}
 
 	public render() {
@@ -360,21 +540,26 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 					<div style={GoalsContainerStyle}>
 						{header}
 						<PLinkButton 
-							text="Create a goal" glyphNames={["glyphicon-plus-sign"]} 
-							clickHandler={this.handleCreateGoalClicked} 
+							text="Create a goal" glyphNames={["glyphicon-plus-sign"]}
+							enabled={true} clickHandler={this.handleCreateGoalClicked} 
 						/>
 					</div>
 				);
 			}
 			else {
-				// Get the monthlySubCategoryBudget to display the goal progress.
-				var target = monthlySubCategoryBudget.goalTarget;
-				var completed = monthlySubCategoryBudget.goalOverallFunded;
-				var percentageCompleted = Math.round(completed / target * 100); 
+				// Show the goal progress
+				var viewer:JSX.Element;
+				if(this.state.goalType == SubCategoryGoalType.TargetBalance)
+					viewer = this.getGoalViewerForTargetBalance();
+				else if(this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate)
+					viewer = this.getGoalViewerForTargetBalanceOnDate();
+				else
+					viewer = this.getGoalViewerForMonthlyFunding();
+				
 				return (
 					<div style={GoalsContainerStyle}>
 						{header}
-						<ProgressBar now={percentageCompleted} />
+						{viewer}
 					</div>
 				);
 			}
@@ -383,11 +568,11 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 			// Show the Goals Editor
 			var editor:JSX.Element;
 			if(this.state.goalType == SubCategoryGoalType.TargetBalance)
-				editor = this.getGoalValuesContainerForTargetBalance();
+				editor = this.getGoalEditorForTargetBalance();
 			else if(this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate)
-				editor = this.getGoalValuesContainerForTargetBalanceOnDate();
+				editor = this.getGoalEditorForTargetBalanceOnDate();
 			else
-				editor = this.getGoalValuesContainerForMonthlyFunding();
+				editor = this.getGoalEditorForMonthlyFunding();
 
 			return (
 				<div style={GoalsContainerStyle}>
@@ -401,9 +586,9 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 					{editor}
 					<hr className="inspector-horizontal-rule" />
 					<div className="buttons-container">
-						<PLinkButton text="Delete" clickHandler={this.handleDeleteClicked} />
+						<PLinkButton text="Delete" enabled={true} clickHandler={this.handleDeleteClicked} />
 						<div style={{width:"8px"}} />
-						<PLinkButton text="Cancel" clickHandler={this.handleCancelClicked} />
+						<PLinkButton text="Cancel" enabled={true} clickHandler={this.handleCancelClicked} />
 						<div className="spacer" />
 						<button className="dialog-primary-button" onClick={this.handleOkClicked}>
 							OK&nbsp;<Glyphicon glyph="ok-circle"/>

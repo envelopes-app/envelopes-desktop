@@ -55,7 +55,6 @@ const BudgetSubContainerStyle = {
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	// TODO: Goals
-	// TODO: Debt Category Inspectors
 	// TODO: Activity column numbers should be disabled when there are is no activity
 
 	private createCategoryDialog:dialogs.PCreateCategoryDialog;

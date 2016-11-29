@@ -59,7 +59,8 @@ const PaymentMessageStyle:React.CSSProperties = {
 
 const ProgressBarStyle:React.CSSProperties = {
 	height: "10px",
-	marginBottom: "0px"
+	marginBottom: "0px",
+	backgroundColor: "#FFFFFF"
 }
 
 const ProgressBarMessageStyle:React.CSSProperties = {

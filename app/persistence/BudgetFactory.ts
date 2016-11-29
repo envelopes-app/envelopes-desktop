@@ -80,40 +80,34 @@ export class BudgetFactory {
 										budgetKnowledge:BudgetKnowledge):Promise<any> {
 
 		var referenceData:IReferenceDataForEnsuringMonthlyDataExists;
-		
+		Logger.info(`BudgetFactory::Loading reference data for ensuring that monthly budget data for ${month.toISOString()} exists.`);
 		return this.getReferenceDataForEnsuringMonthlyDataExists(budgetId, month)
 			.then((data:IReferenceDataForEnsuringMonthlyDataExists)=> {
 				
 				referenceData = data;
 				
-				// We need to load all the subcategories from the database so we can create
-				// monthly subcategory budget entities for the month.
-				var query = budgetQueries.SubCategoryQueries.getAllSubCategories(budgetId, true);
-				return executeSqlQueries([query])
-			}).then((result:any)=>{
-
 				var query:IDatabaseQuery;
 				var queriesList:Array<IDatabaseQuery> = [];
-				var subCategories:Array<budgetEntities.ISubCategory> = result.subCategories;
+				var subCategories:Array<budgetEntities.ISubCategory> = referenceData.subCategories;
 				var subCategoryIds:Array<string>  = _.map(subCategories, "entityId") as Array<string>;
 
+				// Get the query for creating the monthlyBudget entity. This would return null, if the monthlyBudget entity
+				// already exists in the passed reference data
 				var query = this.createMonthlyBudgetForMonth(budgetId, month, referenceData, budgetKnowledge);
 				if(query)
 					queriesList.push(query);
 
-				queriesList = queriesList.concat( this.createMonthlySubCategoryBudgetsForMonth(budgetId, month, subCategoryIds, referenceData, budgetKnowledge) );
+				queriesList = queriesList.concat( this.createMonthlySubCategoryBudgetsForMonth(budgetId, month, subCategoryIds, referenceData, budgetKnowledge, queueCalculations) );
+				if(queriesList.length > 0) {
 
-				if(queueCalculations) {
-
-					// Iterate through all the subcategories and queue a monthly subcategory budget calculation for each of them
-					_.forEach(subCategoryIds, (subCategoryId:string)=>{
-
-						query = miscQueries.CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(budgetId, subCategoryId, month.toISOString());
-						queriesList.push(query);
-					});
+					Logger.info(`BudgetFactory::Running queries to create the missing monthly subcategory budget data.`);
+					return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
 				}
+				else {
 
-				return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
+					Logger.info(`BudgetFactory::Monthly subcategory budget data for all subcategories already exists. Returning.`);
+					Promise.resolve(null);
+				}
 			});
 	}
 
@@ -334,8 +328,8 @@ export class BudgetFactory {
 	private getReferenceDataForEnsuringMonthlyDataExists(budgetId:string, month:DateWithoutTime):Promise<IReferenceDataForEnsuringMonthlyDataExists> {
 
 		var queriesList:Array<IDatabaseQuery> = [
-			budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetId),
-			budgetQueries.SubCategoryQueries.getAllSubCategories(budgetId),
+			budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetId, true),
+			budgetQueries.SubCategoryQueries.getAllSubCategories(budgetId, true),
 			budgetQueries.MonthlyBudgetQueries.findMonthlyBudgetByMonth(budgetId, month),
 			budgetQueries.MonthlySubCategoryBudgetQueries.findMonthlySubCategoryBudgetByMonth(budgetId, month)
 		];
@@ -571,7 +565,8 @@ export class BudgetFactory {
 													month:DateWithoutTime, 
 													subCategoryIds:Array<string>, 
 													referenceData:IReferenceDataForEnsuringMonthlyDataExists, 
-													budgetKnowledge:BudgetKnowledge):Array<IDatabaseQuery> {
+													budgetKnowledge:BudgetKnowledge,
+													queueCalculations:boolean = false):Array<IDatabaseQuery> {
 
 		var queriesList:Array<IDatabaseQuery> = [];
 		var monthlyBudgetId = KeyGenerator.getMonthlyBudgetIdentity(budgetId, month);
@@ -626,6 +621,12 @@ export class BudgetFactory {
 					deviceKnowledge: budgetKnowledge.getNextValue(),
 					deviceKnowledgeForCalculatedFields: 0
 				}));
+
+				if(queueCalculations) {
+					queriesList.push(
+						miscQueries.CalculationQueries.getQueueMonthlySubCategoryBudgetCalculationQuery(budgetId, subCategoryId, month.toISOString())
+					);
+				}
 			}
 		});
 

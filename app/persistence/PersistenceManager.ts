@@ -176,35 +176,23 @@ export class PersistenceManager {
 		var budgetKnowledge = this.budgetKnowledge;
 
 		Logger.info(`PersistenceManager::Ensure that monthly budget data for the month of '${month.toISOString()}' already exists.`);
-		// Check if we already have data available for this month
-		var monthlySubCategoryBudgetsArray = existingEntitiesCollection.monthlySubCategoryBudgets;
-		var monthlySubCategoryBudgetsForMonth = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(month.toISOString());
-		if(monthlySubCategoryBudgetsForMonth && monthlySubCategoryBudgetsForMonth.length > 0) {
-			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' already exists.`);
-			return Promise.resolve({});
-		}
-		else {
+		var budgetFactory = new BudgetFactory();
+		return budgetFactory.createMonthlyBudgetDataForMonth(budgetId, month, true, budgetKnowledge)
+			.then((retVal:any)=>{
 
-			Logger.info(`PersistenceManager::The monthly budget data for the month of '${month.toISOString()}' does not exist. Creating now.`);
-			// We did not find monthlySubCategoryBudget entities for this month, so we need to create them
-			var budgetFactory = new BudgetFactory();
-			return budgetFactory.createMonthlyBudgetDataForMonth(budgetId, month, true, budgetKnowledge)
-				.then((retVal:any)=>{
-
-					// Run pending calculations
-					Logger.info(`PersistenceManager::Performing pending calculations.`);
-					return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
-				})
-				.then((retVal:boolean)=>{
-					
-					Logger.info(`PersistenceManager::Loading updated data from the database.'`);
-					// Load updated data from the database
-					var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
-					var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
-					var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
-					return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
-				});
-		}
+				// Run pending calculations
+				Logger.info(`PersistenceManager::Performing pending calculations.`);
+				return this.calculationsManager.performPendingCalculations(budgetId, budgetKnowledge);
+			})
+			.then((retVal:boolean)=>{
+				
+				Logger.info(`PersistenceManager::Loading updated data from the database.`);
+				// Load updated data from the database
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				var budgetDeviceKnowledgeForCalculations = this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage;
+				return this.loadEntitiesFromDatabase(budgetId, budgetDeviceKnowledge, budgetDeviceKnowledgeForCalculations, catalogDeviceKnowledge);
+			});
 	}
 
 	public performScheduledTransactionCalculations():Promise<ISimpleEntitiesCollection> {
@@ -215,7 +203,7 @@ export class PersistenceManager {
 		return this.calculationsManager.performScheduledTransactionCalculations(budgetId, budgetKnowledge, true)
 			.then((retVal:IScheduledTransactionCalculationsResult)=>{
 				
-				Logger.info(`PersistenceManager::Loading updated data from the database.'`);
+				Logger.info(`PersistenceManager::Loading updated data from the database.`);
 				// Load updated data from the database
 				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
 				var budgetDeviceKnowledge = this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;

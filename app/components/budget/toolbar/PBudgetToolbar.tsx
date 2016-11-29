@@ -70,22 +70,22 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 					<PLinkButton 
 						ref={(c)=>{this.expandAllButton = c;}}
 						tooltip="Expand all categories" glyphNames={["glyphicon-list", "glyphicon-arrow-down"]} 
-						clickHandler={this.onExpandAllButtonClick} />
+						enabled={true} clickHandler={this.onExpandAllButtonClick} />
 
 					<PLinkButton 
 						ref={(c)=>{this.collapseAllButton = c;}}
 						tooltip="Collapse all categories" glyphNames={["glyphicon-list", "glyphicon-arrow-up"]} 
-						clickHandler={this.onCollapseAllButtonClick} />
+						enabled={true} clickHandler={this.onCollapseAllButtonClick} />
 
 					<PLinkButton 
 						ref={(c)=>{this.addCategoryButton = c;}}
 						tooltip="Add Category Group" text="Add Category Group" glyphNames={["glyphicon-plus-sign"]} 
-						clickHandler={this.onAddCategoryButtonClick} />
+						enabled={true} clickHandler={this.onAddCategoryButtonClick} />
 
 					<PLinkButton 
 						ref={(c)=>{this.reorderButton = c;}}
 						tooltip="Reorder Categories" text="Reorder Categories" glyphNames={["glyphicon-retweet"]} 
-						clickHandler={this.onReorderCategoriesButtonClick} />
+						enabled={true} clickHandler={this.onReorderCategoriesButtonClick} />
 				</div>
 			</div>
 		);

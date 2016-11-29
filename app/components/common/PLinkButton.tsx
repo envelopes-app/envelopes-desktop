@@ -7,7 +7,7 @@ import { Glyphicon } from 'react-bootstrap';
 export interface PLinkButtonProps {
 	text?: string;
 	glyphNames?: Array<string>;
-	enabled?:boolean;
+	enabled:boolean;
 	tooltip?: string;
 	clickHandler?: (event:React.MouseEvent<any>)=>void;
 	showDropDown?:boolean;
@@ -55,7 +55,7 @@ export class PLinkButton extends React.Component<PLinkButtonProps, {hoverState:b
 
 	private onClick(event:React.MouseEvent<any>):void {
 
-		if(this.props.enabled == undefined || this.props.enabled == null || this.props.enabled == true)
+		if(this.props.enabled == true && this.props.clickHandler)
 			this.props.clickHandler(event);
 	}
 
