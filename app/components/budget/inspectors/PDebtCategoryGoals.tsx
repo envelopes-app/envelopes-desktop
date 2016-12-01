@@ -22,10 +22,14 @@ export interface PDebtCategoryGoalsProps {
 export interface PDebtCategoryGoalsState {
 	showEditor:boolean;
 	goalType:string;
-	monthlyFunding:string;
+	monthlyFunding:number;
 	targetBalanceMonth:string;
 	targetBalanceYear:string;
+	monthlyFundingHasFocus:boolean;
 }
+
+const OrangeColor = "#E59100";
+const GreenColor = "#16A336";
 
 const GoalsContainerStyle:React.CSSProperties = {
 	display: "flex",
@@ -73,6 +77,9 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		this.onTargetBalanceMonthChange = this.onTargetBalanceMonthChange.bind(this);
 		this.onTargetBalanceYearChange = this.onTargetBalanceYearChange.bind(this);
 		this.onMonthlyFundingChange = this.onMonthlyFundingChange.bind(this);
+		this.onMonthlyFundingFocus = this.onMonthlyFundingFocus.bind(this);
+		this.onMonthlyFundingBlur = this.onMonthlyFundingBlur.bind(this);
+		this.handleEditClicked = this.handleEditClicked.bind(this);
 		this.handleDeleteClicked = this.handleDeleteClicked.bind(this);
 		this.handleCancelClicked = this.handleCancelClicked.bind(this);
 		this.handleOkClicked = this.handleOkClicked.bind(this);
@@ -80,10 +87,11 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
 		this.state = {
 			showEditor: false,
-			goalType: SubCategoryGoalType.TargetBalance,
-			monthlyFunding: "",
+			goalType: null,
+			monthlyFunding: 0,
 			targetBalanceMonth: currentMonth.getMonth().toString(),
-			targetBalanceYear: currentMonth.getYear().toString()
+			targetBalanceYear: currentMonth.getYear().toString(),
+			monthlyFundingHasFocus: false
 		};
 	}
 
@@ -95,8 +103,8 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 
 		var state = Object.assign({}, this.state);
 		state.showEditor = true;
-		state.goalType = subCategory.goalType ? subCategory.goalType : SubCategoryGoalType.TargetBalance;
-		state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding.toString() : "";
+		state.goalType = subCategory.goalType ? subCategory.goalType : SubCategoryGoalType.TargetBalanceOnDate;
+		state.monthlyFunding = subCategory.monthlyFunding ? subCategory.monthlyFunding : 0;
 		state.targetBalanceMonth = targetBalanceMonth.getMonth().toString();
 		state.targetBalanceYear = targetBalanceMonth.getYear().toString();
 		this.setState(state);
@@ -133,19 +141,28 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 
 	private onMonthlyFundingChange(event:React.FormEvent<any>):void {
 
-		var updatedValue = this.state.monthlyFunding;
-		var target = event.target as HTMLInputElement;
-		if(target.value == "")
-			updatedValue = "";
-		else {
-			var parsedValue = Number.parseInt(target.value);
-			if(!isNaN(parsedValue))
-				updatedValue = parsedValue.toString();
-		}
+		var state = Object.assign({}, this.state);
+		state.monthlyFunding = this.props.dataFormatter.unformatCurrency((event.target as HTMLInputElement).value);
+		this.setState(state);
+	}
+
+	private onMonthlyFundingFocus(event:React.FocusEvent<any>):void {
 
 		var state = Object.assign({}, this.state);
-		state.monthlyFunding = updatedValue;
+		state.monthlyFundingHasFocus = true;
 		this.setState(state);
+	}
+
+	private onMonthlyFundingBlur(event:React.FocusEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.monthlyFundingHasFocus = false;
+		this.setState(state);
+	}
+
+	private handleEditClicked(event:React.MouseEvent<any>):void {
+		// Switching to show the editor
+		this.showEditor();
 	}
 
 	private handleDeleteClicked(event:React.MouseEvent<any>):void {
@@ -197,7 +214,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		subCategoryClone.goalCreationMonth = monthlySubCategoryBudget.month;
 
 		if(this.state.goalType == SubCategoryGoalType.MonthlyFunding) {
-			subCategoryClone.monthlyFunding = this.state.monthlyFunding ? Number.parseInt(this.state.monthlyFunding) : 0;
+			subCategoryClone.monthlyFunding = this.state.monthlyFunding;
 		}
 		else {
 			subCategoryClone.monthlyFunding = null;
@@ -226,8 +243,33 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		});
 
 	}
+
+	private getGoalsHeader(subCategory:budgetEntities.ISubCategory):JSX.Element {
+
+		var goalsHeader:JSX.Element;
+
+		// Only show the edit link in the header if we have a goal defined, and we are 
+		// not currently showing the editor.
+		if(subCategory.goalType && this.state.showEditor == false) {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					<span>GOALS</span>
+					<PLinkButton text="Edit" enabled={true} clickHandler={this.handleEditClicked} />
+				</div>
+			);
+		}
+		else {
+			goalsHeader = (
+				<div className="inspector-section-header">
+					GOALS
+				</div>
+			);
+		}
+
+		return goalsHeader;
+	}
 	
-	private getGoalValuesContainerForTargetBalanceOnDate():JSX.Element {
+	private getGoalEditorForTargetBalanceOnDate():JSX.Element {
 
 		var yearOptions:Array<JSX.Element> = [];
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
@@ -266,44 +308,44 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		);
 	}
 	
-	private getGoalValuesContainerForMonthlyFunding():JSX.Element {
+	private getGoalEditorForMonthlyFunding():JSX.Element {
+
+		var dataFormatter = this.props.dataFormatter;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var monthlyFunding = dataFormatter.formatCurrency(this.state.monthlyFunding, this.state.monthlyFundingHasFocus);
 
 		return (
 			<div>
 				<FormGroup key="formgroup">
 					<ControlLabel>Target Budgeted Amount:</ControlLabel>
 					<FormControl type="text" componentClass="input" style={FormControlStyle} 
-						value={this.state.monthlyFunding} onChange={this.onMonthlyFundingChange}
+						value={monthlyFunding} onChange={this.onMonthlyFundingChange}
+						onFocus={this.onMonthlyFundingFocus} onBlur={this.onMonthlyFundingBlur}
 					/>
 				</FormGroup>
 			</div>
 		);
 	}
 
-	private getGoalsHeader(subCategory:budgetEntities.ISubCategory):JSX.Element {
+	private getGoalViewerForTargetBalanceOnDate():JSX.Element {
 
-		var goalsHeader:JSX.Element;
-
-		// Only show the edit link in the header if we have a goal defined, and we are 
-		// not currently showing the editor.
-		if(subCategory.goalType && this.state.showEditor == false) {
-			goalsHeader = (
-				<div className="inspector-section-header">
-					<span>GOALS</span>
-					<PLinkButton text="Edit" enabled={true} />
-				</div>
-			);
-		}
-		else {
-			goalsHeader = (
-				<div className="inspector-section-header">
-					GOALS
-				</div>
-			);
-		}
-
-		return goalsHeader;
+		return null;
 	}
+
+	private getGoalViewerForMonthlyFunding():JSX.Element {
+
+		return null;
+	}
+
+	public componentWillReceiveProps(nextProps:PDebtCategoryGoalsProps):void {
+
+		// If the subCategory or the monthlySubCategoryBudget entity changes, update the values in the state.
+		if(this.props.subCategory !== nextProps.subCategory || this.props.monthlySubCategoryBudget != nextProps.monthlySubCategoryBudget) {
+			var state = Object.assign({}, this.state);
+			state.showEditor = false;
+			this.setState(state);
+		}
+	} 
 
 	public render() {
 
@@ -327,25 +369,30 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 				);
 			}
 			else {
-				// Get the monthlySubCategoryBudget to display the goal progress.
-				var target = monthlySubCategoryBudget.goalTarget;
-				var completed = monthlySubCategoryBudget.goalOverallFunded;
-				var percentageCompleted = Math.round(completed / target * 100); 
+				// Show the goal progress
+				// Note: When viewing goals, use values directly from the entities in the props.
+				var viewer:JSX.Element;
+				if(subCategory.goalType == SubCategoryGoalType.TargetBalanceOnDate)
+					viewer = this.getGoalViewerForTargetBalanceOnDate();
+				else
+					viewer = this.getGoalViewerForMonthlyFunding();
+				
 				return (
 					<div style={GoalsContainerStyle}>
 						{header}
-						<ProgressBar now={percentageCompleted} />
+						{viewer}
 					</div>
 				);
 			}
 		}
 		else {
 			// Show the Goals Editor
+			// Use values from the state when editing instead of from the entities in the props.
 			var editor:JSX.Element;
 			if(this.state.goalType == SubCategoryGoalType.TargetBalanceOnDate)
-				editor = this.getGoalValuesContainerForTargetBalanceOnDate();
+				editor = this.getGoalEditorForTargetBalanceOnDate();
 			else
-				editor = this.getGoalValuesContainerForMonthlyFunding();
+				editor = this.getGoalEditorForMonthlyFunding();
 
 			return (
 				<div style={GoalsContainerStyle}>

@@ -409,6 +409,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var dataFormatter = this.props.dataFormatter;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var targetBalance = dataFormatter.formatCurrency(this.state.targetBalance, this.state.targetBalanceHasFocus);
+
 		var yearOptions:Array<JSX.Element> = [];
 		var currentMonth = DateWithoutTime.createForCurrentMonth();
 		for(var i = currentMonth.getYear(), j = 0; j < 20; i++,j++) {
@@ -458,6 +459,7 @@ export class PDefaultCategoryGoals extends React.Component<PDefaultCategoryGoals
 		var dataFormatter = this.props.dataFormatter;
 		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
 		var monthlyFunding = dataFormatter.formatCurrency(this.state.monthlyFunding, this.state.monthlyFundingHasFocus);
+
 		return (
 			<div key={monthlySubCategoryBudget.entityId + "_monthlyFundingEditor"}>
 				<FormGroup key="formgroup">
