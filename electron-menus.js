@@ -57,23 +57,6 @@ function initializeModule() {
 		label: 'View',
 		submenu: [
 			{
-				label: 'Reload',
-				accelerator: 'CmdOrCtrl+R',
-				click (item, focusedWindow) {
-					if (focusedWindow) focusedWindow.reload()
-				}
-			},
-			{
-				label: 'Toggle Developer Tools',
-				accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-				click (item, focusedWindow) {
-					if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-				}
-			},
-			{
-				type: 'separator'
-			},
-			{
 				role: 'resetzoom'
 			},
 			{
@@ -109,8 +92,31 @@ function initializeModule() {
 				click () { require('electron').shell.openExternal('http://electron.atom.io') }
 			}
 		]
+	}]
+
+	if (process.env.NODE_ENV === 'development') {
+
+		// Add the "Reload" and "Toggle Developer Tools" menu items to the view menu
+		template[2].submenu.unshift(
+			{
+				label: 'Reload',
+				accelerator: 'CmdOrCtrl+R',
+				click (item, focusedWindow) {
+					if (focusedWindow) focusedWindow.reload()
+				}
+			},
+			{
+				label: 'Toggle Developer Tools',
+				accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+				click (item, focusedWindow) {
+					if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+				}
+			},
+			{
+				type: 'separator'
+			}
+		)
 	}
-	]
 
 	if (process.platform === 'darwin') {
 		template.unshift({
