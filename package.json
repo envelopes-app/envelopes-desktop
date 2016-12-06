@@ -130,7 +130,8 @@
     "rebuild-modules": "electron-rebuild --pre-gyp-fix",
 
     "build": "node ./scripts/build.js",
-    "package-app": "electron-packager ./build ENAB --platform=darwin --out=./dist --no-prune --overwrite && cp ./application.icns ./dist/ENAB-darwin-x64/ENAB.app/Contents/Resources/electron.icns",
+    "package-osx-app": "electron-packager ./build ENAB --platform=darwin --out=./dist --no-prune --overwrite && cp ./application.icns ./dist/ENAB-darwin-x64/ENAB.app/Contents/Resources/electron.icns",
+    "package-win-app": "electron-packager ./build ENAB --platform=win32 --out=./dist --no-prune --overwrite",
 
     "pretest": "webpack --config './config/webpack.config.test.js'",
     "test": "NODE_ENV=test karma start ./config/karma.config.js"
