@@ -12,6 +12,8 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 
 export interface PMasterCategoryRowProps {
 	dataFormatter:DataFormatter;
+	containerHeight:number;
+	containerWidth:number;
 	masterCategory:budgetEntities.IMasterCategory;
 	subCategories:Array<budgetEntities.ISubCategory>;
 	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
@@ -22,8 +24,8 @@ export interface PMasterCategoryRowProps {
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
 	expandMasterCategory:(masterCategoryId:string)=>void;
 	collapseMasterCategory:(masterCategoryId:string)=>void;
-	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
-	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
+	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
 	showMasterCategoryActivityDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
 
@@ -151,9 +153,16 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 	private onAddSubCategoryClick(event:React.MouseEvent<any>):void {
 
+		var eventY = event.clientY;
+		var containerHeight = this.props.containerHeight;
+		var placement = "bottom";
+		// If we have more space above, then below the name, then show the dialog above instead of below
+		if(eventY > containerHeight - eventY)
+			placement = "top";
+
 		var masterCategory = this.props.masterCategory;
 		var element = ReactDOM.findDOMNode(this.addCategoryButton) as HTMLElement;
-		this.props.showCreateCategoryDialog(masterCategory.entityId, element);
+		this.props.showCreateCategoryDialog(masterCategory.entityId, element, placement);
 	}
 	
 	private onCheckBoxSelectionChange(event:React.FormEvent<any>):void {
@@ -195,12 +204,19 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 	private onCategoryNameClick(event:React.MouseEvent<any>):void {
 
+		var eventY = event.clientY;
+		var containerHeight = this.props.containerHeight;
+		var placement = "bottom";
+		// If we have more space above, then below the name, then show the dialog above instead of below
+		if(eventY > containerHeight - eventY)
+			placement = "top";
+
 		var masterCategory = this.props.masterCategory;
 		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
 		if(isHiddenMasterCategory)
 			this.props.showHiddenCategoriesDialog(this.categoryNameLabel);
 		else
-			this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel);
+			this.props.showMasterCategoryEditDialog(masterCategory.entityId, this.categoryNameLabel, placement);
 	}
 
 	private onActivityClick(event:React.MouseEvent<any>):void {

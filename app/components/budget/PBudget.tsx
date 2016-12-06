@@ -30,6 +30,8 @@ export interface PBudgetProps {
 export interface PBudgetState {
 	dataFormat:string;
 	dataFormatter:DataFormatter;
+	componentWidth:number;
+	componentHeight:number;
 	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
@@ -54,6 +56,8 @@ const BudgetSubContainerStyle = {
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
+	private budgetContainer:HTMLDivElement;
+
 	// TODO: Goals
 	// TODO: Activity column numbers should be disabled when there are is no activity
 
@@ -71,6 +75,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	constructor(props:PBudgetProps) {
         super(props);
+		this.handleWindowResize = this.handleWindowResize.bind(this);
 		this.setSelectedMonth = this.setSelectedMonth.bind(this); 
 		this.selectAllCategories = this.selectAllCategories.bind(this);
 		this.unselectAllCategories = this.unselectAllCategories.bind(this);
@@ -113,6 +118,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.state = {
 			dataFormat: JSON.stringify(dataFormat),
 			dataFormatter: new DataFormatter(dataFormat),
+			componentWidth:0, 
+			componentHeight:0, 
 			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
@@ -129,6 +136,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			this.props.setSelectedBudgetMonth(month);
 		}
 	}
+	
   	// *******************************************************************************************************
 	// Handlers for commands initiated from the budget rows
 	// *******************************************************************************************************
@@ -378,37 +386,37 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
-	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement):void {
+	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for editing the subcategory
-		this.subCategoryEditDialog.show(subCategoryId, element);
+		this.subCategoryEditDialog.show(subCategoryId, element, placement);
 	}
 
-	private showMasterCategoryEditDialog(masterCategoryId:string, element:HTMLElement):void {
+	private showMasterCategoryEditDialog(masterCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for editing the subcategory
-		this.masterCategoryEditDialog.show(masterCategoryId, element);
+		this.masterCategoryEditDialog.show(masterCategoryId, element, placement);
 	}
 
-	private showCreateCategoryDialog(masterCategoryId:string, element:HTMLElement):void {
+	private showCreateCategoryDialog(masterCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for creating a category
-		this.createCategoryDialog.show(masterCategoryId, element);
+		this.createCategoryDialog.show(masterCategoryId, element, placement);
 	}
 
-	private showDefaultSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
+	private showDefaultSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for default category activity
 		var selectedMonth = this.props.selectedBudgetMonth;
-		this.defaultCategoryActivityDialog.show(subCategoryId, selectedMonth, element);
+		this.defaultCategoryActivityDialog.show(subCategoryId, selectedMonth, element, placement);
 	}
 
-	private showDebtSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement):void {
+	private showDebtSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for debt category activity
 		var selectedMonth = this.props.selectedBudgetMonth;
-		this.debtCategoryActivityDialog.show(subCategoryId, selectedMonth, element);
+		this.debtCategoryActivityDialog.show(subCategoryId, selectedMonth, element, placement);
 	}
 
-	private showMasterCategoryActivityDialog(masterCategoryId:string, element:HTMLElement):void {
+	private showMasterCategoryActivityDialog(masterCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for master category activity
 		var selectedMonth = this.props.selectedBudgetMonth;
-		this.masterCategoryActivityDialog.show(masterCategoryId, selectedMonth, element);
+		this.masterCategoryActivityDialog.show(masterCategoryId, selectedMonth, element, placement);
 	}
 
 	private showCoverOverspendingDialog(subCategoryId:string, amountToCover:number, element:HTMLElement, placement:string = "left"):void {
@@ -471,6 +479,28 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 	// *******************************************************************************************************
 	// *******************************************************************************************************
+	public componentDidMount() {
+		window.addEventListener("resize", this.handleWindowResize);
+		this.updateComponentDimensions();
+	}
+
+	public componentWillUnmount() {
+		window.removeEventListener("resize", this.handleWindowResize);
+	}
+
+	private handleWindowResize():void {
+		this.updateComponentDimensions();
+	}
+
+	public updateComponentDimensions() {
+		debugger;
+		var state = Object.assign({}, this.state) as PBudgetState;
+		var div = ReactDOM.findDOMNode(this.budgetContainer);
+		state.componentWidth = div.clientWidth;
+		state.componentHeight = div.clientHeight;
+		this.setState(state);
+	}
+
 	public componentWillReceiveProps(nextProps:PBudgetProps):void {
 
 		// If the dataFormat in the active budget has changed, then recreate the dataFormatter.
@@ -493,13 +523,13 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	public render() {
 
 		if(!this.props.entitiesCollection.budgets || this.props.entitiesCollection.budgets.length == 0)
-			return <div />;
+			return <div ref={(d)=> this.budgetContainer = d} style={BudgetContainerStyle} />;
 			
 		var selectedMonth = this.props.selectedBudgetMonth;
 		var currentBudget = this.props.entitiesCollection.budgets.getEntityById(this.props.activeBudgetId);
 
     	return (
-			<div style={BudgetContainerStyle}>
+			<div ref={(d)=> this.budgetContainer = d} style={BudgetContainerStyle}>
 				<PBudgetHeader 
 					currentMonth={selectedMonth} 
 					currentBudget={currentBudget}
@@ -520,6 +550,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
 						dataFormatter={this.state.dataFormatter}
+						containerHeight={this.state.componentHeight}
+						containerWidth={this.state.componentWidth}
 						currentMonth={selectedMonth} 
 						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 

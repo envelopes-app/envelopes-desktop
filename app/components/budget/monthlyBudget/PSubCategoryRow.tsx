@@ -16,6 +16,8 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 
 export interface PSubCategoryRowProps {
 	dataFormatter:DataFormatter;
+	containerHeight:number;
+	containerWidth:number;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
 	editingSubCategory:string;
@@ -27,7 +29,7 @@ export interface PSubCategoryRowProps {
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
-	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
+	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
 	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
@@ -173,8 +175,16 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	}
 
 	private onCategoryNameClick(event:React.MouseEvent<any>):void {
+
+		var eventY = event.clientY;
+		var containerHeight = this.props.containerHeight;
+		var placement = "bottom";
+		// If we have more space above, then below the name, then show the dialog above instead of below
+		if(eventY > containerHeight - eventY)
+			placement = "top";
+
 		var subCategory = this.props.subCategory;
-		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel);
+		this.props.showSubCategoryEditDialog(subCategory.entityId, this.categoryNameLabel, placement);
 	}
 
 	private onBalanceValueClick(event:React.MouseEvent<any>):void {

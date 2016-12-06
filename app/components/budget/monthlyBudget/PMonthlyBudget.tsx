@@ -16,6 +16,8 @@ import * as budgetEntities from '../../../interfaces/budgetEntities';
 
 export interface PMonthlyBudgetProps {
 	dataFormatter:DataFormatter;
+	containerHeight:number;
+	containerWidth:number;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
 	editingSubCategory:string;
@@ -92,7 +94,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					<PSubCategoryRow 
 						key={subCategory.entityId} 
 						dataFormatter={this.props.dataFormatter}
-						subCategory={subCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
+						containerHeight={this.props.containerHeight}
+						containerWidth={this.props.containerWidth}
+						subCategory={subCategory} 
+						monthlySubCategoryBudget={monthlySubCategoryBudget}
 						editingSubCategory={this.props.editingSubCategory}
 						selectedSubCategories={this.props.selectedSubCategories} 
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
@@ -117,6 +122,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				<PMasterCategoryRow
 					key={masterCategory.entityId} 
 					dataFormatter={this.props.dataFormatter}
+					containerHeight={this.props.containerHeight}
+					containerWidth={this.props.containerWidth}
 					masterCategory={masterCategory} 
 					subCategories={subCategories} 
 					monthlySubCategoryBudgets={monthlySubCategoryBudgets}
@@ -151,7 +158,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 			<PSubCategoryRow 
 				key={uncategorizedSubCategory.entityId} 
 				dataFormatter={this.props.dataFormatter}
-				subCategory={uncategorizedSubCategory} monthlySubCategoryBudget={monthlySubCategoryBudget}
+				containerHeight={this.props.containerHeight}
+				containerWidth={this.props.containerWidth}
+				subCategory={uncategorizedSubCategory} 
+				monthlySubCategoryBudget={monthlySubCategoryBudget}
 				editingSubCategory={this.props.editingSubCategory}
 				selectedSubCategories={this.props.selectedSubCategories} 
 				selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
