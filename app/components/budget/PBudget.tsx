@@ -493,7 +493,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	}
 
 	public updateComponentDimensions() {
-		debugger;
+
 		var state = Object.assign({}, this.state) as PBudgetState;
 		var div = ReactDOM.findDOMNode(this.budgetContainer);
 		state.componentWidth = div.clientWidth;
