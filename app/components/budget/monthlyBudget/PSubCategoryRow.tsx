@@ -61,7 +61,8 @@ const SubCategoryRowContainerStyle:React.CSSProperties = {
 	borderRightWidth: "0px",
 	borderLeftWidth: "0px",
 	paddingTop: "3px",
-	paddingBottom: "3px"
+	paddingBottom: "3px",
+	paddingRight: "10px"
 }
 
 const SelectionColumnStyle:React.CSSProperties = {

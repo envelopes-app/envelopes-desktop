@@ -249,11 +249,11 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
     	return (
 			<div style={MonthlyBudgetContainerStyle}>
-				<PHeaderRow 
-					selectAllCategories={this.props.selectAllCategories}
-					unselectAllCategories={this.props.unselectAllCategories}
-				/>
 				<div style={MonthlyBudgetSubContainerStyle}>
+					<PHeaderRow 
+						selectAllCategories={this.props.selectAllCategories}
+						unselectAllCategories={this.props.unselectAllCategories}
+					/>
 					{masterCategoryRows}
 				</div>
 			</div>

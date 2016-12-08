@@ -20,7 +20,8 @@ const HeaderRowContainerStyle:React.CSSProperties = {
 	borderTopWidth: "0px",
 	borderBottomWidth: "1px",
 	borderRightWidth: "0px",
-	borderLeftWidth: "0px"
+	borderLeftWidth: "0px",
+	paddingRight: "10px"
 }
 
 const SelectionColumnStyle:React.CSSProperties = {
