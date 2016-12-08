@@ -27,7 +27,7 @@ const CategoriesContainer:React.CSSProperties = {
 	flexFlow: "column nowrap",
 	width: "100%",
 	maxHeight: "400px",
-	overflowY: "scroll"
+	overflowY: "auto"
 }
 
 const MasterCategoryContainerStyle:React.CSSProperties = {

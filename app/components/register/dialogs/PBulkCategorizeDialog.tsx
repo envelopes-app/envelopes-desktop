@@ -24,7 +24,7 @@ export interface PBulkCategorizeDialogState {
 }
 
 const ScrollableContainerStyle:React.CSSProperties = {
-	overflowY: "scroll",
+	overflowY: "auto",
 }
 
 export class PBulkCategorizeDialog extends React.Component<PBulkCategorizeDialogProps, PBulkCategorizeDialogState> {

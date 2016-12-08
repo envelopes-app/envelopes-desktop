@@ -37,7 +37,7 @@ const InspectorContainerStyle:React.CSSProperties = {
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
 	backgroundColor: "#E5F5F9",
-	overflowY: "scroll"
+	overflowY: "auto"
 }
 
 export class PInspectorContainer extends React.Component<PInspectorContainerProps, {}> {

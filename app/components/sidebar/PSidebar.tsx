@@ -66,8 +66,10 @@ const PModuleButtonStyle:React.CSSProperties = {
 };
 
 const PContainerStyle:React.CSSProperties = {
-	flex: "1 1 100%",
-	overflowY: "scroll"
+	flex: "1 1 auto",
+	width: "100%",
+	height: "100%",
+	overflowY: "auto"
 }
 
 const ModuleButtonIconStyle:React.CSSProperties = {

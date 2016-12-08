@@ -119,7 +119,7 @@ const ListHeaderAccountTypeLabelStyle:React.CSSProperties = {
 const ListStyle:React.CSSProperties = {
 	paddingLeft: "0px",
 	maxHeight: "250px",	
-	overflowY: "scroll",
+	overflowY: "auto",
 }
 
 const ListAccountNameStyle:React.CSSProperties = {

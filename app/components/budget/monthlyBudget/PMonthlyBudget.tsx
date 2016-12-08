@@ -60,12 +60,11 @@ const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
-	overflowY: "scroll"
+	overflowY: "auto"
 }
 
 const MonthlyBudgetSubContainerStyle:React.CSSProperties = {
 	width: "100%",
-	height: "100%",
 	display: "flex",
 	flexFlow: 'column nowrap',
 }

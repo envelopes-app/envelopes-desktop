@@ -34,7 +34,7 @@ const PopoverStyle:React.CSSProperties = {
 }
 
 const ScrollableContainerStyle = {
-	overflowY: "scroll",
+	overflowY: "auto",
 }
 
 const NewPayeeCreationMessageStyle = {

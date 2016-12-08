@@ -25,7 +25,7 @@ const TransactionsContainer:React.CSSProperties = {
 
 const TransactionsListContainer:React.CSSProperties = {
 	flex: "1 1 100%",
-	overflowY: "scroll"
+	overflowY: "auto"
 }
 
 const HeaderRow:React.CSSProperties = {

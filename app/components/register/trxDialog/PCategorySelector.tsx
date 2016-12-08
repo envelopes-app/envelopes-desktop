@@ -37,7 +37,7 @@ const PopoverStyle:React.CSSProperties = {
 }
 
 const ScrollableContainerStyle:React.CSSProperties = {
-	overflowY: "scroll",
+	overflowY: "auto",
 }
 
 export class PCategorySelector extends React.Component<PCategorySelectorProps, {}> {

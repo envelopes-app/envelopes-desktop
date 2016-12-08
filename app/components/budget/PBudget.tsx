@@ -50,8 +50,7 @@ const BudgetSubContainerStyle = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	height: '100%',
-	width: '100%',
-	overflowX: "scroll"
+	width: '100%'
 }
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
