@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 import * as Baby from 'babyparse';
 import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
-import { DataFormatter } from '../../utilities';
+import { DataFormatter, Logger } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
 import { YNABDataImporter } from '../../persistence';
@@ -179,38 +179,36 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 	private browseForBudgetFile():void {
 
-		const {dialog} = require('electron').remote;
-		var options:Electron.OpenDialogOptions = {
-			filters: [{name: 'CSV Files', extensions: ['csv']}],
-			properties: ['openFile']
-		};
-		dialog.showOpenDialog(null, options, (filePaths:Array<string>)=>{
+		var { ipcRenderer } = require('electron');
+		ipcRenderer.once("budget-file-path", (event, ...args:any[])=>{
 
-			if(filePaths && filePaths.length > 0) {
+			if(args[0]) {
 				// Save the file path in the state and validate the file
 				var state = Object.assign({}, this.state);
-				state.budgetPath = filePaths[0];
+				state.budgetPath = args[0];
 				this.setState(state);
 			}
 		});
+
+		// Send the request to the main process
+		ipcRenderer.send("select-budget-file-request", []);
 	}
 
 	private browseForRegisterFile():void {
 
-		const {dialog} = require('electron').remote;
-		var options:Electron.OpenDialogOptions = {
-			filters: [{name: 'CSV Files', extensions: ['csv']}],
-			properties: ['openFile']
-		};
-		dialog.showOpenDialog(null, options, (filePaths:Array<string>)=>{
+		var { ipcRenderer } = require('electron');
+		ipcRenderer.once("register-file-path", (event, ...args:any[])=>{
 
-			if(filePaths && filePaths.length > 0) {
+			if(args[0]) {
 				// Save the file path in the state and validate the file
 				var state = Object.assign({}, this.state);
-				state.registerPath = filePaths[0];
+				state.registerPath = args[0];
 				this.setState(state);
 			}
 		});
+
+		// Send the request to the main process
+		ipcRenderer.send("select-register-file-request", []);
 	}
 
 	private validateStep1():void {
