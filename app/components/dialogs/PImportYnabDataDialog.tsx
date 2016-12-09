@@ -6,6 +6,7 @@ import * as ReactDOM from 'react-dom';
 import * as Baby from 'babyparse';
 import { Modal, Form, FormGroup, FormControl, ControlLabel, Glyphicon } from 'react-bootstrap';
 
+import { PFileDropContainer } from '../common/PFileDropContainer';
 import { DataFormatter, Logger } from '../../utilities';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import { AccountTypes, AccountTypeNames } from '../../constants';
@@ -50,25 +51,11 @@ const FormControlsContainer:React.CSSProperties = {
 const FileInputStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	borderColor: '#2FA2B5',
-	borderWidth: '2px',
-	borderRightWidth: '1px',
-	borderTopRightRadius: "0px",
-	borderBottomRightRadius: "0px",
+	borderWidth: '2px'
 }
 
 const FileInputErrorStyle:React.CSSProperties = Object.assign({}, FileInputStyle, {
 	borderBottomLeftRadius: "0px",
-});
-
-const BrowseButtonStyle:React.CSSProperties = {
-	height: '34px',
-	borderWidth: '2px',
-	borderLeftWidth: '1px',
-	borderTopLeftRadius: "0px",
-	borderBottomLeftRadius: "0px",
-}
-
-const BrowseButtonErrorStyle:React.CSSProperties = Object.assign({}, BrowseButtonStyle, {
 	borderBottomRightRadius: "0px",
 });
 
@@ -152,8 +139,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);
 		this.showBudgetSettings = this.showBudgetSettings.bind(this);
-		this.browseForBudgetFile = this.browseForBudgetFile.bind(this);
-		this.browseForRegisterFile = this.browseForRegisterFile.bind(this);
+		this.handleFileDrop = this.handleFileDrop.bind(this);
 		this.validateStep1 = this.validateStep1.bind(this);
 		this.validateStep2 = this.validateStep2.bind(this);
         this.state = { 
@@ -177,38 +163,30 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.props.showBudgetSettings();
 	}
 
-	private browseForBudgetFile():void {
+	private handleFileDrop(files:FileList, event:React.SyntheticEvent<any>):void {
 
-		var { ipcRenderer } = require('electron');
-		ipcRenderer.once("budget-file-path", (event, ...args:any[])=>{
+		var stateModified = false;
+		var state = Object.assign({}, this.state);
 
-			if(args[0]) {
-				// Save the file path in the state and validate the file
-				var state = Object.assign({}, this.state);
-				state.budgetPath = args[0];
-				this.setState(state);
+		for(var i:number = 0; i < files.length; i++) {
+
+			var file:File = files[i];
+			if(file.type == 'text/csv') {
+
+				var fileName = file.name;
+				if(fileName.endsWith("Budget.csv")) {
+					state.budgetPath = file.path;
+					stateModified = true;
+				}
+				else if(fileName.endsWith("Register.csv")) {
+					state.registerPath = file.path;
+					stateModified = true;
+				}
 			}
-		});
+		}
 
-		// Send the request to the main process
-		ipcRenderer.send("select-budget-file-request", []);
-	}
-
-	private browseForRegisterFile():void {
-
-		var { ipcRenderer } = require('electron');
-		ipcRenderer.once("register-file-path", (event, ...args:any[])=>{
-
-			if(args[0]) {
-				// Save the file path in the state and validate the file
-				var state = Object.assign({}, this.state);
-				state.registerPath = args[0];
-				this.setState(state);
-			}
-		});
-
-		// Send the request to the main process
-		ipcRenderer.send("select-register-file-request", []);
+		if(stateModified)
+			this.setState(state);
 	}
 
 	private validateStep1():void {
@@ -385,12 +363,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Budget.csv' Path:
 					</ControlLabel>
-					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
-						<button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForBudgetFile}>
-							<Glyphicon glyph="folder-open" />
-						</button>
-					</div>
+					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
 					<label style={ErrorMessageStyle}>{this.state.budgetPathValidationMessage}</label>
 				</FormGroup>
 			);
@@ -401,12 +374,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Budget.csv' Path:
 					</ControlLabel>
-					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetPath} readOnly={true} />
-						<button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForBudgetFile}>
-							<Glyphicon glyph="folder-open" />
-						</button>
-					</div>
+					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetPath} readOnly={true} />
 				</FormGroup>
 			);
 		}
@@ -423,12 +391,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Register.csv' Path:
 					</ControlLabel>
-					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerPath} readOnly={true} />
-						<button className="dialog-browse-button" style={BrowseButtonErrorStyle} onClick={this.browseForRegisterFile}>
-							<Glyphicon glyph="folder-open" />
-						</button>
-					</div>
+					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerPath} readOnly={true} />
 					<label style={ErrorMessageStyle}>{this.state.registerPathValidationMessage}</label>
 				</FormGroup>
 			);
@@ -439,12 +402,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Register.csv' Path:
 					</ControlLabel>
-					<div style={FormControlsContainer}>
-						<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerPath} readOnly={true} />
-						<button className="dialog-browse-button" style={BrowseButtonStyle} onClick={this.browseForRegisterFile}>
-							<Glyphicon glyph="folder-open" />
-						</button>
-					</div>
+					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerPath} readOnly={true} />
 				</FormGroup>
 			);
 		}
@@ -465,12 +423,17 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					</Modal.Header>
 					<Modal.Body>
 						<Form>
-							<div>
+							<p>
 								Before importing your YNAB data, make sure that the date and currency formatting settings in this budget match those of your online YNAB budget. If the settings do not match, the data may not import correctly.
-							</div>
+							</p>
+							<p>
+								Drag and drop the 'Budget.csv' and 'Register.csv' files below.
+							</p>
 							<br />
-							{budgetPath}
-							{registerPath}
+							<PFileDropContainer handleFileDrop={this.handleFileDrop}>
+								{budgetPath}
+								{registerPath}
+							</PFileDropContainer>
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>

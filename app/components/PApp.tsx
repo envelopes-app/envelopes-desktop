@@ -113,6 +113,19 @@ export class PApp extends React.Component<AppProps, AppState> {
 		ipcRenderer.send("window-title-request", payload);
 	}
 
+	public componentDidMount() {
+
+		document.addEventListener('dragover', (event)=>{
+			event.preventDefault();
+			return false;
+		}, false);
+
+		document.addEventListener('drop', (event)=>{
+			event.preventDefault();
+			return false;
+		}, false);	
+	}
+
 	public render() {
 
 		var visibleModule;
