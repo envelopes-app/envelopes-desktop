@@ -27,7 +27,6 @@ export interface PInspectorContainerProps {
 
 const InspectorContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
-	minWidth: "340px",
 	width: "340px",
 	height: "100%",
 	borderColor: "#DFE4E9",

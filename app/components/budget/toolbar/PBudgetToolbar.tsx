@@ -18,7 +18,7 @@ const BudgetToolbarContainerStyle:React.CSSProperties = {
 	width: '100%',
 	backgroundColor: '#ffffff',
 	paddingLeft: '10px',
-	paddingRight: '10px'
+	paddingRight: '10px',
 }
 
 const BudgetToolbarStyle:React.CSSProperties = {

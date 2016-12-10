@@ -50,14 +50,15 @@ const BudgetSubContainerStyle = {
 	display: 'flex',
 	flexFlow: 'row nowrap',
 	height: '100%',
-	width: '100%'
+	width: '100%',
+	overflowX: 'auto',
+	overflowY: "hidden"
 }
 
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	private budgetContainer:HTMLDivElement;
 
-	// TODO: Goals
 	// TODO: Activity column numbers should be disabled when there are is no activity
 
 	private createCategoryDialog:dialogs.PCreateCategoryDialog;

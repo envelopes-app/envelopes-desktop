@@ -31,7 +31,7 @@ const BudgetHeaderContainerStyle:React.CSSProperties = {
 	width: '100%',
 	backgroundColor: '#003540',
 	paddingLeft: '5px',
-	paddingRight: '5px'
+	paddingRight: '5px',
 }
 
 const BudgetHeaderStyle:React.CSSProperties = {

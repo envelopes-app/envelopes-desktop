@@ -11,9 +11,14 @@ var appConfig = require('../config/webpack.config.prod');
 var containerConfig = require('../config/webpack.config.electron');
 var paths = require('../config/paths');
 
-// Remove all content but keep the directory so that
-// if you're in it, you don't end up in Trash
-rimrafSync(paths.appBuild + '/*.*');
+if(!fs.existsSync(paths.appBuild)) {
+	fs.mkdirSync(paths.appBuild);
+}
+else {
+	// Remove all content but keep the directory so that
+	// if you're in it, you don't end up in Trash
+	rimrafSync(paths.appBuild + '/*.*');
+}
 
 // Copy the package.json file into the build directory
 fs.createReadStream(path.join(paths.root, 'package.json')).pipe(fs.createWriteStream(path.join(paths.appBuild, 'package.json')));
