@@ -17,7 +17,7 @@ module.exports = {
 	devtool: 'source-map',
 	target: 'electron-main',
 	entry: [
-		'./electron.js'
+	  	'./electron.js'
 	],
 	output: {
 		path: paths.appBuild,

@@ -22,7 +22,7 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     require.resolve('./polyfills'),
-	path.join(paths.appSrc, 'index')
+	  path.join(paths.appSrc, 'index')
   ],
   output: {
     path: paths.appBuild,

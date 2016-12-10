@@ -7,9 +7,9 @@ var filesize = require('filesize');
 var gzipSize = require('gzip-size').sync;
 var rimrafSync = require('rimraf').sync;
 var webpack = require('webpack');
-var appConfig = require('../config/webpack.config.prod');
-var containerConfig = require('../config/webpack.config.electron');
-var paths = require('../config/paths');
+var appConfig = require('./config/webpack.config.prod');
+var containerConfig = require('./config/webpack.config.electron');
+var paths = require('./config/paths');
 
 if(!fs.existsSync(paths.appBuild)) {
 	fs.mkdirSync(paths.appBuild);
@@ -20,22 +20,37 @@ else {
 	rimrafSync(paths.appBuild + '/*.*');
 }
 
-// Copy the package.json file into the build directory
-fs.createReadStream(path.join(paths.root, 'package.json')).pipe(fs.createWriteStream(path.join(paths.appBuild, 'package.json')));
+// Copy the icon files into the app output directory
+// fs.createReadStream(path.join(paths.root, 'package.json')).pipe(fs.createWriteStream(path.join(paths.appBuild, 'package.json')));
 
 console.log('Creating an optimized production build...');
 webpack(appConfig).run(function(err, stats) {
 	if (err) {
-		console.error('Failed to create a production build. Reason:');
+		console.error("Failed to create a production 'react app' build. Reason:");
 		console.error(err.message || err);
 		process.exit(1);
 	}
+	else {
+		outputStats("react app", stats);
+	}
 
-	console.log(chalk.green('Compiled successfully.'));
-	console.log();
 
+	webpack(containerConfig).run(function(err, stats) {
+		if (err) {
+			console.error("Failed to create a production 'electron container' build. Reason:");
+			console.error(err.message || err);
+			process.exit(1);
+		}
+		else {
+			outputStats("electron container", stats);
+		}
+	});
+});
+
+function outputStats(moduleName, stats) {
+
+	console.log(chalk.green("Compiled '" + moduleName + "' successfully."));
 	console.log('File sizes after gzip:');
-	console.log();
 	var assets = stats.toJson().assets
 		.filter(asset => /\.(js|css)$/.test(asset.name))
 		.map(asset => {
@@ -48,17 +63,9 @@ webpack(appConfig).run(function(err, stats) {
 	assets.sort((a, b) => b.size - a.size);
 	assets.forEach(asset => {
 		console.log(
-			'  ' + chalk.dim('build' + path.sep) + chalk.cyan(asset.name) + ': ' +
+			'  ' + chalk.cyan(asset.name) + ': ' +
 			chalk.green(filesize(asset.size))
 		);
   	});
 	console.log();
-
-	webpack(containerConfig).run(function(err, stats) {
-		if (err) {
-			console.error('Failed to create a production build. Reason:');
-			console.error(err.message || err);
-			process.exit(1);
-		}
-	});
-});
+}

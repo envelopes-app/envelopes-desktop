@@ -6,10 +6,10 @@ function resolve(relativePath) {
 
 module.exports = {
   root: resolve('../'),
-  appBuild: resolve('../build'),
+  appSrc: resolve('../src'),
+  appBuild: resolve('../app'),
   appHtml: resolve('../index.html'),
   appFavicon: resolve('../favicon.ico'),
   appPackageJson: resolve('../package.json'),
-  appSrc: resolve('../app'),
   nodeModules: resolve('../node_modules')
 };

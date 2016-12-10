@@ -1,8 +1,13 @@
 {
   "name": "enab",
+  "productName": "ENAB",
+  "description": "An alternate implementation of the YNAB methodology.",
   "version": "1.0.0",
+  "author": {
+    "name": "ByteSmiths Pvt. Ltd."
+  },
   "private": true,
-  "main": "electron.js",
+  "main": "app/electron.js",
   "devDependencies": {
     "@types/babyparse": "0.0.30",
     "@types/chai": "3.4.34",
@@ -45,8 +50,8 @@
     "css-loader": "0.26.1",
     "detect-port": "1.0.6",
     "electron": "1.4.11",
+    "electron-builder": "10.6.1",
     "electron-devtools-installer": "2.0.1",
-    "electron-packager": "8.3.0",
     "electron-rebuild": "1.4.0",
     "eslint": "3.11.1",
     "eslint-loader": "1.6.1",
@@ -115,6 +120,7 @@
     "redux": "3.6.0",
     "redux-logger": "2.7.4",
     "redux-thunk": "2.1.0",
+    "source-map-support": "0.4.6",
     "sqlite3": "3.1.8",
     "uuid": "3.0.1"
   },
@@ -130,15 +136,21 @@
   },
   "scripts": {
     "start": "webpack-dev-server --inline --config './config/webpack.config.dev.js'",
-    "start-electron": "NODE_ENV=development electron -r babel-register -r babel-polyfill ./electron.js",
+    "start-electron": "NODE_ENV=development electron -r babel-register -r babel-polyfill ./src/electron.js",
     "rebuild-modules": "electron-rebuild --pre-gyp-fix",
-    "build": "node ./scripts/build.js",
-    "package-osx-app": "electron-packager ./build ENAB --platform=darwin --out=./dist --no-prune --overwrite && cp ./application.icns ./dist/ENAB-darwin-x64/ENAB.app/Contents/Resources/electron.icns",
-    "package-win-app": "electron-packager ./build ENAB --platform=win32 --out=./dist --no-prune --overwrite",
+    "transpile": "node ./transpile.js",
+    "build-installer": "build",
     "pretest": "webpack --config './config/webpack.config.test.js'",
     "test": "NODE_ENV=test karma start ./config/karma.config.js"
   },
   "eslintConfig": {
     "extends": "./config/eslint.js"
+  },
+  "build": {
+    "appId": "com.bytesmiths.enab",
+    "mac": {
+      "category": "public.app-category.finance",
+      "target": "dmg"
+    }
   }
 }
