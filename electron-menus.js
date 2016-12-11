@@ -94,7 +94,7 @@ function initializeModule() {
 		]
 	}]
 
-	//if (process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV === 'development') {
 
 		// Add the "Reload" and "Toggle Developer Tools" menu items to the view menu
 		template[2].submenu.unshift(
@@ -116,7 +116,7 @@ function initializeModule() {
 				type: 'separator'
 			}
 		)
-	//}
+	}
 
 	if (process.platform === 'darwin') {
 		template.unshift({
