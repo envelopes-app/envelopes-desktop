@@ -7,6 +7,9 @@ const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus
 const { initializeDatabaseModule, finalizeDatabaseModule } = require('./electron-database');
 const { initializeWindowModule, finalizeWindowModule } = require('./electron-window');
 
+if(require('electron-squirrel-startup'))
+	return;
+	
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 // Global reference of the window object.
