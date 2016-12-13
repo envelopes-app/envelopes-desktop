@@ -100,12 +100,7 @@ module.exports = {
       }
     ]
   },
-  ts: {
-	configFileName: path.join(paths.appSrc, 'tsconfig.json')
-  },
   eslint: {
-    // TODO: consider separate config for production,
-    // e.g. to enable no-console and no-debugger only in prod.
     configFile: path.join(__dirname, 'eslint.js'),
     useEslintrc: false
   },

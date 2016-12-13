@@ -135,12 +135,12 @@
     "webpack-dev-server": "./node_modules/.bin/webpack-dev-server"
   },
   "scripts": {
-    "start": "webpack-dev-server --inline --config './config/webpack.config.dev.js'",
+    "start": "webpack-dev-server --inline --config ./config/webpack.config.dev.js",
     "start-electron": "NODE_ENV=development electron -r babel-register -r babel-polyfill ./src/electron.js",
     "rebuild-modules": "electron-rebuild --pre-gyp-fix",
     "transpile": "node ./transpile.js",
     "build-installer": "build",
-    "pretest": "webpack --config './config/webpack.config.test.js'",
+    "pretest": "webpack --config ./config/webpack.config.test.js",
     "test": "NODE_ENV=test karma start ./config/karma.config.js"
   },
   "eslintConfig": {
