@@ -7,9 +7,6 @@ const { initializeMenusModule, finalizeMenusModule } = require('./electron-menus
 const { initializeDatabaseModule, finalizeDatabaseModule } = require('./electron-database');
 const { initializeWindowModule, finalizeWindowModule } = require('./electron-window');
 
-if(require('electron-squirrel-startup'))
-	return;
-	
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 // Global reference of the window object.
@@ -79,6 +76,8 @@ const installExtensions = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+
+	if(require('electron-squirrel-startup')) return;
 
 	// Install the required extensions
   	return installExtensions()

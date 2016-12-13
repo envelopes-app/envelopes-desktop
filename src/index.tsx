@@ -18,6 +18,9 @@ import './styles/fixed-data-table.css';
 import CApp from './components/CApp';
 import { GlobalActionsCreator } from './actionCreators';
 import combinedReducer from './reducers/CombinedReducer';
+import { Logger } from './utilities/Logger';
+
+Logger.initializeLogging();
 
 injectTapEventPlugin();
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
