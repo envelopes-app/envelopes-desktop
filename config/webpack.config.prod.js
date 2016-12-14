@@ -8,13 +8,17 @@ var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 var url = require('url');
 var paths = require('./paths');
 
-var nodeModules = {};
+var externalModules = {
+  "fs": "fs",
+  "path": "path"
+};
+
 fs.readdirSync('node_modules')
   .filter(function(x) {
     return ['.bin'].indexOf(x) === -1;
   })
   .forEach(function(mod) {
-	nodeModules[mod] = 'commonjs ' + mod;
+    externalModules[mod] = 'commonjs ' + mod;
   });
 
 module.exports = {
@@ -22,7 +26,7 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     require.resolve('./polyfills'),
-	  path.join(paths.appSrc, 'index')
+    path.join(paths.appSrc, 'index')
   ],
   output: {
     path: paths.appBuild,
@@ -65,7 +69,7 @@ module.exports = {
         // We already have it thanks to postcss.
         loader: ExtractTextPlugin.extract('style', 'css?-autoprefixer!postcss')
       },
-	  {
+    {
         test: /\.less$/,
         loader: "style!css!less"
       },
@@ -83,8 +87,8 @@ module.exports = {
         loader: "file" 
       },
       {
-         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, 
-         loader: "url?limit=10000&mimetype=application/octet-stream" 
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, 
+        loader: "url?limit=10000&mimetype=application/octet-stream" 
       },
       { 
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
@@ -108,7 +112,7 @@ module.exports = {
     return [autoprefixer];
   },
   plugins: [
-	new webpack.IgnorePlugin(/vertx/),
+  new webpack.IgnorePlugin(/vertx/),
     new LodashModuleReplacementPlugin,
     new HtmlWebpackPlugin({
       inject: true,
@@ -130,7 +134,7 @@ module.exports = {
     new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-/*    new webpack.optimize.UglifyJsPlugin({
+    new webpack.optimize.UglifyJsPlugin({
       compress: {
         screw_ie8: true,
         warnings: false
@@ -142,8 +146,8 @@ module.exports = {
         comments: false,
         screw_ie8: true
       }
-    }),*/
+    }),
     new ExtractTextPlugin('[name].[contenthash:8].css')
   ],
-  externals: [nodeModules]
+  externals: [externalModules]
 };

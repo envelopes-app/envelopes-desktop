@@ -1,8 +1,7 @@
-const pjson = require('./package.json');
 const { app, dialog, ipcMain } = require('electron');
 
 let browserWindow;
-let appName = `ENAB v${pjson.version}`; 
+let appName = `ENAB v1.0.0`; 
 let openBudgetName; 
 
 function initializeModule(mainWindow) {
