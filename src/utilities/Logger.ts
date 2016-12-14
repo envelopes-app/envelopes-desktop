@@ -22,8 +22,9 @@ export class Logger {
 			Logger.currentLogLevel = LogLevels.Info;
 		}
 		
-		const fs = require('fs');
-		const path = require('path');
+		const remote = require('electron').remote;
+		const fs = remote.require('fs');
+		const path = remote.require('path');
 		const { app } = require('electron').remote;
 	
 		var appFolderName = (process.env.NODE_ENV === 'development') ? "ENAB-DEV" : "ENAB";  
