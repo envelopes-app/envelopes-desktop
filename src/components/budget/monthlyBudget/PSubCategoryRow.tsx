@@ -10,7 +10,7 @@ import { PSubCategoryBudgetedValue } from './PSubCategoryBudgetedValue';
 import { PSubCategoryActivityValue } from './PSubCategoryActivityValue';
 import { PSubCategoryBalanceValue } from './PSubCategoryBalanceValue';
 import { InternalCategories, SubCategoryType } from '../../../constants';
-import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
+import { DataFormatter, DateWithoutTime, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -18,8 +18,11 @@ export interface PSubCategoryRowProps {
 	dataFormatter:DataFormatter;
 	containerHeight:number;
 	containerWidth:number;
+	visibleMonths:number;
+	currentMonth:DateWithoutTime;
 	subCategory:budgetEntities.ISubCategory;
-	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
+	// MonthlySubCategoryBudget entities mapped by month and subCategoryId
+	monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>;
 	editingSubCategory:string;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
@@ -73,6 +76,26 @@ const CategoryNameColumnStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	paddingLeft: "20px"
 }
+
+const PrevMonthValueColumnStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+	width: "100px",
+	textAlign: "right",
+	paddingRight: "8px"
+}
+
+const PrevMonthValueStyle:React.CSSProperties = {
+	color: "#333333",
+	fontSize: "14px",
+	fontWeight: "normal",
+	fontStyle: "italic",
+	opacity: 0.7,
+	marginBottom: "0px"
+} 
+
+const PrevMonthValueSelectedStyle:React.CSSProperties = Object.assign({}, PrevMonthValueStyle, {
+	color: "#FFFFFF"
+}); 
 
 export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubCategoryRowState> {
 
@@ -189,7 +212,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 	private onBalanceValueClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
-		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
+		var currentMonth = this.props.currentMonth;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudgetsMap[`${currentMonth.toISOString()}_${subCategory.entityId}`];
 
 		var balance = monthlySubCategoryBudget.balance ? monthlySubCategoryBudget.balance : 0;
 		var upcomingTransactions = monthlySubCategoryBudget.upcomingTransactions ? monthlySubCategoryBudget.upcomingTransactions : 0;
@@ -223,14 +247,95 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		}
 	}
 
+	private getValueNodesForCurrentMonth(isSelected:boolean, isHovering:boolean, isEditing:boolean):Array<JSX.Element> {
+
+		var dataFormatter = this.props.dataFormatter;
+		var subCategory = this.props.subCategory;
+		var currentMonth = this.props.currentMonth;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudgetsMap[`${currentMonth.toISOString()}_${subCategory.entityId}`];
+		if(!monthlySubCategoryBudget)
+			Logger.error(`PSubCategoryRow::MonthlySubCategoryBudget entity for ${subCategory.name} was not found.`);
+
+		// Create key strings for the nodes that we are going to add
+		var separatorNodeKey = `${currentMonth.toISOString()}_${subCategory.entityId}_separator`;
+		var budgetedNodeKey = `${currentMonth.toISOString()}_${subCategory.entityId}_budgeted`;
+		var activityNodeKey = `${currentMonth.toISOString()}_${subCategory.entityId}_activity`;
+		var balanceNodeKey = `${currentMonth.toISOString()}_${subCategory.entityId}_balance`;
+
+		return([
+			<div key={separatorNodeKey} className={this.props.visibleMonths == 1 ? "vertical-separator" : "vertical-separator-thick"} />,
+			<PSubCategoryBudgetedValue
+				key={budgetedNodeKey} 
+				ref={(b)=> this.budgetedValue = b}
+				dataFormatter={dataFormatter}
+				isSelected={isSelected}
+				isHovering={isHovering}
+				isEditing={isEditing}
+				subCategory={subCategory}
+				monthlySubCategoryBudget={monthlySubCategoryBudget}
+				selectSubCategory={this.props.selectSubCategory}
+				selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
+				updateEntities={this.props.updateEntities}
+			/>,
+
+			<PSubCategoryActivityValue 
+				key={activityNodeKey} 
+				dataFormatter={dataFormatter}
+				isSelected={isSelected}
+				subCategory={subCategory}
+				monthlySubCategoryBudget={monthlySubCategoryBudget}
+				showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
+				showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
+			/>,
+
+			<PSubCategoryBalanceValue 
+				key={balanceNodeKey} 
+				ref={(b)=> this.balanceValue = b}
+				dataFormatter={dataFormatter}
+				monthlySubCategoryBudget={monthlySubCategoryBudget}
+				onClick={this.onBalanceValueClick}
+			/>
+		]);
+	}
+
+	private getValueNodesForPreviousMonth(month:DateWithoutTime, isSelected:boolean, useThickSeparator:boolean):Array<JSX.Element> {
+
+		var dataFormatter = this.props.dataFormatter;
+		var subCategory = this.props.subCategory;
+		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudgetsMap[`${month.toISOString()}_${subCategory.entityId}`];
+		// Get the values to display from the monthlySubCategoryBudget entity 
+		var budgeted = 0, activity = 0, balance = 0;
+		if(monthlySubCategoryBudget) {
+			budgeted = monthlySubCategoryBudget.budgeted;
+			activity = monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
+			balance = monthlySubCategoryBudget.balance;
+		}
+
+		// Create key strings for the nodes that we are going to add
+		var separatorNodeKey = `${month.toISOString()}_${subCategory.entityId}_separator`;
+		var budgetedNodeKey = `${month.toISOString()}_${subCategory.entityId}_budgeted`;
+		var activityNodeKey = `${month.toISOString()}_${subCategory.entityId}_activity`;
+		var balanceNodeKey = `${month.toISOString()}_${subCategory.entityId}_balance`;
+
+		return ([
+			<div key={separatorNodeKey} className={useThickSeparator == true ? "vertical-separator-thick" : "vertical-separator"} />,
+			<div key={budgetedNodeKey} style={PrevMonthValueColumnStyle}>
+				<label style={isSelected ? PrevMonthValueSelectedStyle : PrevMonthValueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
+			</div>,
+			<div key={activityNodeKey} style={PrevMonthValueColumnStyle}>
+				<label style={isSelected ? PrevMonthValueSelectedStyle : PrevMonthValueStyle}>{dataFormatter.formatCurrency(activity)}</label>
+			</div>,
+			<div key={balanceNodeKey} style={PrevMonthValueColumnStyle}>
+				<label style={isSelected ? PrevMonthValueSelectedStyle : PrevMonthValueStyle}>{dataFormatter.formatCurrency(balance)}</label>
+			</div>
+		]);
+	}
+
 	public render() {
 
 		var dataFormatter = this.props.dataFormatter;
 		var subCategory = this.props.subCategory;
 		var isUncategorizedCategory = (subCategory.internalName == InternalCategories.UncategorizedSubCategory); 
-		var monthlySubCategoryBudget = this.props.monthlySubCategoryBudget;
-		if(!monthlySubCategoryBudget)
-			Logger.error(`PSubCategoryRow::MonthlySubCategoryBudget entity for ${subCategory.name} was not found.`);
 
 		// Determine the styles for the row based on the state 
 		var selectedSubCategoriesMap = this.props.selectedSubCategoriesMap;
@@ -249,6 +354,22 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 		// Get the JSX for category name 
 		var categoryNameNode = this.getCategoryNameNode(subCategory, isUncategorizedCategory);
 
+		// Get the JSX for value nodes for all the visible months
+		var month = this.props.currentMonth.clone().subtractMonths(this.props.visibleMonths - 1);
+		var valueNodes:Array<JSX.Element> = [];
+		// Use thin separator for the first month
+		var useThickSeparator = false;
+		// First add nodes for any previous months that are visible
+		while(month.isBefore(this.props.currentMonth)) {
+			valueNodes = valueNodes.concat(this.getValueNodesForPreviousMonth(month, isSelected, useThickSeparator));
+			month.addMonths(1);			
+			// Use thick separator for all following months
+			useThickSeparator = true;			
+		}
+
+		// Lastly, add nodes for the current month
+		valueNodes = valueNodes.concat(this.getValueNodesForCurrentMonth(isSelected, isHovering, isEditing));
+
     	return (
 			<div style={subCategoryRowContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
 					onClick={this.onClick} onKeyDown={this.onKeyDown}>
@@ -256,36 +377,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				{categoryNameNode}
-
-				<div className="vertical-separator" />
-				<PSubCategoryBudgetedValue 
-					ref={(b)=> this.budgetedValue = b}
-					dataFormatter={dataFormatter}
-					isSelected={isSelected}
-					isHovering={isHovering}
-					isEditing={isEditing}
-					subCategory={subCategory}
-					monthlySubCategoryBudget={monthlySubCategoryBudget}
-					selectSubCategory={this.props.selectSubCategory}
-					selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
-					updateEntities={this.props.updateEntities}
-				/>
-
-				<PSubCategoryActivityValue 
-					dataFormatter={dataFormatter}
-					isSelected={isSelected}
-					subCategory={subCategory}
-					monthlySubCategoryBudget={monthlySubCategoryBudget}
-					showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
-					showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
-				/>
-
-				<PSubCategoryBalanceValue 
-					ref={(b)=> this.balanceValue = b}
-					dataFormatter={dataFormatter}
-					monthlySubCategoryBudget={monthlySubCategoryBudget}
-					onClick={this.onBalanceValueClick}
-				/>
+				{valueNodes}
 			</div>
 		);
   	}

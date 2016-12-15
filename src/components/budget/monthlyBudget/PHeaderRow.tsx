@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 export interface PHeaderRowProps { 
+	visibleMonths:number;
 	selectAllCategories:()=>void;
 	unselectAllCategories:()=>void;
 }
@@ -49,6 +50,10 @@ const LableStyle:React.CSSProperties = {
 	marginBottom: "0px"
 }
 
+const BoldLableStyle = Object.assign({}, LableStyle, {
+	fontWeight: "bold"
+});
+
 export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 
 	constructor(props:PHeaderRowProps) {
@@ -66,6 +71,25 @@ export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 	}
 	
 	public render() {
+
+		var visibleMonths = this.props.visibleMonths;
+		var dataColumnHeaders:Array<JSX.Element> = [];
+		for(var i:number = 1; i <= visibleMonths; i++) {
+
+			dataColumnHeaders = dataColumnHeaders.concat([
+				<div key={"separator_" + i} className={i == 1 ? "vertical-separator" : "vertical-separator-thick"} />,
+				<div key={"budgeted_" + i} style={LabelContainerStyle}>
+					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>BUDGETED</label>
+				</div>,
+				<div key={"activity_" + i} style={LabelContainerStyle}>
+					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>ACTIVITY</label>
+				</div>,
+				<div key={"available_" + i} style={LabelContainerStyle}>
+					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>AVAILABLE</label>
+				</div>
+			]);
+		}
+
     	return (
 			<div style={HeaderRowContainerStyle}>
 				<div style={SelectionColumnStyle}>
@@ -74,16 +98,7 @@ export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 				<div style={CategoryLabelContainerStyle}>
 					<label style={LableStyle}>CATEGORY</label>
 				</div>
-				<div className="vertical-separator" />
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>BUDGETED</label>
-				</div>
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>ACTIVITY</label>
-				</div>
-				<div style={LabelContainerStyle}>
-					<label style={LableStyle}>AVAILABLE</label>
-				</div>
+				{dataColumnHeaders}
 			</div>
 		);
   	}

@@ -120,8 +120,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.state = {
 			dataFormat: JSON.stringify(dataFormat),
 			dataFormatter: new DataFormatter(dataFormat),
-			componentWidth:0, 
-			componentHeight:0, 
+			componentWidth: 0, 
+			componentHeight: 0, 
 			editingSubCategory: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},

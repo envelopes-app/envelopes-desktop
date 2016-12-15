@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 
 import { PButtonWithGlyph } from '../../common/PButtonWithGlyph';
 import { InternalCategories } from '../../../constants';
-import { DataFormatter, SimpleObjectMap, Logger } from '../../../utilities';
+import { DataFormatter, DateWithoutTime, SimpleObjectMap, Logger } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
 
@@ -14,9 +14,12 @@ export interface PMasterCategoryRowProps {
 	dataFormatter:DataFormatter;
 	containerHeight:number;
 	containerWidth:number;
+	visibleMonths:number;
+	currentMonth:DateWithoutTime;
 	masterCategory:budgetEntities.IMasterCategory;
 	subCategories:Array<budgetEntities.ISubCategory>;
-	monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget>;
+	// MonthlySubCategoryBudget entities mapped by month and subCategoryId
+	monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
 
@@ -51,8 +54,6 @@ const MasterCategoryRowContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "1px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "0px",
-//	paddingTop: "3px",
-//	paddingBottom: "3px",
 	paddingRight: "10px"
 }
 
@@ -102,6 +103,15 @@ const ValueStyle:React.CSSProperties = {
 }
 
 const ValueHoverStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
+	color: "#333333"
+});
+
+const PrevMonthValueStyle = Object.assign({}, ValueStyle, {
+	fontStyle: "italic",
+	opacity: 0.7
+});
+
+const PrevMonthValueHoverStyle = Object.assign({}, PrevMonthValueStyle, {
 	color: "#333333"
 });
 
@@ -281,7 +291,9 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 				<div key={nameKey} style={CategoryNameColumnStyle}>
 					<label className="budget-row-mastercategoryname"
 						ref={(l)=> this.categoryNameLabel = l}
-						onClick={this.onCategoryNameClick}>{masterCategory.name}&nbsp;</label>
+						onClick={this.onCategoryNameClick}>
+						{masterCategory.name}&nbsp;
+					</label>
 					<PButtonWithGlyph showGlyph={this.state.hoverState} 
 						ref={(b)=> this.addCategoryButton = b}
 						glyphName="glyphicon-plus-sign" clickHandler={this.onAddSubCategoryClick} />
@@ -290,15 +302,20 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		}
 	}
 
-	public render() {
+	private getValueNodesForMonth(month:DateWithoutTime, useThickSeparator:boolean):Array<JSX.Element> {
 
 		var dataFormatter = this.props.dataFormatter;
-		var glyphiconClass, containerClass:string;
-		var collapseContainerIdentity = "subCategoriesContainer_" + this.props.masterCategory.entityId;
-
+		var masterCategory = this.props.masterCategory;
+		var monthlySubCategoryBudgetsMap = this.props.monthlySubCategoryBudgetsMap;
 		var budgeted = 0, activity = 0, balance = 0, transactionsCount = 0;
-		_.forEach(this.props.monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
+		var isCurrentMonth = this.props.currentMonth.equalsByMonth(month);
 
+		if(!isCurrentMonth)
+			debugger;
+
+		_.forEach(this.props.subCategories, (subCategory)=>{
+
+			var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[`${month.toISOString()}_${subCategory.entityId}`];
 			if(monthlySubCategoryBudget) {
 				budgeted += monthlySubCategoryBudget.budgeted;
 				activity += monthlySubCategoryBudget.cashOutflows + monthlySubCategoryBudget.creditOutflows;
@@ -306,6 +323,59 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 				transactionsCount += monthlySubCategoryBudget.transactionsCount;
 			}
 		});
+
+		var valueStyle = isCurrentMonth ? ValueStyle : PrevMonthValueStyle;
+		if(this.state.hoverState)
+			valueStyle = isCurrentMonth ? ValueHoverStyle : PrevMonthValueHoverStyle;
+
+		// Create key strings for the nodes that we are going to add
+		var separatorNodeKey = `${month.toISOString()}_${masterCategory.entityId}_separator`;
+		var budgetedNodeKey = `${month.toISOString()}_${masterCategory.entityId}_budgeted`;
+		var activityNodeKey = `${month.toISOString()}_${masterCategory.entityId}_activity`;
+		var balanceNodeKey = `${month.toISOString()}_${masterCategory.entityId}_balance`;
+		
+		var activityNode:JSX.Element;
+		transactionsCount = 1; // This is not reliable yet, so setting it to 1 to always make this clickable
+		if(transactionsCount == 0) {
+			// If there are no transactions, then apply the same style to the activty value as the
+			// budgeted and balance values
+			activityNode = (
+				<div key={activityNodeKey} style={ValueColumnStyle}>
+					<label style={valueStyle} ref={(a)=> this.activityLabel = a}>{dataFormatter.formatCurrency(activity)}</label>
+				</div>
+			);
+		}
+		else {
+			// Otherwise apply the specific ActivityValueStyle 
+			var activityValueStyle = isCurrentMonth ? ActivityValueStyle : PrevMonthValueStyle;
+			if(this.state.hoverState)
+				activityValueStyle = isCurrentMonth ? ActivityValueHoverStyle : PrevMonthValueHoverStyle;
+
+			activityNode = (
+				<div key={activityNodeKey} style={ValueColumnStyle}>
+					<label style={activityValueStyle} ref={(a)=> this.activityLabel = a}
+						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
+				</div>
+			);
+		}
+
+		return ([
+			<div key={separatorNodeKey} className={useThickSeparator ? "vertical-separator-thick" : "vertical-separator"} />,
+			<div key={budgetedNodeKey} style={ValueColumnStyle}>
+				<label style={valueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
+			</div>,
+			activityNode,
+			<div key={balanceNodeKey} style={ValueColumnStyle}>
+				<label style={valueStyle}>{dataFormatter.formatCurrency(balance)}</label>
+			</div>
+		]);
+	}
+
+	public render() {
+
+		var dataFormatter = this.props.dataFormatter;
+		var glyphiconClass, containerClass:string;
+		var collapseContainerIdentity = "subCategoriesContainer_" + this.props.masterCategory.entityId;
 
 		var masterCategory = this.props.masterCategory;
 		var isHiddenMasterCategory = (masterCategory.internalName == InternalCategories.HiddenMasterCategory); 
@@ -332,33 +402,20 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		if(this.state.hoverState)
 			valueStyle = ValueHoverStyle;
 
+		var currentMonth = this.props.currentMonth.clone().subtractMonths(this.props.visibleMonths - 1);
+		var valueNodes:Array<JSX.Element> = [];
+		// Use thin separator for the first month
+		var useThickSeparator = false;
+		while(currentMonth.isAfter(this.props.currentMonth) == false) {
+
+			valueNodes = valueNodes.concat(this.getValueNodesForMonth(currentMonth, useThickSeparator));
+			currentMonth.addMonths(1);
+			// Use thick separator for all following months
+			useThickSeparator = true;			
+		}
+
 		// Get the JSX for selection column, expand/collapse column and the category name column 
 		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isSelected, glyphiconClass);
-
-		var activityNode:JSX.Element;
-		transactionsCount = 1; // This is not reliable yet, so setting it to 1 to always make this clickable
-		if(transactionsCount == 0) {
-			// If there are no transactions, then apply the same style to the activty value as the
-			// budgeted and balance values
-			activityNode = (
-				<div style={ValueColumnStyle}>
-					<label style={valueStyle} ref={(a)=> this.activityLabel = a}>{dataFormatter.formatCurrency(activity)}</label>
-				</div>
-			);
-		}
-		else {
-			// Otherwise apply the specific ActivityValueStyle 
-			var activityValueStyle = ActivityValueStyle;
-			if(this.state.hoverState)
-				activityValueStyle = ActivityValueHoverStyle;
-
-			activityNode = (
-				<div style={ValueColumnStyle}>
-					<label style={activityValueStyle} ref={(a)=> this.activityLabel = a}
-						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
-				</div>
-			);
-		}
 
     	return (
 			<div>
@@ -366,17 +423,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 					onMouseLeave={this.handleMouseLeave} onClick={this.onClick}>
 
 					{categoryNameNodes}
-
-					<div className="vertical-separator" />
-					<div style={ValueColumnStyle}>
-						<label style={valueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
-					</div>
-
-					{activityNode}
-
-					<div style={ValueColumnStyle}>
-						<label style={valueStyle}>{dataFormatter.formatCurrency(balance)}</label>
-					</div>
+					{valueNodes}
 				</div>
 				<div className={containerClass} id={collapseContainerIdentity}>
 					{this.props.children}

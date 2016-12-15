@@ -50,6 +50,10 @@ export interface PMonthlyBudgetProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
+export interface PMonthlyBudgetState {
+	visibleMonths:number;
+}
+
 const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	minWidth: "600px",
@@ -69,7 +73,17 @@ const MonthlyBudgetSubContainerStyle:React.CSSProperties = {
 	flexFlow: 'column nowrap',
 }
 
-export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
+export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthlyBudgetState> {
+
+	private monthlyBudgetContainer:HTMLDivElement;
+
+	constructor(props:PMonthlyBudgetProps) {
+        super(props);
+
+		this.state = {
+			visibleMonths: 1
+		}
+	}
 
 	private getBudgetRows(masterCategory:budgetEntities.IMasterCategory, 
 					subCategoriesArray:SubCategoriesArray,
@@ -77,15 +91,12 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
 		var masterCategoryRow:JSX.Element;
 		var subCategoryRows:Array<JSX.Element> = [];
-		var monthlySubCategoryBudgets:Array<budgetEntities.IMonthlySubCategoryBudget> = [];
+		var currentMonth = this.props.currentMonth;
 		// If this is the hidden master category, then we won't be creating subcategory rows for it
 		var createSubCategoryRows = (masterCategory.internalName != InternalCategories.HiddenMasterCategory);
 
 		var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
 		_.forEach(subCategories, (subCategory)=>{
-
-			var monthlySubCategoryBudget = monthlySubCategoryBudgetsMap[subCategory.entityId];
-			monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
 
 			if(createSubCategoryRows) {
 
@@ -95,8 +106,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 						dataFormatter={this.props.dataFormatter}
 						containerHeight={this.props.containerHeight}
 						containerWidth={this.props.containerWidth}
+						visibleMonths={this.state.visibleMonths}
+						currentMonth={this.props.currentMonth}
 						subCategory={subCategory} 
-						monthlySubCategoryBudget={monthlySubCategoryBudget}
+						monthlySubCategoryBudgetsMap={monthlySubCategoryBudgetsMap}
 						editingSubCategory={this.props.editingSubCategory}
 						selectedSubCategories={this.props.selectedSubCategories} 
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
@@ -123,9 +136,11 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 					dataFormatter={this.props.dataFormatter}
 					containerHeight={this.props.containerHeight}
 					containerWidth={this.props.containerWidth}
+					visibleMonths={this.state.visibleMonths}
+					currentMonth={this.props.currentMonth}
 					masterCategory={masterCategory} 
 					subCategories={subCategories} 
-					monthlySubCategoryBudgets={monthlySubCategoryBudgets}
+					monthlySubCategoryBudgetsMap={monthlySubCategoryBudgetsMap}
 					selectedMasterCategoriesMap={this.props.selectedMasterCategoriesMap}
 					collapsedMasterCategoriesMap={this.props.collapsedMasterCategoriesMap}
 					selectMasterCategory={this.props.selectMasterCategory}
@@ -147,7 +162,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 		return masterCategoryRow;
 	}
 
-	private getUncategorizedRow():JSX.Element {
+	private getUncategorizedRow(monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>):JSX.Element {
 
 		var monthString = this.props.currentMonth.toISOString();
 		// Get the uncategorized subcategory
@@ -159,8 +174,10 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 				dataFormatter={this.props.dataFormatter}
 				containerHeight={this.props.containerHeight}
 				containerWidth={this.props.containerWidth}
+				visibleMonths={this.state.visibleMonths}
+				currentMonth={this.props.currentMonth}
 				subCategory={uncategorizedSubCategory} 
-				monthlySubCategoryBudget={monthlySubCategoryBudget}
+				monthlySubCategoryBudgetsMap={monthlySubCategoryBudgetsMap}
 				editingSubCategory={this.props.editingSubCategory}
 				selectedSubCategories={this.props.selectedSubCategories} 
 				selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
@@ -181,6 +198,57 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 		return uncategorizedRow;
 	}
 
+	private calculateVisibleMonths():void {
+
+		if(this.monthlyBudgetContainer) {
+
+			debugger;
+			// We are going to allocate a minimum of 290px for the name column 
+			var categoryColumnNameWidth = 300;
+			var monthlyDataColumnWidth = 310;
+			// Get the width of the container available for displaying the monthly budget data and 
+			// calculate the number of visible months that we can fit
+			var availableWidth = this.monthlyBudgetContainer.clientWidth - categoryColumnNameWidth;
+			var visibleMonths = Math.max(Math.floor(availableWidth / monthlyDataColumnWidth), 1);
+			if(visibleMonths != this.state.visibleMonths) {
+				// Update the visibleMonths value in the state
+				var state = Object.assign({}, this.state);
+				state.visibleMonths = visibleMonths;
+				this.setState(state);
+			}
+		}
+	}
+
+	private showUncategorizedRow():boolean {
+
+		var currentMonth = this.props.currentMonth.clone();
+		var visibleMonths = this.state.visibleMonths;
+
+		// We want to show the uncategorized row if we have uncategorized values in any of the visible month values
+		for(var i:number = 0; i < visibleMonths; i++) {
+			var monthString = currentMonth.toISOString();
+			var monthlyBudget = this.props.entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(monthString);
+			if(monthlyBudget && (monthlyBudget.uncategorizedBalance != 0 || 
+				monthlyBudget.uncategorizedCashOutflows != 0 || monthlyBudget.uncategorizedCreditOutflows != 0)) {
+				return true;
+			}
+
+			currentMonth.subtractMonths(1);
+		}
+
+		return false;
+	}
+
+	public componentWillReceiveProps() {
+
+		this.calculateVisibleMonths();
+	}
+
+	public componentDidUpdate() {
+
+		this.calculateVisibleMonths();
+	}
+
 	public render() {
 
 		var masterCategoryRow:JSX.Element; 
@@ -192,21 +260,27 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
 		if(masterCategoriesArray) {
 
-			// Get the MonthlySubCategoryBudget entities for the current month
-			var monthString = this.props.currentMonth.toISOString();
-			var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(monthString);
-			// Create a map of these monthly subcategory budget entities by subCategoryId
+			var visibleMonths = this.state.visibleMonths;
+			var currentMonth = this.props.currentMonth.clone();
 			var monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget> = {};
-			_.forEach(monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
-				monthlySubCategoryBudgetsMap[monthlySubCategoryBudget.subCategoryId] = monthlySubCategoryBudget;
-			});
 
-			// Add the Uncategorized Subcategory row at the top if we have uncategorized values in this month
-			var monthlyBudget = this.props.entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(monthString);
-			if(monthlyBudget && (monthlyBudget.uncategorizedBalance != 0 || 
-				monthlyBudget.uncategorizedCashOutflows != 0 || monthlyBudget.uncategorizedCreditOutflows != 0)) {
+			for(var i:number = 0; i < visibleMonths; i++) {
 
-				masterCategoryRows.push( this.getUncategorizedRow() );
+				// Get the MonthlySubCategoryBudget entities for the current month
+				var monthString = currentMonth.toISOString();
+				var monthlySubCategoryBudgets = monthlySubCategoryBudgetsArray.getMonthlySubCategoryBudgetsByMonth(monthString);
+				// Create a map of these monthly subcategory budget entities by month and subCategoryId concatenated
+				_.forEach(monthlySubCategoryBudgets, (monthlySubCategoryBudget)=>{
+					monthlySubCategoryBudgetsMap[`${monthString}_${monthlySubCategoryBudget.subCategoryId}`] = monthlySubCategoryBudget;
+				});
+
+				// Subtract a month from the current month so that we can get the data for previous visible months, if any.
+				currentMonth.subtractMonths(1);
+			}
+
+			// Add the Uncategorized Subcategory row at the top if we have uncategorized values in any of the visible months
+			if(this.showUncategorizedRow()) {
+				masterCategoryRows.push( this.getUncategorizedRow(monthlySubCategoryBudgetsMap) );
 			}
 
 			// Add the Debt Payment master category row, provided we have any debt categories
@@ -249,8 +323,9 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, {}> {
 
     	return (
 			<div style={MonthlyBudgetContainerStyle}>
-				<div style={MonthlyBudgetSubContainerStyle}>
+				<div ref={(d)=> this.monthlyBudgetContainer = d} style={MonthlyBudgetSubContainerStyle}>
 					<PHeaderRow 
+						visibleMonths={this.state.visibleMonths}
 						selectAllCategories={this.props.selectAllCategories}
 						unselectAllCategories={this.props.unselectAllCategories}
 					/>
