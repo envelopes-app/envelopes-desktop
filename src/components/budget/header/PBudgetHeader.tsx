@@ -8,6 +8,7 @@ import { PMonthSelection } from './PMonthSelection';
 import { PMonthSummary } from './PMonthSummary';
 import { PMonthAOM } from './PMonthAOM';
 
+import { UIConstants } from '../../../constants';
 import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import * as catalogEntities from '../../../interfaces/catalogEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -17,6 +18,7 @@ export interface PBudgetHeaderProps {
 	currentMonth:DateWithoutTime;
 	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
+	inspectorCollapsed:boolean;
 
 	setSelectedMonth:(month:DateWithoutTime)=>void;
 	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
@@ -44,9 +46,40 @@ const BudgetHeaderStyle:React.CSSProperties = {
 	paddingRight: '5px'
 }
 
+const RightContainerStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+}
+
 export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
   
+	private getRightContainer():JSX.Element {
+
+		var rightContainerStyle = Object.assign(RightContainerStyle, {
+			width: this.props.inspectorCollapsed ? UIConstants.InspectorCollapsedWidth : UIConstants.InspectorExpandedWidth
+		});
+
+		var rightContainer:JSX.Element;
+		if(this.props.inspectorCollapsed) {
+			rightContainer = <div style={RightContainerStyle} />;
+		}
+		else {
+			// The container is expanded so we can put the ageOfMoney in it
+			rightContainer = (
+				<div style={RightContainerStyle}>
+					<PMonthAOM 
+						currentMonth={this.props.currentMonth} 
+						entitiesCollection={this.props.entitiesCollection}
+					/>
+				</div>
+			);
+		}
+
+		return rightContainer;
+	}
+
 	public render() {
+
+		var rightContainer = this.getRightContainer();
 
 		// Get the first and last months from the budget entity. Min and Max months will
 		// be -1 and +1 months from them respectively.
@@ -72,6 +105,8 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 						setSelectedMonth={this.props.setSelectedMonth} 
 					/>
 
+					<div className="spacer" />
+
 					<PMonthSummary 
 						dataFormatter={this.props.dataFormatter}
 						currentMonth={this.props.currentMonth} 
@@ -80,10 +115,7 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 					/>
 
-					<PMonthAOM 
-						currentMonth={this.props.currentMonth} 
-						entitiesCollection={this.props.entitiesCollection}
-					/>
+					{rightContainer}
 				</div>
 			</div>
 		);
