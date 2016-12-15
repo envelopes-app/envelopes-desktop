@@ -37,6 +37,7 @@ export interface PBudgetState {
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
+	inspectorCollapsed:boolean;
 }
 
 const BudgetContainerStyle = {
@@ -90,6 +91,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.collapseMasterCategory = this.collapseMasterCategory.bind(this);
 		this.expandAllMasterCategories = this.expandAllMasterCategories.bind(this);
 		this.collapseAllMasterCategories = this.collapseAllMasterCategories.bind(this);
+		this.setInspectorState = this.setInspectorState.bind(this);
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
 		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
@@ -124,7 +126,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
 			selectedMasterCategoriesMap: {},
-			collapsedMasterCategoriesMap: {}
+			collapsedMasterCategoriesMap: {},
+			inspectorCollapsed: false
 		}
     }
 
@@ -386,6 +389,13 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
+	private setInspectorState(collapsed:boolean):void {
+		
+		var state = Object.assign({}, this.state) as PBudgetState;
+		state.inspectorCollapsed = collapsed;
+		this.setState(state);
+	}
+
 	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for editing the subcategory
 		this.subCategoryEditDialog.show(subCategoryId, element, placement);
@@ -541,8 +551,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					updateEntities={this.props.updateEntities} />
 
 				<PBudgetToolbar 
+					inspectorCollapsed={this.state.inspectorCollapsed}
 					expandAllMasterCategories={this.expandAllMasterCategories}
 					collapseAllMasterCategories={this.collapseAllMasterCategories}
+					setInspectorState={this.setInspectorState}
 					onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
 					showReorderCategoriesDialog={this.showReorderCategoriesDialog}
 				/>
@@ -585,6 +597,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						dataFormatter={this.state.dataFormatter}
 						currentMonth={selectedMonth}
 						selectedSubCategories={this.state.selectedSubCategories}
+						inspectorCollapsed={this.state.inspectorCollapsed}
 						entitiesCollection={this.props.entitiesCollection} 
 						showUpcomingTransactionsDialog={this.showUpcomingTransactionsDialog}
 						updateEntities={this.props.updateEntities}

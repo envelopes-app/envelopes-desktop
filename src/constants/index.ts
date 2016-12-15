@@ -14,3 +14,4 @@ export { SubCategoryType } from './SubCategoryType';
 export { TransactionFlag } from './TransactionFlag';
 export { TransactionFrequency } from './TransactionFrequency';
 export { TransactionSources } from './TransactionSources';
+export { UIConstants } from './UIConstants';
