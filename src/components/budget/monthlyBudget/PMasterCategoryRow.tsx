@@ -106,11 +106,11 @@ const ValueHoverStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
 });
 
 const ActivityValueStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
-	textDecoration: "underline",
 	cursor: "pointer"
 });
 
 const ActivityValueHoverStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
+	textDecoration: "underline",
 	color: "#333333"
 });
 
@@ -336,6 +336,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 		var categoryNameNodes = this.getCategoryNameNodes(masterCategory, isSelected, glyphiconClass);
 
 		var activityNode:JSX.Element;
+		transactionsCount = 1; // This is not reliable yet, so setting it to 1 to always make this clickable
 		if(transactionsCount == 0) {
 			// If there are no transactions, then apply the same style to the activty value as the
 			// budgeted and balance values
