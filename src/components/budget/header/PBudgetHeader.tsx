@@ -54,18 +54,18 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
   
 	private getRightContainer():JSX.Element {
 
-		var rightContainerStyle = Object.assign(RightContainerStyle, {
+		var rightContainerStyle = Object.assign({}, RightContainerStyle, {
 			width: this.props.inspectorCollapsed ? UIConstants.InspectorCollapsedWidth : UIConstants.InspectorExpandedWidth
 		});
 
 		var rightContainer:JSX.Element;
 		if(this.props.inspectorCollapsed) {
-			rightContainer = <div style={RightContainerStyle} />;
+			rightContainer = <div style={rightContainerStyle} />;
 		}
 		else {
 			// The container is expanded so we can put the ageOfMoney in it
 			rightContainer = (
-				<div style={RightContainerStyle}>
+				<div style={rightContainerStyle}>
 					<PMonthAOM 
 						currentMonth={this.props.currentMonth} 
 						entitiesCollection={this.props.entitiesCollection}
