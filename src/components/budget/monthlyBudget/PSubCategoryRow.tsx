@@ -60,8 +60,6 @@ const SubCategoryRowContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "1px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "0px",
-	paddingTop: "3px",
-	paddingBottom: "3px",
 	paddingRight: "10px"
 }
 
@@ -258,6 +256,8 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, PSubC
 					<input type="checkbox" checked={isSelected} onChange={this.onCheckBoxSelectionChange} />
 				</div>
 				{categoryNameNode}
+
+				<div className="vertical-separator" />
 				<PSubCategoryBudgetedValue 
 					ref={(b)=> this.budgetedValue = b}
 					dataFormatter={dataFormatter}

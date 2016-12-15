@@ -74,6 +74,7 @@ export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 				<div style={CategoryLabelContainerStyle}>
 					<label style={LableStyle}>CATEGORY</label>
 				</div>
+				<div className="vertical-separator" />
 				<div style={LabelContainerStyle}>
 					<label style={LableStyle}>BUDGETED</label>
 				</div>

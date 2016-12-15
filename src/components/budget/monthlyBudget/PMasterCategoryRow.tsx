@@ -51,8 +51,8 @@ const MasterCategoryRowContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "1px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "0px",
-	paddingTop: "3px",
-	paddingBottom: "3px",
+//	paddingTop: "3px",
+//	paddingBottom: "3px",
 	paddingRight: "10px"
 }
 
@@ -84,10 +84,14 @@ const CategoryNameStyle:React.CSSProperties = {
 
 const ValueColumnStyle:React.CSSProperties = {
 	flex: "0 0 auto",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "flex-end",
 	width: "100px",
 	color: "#4D717A",
 	textAlign: "right",
-	paddingRight: "8px"
+	paddingRight: "8px",
+	height: "100%"
 }
 
 const ValueStyle:React.CSSProperties = {
@@ -362,6 +366,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 					{categoryNameNodes}
 
+					<div className="vertical-separator" />
 					<div style={ValueColumnStyle}>
 						<label style={valueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
 					</div>
