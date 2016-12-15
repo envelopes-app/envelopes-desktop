@@ -139,9 +139,9 @@
 .month-button {
 	width: 50px;
 	height: 40px;
-	border: none;
 	outline: none;
 	color: #000000;
+	border: none;
 	background-color: #FFFFFF;
 }
 
@@ -160,6 +160,7 @@
 }
 
 .month-button-selected {
+	&:extend(.month-button);
 	color: #FFFFFF;
 	background-color: #009CC2;
 	cursor: default;
