@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
 import { PTransactionsList } from './PTransactionsList';
-import { TransactionSources } from '../../../constants';
+import { InternalCategories,TransactionSources } from '../../../constants';
 import { DataFormatter, DateWithoutTime } from '../../../utilities/';
 import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -64,6 +64,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 
 		// Get the subCategory for the passed subCategoryId
 		var subCategory = this.props.entitiesCollection.subCategories.getEntityById(subCategoryId);
+		var isUncategorized = subCategory.internalName == InternalCategories.UncategorizedSubCategory;
 		if(subCategory) {
 
 			var state = Object.assign({}, this.state) as PDefaultCategoryActivityDialogState;
@@ -71,7 +72,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 			state.target = target;
 			state.placement = placement;
 			state.subCategoryName = subCategory.name;
-			state.transactions = this.buildTransactionObjects(subCategoryId, month);
+			state.transactions = this.buildTransactionObjects(isUncategorized ? null : subCategoryId, month);
 			this.setState(state);
 		}
 	}
