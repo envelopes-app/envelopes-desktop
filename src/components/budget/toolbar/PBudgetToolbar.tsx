@@ -105,6 +105,10 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 			<div style={BudgetToolbarContainerStyle}>
 				<div style={BudgetToolbarStyle}>
 					<PLinkButton 
+						tooltip="Reorder Categories" glyphNames={["glyphicon-retweet"]} 
+						enabled={true} clickHandler={this.onReorderCategoriesButtonClick} />
+
+					<PLinkButton 
 						tooltip="Expand all categories" glyphNames={["glyphicon-list", "glyphicon-arrow-down"]} 
 						enabled={true} clickHandler={this.onExpandAllButtonClick} />
 
@@ -116,10 +120,6 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 						ref={(c)=>{this.addCategoryButton = c;}}
 						tooltip="Add Category Group" text="Add Category Group" glyphNames={["glyphicon-plus-sign"]} 
 						enabled={true} clickHandler={this.onAddCategoryButtonClick} />
-
-					<PLinkButton 
-						tooltip="Reorder Categories" text="Reorder Categories" glyphNames={["glyphicon-retweet"]} 
-						enabled={true} clickHandler={this.onReorderCategoriesButtonClick} />
 
 					<div className="spacer" />
 					{inspectorButton}

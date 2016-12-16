@@ -301,6 +301,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 
 		var glyphiconClass, containerClass:string;
 		var masterCategory = this.props.masterCategory;
+		debugger;
 		var currentMonth = this.props.currentMonth.clone().subtractMonths(this.props.visibleMonths - 1);
 		var monthValueNodes:Array<JSX.Element> = [];
 		while(currentMonth.isAfter(this.props.currentMonth) == false) {
@@ -320,7 +321,7 @@ export class PMasterCategoryRow extends React.Component<PMasterCategoryRowProps,
 			);
 
 			monthValueNodes.push(monthValueNode);
-			currentMonth.addMonths(1);
+			currentMonth = currentMonth.clone().addMonths(1);
 		}
 
 		// Is this master category row currently collapsed or expanded?
