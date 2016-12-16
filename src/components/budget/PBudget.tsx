@@ -423,10 +423,9 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.debtCategoryActivityDialog.show(subCategoryId, selectedMonth, element, placement);
 	}
 
-	private showMasterCategoryActivityDialog(masterCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
+	private showMasterCategoryActivityDialog(masterCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for master category activity
-		var selectedMonth = this.props.selectedBudgetMonth;
-		this.masterCategoryActivityDialog.show(masterCategoryId, selectedMonth, element, placement);
+		this.masterCategoryActivityDialog.show(masterCategoryId, month, element, placement);
 	}
 
 	private showCoverOverspendingDialog(subCategoryId:string, amountToCover:number, element:HTMLElement, placement:string = "left"):void {

@@ -45,7 +45,7 @@ export interface PMonthlyBudgetProps {
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
 	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
 	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
-	showMasterCategoryActivityDialog:(masterCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showMasterCategoryActivityDialog:(masterCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -150,10 +150,7 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 					showMasterCategoryEditDialog={this.props.showMasterCategoryEditDialog}
 					showCreateCategoryDialog={this.props.showCreateCategoryDialog}
 					showHiddenCategoriesDialog={this.props.showHiddenCategoriesDialog}
-					showMasterCategoryActivityDialog={this.props.showMasterCategoryActivityDialog}
-
-					entitiesCollection={this.props.entitiesCollection}
-					updateEntities={this.props.updateEntities}>
+					showMasterCategoryActivityDialog={this.props.showMasterCategoryActivityDialog}>
 
 					{subCategoryRows}
 				</PMasterCategoryRow>
@@ -202,7 +199,6 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 
 		if(this.monthlyBudgetContainer) {
 
-			debugger;
 			// We are going to allocate a minimum of 290px for the name column 
 			var categoryColumnNameWidth = 300;
 			var monthlyDataColumnWidth = 310;
