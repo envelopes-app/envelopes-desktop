@@ -77,7 +77,7 @@ export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 		for(var i:number = 1; i <= visibleMonths; i++) {
 
 			dataColumnHeaders = dataColumnHeaders.concat([
-				<div key={"separator_" + i} className={i == 1 ? "vertical-separator" : "vertical-separator-thick"} />,
+				<div key={"separator_" + i} className="vertical-separator-thick" />,
 				<div key={"budgeted_" + i} style={LabelContainerStyle}>
 					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>BUDGETED</label>
 				</div>,
