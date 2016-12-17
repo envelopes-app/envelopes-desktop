@@ -54,7 +54,9 @@ const MonthNameStyle:React.CSSProperties = {
 	borderBottomWidth: "0px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "5px",
-	color: UIConstants.BudgetHeaderTextColor
+	color: UIConstants.BudgetHeaderTextColor,
+	fontSize: "14px",
+	fontWeight: "bold"
 }
 
 export class PToolbarRow extends React.Component<PToolbarRowProps, {}> {
