@@ -50,10 +50,6 @@ const LableStyle:React.CSSProperties = {
 	marginBottom: "0px"
 }
 
-const BoldLableStyle = Object.assign({}, LableStyle, {
-	fontWeight: "bold"
-});
-
 export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 
 	constructor(props:PHeaderRowProps) {
@@ -79,13 +75,13 @@ export class PHeaderRow extends React.Component<PHeaderRowProps, {}> {
 			dataColumnHeaders = dataColumnHeaders.concat([
 				<div key={"separator_" + i} className="vertical-separator-thick" />,
 				<div key={"budgeted_" + i} style={LabelContainerStyle}>
-					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>BUDGETED</label>
+					<label style={LableStyle}>BUDGETED</label>
 				</div>,
 				<div key={"activity_" + i} style={LabelContainerStyle}>
-					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>ACTIVITY</label>
+					<label style={LableStyle}>ACTIVITY</label>
 				</div>,
 				<div key={"available_" + i} style={LabelContainerStyle}>
-					<label style={i < visibleMonths ? LableStyle : BoldLableStyle}>AVAILABLE</label>
+					<label style={LableStyle}>AVAILABLE</label>
 				</div>
 			]);
 		}

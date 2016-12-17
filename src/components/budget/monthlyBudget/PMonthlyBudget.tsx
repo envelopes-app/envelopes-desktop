@@ -20,19 +20,19 @@ export interface PMonthlyBudgetProps {
 	containerWidth:number;
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
-	editingSubCategory:string;
-	selectedSubCategories:Array<string>;
+	editingSubCategoryId:string;
+	editingSubCategoryMonth:DateWithoutTime;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	collapsedMasterCategoriesMap:SimpleObjectMap<boolean>;
 	// Local UI state updation functions
 	selectAllCategories:()=>void;
 	unselectAllCategories:()=>void;
-	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectMasterCategory:(masterCategory:budgetEntities.IMasterCategory, unselectAllOthers:boolean)=>void;
 	unselectMasterCategory:(masterCategory:budgetEntities.IMasterCategory)=>void;
-	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
+	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
 	expandMasterCategory:(masterCategoryId:string)=>void;
@@ -40,11 +40,11 @@ export interface PMonthlyBudgetProps {
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
 	showSubCategoryEditDialog:(subCategoryId:string, element:HTMLElement)=>void;
 	showMasterCategoryEditDialog:(masterCategoryId:string, element:HTMLElement)=>void;
-	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
-	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, month:DateWithoutTime, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	showHiddenCategoriesDialog:(element:HTMLElement, placement?:string)=>void;
-	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
-	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showDefaultSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
+	showDebtSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 	showMasterCategoryActivityDialog:(masterCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
@@ -110,8 +110,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 						currentMonth={this.props.currentMonth}
 						subCategory={subCategory} 
 						monthlySubCategoryBudgetsMap={monthlySubCategoryBudgetsMap}
-						editingSubCategory={this.props.editingSubCategory}
-						selectedSubCategories={this.props.selectedSubCategories} 
+						editingSubCategoryId={this.props.editingSubCategoryId}
+						editingSubCategoryMonth={this.props.editingSubCategoryMonth}
 						selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
 						selectSubCategory={this.props.selectSubCategory}
 						unselectSubCategory={this.props.unselectSubCategory}
@@ -123,7 +123,6 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 						showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
 						showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
-						entitiesCollection={this.props.entitiesCollection}
 						updateEntities={this.props.updateEntities} />
 				);
 				subCategoryRows.push(subCategoryRow);
@@ -175,8 +174,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 				currentMonth={this.props.currentMonth}
 				subCategory={uncategorizedSubCategory} 
 				monthlySubCategoryBudgetsMap={monthlySubCategoryBudgetsMap}
-				editingSubCategory={this.props.editingSubCategory}
-				selectedSubCategories={this.props.selectedSubCategories} 
+				editingSubCategoryId={this.props.editingSubCategoryId}
+				editingSubCategoryMonth={this.props.editingSubCategoryMonth}
 				selectedSubCategoriesMap={this.props.selectedSubCategoriesMap}
 				selectSubCategory={this.props.selectSubCategory}
 				unselectSubCategory={this.props.unselectSubCategory}
@@ -188,7 +187,6 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 				showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 				showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
 				showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
-				entitiesCollection={this.props.entitiesCollection}
 				updateEntities={this.props.updateEntities} />
 		);
 

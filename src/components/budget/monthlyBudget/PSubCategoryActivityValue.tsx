@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { DataFormatter } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { SubCategoryType } from '../../../constants';
 
@@ -11,9 +11,10 @@ export interface PSubCategoryActivityValueProps {
 	dataFormatter:DataFormatter;
 	isSelected:boolean;
 	subCategory:budgetEntities.ISubCategory;
+	currentMonth:DateWithoutTime;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	showDefaultSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
-	showDebtSubCategoryActivityDialog:(subCategoryId:string, element:HTMLElement, placement?:string)=>void;
+	showDefaultSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
+	showDebtSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 }
 
 export interface PSubCategoryActivityValueState {
@@ -77,10 +78,11 @@ export class PSubCategoryActivityValue extends React.Component<PSubCategoryActiv
 	private onActivityClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
+		var currentMonth = this.props.currentMonth;
 		if(subCategory.type == SubCategoryType.Debt)
-			this.props.showDebtSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
+			this.props.showDebtSubCategoryActivityDialog(subCategory.entityId, currentMonth, this.activityLabel);
 		else
-			this.props.showDefaultSubCategoryActivityDialog(subCategory.entityId, this.activityLabel);
+			this.props.showDefaultSubCategoryActivityDialog(subCategory.entityId, currentMonth, this.activityLabel);
 	}
 
 	public render() {
@@ -98,10 +100,10 @@ export class PSubCategoryActivityValue extends React.Component<PSubCategoryActiv
 			activityValueStyle = ActivityValueSelectedStyle;
 
 		return (
-			<div style={ActivityContainerStyle} onClick={this.onActivityClick}
-			 	onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-				
-				<label ref={(a)=> this.activityLabel = a} style={activityValueStyle}>{dataFormatter.formatCurrency(activity)}</label>
+			<div style={ActivityContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+				<label ref={(a)=> this.activityLabel = a} style={activityValueStyle} onClick={this.onActivityClick}>
+					{dataFormatter.formatCurrency(activity)}
+				</label>
 			</div>
 		);
   	}

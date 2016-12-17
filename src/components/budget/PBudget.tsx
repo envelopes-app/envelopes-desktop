@@ -32,7 +32,8 @@ export interface PBudgetState {
 	dataFormatter:DataFormatter;
 	componentWidth:number;
 	componentHeight:number;
-	editingSubCategory:string;
+	editingSubCategoryId:string;
+	editingSubCategoryMonth:DateWithoutTime;
 	selectedSubCategories:Array<string>;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 	selectedMasterCategoriesMap:SimpleObjectMap<boolean>;
@@ -122,7 +123,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			dataFormatter: new DataFormatter(dataFormat),
 			componentWidth: 0, 
 			componentHeight: 0, 
-			editingSubCategory: null,
+			editingSubCategoryId: null,
+			editingSubCategoryMonth: null,
 			selectedSubCategories: [],
 			selectedSubCategoriesMap: {},
 			selectedMasterCategoriesMap: {},
@@ -143,7 +145,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   	// *******************************************************************************************************
 	// Handlers for commands initiated from the budget rows
 	// *******************************************************************************************************
-	private selectSubCategory(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean):void {
+	private selectSubCategory(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean):void {
 
 		var state = Object.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
@@ -151,10 +153,16 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 			state.selectedSubCategoriesMap = {};
 			state.selectedMasterCategoriesMap = {};
 
-			if(setAsEditing)
-				state.editingSubCategory = subCategory.entityId;
-			else
-				state.editingSubCategory = null;
+			if(setAsEditing) {
+
+				state.editingSubCategoryId = subCategory.entityId;
+				state.editingSubCategoryMonth = month.clone();
+			}
+			else {
+
+				state.editingSubCategoryId = null;
+				state.editingSubCategoryMonth = null;
+			}
 		}
 
 		// Mark the passed subCategoryId as selected
@@ -170,7 +178,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var state = Object.assign({}, this.state) as PBudgetState;
 		// Mark the passed subCategoryId as unselected
 		var index = _.findIndex(state.selectedSubCategories, subCategory.entityId);
-		state.editingSubCategory = null;
+		state.editingSubCategoryId = null;
+		state.editingSubCategoryMonth = null;
 		state.selectedSubCategories.splice(index, 1);
 		state.selectedSubCategoriesMap[subCategory.entityId] = false;
 		// Since we are unselecting the subcategory, it's master category, if selected, would also ne unselected
@@ -196,7 +205,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private selectAllCategories():void {
 
 		var state = Object.assign({}, this.state) as PBudgetState;
-		state.editingSubCategory = null;
+		state.editingSubCategoryId = null;
+		state.editingSubCategoryMonth = null;
 		state.selectedSubCategories = [];
 		state.selectedSubCategoriesMap = {};
 		state.selectedMasterCategoriesMap = {};
@@ -225,7 +235,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 	private unselectAllCategories():void {
 
 		var state = Object.assign({}, this.state) as PBudgetState;
-		state.editingSubCategory = null;
+		state.editingSubCategoryId = null;
+		state.editingSubCategoryMonth = null;
 		state.selectedSubCategories = [];
 		state.selectedSubCategoriesMap = {};
 		state.selectedMasterCategoriesMap = {};
@@ -236,7 +247,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		var state = Object.assign({}, this.state) as PBudgetState;
 		if(unselectAllOthers) {
-			state.editingSubCategory = null;
+			state.editingSubCategoryId = null;
+			state.editingSubCategoryMonth = null;
 			state.selectedSubCategories = [];
 			state.selectedSubCategoriesMap = {};
 			state.selectedMasterCategoriesMap = {};
@@ -264,7 +276,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		// Mark all these subCategories as unselected
 		_.forEach(subCategories, (subCategory)=>{
 			var index = _.findIndex(state.selectedSubCategories, subCategory.entityId);
-			state.editingSubCategory = null;
+			state.editingSubCategoryId = null;
+			state.editingSubCategoryMonth = null;
 			state.selectedSubCategories.splice(index, 1);
 			state.selectedSubCategoriesMap[subCategory.entityId] = false;
 		});
@@ -273,11 +286,12 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
-	private selectSubCategoryForEditing(subCategory:budgetEntities.ISubCategory):void {
+	private selectSubCategoryForEditing(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime):void {
 
 		var subCategoryId = subCategory.entityId;
 		var state = Object.assign({}, this.state) as PBudgetState;
-		state.editingSubCategory = subCategoryId;
+		state.editingSubCategoryId = subCategoryId;
+		state.editingSubCategoryMonth = month.clone();
 		state.selectedSubCategories = [subCategoryId];
 		state.selectedSubCategoriesMap = {};
 		state.selectedSubCategoriesMap[subCategoryId] = true;
@@ -292,11 +306,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var subCategoryIds = this.getSortedCategoryIdsList();
 		// If we don't currently have a subcategory being edited, then set the first category
 		// from the list to be the one being edited
-		if(!state.editingSubCategory)
-			state.editingSubCategory = subCategoryIds[0];
+		if(!state.editingSubCategoryId)
+			state.editingSubCategoryId = subCategoryIds[0];
 		else {
 			// Find the index of the subcategory currently being edited
-			var index = _.indexOf(subCategoryIds, state.editingSubCategory);
+			var index = _.indexOf(subCategoryIds, state.editingSubCategoryId);
 			// if the index is for the last item in the list, then set it to zero.
 			// Otherwise increment it to point to next subcategory
 			if(index == subCategoryIds.length - 1)
@@ -305,7 +319,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				index++;
 
 			var subCategoryId = subCategoryIds[index];
-			state.editingSubCategory = subCategoryId;
+			state.editingSubCategoryId = subCategoryId;
 			state.selectedSubCategories = [subCategoryId];
 			state.selectedSubCategoriesMap = {};
 			state.selectedSubCategoriesMap[subCategoryId] = true;
@@ -322,11 +336,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		var subCategoryIds = this.getSortedCategoryIdsList();
 		// If we don't currently have a subcategory being edited, then set the first category
 		// from the list to be the one being edited
-		if(!state.editingSubCategory)
-			state.editingSubCategory = subCategoryIds[0];
+		if(!state.editingSubCategoryId)
+			state.editingSubCategoryId = subCategoryIds[0];
 		else {
 			// Find the index of the subcategory currently being edited
-			var index = _.indexOf(subCategoryIds, state.editingSubCategory);
+			var index = _.indexOf(subCategoryIds, state.editingSubCategoryId);
 			// if the index is for the first item in the list, then set it to the last item.
 			// Otherwise decrement it to point to previous subcategory
 			if(index == 0)
@@ -335,7 +349,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 				index--;
 
 			var subCategoryId = subCategoryIds[index];
-			state.editingSubCategory = subCategoryId;
+			state.editingSubCategoryId = subCategoryId;
 			state.selectedSubCategories = [subCategoryId];
 			state.selectedSubCategoriesMap = {};
 			state.selectedSubCategoriesMap[subCategoryId] = true;
@@ -411,16 +425,14 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.createCategoryDialog.show(masterCategoryId, element, placement);
 	}
 
-	private showDefaultSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
+	private showDefaultSubCategoryActivityDialog(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for default category activity
-		var selectedMonth = this.props.selectedBudgetMonth;
-		this.defaultCategoryActivityDialog.show(subCategoryId, selectedMonth, element, placement);
+		this.defaultCategoryActivityDialog.show(subCategoryId, month, element, placement);
 	}
 
-	private showDebtSubCategoryActivityDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
+	private showDebtSubCategoryActivityDialog(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for debt category activity
-		var selectedMonth = this.props.selectedBudgetMonth;
-		this.debtCategoryActivityDialog.show(subCategoryId, selectedMonth, element, placement);
+		this.debtCategoryActivityDialog.show(subCategoryId, month, element, placement);
 	}
 
 	private showMasterCategoryActivityDialog(masterCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement:string = "bottom"):void {
@@ -428,16 +440,14 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.masterCategoryActivityDialog.show(masterCategoryId, month, element, placement);
 	}
 
-	private showCoverOverspendingDialog(subCategoryId:string, amountToCover:number, element:HTMLElement, placement:string = "left"):void {
-		// Show the dialog for creating a category
-		var selectedMonth = this.props.selectedBudgetMonth;
-		this.coverOverspendingDialog.show(subCategoryId, selectedMonth, amountToCover, element, placement);
+	private showCoverOverspendingDialog(subCategoryId:string, month:DateWithoutTime, amountToCover:number, element:HTMLElement, placement:string = "left"):void {
+		// Show the cover overspending dialog for subcategory
+		this.coverOverspendingDialog.show(subCategoryId, month, amountToCover, element, placement);
 	}
 
-	private showMoveMoneyDialog(subCategoryId:string, amountToMove:number, element:HTMLElement, placement:string = "left"):void {
-		// Show the dialog for creating a category
-		var selectedMonth = this.props.selectedBudgetMonth;
-		this.moveMoneyDialog.show(subCategoryId, selectedMonth, amountToMove, element, placement);
+	private showMoveMoneyDialog(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement:string = "left"):void {
+		// Show the move money dialog for subcategory
+		this.moveMoneyDialog.show(subCategoryId, month, amountToMove, element, placement);
 	}
 
 	private showHiddenCategoriesDialog(element:HTMLElement, placement:string = "top"):void {
@@ -567,8 +577,8 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						currentMonth={selectedMonth} 
 						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 
-						editingSubCategory={this.state.editingSubCategory}
-						selectedSubCategories={this.state.selectedSubCategories}
+						editingSubCategoryId={this.state.editingSubCategoryId}
+						editingSubCategoryMonth={this.state.editingSubCategoryMonth}
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
 						selectedMasterCategoriesMap={this.state.selectedMasterCategoriesMap}
 						collapsedMasterCategoriesMap={this.state.collapsedMasterCategoriesMap}

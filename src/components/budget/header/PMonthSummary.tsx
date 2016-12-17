@@ -13,8 +13,8 @@ export interface PMonthSummaryProps {
 	currentMonth:DateWithoutTime;
 	entitiesCollection:IEntitiesCollection;
 
-	showCoverOverspendingDialog:(subCategoryId:string, amountToCover:number, element:HTMLElement, placement?:string)=>void;
-	showMoveMoneyDialog:(subCategoryId:string, amountToMove:number, element:HTMLElement, placement?:string)=>void;
+	showCoverOverspendingDialog:(subCategoryId:string, month:DateWithoutTime, amountToCover:number, element:HTMLElement, placement?:string)=>void;
+	showMoveMoneyDialog:(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 }
 
 export interface PMonthSummaryState { }
@@ -108,9 +108,9 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, PMonthSum
 		// If the ATB value is negative, we will show the cover overspending dialog. Otherwise show the
 		// move money dialog.
 		if(availableToBudget < 0)
-			this.props.showCoverOverspendingDialog(immediateIncomeSubCategory.entityId, availableToBudget, this.atbContainer, "bottom");
+			this.props.showCoverOverspendingDialog(immediateIncomeSubCategory.entityId, currentMonth, availableToBudget, this.atbContainer, "bottom");
 		else 
-			this.props.showMoveMoneyDialog(immediateIncomeSubCategory.entityId, availableToBudget, this.atbContainer, "bottom");
+			this.props.showMoveMoneyDialog(immediateIncomeSubCategory.entityId, currentMonth, availableToBudget, this.atbContainer, "bottom");
 	}
 
 	private getBudgetedInFuture():number {

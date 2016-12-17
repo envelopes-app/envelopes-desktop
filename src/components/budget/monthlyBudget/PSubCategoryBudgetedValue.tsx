@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { DataFormatter } from '../../../utilities';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { InternalCategories } from '../../../constants';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -13,10 +13,11 @@ export interface PSubCategoryBudgetedValueProps {
 	isSelected:boolean;
 	isHovering:boolean;
 	isEditing:boolean;
+	currentMonth:DateWithoutTime;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
-	selectSubCategory:(subCategory:budgetEntities.ISubCategory, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
-	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory)=>void;
+	selectSubCategory:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
+	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
@@ -83,7 +84,8 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 	private onClick(event:React.MouseEvent<any>):void {
 
 		var subCategory = this.props.subCategory;
-		this.props.selectSubCategoryForEditing(subCategory);
+		var currentMonth = this.props.currentMonth;
+		this.props.selectSubCategoryForEditing(subCategory, currentMonth);
 	}
 
 	private onBudgetValueChange(event:React.FormEvent<any>):void {
@@ -98,7 +100,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 
 	private onBlur(event:React.FocusEvent<HTMLInputElement>):void {
 		this.commitValue();
-		this.props.selectSubCategory(this.props.subCategory, true, false);
+		this.props.selectSubCategory(this.props.subCategory, this.props.currentMonth, true, false);
 	}
 
 	public discardValue():void {
