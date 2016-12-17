@@ -40,8 +40,7 @@ const InspectorContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
-	backgroundColor: UIConstants.InspectorBackgroundColor,
-	overflowY: "auto"
+	backgroundColor: UIConstants.InspectorBackgroundColor
 }
 
 const InspectorContainerCollapsedStyle = Object.assign({}, InspectorContainerStyle, {
@@ -52,7 +51,7 @@ const InspectorContainerExpandedStyle = Object.assign({}, InspectorContainerStyl
 	width: UIConstants.InspectorExpandedWidth
 });
 
-const InspectorBarStyle:React.CSSProperties = {
+const InspectorExpandCollapseBarStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	display: "flex",
 	alignItems: "center",
@@ -67,6 +66,12 @@ const InspectorBarStyle:React.CSSProperties = {
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
 	cursor: "pointer"
+}
+
+const InspectorInternalContainerStyle:React.CSSProperties = {
+	width: "100%",
+	height: "100%",
+	overflowY: "auto"
 }
 
 const GlyphStyle:React.CSSProperties = {
@@ -98,7 +103,7 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 		if(this.props.inspectorCollapsed) {
 			return (
 				<div style={InspectorContainerCollapsedStyle}>
-					<div style={InspectorBarStyle} onClick={this.expandCollapseInspector}>
+					<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
 						{glyph}
 					</div>
 				</div>
@@ -163,10 +168,12 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 
 			return (
 				<div style={InspectorContainerExpandedStyle}>
-					<div style={InspectorBarStyle} onClick={this.expandCollapseInspector}>
+					<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
 						{glyph}
 					</div>
-					{inspector}
+					<div style={InspectorInternalContainerStyle}>
+						{inspector}
+					</div>
 				</div>
 			);
 		}

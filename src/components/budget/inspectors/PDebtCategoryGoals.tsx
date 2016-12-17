@@ -261,7 +261,7 @@ export class PDebtCategoryGoals extends React.Component<PDebtCategoryGoalsProps,
 		else {
 			goalsHeader = (
 				<div className="inspector-section-header">
-					GOALS
+					<span>GOALS</span>
 				</div>
 			);
 		}
