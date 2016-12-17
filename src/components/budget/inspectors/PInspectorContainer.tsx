@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Glyphicon } from 'react-bootstrap';
 
+import { PLinkButton } from '../../common/PLinkButton';
 import { PDefaultInspector } from './PDefaultInspector';
 import { PDefaultCategoryInspector } from './PDefaultCategoryInspector';
 import { PDebtCategoryInspector } from './PDebtCategoryInspector';
@@ -21,13 +23,16 @@ export interface PInspectorContainerProps {
 	selectedSubCategories:Array<string>;
 	inspectorCollapsed:boolean;
 	entitiesCollection:IEntitiesCollection;
+	setInspectorState:(collapsed:boolean)=>void;
 	showUpcomingTransactionsDialog:(monthlySubCategoryBudgetId:string, element:HTMLElement, placement?:string)=>void;
 	// Dispatcher Functions
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const InspectorContainerStyle:React.CSSProperties = {
-	flex: '0 0 auto',
+	flex: "0 0 auto",
+	display: "flex",
+	flexFlow: "row nowrap",
 	height: "100%",
 	borderColor: UIConstants.InspectorBorderColor,
 	borderStyle: "solid",
@@ -47,12 +52,57 @@ const InspectorContainerExpandedStyle = Object.assign({}, InspectorContainerStyl
 	width: UIConstants.InspectorExpandedWidth
 });
 
+const InspectorBarStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+	height: "100%",
+	width: "20px",
+	backgroundColor: UIConstants.InspectorBackgroundColor,
+	borderColor: UIConstants.InspectorBorderColor,
+	borderStyle: "solid",
+	borderTopWidth: "0px",
+	borderBottomWidth: "0px",
+	borderRightWidth: "1px",
+	borderLeftWidth: "0px",
+	cursor: "pointer"
+}
+
+const GlyphStyle:React.CSSProperties = {
+	color: '#009cc2'
+}
+
 export class PInspectorContainer extends React.Component<PInspectorContainerProps, {}> {
+
+	constructor(props:PInspectorContainerProps) {
+        super(props);
+		this.expandCollapseInspector = this.expandCollapseInspector.bind(this);
+	}
+
+	private expandCollapseInspector():void {
+		if(this.props.inspectorCollapsed)
+			this.props.setInspectorState(false);
+		else
+			this.props.setInspectorState(true);
+	}
 
 	public render() {
 
+		var glyph:JSX.Element;
+		if(this.props.inspectorCollapsed)
+			glyph = <Glyphicon glyph="chevron-left" style={GlyphStyle} />;
+		else
+			glyph = <Glyphicon glyph="chevron-right" style={GlyphStyle} />;
+
 		if(this.props.inspectorCollapsed) {
-			return <div style={InspectorContainerCollapsedStyle} />;
+			return (
+				<div style={InspectorContainerCollapsedStyle}>
+					<div style={InspectorBarStyle} onClick={this.expandCollapseInspector}>
+						{glyph}
+					</div>
+				</div>
+			);
 		}
 		else {
 			var inspector:JSX.Element;
@@ -113,6 +163,9 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 
 			return (
 				<div style={InspectorContainerExpandedStyle}>
+					<div style={InspectorBarStyle} onClick={this.expandCollapseInspector}>
+						{glyph}
+					</div>
 					{inspector}
 				</div>
 			);

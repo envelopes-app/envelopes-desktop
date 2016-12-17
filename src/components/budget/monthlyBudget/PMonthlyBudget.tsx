@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PHeaderRow } from './PHeaderRow';
+import { PToolbarRow } from './PToolbarRow';
 import { PMasterCategoryRow } from './PMasterCategoryRow';
 import { PSubCategoryRow } from './PSubCategoryRow';
 
@@ -35,6 +36,10 @@ export interface PMonthlyBudgetProps {
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
 	selectNextSubCategoryForEditing:()=>void;
 	selectPreviousSubCategoryForEditing:()=>void;
+	expandAllMasterCategories:()=>void;
+	collapseAllMasterCategories:()=>void;
+	onAddCategoryGroupSelected:(element:HTMLElement)=>void;
+	showReorderCategoriesDialog:()=>void;
 	expandMasterCategory:(masterCategoryId:string)=>void;
 	collapseMasterCategory:(masterCategoryId:string)=>void;
 	showCreateCategoryDialog:(masterCategoryId:string, element:HTMLElement)=>void;
@@ -318,6 +323,15 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
     	return (
 			<div style={MonthlyBudgetContainerStyle}>
 				<div ref={(d)=> this.monthlyBudgetContainer = d} style={MonthlyBudgetSubContainerStyle}>
+
+					<PToolbarRow 
+						visibleMonths={this.state.visibleMonths}
+						currentMonth={this.props.currentMonth}
+						expandAllMasterCategories={this.props.expandAllMasterCategories}
+						collapseAllMasterCategories={this.props.collapseAllMasterCategories}
+						onAddCategoryGroupSelected={this.props.onAddCategoryGroupSelected} 
+						showReorderCategoriesDialog={this.props.showReorderCategoriesDialog}
+					/>
 					<PHeaderRow 
 						visibleMonths={this.state.visibleMonths}
 						selectAllCategories={this.props.selectAllCategories}

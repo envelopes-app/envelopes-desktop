@@ -5,7 +5,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { PBudgetHeader } from './header/PBudgetHeader';
-import { PBudgetToolbar } from './toolbar/PBudgetToolbar';
 import { PMonthlyBudget } from './monthlyBudget/PMonthlyBudget';
 import { PInspectorContainer } from './inspectors/PInspectorContainer';
 
@@ -560,15 +559,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					showMoveMoneyDialog={this.showMoveMoneyDialog}
 					updateEntities={this.props.updateEntities} />
 
-				<PBudgetToolbar 
-					inspectorCollapsed={this.state.inspectorCollapsed}
-					expandAllMasterCategories={this.expandAllMasterCategories}
-					collapseAllMasterCategories={this.collapseAllMasterCategories}
-					setInspectorState={this.setInspectorState}
-					onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
-					showReorderCategoriesDialog={this.showReorderCategoriesDialog}
-				/>
-
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
 						dataFormatter={this.state.dataFormatter}
@@ -591,6 +581,10 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectSubCategoryForEditing={this.selectSubCategoryForEditing}
 						selectNextSubCategoryForEditing={this.selectNextSubCategoryForEditing}
 						selectPreviousSubCategoryForEditing={this.selectPreviousSubCategoryForEditing}
+						expandAllMasterCategories={this.expandAllMasterCategories}
+						collapseAllMasterCategories={this.collapseAllMasterCategories}
+						onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
+						showReorderCategoriesDialog={this.showReorderCategoriesDialog}
 						expandMasterCategory={this.expandMasterCategory}
 						collapseMasterCategory={this.collapseMasterCategory}
 						showCreateCategoryDialog={this.showCreateCategoryDialog}
@@ -609,6 +603,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectedSubCategories={this.state.selectedSubCategories}
 						inspectorCollapsed={this.state.inspectorCollapsed}
 						entitiesCollection={this.props.entitiesCollection} 
+						setInspectorState={this.setInspectorState}
 						showUpcomingTransactionsDialog={this.showUpcomingTransactionsDialog}
 						updateEntities={this.props.updateEntities}
 					/>

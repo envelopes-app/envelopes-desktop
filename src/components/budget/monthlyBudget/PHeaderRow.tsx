@@ -3,6 +3,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { UIConstants } from '../../../constants';
+
 export interface PHeaderRowProps { 
 	visibleMonths:number;
 	selectAllCategories:()=>void;
@@ -16,7 +18,7 @@ const HeaderRowContainerStyle:React.CSSProperties = {
 	flexFlow: 'row nowrap',
 	alignItems: "center",
 	backgroundColor: "#FFFFFF",
-	borderColor: "#DFE4E9",
+	borderColor: UIConstants.MonthlyBudgetBorderColor,
 	borderStyle: "solid",
 	borderTopWidth: "0px",
 	borderBottomWidth: "1px",
@@ -46,7 +48,7 @@ const LabelContainerStyle:React.CSSProperties = {
 const LableStyle:React.CSSProperties = {
 	fontSize: "11px",
 	fontWeight: "normal",
-	color: "#4D717A",
+	color: UIConstants.BudgetHeaderTextColor,
 	marginBottom: "0px"
 }
 

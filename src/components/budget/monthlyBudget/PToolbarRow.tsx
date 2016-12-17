@@ -4,13 +4,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { UIConstants } from '../../../constants';
+import { DateWithoutTime } from '../../../utilities';
 import { PLinkButton } from '../../common/PLinkButton';
 
-export interface PBudgetToolbarProps {
-	inspectorCollapsed:boolean;
+export interface PToolbarRowProps {
+	currentMonth:DateWithoutTime;
+	visibleMonths:number;
 	expandAllMasterCategories:()=>void;
 	collapseAllMasterCategories:()=>void;
-	setInspectorState:(collapsed:boolean)=>void;
 	onAddCategoryGroupSelected:(element:HTMLElement)=>void;
 	showReorderCategoriesDialog:()=>void;
 }
@@ -20,6 +21,12 @@ const BudgetToolbarContainerStyle:React.CSSProperties = {
 	height: '35px',
 	width: '100%',
 	backgroundColor: '#ffffff',
+	borderColor: UIConstants.MonthlyBudgetBorderColor,
+	borderStyle: "solid",
+	borderTopWidth: "0px",
+	borderBottomWidth: "1px",
+	borderRightWidth: "0px",
+	borderLeftWidth: "0px",
 	paddingLeft: '10px',
 	paddingRight: '10px',
 }
@@ -34,14 +41,28 @@ const BudgetToolbarStyle:React.CSSProperties = {
 	width: '100%',
 }
 
-export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
+const MonthNameStyle:React.CSSProperties = {
+	display: 'flex',
+	flexFlow: 'row nowrap',
+	justifyContent: 'center',
+	alignItems: 'center',
+	height: '100%',
+	width: UIConstants.MonthlyDataColumnsWidth,
+	borderColor: UIConstants.MonthlyBudgetBorderColor,
+	borderStyle: "solid",
+	borderTopWidth: "0px",
+	borderBottomWidth: "0px",
+	borderRightWidth: "0px",
+	borderLeftWidth: "5px",
+	color: UIConstants.BudgetHeaderTextColor
+}
+
+export class PToolbarRow extends React.Component<PToolbarRowProps, {}> {
   
 	private addCategoryButton:PLinkButton;
 
-	constructor(props:PBudgetToolbarProps) {
+	constructor(props:PToolbarRowProps) {
         super(props);
-		this.expandInspector = this.expandInspector.bind(this);
-		this.collapseInspector = this.collapseInspector.bind(this);
 		this.onExpandAllButtonClick = this.onExpandAllButtonClick.bind(this);
 		this.onCollapseAllButtonClick = this.onCollapseAllButtonClick.bind(this);
 		this.onAddCategoryButtonClick = this.onAddCategoryButtonClick.bind(this);
@@ -66,40 +87,28 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 		this.props.showReorderCategoriesDialog();
 	}
 
-	private expandInspector():void {
-		this.props.setInspectorState(false);
-	}
+	public getMonthNameNodes():Array<JSX.Element> {
 
-	private collapseInspector():void {
-		this.props.setInspectorState(true);
-	}
+		var currentMonth = this.props.currentMonth.clone().subtractMonths(this.props.visibleMonths - 1);
+		var monthNameNodes:Array<JSX.Element> = [];
+		while(currentMonth.isAfter(this.props.currentMonth) == false) {
 
-	private getInspectorButton():JSX.Element {
-
-		var inspectorbutton:JSX.Element;
-
-		if(this.props.inspectorCollapsed) {
-
-			inspectorbutton = (
-				<PLinkButton 
-					tooltip="Expand inspector" text="Expand Inspector" glyphNames={["glyphicon-chevron-left", "glyphicon-menu-hamburger"]} 
-					enabled={true} clickHandler={this.expandInspector} />
+			var monthNameNode = (
+				<div key={currentMonth.toISOString()} style={MonthNameStyle}>
+					{currentMonth.format("MMM YYYY")}
+				</div>
 			);
-		}
-		else {
-			inspectorbutton = (
-				<PLinkButton 
-					tooltip="Collapse Inspector" text="Collapse Inspector" glyphNames={["glyphicon-menu-hamburger", "glyphicon-chevron-right"]} 
-					enabled={true} clickHandler={this.collapseInspector} />
-			);
+
+			monthNameNodes.push(monthNameNode);
+			currentMonth = currentMonth.addMonths(1);
 		}
 
-		return inspectorbutton;
+		return monthNameNodes;
 	}
 
 	public render() {
 
-		var inspectorButton = this.getInspectorButton();
+		var monthNameNodes = this.getMonthNameNodes();
 
     	return (
 			<div style={BudgetToolbarContainerStyle}>
@@ -122,7 +131,7 @@ export class PBudgetToolbar extends React.Component<PBudgetToolbarProps, {}> {
 						enabled={true} clickHandler={this.onAddCategoryButtonClick} />
 
 					<div className="spacer" />
-					{inspectorButton}
+					{monthNameNodes}
 				</div>
 			</div>
 		);

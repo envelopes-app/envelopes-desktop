@@ -18,6 +18,7 @@ export interface PDefaultInspectorProps {
 }
 
 const DefaultInspectorContainerStyle:React.CSSProperties = {
+	flex: "1 1 auto",
 	display: "flex",
 	flexFlow: 'column nowrap',
 	alignItems: "center",
