@@ -50,13 +50,16 @@ const BudgetedValueStyle:React.CSSProperties = {
 	textAlign: "right",
 	borderStyle: "none",
 	borderWidth: "0px",
-	paddingLeft: "0px",
+	paddingLeft: "1px",
 	paddingRight: "0px",
 	paddingTop: "0px",
 	paddingBottom: "0px",
 	color: "#333333",
 	backgroundColor: "#FFFFFF",
-	outlineStyle: "none"
+	outlineStyle: "none",
+	whiteSpace: "nowrap",
+  	overflow: "hidden",
+  	textOverflow: "ellipsis"
 } 
 
 const BudgetedValueSelectedStyle:React.CSSProperties = Object.assign({}, BudgetedValueStyle, {
@@ -207,7 +210,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 				
 				return (
 					<div style={budgetedContainerStyle}>
-						<input type="text" style={budgetedValueStyle} value={dataFormatter.formatCurrency(budgetedValue)} 
+						<input type="text" style={budgetedValueStyle} title={dataFormatter.formatCurrency(budgetedValue)} value={dataFormatter.formatCurrency(budgetedValue)} 
 							onClick={this.onClick} readOnly={true}/>
 					</div>
 				);

@@ -24,6 +24,7 @@ export interface PSubCategoryActivityValueState {
 const ActivityContainerStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "100px",
+	height: "22px",
 	textAlign: "right",
 	paddingRight: "8px"
 }
@@ -32,7 +33,12 @@ const ActivityValueStyle:React.CSSProperties = {
 	color: "#333333",
 	fontSize: "14px",
 	fontWeight: "normal",
-	marginBottom: "0px"
+	paddingLeft: "1px",
+	paddingRight: "0px",
+	marginBottom: "0px",
+	whiteSpace: "nowrap",
+  	overflow: "hidden",
+  	textOverflow: "ellipsis"
 } 
 
 const ActivityValueDisabledStyle:React.CSSProperties = Object.assign({}, ActivityValueStyle, {
@@ -101,7 +107,8 @@ export class PSubCategoryActivityValue extends React.Component<PSubCategoryActiv
 
 		return (
 			<div style={ActivityContainerStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-				<label ref={(a)=> this.activityLabel = a} style={activityValueStyle} onClick={this.onActivityClick}>
+				<label ref={(a)=> this.activityLabel = a} style={activityValueStyle} 
+					onClick={this.onActivityClick} title={dataFormatter.formatCurrency(activity)}>
 					{dataFormatter.formatCurrency(activity)}
 				</label>
 			</div>

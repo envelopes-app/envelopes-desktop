@@ -16,6 +16,7 @@ export interface PSubCategoryBalanceValueProps {
 const BalanceContainerStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	width: "100px",
+	height: "22px",
 	textAlign: "right",
 	paddingRight: "8px"
 }
@@ -71,14 +72,14 @@ export class PSubCategoryBalanceValue extends React.Component<PSubCategoryBalanc
 		if(this.props.onClick) {
 			return (
 				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
-					<div className={className} onClick={this.props.onClick}>{dataFormatter.formatCurrency(balance)}</div>
+					<div className={className} onClick={this.props.onClick} title={dataFormatter.formatCurrency(balance)}>{dataFormatter.formatCurrency(balance)}</div>
 				</div>
 			);
 		}
 		else {
 			return (
 				<div ref={(d)=> this.balanceValueContainer = d} style={BalanceContainerStyle}>
-					<div className={className} style={{cursor:"default"}}>{dataFormatter.formatCurrency(balance)}</div>
+					<div className={className} style={{cursor:"default"}} title={dataFormatter.formatCurrency(balance)}>{dataFormatter.formatCurrency(balance)}</div>
 				</div>
 			);
 		}

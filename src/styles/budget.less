@@ -48,11 +48,16 @@
 // Styles for the balance cell on the budget screen. We are extending the 'badge" style from bootstrap
 // ***************************************************************************************************
 .budget-row-balance-base {
-	&:extend(.badge);
 	font-size: 14px;
 	font-weight: normal;
 	color: #FFFFFF;
+	border-radius: 1000px;
+	padding-left: 5px;
+	padding-right: 5px;
 	cursor: pointer;
+	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
 }
 
 .budget-row-balance-grey {
@@ -104,6 +109,9 @@
 	font-size: 14px;
 	margin-bottom: 2px;
 	outline: none;
+	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
 }
 
 .quick-budget-button:focus {

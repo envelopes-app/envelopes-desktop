@@ -48,7 +48,11 @@ const ValueStyle:React.CSSProperties = {
 	fontSize: "14px",
 	fontWeight: "bold",
 	color: "#4D717A",
-	marginBottom: "0px"
+	marginBottom: "0px",
+	paddingLeft: "1px",
+	whiteSpace: "nowrap",
+  	overflow: "hidden",
+  	textOverflow: "ellipsis"
 }
 
 const ActivityValueStyle:React.CSSProperties = Object.assign({}, ValueStyle, {
@@ -133,14 +137,14 @@ export class PMasterCategoryMonthValues extends React.Component<PMasterCategoryM
 			<div style={ValuesContainerStyle}>
 				<div className="vertical-separator-thick" />
 				<div style={ValueColumnStyle}>
-					<label style={ValueStyle}>{dataFormatter.formatCurrency(budgeted)}</label>
+					<label style={ValueStyle} title={dataFormatter.formatCurrency(budgeted)}>{dataFormatter.formatCurrency(budgeted)}</label>
 				</div>
 				<div style={ValueColumnStyle} onMouseEnter={this.handleMouseEnterOnActivityColumn} onMouseLeave={this.handleMouseLeaveOnActivityColumn}>
 					<label style={activityValueStyle} ref={(a)=> this.activityLabel = a}
-						onClick={this.onActivityClick}>{dataFormatter.formatCurrency(activity)}</label>
+						onClick={this.onActivityClick} title={dataFormatter.formatCurrency(activity)}>{dataFormatter.formatCurrency(activity)}</label>
 				</div>
 				<div style={ValueColumnStyle}>
-					<label style={ValueStyle}>{dataFormatter.formatCurrency(balance)}</label>
+					<label style={ValueStyle} title={dataFormatter.formatCurrency(balance)}>{dataFormatter.formatCurrency(balance)}</label>
 				</div>
 			</div>
 		);

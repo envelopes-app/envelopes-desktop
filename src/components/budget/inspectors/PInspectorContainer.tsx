@@ -67,7 +67,7 @@ const InspectorExpandCollapseBarStyle:React.CSSProperties = {
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
 	paddingTop: "5px",
-	paddingBottom: "5px",
+	paddingBottom: "10px",
 	cursor: "pointer"
 }
 
