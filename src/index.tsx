@@ -24,7 +24,6 @@ Logger.initializeLogging();
 
 injectTapEventPlugin();
 const store = createStore(combinedReducer, applyMiddleware(thunkMiddleware));
-var refreshDatabase:boolean = (process.env.NODE_ENV === 'development') ? true : false;
 store.dispatch(GlobalActionsCreator.initializeDatabase(false));
 
 ReactDOM.render(

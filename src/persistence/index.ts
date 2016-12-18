@@ -1,6 +1,7 @@
 export { BudgetFactory } from './BudgetFactory';
 export { CalculationsManager } from './CalculationsManager';
 export { DatabaseFactory } from './DatabaseFactory';
+export { DropboxManager } from './DropboxManager';
 export { EntityFactory } from './EntityFactory';
 export { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 export { MigrationsManager } from './MigrationsManager';

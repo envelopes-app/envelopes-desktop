@@ -6,6 +6,7 @@ import { BudgetFactory } from './BudgetFactory';
 import { DatabaseFactory } from './DatabaseFactory';
 import { EntityFactory } from './EntityFactory';
 import { CalculationsManager } from './CalculationsManager';
+import { DropboxManager } from './DropboxManager';
 import * as commonInterfaces from '../interfaces/common'; 
 import { IImportedAccountObject } from '../interfaces/objects';
 import * as catalogEntities from '../interfaces/catalogEntities';
@@ -42,10 +43,13 @@ export class PersistenceManager {
 	private budgetKnowledge:BudgetKnowledge;
 	private activeBudget:catalogEntities.IBudget;
 	private calculationsManager:CalculationsManager = new CalculationsManager();
+	private dropboxManager:DropboxManager = new DropboxManager();
 
+	// Persistence helper classes for catalog entities
 	private budgetHelper = new persistenceHelpers.BudgetHelper();
 	private globalSettingHelper = new persistenceHelpers.GlobalSettingHelper();
 
+	// Persistence helper classes for budget entities
 	private accountHelper = new persistenceHelpers.AccountHelper();
 	private masterCategoryHelper = new persistenceHelpers.MasterCategoryHelper();
 	private monthlyBudgetHelper = new persistenceHelpers.MonthlyBudgetHelper();
@@ -86,7 +90,7 @@ export class PersistenceManager {
 			.then((deviceId:string)=>{
 
 				this.deviceId = deviceId;
-				return true;
+				return this.dropboxManager.initialize(deviceId);
 			});
 	}
 
