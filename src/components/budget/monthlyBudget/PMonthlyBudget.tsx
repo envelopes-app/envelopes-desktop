@@ -62,12 +62,6 @@ const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	flexFlow: 'column nowrap',
 	minWidth: "600px",
 	backgroundColor: "#FFFFFF",
-	borderColor: "#DFE4E9",
-	borderStyle: "solid",
-	borderTopWidth: "0px",
-	borderBottomWidth: "0px",
-	borderRightWidth: "1px",
-	borderLeftWidth: "0px",
 }
 
 const MonthlyBudgetSubContainerStyle:React.CSSProperties = {

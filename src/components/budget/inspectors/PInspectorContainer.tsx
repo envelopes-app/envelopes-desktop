@@ -29,27 +29,47 @@ export interface PInspectorContainerProps {
 	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
-const InspectorContainerStyle:React.CSSProperties = {
+const InspectorOuterContainerStyle:React.CSSProperties = {
 	flex: "0 0 auto",
+	display: "flex",
+	flexFlow: "column nowrap",
+	height: "100%",
+}
+
+const InspectorOuterContainerCollapsedStyle = Object.assign({}, InspectorOuterContainerStyle, {
+	width: UIConstants.InspectorCollapsedWidth
+});
+
+const InspectorOuterContainerExpandedStyle = Object.assign({}, InspectorOuterContainerStyle, {
+	width: UIConstants.InspectorExpandedWidth
+});
+
+const InspectorHeaderStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+	height: "45px",
+	width: "100%",
+	borderColor: UIConstants.InspectorBorderColor,
+	borderStyle: "solid",
+	borderTopWidth: "0px",
+	borderBottomWidth: "3px",
+	borderRightWidth: "0px",
+	borderLeftWidth: "0px",
+}
+
+const InspectorContainerStyle:React.CSSProperties = {
+	flex: "1 1 auto",
 	display: "flex",
 	flexFlow: "row nowrap",
 	height: "100%",
+	width: "100%",
 	borderColor: UIConstants.InspectorBorderColor,
 	borderStyle: "solid",
-	borderTopWidth: "1px",
+	borderTopWidth: "0px",
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
 	backgroundColor: UIConstants.InspectorBackgroundColor
 }
-
-const InspectorContainerCollapsedStyle = Object.assign({}, InspectorContainerStyle, {
-	width: UIConstants.InspectorCollapsedWidth
-});
-
-const InspectorContainerExpandedStyle = Object.assign({}, InspectorContainerStyle, {
-	width: UIConstants.InspectorExpandedWidth
-});
 
 const InspectorExpandCollapseBarStyle:React.CSSProperties = {
 	flex: "0 0 auto",
@@ -65,7 +85,7 @@ const InspectorExpandCollapseBarStyle:React.CSSProperties = {
 	borderTopWidth: "0px",
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
-	borderLeftWidth: "0px",
+	borderLeftWidth: "1px",
 	paddingTop: "5px",
 	paddingBottom: "10px",
 	cursor: "pointer"
@@ -105,11 +125,14 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 
 		if(this.props.inspectorCollapsed) {
 			return (
-				<div style={InspectorContainerCollapsedStyle}>
-					<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
-						{glyph}
-						{glyph}
-						{glyph}
+				<div style={InspectorOuterContainerCollapsedStyle}>
+					<div style={InspectorHeaderStyle} />
+					<div style={InspectorContainerStyle}>
+						<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
+							{glyph}
+							{glyph}
+							{glyph}
+						</div>
 					</div>
 				</div>
 			);
@@ -172,14 +195,17 @@ export class PInspectorContainer extends React.Component<PInspectorContainerProp
 			}
 
 			return (
-				<div style={InspectorContainerExpandedStyle}>
-					<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
-						{glyph}
-						{glyph}
-						{glyph}
-					</div>
-					<div style={InspectorInternalContainerStyle}>
-						{inspector}
+				<div style={InspectorOuterContainerExpandedStyle}>
+					<div style={InspectorHeaderStyle} />
+					<div style={InspectorContainerStyle}>
+						<div style={InspectorExpandCollapseBarStyle} onClick={this.expandCollapseInspector}>
+							{glyph}
+							{glyph}
+							{glyph}
+						</div>
+						<div style={InspectorInternalContainerStyle}>
+							{inspector}
+						</div>
 					</div>
 				</div>
 			);
