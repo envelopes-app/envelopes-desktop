@@ -32,6 +32,28 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 		return this.monthlyMap[month];
 	}
 
+	public getBudgetedInFutureForMonth(currentMonth:DateWithoutTime):number {
+
+		var monthlyBudgetForCurrentMonth = this.getMonthlyBudgetByMonth(currentMonth.toISOString());
+		var availableToBudgetInCurrentMonth = monthlyBudgetForCurrentMonth.availableToBudget;
+		
+		// Calculate the amount that we have budgeted in future months
+		var budgetedInFutureMonths = _.reduce(this.getAllItems(), (totalBudgeted:number, monthlyBudget:IMonthlyBudget)=>{
+
+			var month = DateWithoutTime.createFromISOString(monthlyBudget.month);
+			if(month.isAfter(currentMonth))
+				return totalBudgeted + monthlyBudget.budgeted;
+			else
+				return totalBudgeted;
+		}, 0);
+
+		// If we are already over budgeted in this month then we cannot contribute anything to next month.
+		if(availableToBudgetInCurrentMonth <= 0 || budgetedInFutureMonths <= 0)
+			return 0;
+		else
+			return Math.min(availableToBudgetInCurrentMonth, budgetedInFutureMonths);
+	}
+
 	protected addEntity(monthlyBudget:IMonthlyBudget):void {
 
 		if(!this.monthlyMap)

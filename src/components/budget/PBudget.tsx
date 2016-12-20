@@ -554,10 +554,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 					dataFormatter={this.state.dataFormatter}
 					inspectorCollapsed={this.state.inspectorCollapsed}
 					entitiesCollection={this.props.entitiesCollection}
-					setSelectedMonth={this.setSelectedMonth}
-					showCoverOverspendingDialog={this.showCoverOverspendingDialog}
-					showMoveMoneyDialog={this.showMoveMoneyDialog}
-					updateEntities={this.props.updateEntities} />
+					setSelectedMonth={this.setSelectedMonth} />
 
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 

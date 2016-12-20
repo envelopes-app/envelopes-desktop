@@ -7,6 +7,9 @@ export class UIConstants {
 	public static MonthlyDataColumnsWidth = "305px"
 	public static BudgetHeaderTextColor = "#4D717A";
 
+	public static PositiveATBColor = "#16A336";
+	public static NegativeATBColor = "#D33C2D";
+
 	// Budget Inspector
 	public static InspectorCollapsedWidth = "20px";
 	public static InspectorExpandedWidth = "340px";

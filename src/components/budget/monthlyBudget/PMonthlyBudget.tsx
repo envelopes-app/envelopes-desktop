@@ -65,7 +65,7 @@ const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	backgroundColor: "#FFFFFF",
 	borderColor: "#DFE4E9",
 	borderStyle: "solid",
-	borderTopWidth: "1px",
+	borderTopWidth: "0px",
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
@@ -203,8 +203,8 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 		if(this.monthlyBudgetContainer) {
 
 			// We are going to allocate a minimum of 290px for the name column 
-			var categoryColumnNameWidth = 300;
-			var monthlyDataColumnWidth = 310;
+			var categoryColumnNameWidth = 300; // Added 10 for right padding
+			var monthlyDataColumnWidth = 305;
 			// Get the width of the container available for displaying the monthly budget data and 
 			// calculate the number of visible months that we can fit
 			var availableWidth = this.monthlyBudgetContainer.clientWidth - categoryColumnNameWidth;
@@ -325,12 +325,16 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 				<div ref={(d)=> this.monthlyBudgetContainer = d} style={MonthlyBudgetSubContainerStyle}>
 
 					<PToolbarRow 
+						dataFormatter={this.props.dataFormatter}
 						visibleMonths={this.state.visibleMonths}
 						currentMonth={this.props.currentMonth}
+						entitiesCollection={this.props.entitiesCollection}
 						expandAllMasterCategories={this.props.expandAllMasterCategories}
 						collapseAllMasterCategories={this.props.collapseAllMasterCategories}
 						onAddCategoryGroupSelected={this.props.onAddCategoryGroupSelected} 
 						showReorderCategoriesDialog={this.props.showReorderCategoriesDialog}
+						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
 					/>
 					<PHeaderRow 
 						visibleMonths={this.state.visibleMonths}

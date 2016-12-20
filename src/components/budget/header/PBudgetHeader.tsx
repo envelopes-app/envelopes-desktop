@@ -19,17 +19,12 @@ export interface PBudgetHeaderProps {
 	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
 	inspectorCollapsed:boolean;
-
 	setSelectedMonth:(month:DateWithoutTime)=>void;
-	showCoverOverspendingDialog:(subCategoryId:string, month:DateWithoutTime, amountToCover:number, element:HTMLElement, placement?:string)=>void;
-	showMoveMoneyDialog:(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement?:string)=>void;
-	// Dispatcher Functions
-	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const BudgetHeaderContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
-	height: '90px',
+	height: '80px',
 	width: '100%',
 	backgroundColor: '#003540',
 	paddingLeft: '5px',
@@ -111,8 +106,6 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 						dataFormatter={this.props.dataFormatter}
 						currentMonth={this.props.currentMonth} 
 						entitiesCollection={this.props.entitiesCollection}
-						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
-						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 					/>
 
 					{rightContainer}
