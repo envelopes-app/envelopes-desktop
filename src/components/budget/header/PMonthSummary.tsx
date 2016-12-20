@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { UIConstants } from '../../../constants';
 import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { IEntitiesCollection } from '../../../interfaces/state';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
@@ -23,7 +24,7 @@ const MonthSummaryContainerStyle:React.CSSProperties = {
 	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px',
-	width: "305px",
+	width: UIConstants.MonthlyDataColumnsWidth,
 	height: "100%"
 }
 
@@ -71,14 +72,16 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, {}> {
 			var monthlyBudgetsArray = entitiesCollection.monthlyBudgets;
 
 			var monthlyBudgetForCurrentMonth = monthlyBudgetsArray.getMonthlyBudgetByMonth(currentMonth.toISOString());
+			var currentMonthImmediateIncome = monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.immediateIncome : 0;
+			var currentMonthAdditionalToBeBudgeted = monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.additionalToBeBudgeted : 0;
+
 			var monthlyBudgetForPrevMonth = monthlyBudgetsArray.getMonthlyBudgetByMonth(prevMonth.toISOString());
-			var currentMonthAvailableToBudget = monthlyBudgetForCurrentMonth.availableToBudget;
 			var previousMonthAvailableToBudget = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.availableToBudget : 0;
 
 			// Calculate the values to display in the summary
-			var fundsForCurrentMonth = previousMonthAvailableToBudget + monthlyBudgetForCurrentMonth.immediateIncome + monthlyBudgetForCurrentMonth.additionalToBeBudgeted;
+			var fundsForCurrentMonth = previousMonthAvailableToBudget + currentMonthImmediateIncome + currentMonthAdditionalToBeBudgeted;
 			var overspentInPrevMonth = monthlyBudgetForPrevMonth ? monthlyBudgetForPrevMonth.overSpent : 0;
-			var budgetedInCurrentMonth = monthlyBudgetForCurrentMonth.budgeted;
+			var budgetedInCurrentMonth = monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.budgeted : 0;
 			var budgetedInFuture = monthlyBudgetsArray.getBudgetedInFutureForMonth(currentMonth);
 
 			return (

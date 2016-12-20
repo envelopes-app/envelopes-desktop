@@ -1,6 +1,7 @@
 export class UIConstants {
 
 	// Budget
+	public static BudgetHeaderBackgroundColor = "#003540";
 	public static MonthlyBudgetBorderColor = "#DFE4E9";
 
 	public static CategoryNameColumnsWidth = "300px";

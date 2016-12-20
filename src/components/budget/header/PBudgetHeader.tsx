@@ -15,6 +15,7 @@ import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfa
 
 export interface PBudgetHeaderProps {
 	dataFormatter:DataFormatter;
+	visibleMonths:number;
 	currentMonth:DateWithoutTime;
 	currentBudget:catalogEntities.IBudget;
 	entitiesCollection:IEntitiesCollection;
@@ -24,18 +25,18 @@ export interface PBudgetHeaderProps {
 
 const BudgetHeaderContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
+	display: 'flex',
+	flexFlow: 'row nowrap',
+	justifyContent: 'space-between',
+	alignItems: 'center',
 	height: '80px',
 	width: '100%',
-	backgroundColor: '#003540',
+	backgroundColor: UIConstants.BudgetHeaderBackgroundColor,
 	paddingLeft: '5px',
 	paddingRight: '5px',
 }
 
 const BudgetHeaderStyle:React.CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row nowrap',
-	justifyContent: 'space-between',
-	alignItems: 'center',
 	height: '100%',
 	width: '100%',
 	paddingRight: '5px'
@@ -72,8 +73,31 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 		return rightContainer;
 	}
 
+	private getMonthSummaries():Array<JSX.Element> {
+
+		var monthSummaryNodes:Array<JSX.Element> = [];
+		var currentMonth = this.props.currentMonth.clone().subtractMonths(this.props.visibleMonths - 1);
+		while(currentMonth.isAfter(this.props.currentMonth) == false) {
+
+			var monthSummaryNode = (
+				<PMonthSummary 
+					key={`${currentMonth.toISOString()}_month_summary`}
+					dataFormatter={this.props.dataFormatter}
+					currentMonth={currentMonth} 
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+			);
+
+			monthSummaryNodes.push(monthSummaryNode);
+			currentMonth = currentMonth.clone().addMonths(1);
+		}
+
+		return monthSummaryNodes;
+	}
+
 	public render() {
 
+		var monthSummaries = this.getMonthSummaries();
 		var rightContainer = this.getRightContainer();
 
 		// Get the first and last months from the budget entity. Min and Max months will
@@ -93,23 +117,15 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 
     	return (
 			<div style={BudgetHeaderContainerStyle}>
-				<div style={BudgetHeaderStyle}>
-					<PMonthSelection 
-						currentMonth={this.props.currentMonth} 
-						minMonth={minMonth} maxMonth={maxMonth} 
-						setSelectedMonth={this.props.setSelectedMonth} 
-					/>
+				<PMonthSelection 
+					currentMonth={this.props.currentMonth} 
+					minMonth={minMonth} maxMonth={maxMonth} 
+					setSelectedMonth={this.props.setSelectedMonth} 
+				/>
 
-					<div className="spacer" />
-
-					<PMonthSummary 
-						dataFormatter={this.props.dataFormatter}
-						currentMonth={this.props.currentMonth} 
-						entitiesCollection={this.props.entitiesCollection}
-					/>
-
-					{rightContainer}
-				</div>
+				<div className="spacer" />
+				{monthSummaries}
+				{rightContainer}
 			</div>
 		);
   	}

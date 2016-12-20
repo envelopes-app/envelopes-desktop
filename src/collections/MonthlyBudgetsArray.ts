@@ -35,7 +35,7 @@ export class MonthlyBudgetsArray extends EntitiesArray<IMonthlyBudget> {
 	public getBudgetedInFutureForMonth(currentMonth:DateWithoutTime):number {
 
 		var monthlyBudgetForCurrentMonth = this.getMonthlyBudgetByMonth(currentMonth.toISOString());
-		var availableToBudgetInCurrentMonth = monthlyBudgetForCurrentMonth.availableToBudget;
+		var availableToBudgetInCurrentMonth = monthlyBudgetForCurrentMonth ? monthlyBudgetForCurrentMonth.availableToBudget : 0;
 		
 		// Calculate the amount that we have budgeted in future months
 		var budgetedInFutureMonths = _.reduce(this.getAllItems(), (totalBudgeted:number, monthlyBudget:IMonthlyBudget)=>{

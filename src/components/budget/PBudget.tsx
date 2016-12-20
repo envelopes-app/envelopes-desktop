@@ -29,6 +29,7 @@ export interface PBudgetProps {
 export interface PBudgetState {
 	dataFormat:string;
 	dataFormatter:DataFormatter;
+	visibleMonths:number;
 	componentWidth:number;
 	componentHeight:number;
 	editingSubCategoryId:string;
@@ -59,6 +60,7 @@ const BudgetSubContainerStyle = {
 export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
   
 	private budgetContainer:HTMLDivElement;
+	private monthlyBudget:PMonthlyBudget;
 
 	// TODO: Activity column numbers should be disabled when there are is no activity
 
@@ -120,6 +122,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.state = {
 			dataFormat: JSON.stringify(dataFormat),
 			dataFormatter: new DataFormatter(dataFormat),
+			visibleMonths: 1,
 			componentWidth: 0, 
 			componentHeight: 0, 
 			editingSubCategoryId: null,
@@ -488,6 +491,21 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 		return categoryIdsList;
 	}
+
+	private calculateVisibleMonths():void {
+
+		var visibleMonths = 1;
+		if(this.monthlyBudget)
+			visibleMonths = this.monthlyBudget.calculateVisibleMonths();
+
+		if(visibleMonths != this.state.visibleMonths) {
+			// Update the visibleMonths value in the state
+			var state = Object.assign({}, this.state);
+			state.visibleMonths = visibleMonths;
+			this.setState(state);
+		}
+	}
+	
   	// *******************************************************************************************************
 	// Action Handlers for commands in the Budget Toolbar
 	// *******************************************************************************************************
@@ -538,6 +556,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		}
 	} 
 
+	public componentDidUpdate() {
+
+		this.calculateVisibleMonths();
+	}
+
 	public render() {
 
 		if(!this.props.entitiesCollection.budgets || this.props.entitiesCollection.budgets.length == 0)
@@ -549,6 +572,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
     	return (
 			<div ref={(d)=> this.budgetContainer = d} style={BudgetContainerStyle}>
 				<PBudgetHeader 
+					visibleMonths={this.state.visibleMonths}
 					currentMonth={selectedMonth} 
 					currentBudget={currentBudget}
 					dataFormatter={this.state.dataFormatter}
@@ -558,9 +582,11 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 
 				<div style={BudgetSubContainerStyle}>
 					<PMonthlyBudget 
+						ref={(d)=> this.monthlyBudget = d}
 						dataFormatter={this.state.dataFormatter}
 						containerHeight={this.state.componentHeight}
 						containerWidth={this.state.componentWidth}
+						visibleMonths={this.state.visibleMonths}
 						currentMonth={selectedMonth} 
 						entitiesCollection={this.props.entitiesCollection} 
 						updateEntities={this.props.updateEntities} 
