@@ -353,28 +353,19 @@
 }
 
 .menu-item:hover {
-	flex: 0 0 auto;
-	display: flex;
-	flex-flow: row nowrap;
-	align-items: center;
+	&:extend(.menu-item);
 	color: #3e5e6a;	
-	font-size: 16px;
-	height: 24px;
-	width: 100%;
-	cursor: pointer;
 }
 
 .menu-item-disabled {
-	flex: 0 0 auto;
-	display: flex;
-	flex-flow: row nowrap;
-	align-items: center;
-	color: #588697;	
-	font-size: 16px;
-	height: 24px;
-	width: 100%;
+	&:extend(.menu-item);
 	cursor: default;
 	opacity: 0.5
+}
+
+.menu-parent-item {
+	&:extend(.menu-item);
+	cursor: default;
 }
 
 /* ******************************************************************************* */
@@ -384,7 +375,7 @@
 	width: 100%;
 	border-style: none;
 	list-style-type: none;
-	padding-left: 0;
+	padding-left: 0px;
 }
 
 .register-settings-dropdown-list-item {
@@ -397,6 +388,7 @@
 	height: 24px;
 	margin-top: 6px;
 	margin-bottom: 6px;
+	padding-left: 20px;
 	cursor: pointer;
 }
 
@@ -410,6 +402,7 @@
 	height: 24px;
 	margin-top: 6px;
 	margin-bottom: 6px;
+	padding-left: 20px;
 	cursor: pointer;
 }
 

@@ -16,6 +16,7 @@ import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
 import { PBulkCategorizeDialog } from './dialogs/PBulkCategorizeDialog';
 import { PMoveToAccountDialog } from './dialogs/PMoveToAccountDialog';
 import { PRegisterSettingsDialog } from './dialogs/PRegisterSettingsDialog'; 
+import { PPayeeSettingsDialog } from './dialogs/PPayeeSettingsDialog'; 
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { EntityFactory } from '../../persistence';
@@ -62,6 +63,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 	private bulkCategorizeDialog:PBulkCategorizeDialog;
 	private moveToAccountDialog:PMoveToAccountDialog;
 	private registerSettingsDialog:PRegisterSettingsDialog;
+	private payeeSettingsDialog:PPayeeSettingsDialog;
 
 	constructor(props:PRegisterProps) {
         super(props);
@@ -84,6 +86,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 		this.showBulkCategorizeDialog = this.showBulkCategorizeDialog.bind(this);
 		this.showMoveToAccountDialog = this.showMoveToAccountDialog.bind(this);
 		this.showRegsiterSettingsDialog = this.showRegsiterSettingsDialog.bind(this);
+		this.showPayeeSettingsDialog = this.showPayeeSettingsDialog.bind(this);
 		this.updateFilterTransactionSettings = this.updateFilterTransactionSettings.bind(this);
 		this.reconcileAccount = this.reconcileAccount.bind(this);
 
@@ -356,6 +359,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 			var registerState = this.getRegisterStateForAccount(activeAccount);
 			// Pass the register state to the settings dialog
 			this.registerSettingsDialog.show(registerState, element, placement);
+		}
+	}
+
+	private showPayeeSettingsDialog():void {
+
+		if(this.payeeSettingsDialog.isShowing() == false) {
+			this.payeeSettingsDialog.show();
 		}
 	}
 
@@ -717,6 +727,13 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 				<PRegisterSettingsDialog 
 					ref={(d)=> this.registerSettingsDialog = d }
 					updateRegisterState={this.updateRegisterState}
+					showPayeeSettingsDialog={this.showPayeeSettingsDialog}
+				/> 
+
+				<PPayeeSettingsDialog 
+					ref={(d)=> this.payeeSettingsDialog = d }
+					entitiesCollection={entitiesCollection}
+					updateEntities={this.props.updateEntities} 
 				/> 
 
 				<PTransactionDialog dialogTitle="Add Transaction"

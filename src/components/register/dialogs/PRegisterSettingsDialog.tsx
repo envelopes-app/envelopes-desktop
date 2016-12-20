@@ -7,6 +7,7 @@ import { Checkbox, Glyphicon, Overlay, Popover } from 'react-bootstrap';
 import { IRegisterState } from '../../../interfaces/state';
 
 export interface PRegisterSettingsDialogProps {
+	showPayeeSettingsDialog:()=>void;
 	updateRegisterState:(registerState:IRegisterState)=>void;
 }
 
@@ -19,7 +20,7 @@ export interface PRegisterSettingsDialogState {
 
 const PopoverStyle:React.CSSProperties = {
 	maxWidth: 'none',
-	width:'220px'
+	width:'240px'
 }
 
 export class PRegisterSettingsDialog extends React.Component<PRegisterSettingsDialogProps, PRegisterSettingsDialogState> {
@@ -27,6 +28,7 @@ export class PRegisterSettingsDialog extends React.Component<PRegisterSettingsDi
 	constructor(props:PRegisterSettingsDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
+		this.showPayeeSettingsDialog = this.showPayeeSettingsDialog.bind(this);
 		this.onShowCheckColumnChange = this.onShowCheckColumnChange.bind(this);
 		this.onShowClearedColumnChange = this.onShowClearedColumnChange.bind(this);
 		this.onShowFlagColumnChange = this.onShowFlagColumnChange.bind(this);
@@ -96,21 +98,36 @@ export class PRegisterSettingsDialog extends React.Component<PRegisterSettingsDi
 		this.props.updateRegisterState(state.registerState);
 	}
 
+	private showPayeeSettingsDialog():void {
+
+		this.hide();
+		this.props.showPayeeSettingsDialog();
+	}
+
 	private getRegisterSettingItems():Array<JSX.Element> {
 
 		var registerState = this.state.registerState;
 		var registerSettingItems:Array<JSX.Element> = [
-			<div key="show-check-column" className="register-settings-dropdown-list-item">
-				<Checkbox checked={registerState.showCheckColumn} onChange={this.onShowCheckColumnChange}>Show Check Column</Checkbox>
+			<div key="show-payee-dialog" className="menu-item" onClick={this.showPayeeSettingsDialog}>
+				<Glyphicon glyph="user" />
+				&nbsp;Payee Settings
 			</div>,
-			<div key="show-cleared-column" className="register-settings-dropdown-list-item">
-				<Checkbox checked={registerState.showClearedColumn} onChange={this.onShowClearedColumnChange}>Show Cleared Column</Checkbox>
+			<div key="separator" className="menu-item-separator" />,
+			<div key="show-register-columns" className="menu-parent-item">
+				<Glyphicon glyph="list-alt" />
+				&nbsp;Register Columns
 			</div>,
 			<div key="show-flag-column" className="register-settings-dropdown-list-item">
 				<Checkbox checked={registerState.showFlagColumn} onChange={this.onShowFlagColumnChange}>Show Flag Column</Checkbox>
 			</div>,
+			<div key="show-check-column" className="register-settings-dropdown-list-item">
+				<Checkbox checked={registerState.showCheckColumn} onChange={this.onShowCheckColumnChange}>Show Check Column</Checkbox>
+			</div>,
 			<div key="show-memo-column" className="register-settings-dropdown-list-item">
 				<Checkbox checked={registerState.showMemoColumn} onChange={this.onShowMemoColumnChange}>Show Memo Column</Checkbox>
+			</div>,
+			<div key="show-cleared-column" className="register-settings-dropdown-list-item">
+				<Checkbox checked={registerState.showClearedColumn} onChange={this.onShowClearedColumnChange}>Show Cleared Column</Checkbox>
 			</div>
 		]; 
 
