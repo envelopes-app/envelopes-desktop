@@ -17,20 +17,14 @@ export interface PMonthSummaryProps {
 const MonthSummaryContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	display: 'flex',
-	flexFlow: 'column nowrap',
+	flexFlow: 'row nowrap',
+	alignItems: 'center',
+	justifyContent: "center",
 	backgroundColor: 'transparent',
 	paddingLeft: '5px',
 	paddingRight: '5px',
 	width: "305px",
 	height: "100%"
-}
-
-const SummaryContainerStyle:React.CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row nowrap',
-	alignItems: 'center',
-	justifyContent: "center",
-	width: "100%"
 }
 
 const SummaryNumbersContainerStyle:React.CSSProperties = {
@@ -89,19 +83,17 @@ export class PMonthSummary extends React.Component<PMonthSummaryProps, {}> {
 
 			return (
 				<div style={MonthSummaryContainerStyle}>
-					<div style={SummaryContainerStyle}>
-						<div style={SummaryNumbersContainerStyle}>
-							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(fundsForCurrentMonth)}</label>
-							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(overspentInPrevMonth)}</label>
-							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInCurrentMonth)}</label>
-							<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInFuture)}</label>
-						</div>
-						<div style={SummaryLabelsContainerStyle}>
-							<label style={SummaryLabelStyle}>Funds for {currentMonthName}</label>
-							<label style={SummaryLabelStyle}>Overspent in {prevMonthName}</label>
-							<label style={SummaryLabelStyle}>Budgeted in {currentMonthName}</label>
-							<label style={SummaryLabelStyle}>Budgeted in Future</label>
-						</div>
+					<div style={SummaryNumbersContainerStyle}>
+						<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(fundsForCurrentMonth)}</label>
+						<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(overspentInPrevMonth)}</label>
+						<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInCurrentMonth)}</label>
+						<label style={SummaryNumberStyle}>{dataFormatter.formatCurrency(-budgetedInFuture)}</label>
+					</div>
+					<div style={SummaryLabelsContainerStyle}>
+						<label style={SummaryLabelStyle}>Funds for {currentMonthName}</label>
+						<label style={SummaryLabelStyle}>Overspent in {prevMonthName}</label>
+						<label style={SummaryLabelStyle}>Budgeted in {currentMonthName}</label>
+						<label style={SummaryLabelStyle}>Budgeted in Future</label>
 					</div>
 				</div>
 			);

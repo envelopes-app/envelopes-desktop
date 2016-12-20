@@ -30,7 +30,7 @@ const BudgetToolbarContainerStyle:React.CSSProperties = {
 	borderColor: UIConstants.MonthlyBudgetBorderColor,
 	borderStyle: "solid",
 	borderTopWidth: "0px",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "3px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "0px",
 	paddingLeft: '10px',
