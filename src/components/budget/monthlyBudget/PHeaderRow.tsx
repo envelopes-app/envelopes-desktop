@@ -12,6 +12,7 @@ export interface PHeaderRowProps {
 }
 
 const HeaderRowContainerStyle:React.CSSProperties = {
+	flex: "0 0 auto",
 	height: "25px",
 	width: "100%",
 	display: "flex",

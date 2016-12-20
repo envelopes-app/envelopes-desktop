@@ -61,6 +61,8 @@ export interface PMonthlyBudgetState {
 
 const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	flex: "1 1 auto",
+	display: "flex",
+	flexFlow: 'column nowrap',
 	minWidth: "600px",
 	backgroundColor: "#FFFFFF",
 	borderColor: "#DFE4E9",
@@ -69,13 +71,13 @@ const MonthlyBudgetContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "0px",
 	borderRightWidth: "1px",
 	borderLeftWidth: "0px",
-	overflowY: "auto"
 }
 
 const MonthlyBudgetSubContainerStyle:React.CSSProperties = {
 	width: "100%",
 	display: "flex",
 	flexFlow: 'column nowrap',
+	overflowY: "auto"
 }
 
 export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthlyBudgetState> {
@@ -321,26 +323,26 @@ export class PMonthlyBudget extends React.Component<PMonthlyBudgetProps, PMonthl
 		}
 
     	return (
-			<div style={MonthlyBudgetContainerStyle}>
-				<div ref={(d)=> this.monthlyBudgetContainer = d} style={MonthlyBudgetSubContainerStyle}>
+			<div ref={(d)=> this.monthlyBudgetContainer = d} style={MonthlyBudgetContainerStyle}>
 
-					<PToolbarRow 
-						dataFormatter={this.props.dataFormatter}
-						visibleMonths={this.state.visibleMonths}
-						currentMonth={this.props.currentMonth}
-						entitiesCollection={this.props.entitiesCollection}
-						expandAllMasterCategories={this.props.expandAllMasterCategories}
-						collapseAllMasterCategories={this.props.collapseAllMasterCategories}
-						onAddCategoryGroupSelected={this.props.onAddCategoryGroupSelected} 
-						showReorderCategoriesDialog={this.props.showReorderCategoriesDialog}
-						showMoveMoneyDialog={this.props.showMoveMoneyDialog}
-						showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
-					/>
-					<PHeaderRow 
-						visibleMonths={this.state.visibleMonths}
-						selectAllCategories={this.props.selectAllCategories}
-						unselectAllCategories={this.props.unselectAllCategories}
-					/>
+				<PToolbarRow 
+					dataFormatter={this.props.dataFormatter}
+					visibleMonths={this.state.visibleMonths}
+					currentMonth={this.props.currentMonth}
+					entitiesCollection={this.props.entitiesCollection}
+					expandAllMasterCategories={this.props.expandAllMasterCategories}
+					collapseAllMasterCategories={this.props.collapseAllMasterCategories}
+					onAddCategoryGroupSelected={this.props.onAddCategoryGroupSelected} 
+					showReorderCategoriesDialog={this.props.showReorderCategoriesDialog}
+					showMoveMoneyDialog={this.props.showMoveMoneyDialog}
+					showCoverOverspendingDialog={this.props.showCoverOverspendingDialog}
+				/>
+				<PHeaderRow 
+					visibleMonths={this.state.visibleMonths}
+					selectAllCategories={this.props.selectAllCategories}
+					unselectAllCategories={this.props.unselectAllCategories}
+				/>
+				<div style={MonthlyBudgetSubContainerStyle}>
 					{masterCategoryRows}
 				</div>
 			</div>
