@@ -90,7 +90,8 @@ export class PersistenceManager {
 			.then((deviceId:string)=>{
 
 				this.deviceId = deviceId;
-				return this.dropboxManager.initialize(deviceId);
+				//return this.dropboxManager.initialize(deviceId);
+				return true;
 			});
 	}
 
