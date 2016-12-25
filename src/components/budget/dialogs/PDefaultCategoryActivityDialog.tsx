@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
-import { PTransactionsList } from './PTransactionsList';
+import { PTransactionsList } from '../../common/PTransactionsList';
 import { InternalCategories,TransactionSources } from '../../../constants';
 import { DataFormatter, DateWithoutTime } from '../../../utilities/';
 import { ITransactionObject } from '../../../interfaces/objects';
@@ -130,6 +130,7 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 							dataFormatter={this.props.dataFormatter}
 							showAccountColumn={true}
 							showCategoryColumn={false}
+							showPayeeColumn={true}
 							transactions={this.state.transactions}
 						/>
 						<div className="buttons-container" style={{paddingTop:"10px"}}>

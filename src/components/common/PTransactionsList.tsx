@@ -1,18 +1,19 @@
-/// <reference path="../../../_includes.ts" />
+/// <reference path="../../_includes.ts" />
 
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon } from 'react-bootstrap';
 
-import { DataFormatter } from '../../../utilities';
-import { ITransactionObject } from '../../../interfaces/objects';
-import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
+import { DataFormatter } from '../../utilities';
+import { ITransactionObject } from '../../interfaces/objects';
+import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
 export interface PTransactionsListProps {
 	dataFormatter:DataFormatter;
 	showAccountColumn:boolean;
 	showCategoryColumn:boolean;
+	showPayeeColumn:boolean;
 	transactions:Array<ITransactionObject>;
 }
 
@@ -100,7 +101,8 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 				<Glyphicon glyph="triangle-bottom" style={{fontSize:"10px", paddingRight:"5px"}} />
 			</div>
 		);
-		headerCells.push(<div key="header_payee" style={HeaderRowCell}>PAYEE</div>);
+		if(this.props.showPayeeColumn)
+			headerCells.push(<div key="header_payee" style={HeaderRowCell}>PAYEE</div>);
 		if(this.props.showCategoryColumn)
 			headerCells.push(<div key="header_category" style={HeaderRowCell}>CATEGORY</div>);
 		headerCells.push(<div key="header_memo" style={HeaderRowCell}>MEMO</div>);
@@ -123,7 +125,8 @@ export class PTransactionsList extends React.Component<PTransactionsListProps, {
 			if(this.props.showAccountColumn)
 				transactionCells.push(<div key={transaction.entityId + '_1'} style={TransactionRowCell} title={transaction.account}>{transaction.account}</div>);
 			transactionCells.push(<div key={transaction.entityId + '_2'} style={TransactionRowCell} title={date}>{date}</div>);
-			transactionCells.push(<div key={transaction.entityId + '_3'} style={TransactionRowCell} title={transaction.payee}>{transaction.payee}</div>);
+			if(this.props.showPayeeColumn)
+				transactionCells.push(<div key={transaction.entityId + '_3'} style={TransactionRowCell} title={transaction.payee}>{transaction.payee}</div>);
 			if(this.props.showCategoryColumn)
 				transactionCells.push(<div key={transaction.entityId + '_4'} style={TransactionRowCell} title={transaction.category}>{transaction.category}</div>);
 			transactionCells.push(<div key={transaction.entityId + '_5'} style={TransactionRowCell} title={transaction.memo}>{transaction.memo}</div>);

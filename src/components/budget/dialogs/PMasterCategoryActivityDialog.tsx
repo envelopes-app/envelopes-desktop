@@ -5,9 +5,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
-import { PTransactionsList } from './PTransactionsList';
+import { PTransactionsList } from '../../common/PTransactionsList';
 import { TransactionSources } from '../../../constants';
-import { DataFormatter, DateWithoutTime } from '../../../utilities/';
+import { DataFormatter, DateWithoutTime } from '../../../utilities';
 import { ITransactionObject } from '../../../interfaces/objects';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../../interfaces/state';
@@ -132,6 +132,7 @@ export class PMasterCategoryActivityDialog extends React.Component<PMasterCatego
 							dataFormatter={this.props.dataFormatter}
 							showAccountColumn={true}
 							showCategoryColumn={true}
+							showPayeeColumn={true}
 							transactions={this.state.transactions}
 						/>
 						<div className="buttons-container" style={{paddingTop:"10px"}}>

@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon, Overlay, Popover } from 'react-bootstrap';
 
-import { PTransactionsList } from './PTransactionsList';
+import { PTransactionsList } from '../../common/PTransactionsList';
 import { DateWithoutTime, DataFormatter, SerializationUtilities, KeyGenerator } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { ITransactionObject } from '../../../interfaces/objects';
@@ -148,6 +148,7 @@ export class PUpcomingTransactionsDialog extends React.Component<PUpcomingTransa
 							dataFormatter={this.props.dataFormatter}
 							showAccountColumn={true}
 							showCategoryColumn={false}
+							showPayeeColumn={true}
 							transactions={this.state.transactions}
 						/>
 						<div className="buttons-container" style={{paddingTop:"10px"}}>

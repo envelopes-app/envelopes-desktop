@@ -8,15 +8,17 @@ import { PRegisterMessageBar } from './messageBar/PRegisterMessageBar';
 import { PRegisterHeader } from './header/PRegisterHeader';
 import { PRegisterToolbar } from './toolbar/PRegisterToolbar';
 import { PRegisterDataGrid } from './dataGrid/PRegisterDataGrid';
-import { PFlagSelectionDialog } from './dialogs/PFlagSelectionDialog';
-import { PFilterTransactionsDialog } from './dialogs/PFilterTransactionsDialog';
-import { PReconcileAccountDialog } from './dialogs/PReconcileAccountDialog';
-import { PApproveRejectDialog } from './dialogs/PApproveRejectDialog';
-import { PEditMenuDialog } from './dialogs/PEditMenuDialog';
-import { PBulkCategorizeDialog } from './dialogs/PBulkCategorizeDialog';
-import { PMoveToAccountDialog } from './dialogs/PMoveToAccountDialog';
-import { PRegisterSettingsDialog } from './dialogs/PRegisterSettingsDialog'; 
-import { PPayeeSettingsDialog } from './dialogs/PPayeeSettingsDialog'; 
+import { 
+	PFlagSelectionDialog, 
+	PFilterTransactionsDialog,
+	PReconcileAccountDialog,
+	PApproveRejectDialog,
+	PEditMenuDialog,
+	PBulkCategorizeDialog,
+	PMoveToAccountDialog,
+	PRegisterSettingsDialog,
+	PPayeeSettingsDialog 
+} from './dialogs'; 
 import { PTransactionDialog } from './trxDialog/PTransactionDialog';
 
 import { EntityFactory } from '../../persistence';
@@ -732,6 +734,7 @@ export class PRegister extends React.Component<PRegisterProps, PRegisterState> {
 
 				<PPayeeSettingsDialog 
 					ref={(d)=> this.payeeSettingsDialog = d }
+					dataFormatter={this.state.dataFormatter}
 					entitiesCollection={entitiesCollection}
 					updateEntities={this.props.updateEntities} 
 				/> 
