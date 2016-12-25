@@ -236,13 +236,8 @@
 }
 
 .hidden-categories-master-category-selectable:hover {
-	width: 100%;
+	&:extend(.hidden-categories-master-category-selectable);
 	color: #00333E;
-	background-color: white;
-	padding-left: 3px;
-	font-weight: bold;
-	margin-bottom: 3px;
-	cursor: pointer;
 }
 
 .hidden-categories-subcategory {
@@ -255,12 +250,8 @@
 }
 
 .hidden-categories-subcategory:hover {
-	width: 100%;
+	&:extend(.hidden-categories-subcategory);
 	color: #00333E;
-	background-color: white;
-	padding-left: 9px;
-	margin-bottom: 3px;
-	cursor: pointer;
 }
 
 /* ***********************************************************************************************
@@ -284,7 +275,6 @@
 }
 
 .reorder-arrow-glyph:hover {
-	color: #003440;
+	&:extend(.reorder-arrow-glyph);
 	opacity: 1;
-	cursor: pointer;
 }

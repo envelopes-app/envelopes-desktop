@@ -88,7 +88,7 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 			// Get the currently selected categoryId
 			var currentCategoryId = this.props.selectedCategoryId;
-			var categories = this.props.categoriesList;
+			var categories = this.getFilteredCategories();
 			var clickableCategories = _.filter(categories, {isMasterCategory: false});
 			var index = _.findIndex(clickableCategories, {entityId: currentCategoryId});
 
@@ -177,10 +177,12 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 
 			if(category.isMasterCategory) {
 				// Create the list item for the master category
-				categoiresPopoverItem = <li key={category.entityId} className="categories-dropdown-list-section">{category.name}:</li>;
+				categoiresPopoverItem = <li key={category.entityId} className="categories-dropdown-list-section" title={category.name}>{category.name}:</li>;
 				categoiresPopoverItems.push(categoiresPopoverItem);
 			}
 			else {
+				var availableAmountString = dataFormatter.formatCurrency(category.availableAmount);
+
 				var availableAmountClassName = "categories-dropdown-list-positive-available-amount";
 				if(category.availableAmount == 0)
 					availableAmountClassName = "categories-dropdown-list-zero-available-amount";
@@ -191,8 +193,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 					categoiresPopoverItem = (
 						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} 
 								className="categories-dropdown-list-item-selected" id={category.entityId}>
-							<label className="categories-dropdown-list-categoryname">{category.name}</label>
-							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
+							<label className="categories-dropdown-list-categoryname" title={category.name}>{category.name}</label>
+							<label className={availableAmountClassName} title={availableAmountString}>{availableAmountString}</label>
 						</div>
 					);
 				}
@@ -201,8 +203,8 @@ export class PCategorySelector extends React.Component<PCategorySelectorProps, {
 						<div ref={(n) => this.categoryItemRefsMap[category.entityId] = n} key={category.entityId} 
 								className="categories-dropdown-list-item" id={category.entityId} 
 								onClick={this.setSelectedCategoryId.bind(this, category.entityId)}>
-							<label className="categories-dropdown-list-categoryname">{category.name}</label>
-							<label className={availableAmountClassName}>{dataFormatter.formatCurrency(category.availableAmount)}</label>
+							<label className="categories-dropdown-list-categoryname" title={category.name}>{category.name}</label>
+							<label className={availableAmountClassName} title={availableAmountString}>{availableAmountString}</label>
 						</div>
 					);
 				}

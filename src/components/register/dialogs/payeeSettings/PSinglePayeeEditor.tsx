@@ -3,6 +3,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { FormControl, FormGroup } from 'react-bootstrap';
 
 import { PPayeeTransactionsDialog } from './PPayeeTransactionsDialog';
 import { TransactionSources } from '../../../../constants';
@@ -22,6 +23,9 @@ export interface PSinglePayeeEditorProps {
 
 export interface PSinglePayeeEditorState {
 	isEditing:boolean;
+	payeeName:string;
+	nameValidationState:string;
+	nameValidationMessage:string;
 	showTransactions:boolean;
 	transactionObjects:Array<ITransactionObject>;
 }
@@ -45,9 +49,52 @@ const NameEditorContainerStyle:React.CSSProperties = {
 }
 
 const NameLabelStyle:React.CSSProperties = {
+	flex: "1 1 auto",
 	fontSize: "20px",
 	fontWeight: "normal",
+	marginBottom: "0px",
+	width: "100%"
+}
+
+const NameButtonStyle:React.CSSProperties = {
+	flex: "0 0 auto",
+	width: "80px",
+	marginLeft: "5px",
+	fontSize: "14px"
+}
+
+const FormGroupStyle:React.CSSProperties = {
+	flex: "1 1 auto",
 	marginBottom: "0px"
+}
+
+const FormControlStyle:React.CSSProperties = {
+	borderColor: '#2FA2B5',
+	borderTopWidth: '2px',
+	borderBottomWidth: '2px',
+	borderLeftWidth: '2px',
+	borderRightWidth: '2px',
+}
+
+const FormControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
+	borderBottomLeftRadius: "0px",
+	borderBottomRightRadius: "0px"
+});
+
+const ErrorMessageStyle:React.CSSProperties = {
+	width: "100%",
+	color: "#FFFFFF",
+	backgroundColor: "#D33C2D",
+	fontSize: "12px",
+	fontWeight: "normal",
+	borderTopLeftRadius: "0px",
+	borderTopRightRadius: "0px",
+	borderBottomLeftRadius: "3px",
+	borderBottomRightRadius: "3px",
+	paddingLeft: "8px",
+	paddingRight: "8px",
+	paddingTop: "3px",
+	paddingBottom: "3px"
 }
 
 const EnablePayeeContainerStyle:React.CSSProperties = {
@@ -58,7 +105,7 @@ const EnablePayeeContainerStyle:React.CSSProperties = {
 	width: "100%"
 }
 
-const EnableLabelStyle:React.CSSProperties = {
+const LabelStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	display: "flex",
 	flexFlow: "row nowrap",
@@ -84,6 +131,20 @@ const SeparatorStyle:React.CSSProperties = {
 	borderTop: "1px solid #588697"
 }
 
+const PayeeCategoryContainerStyle:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "row nowrap",
+	alignItems: "center",
+	width: "100%",
+}
+
+const PayeeCategorySelectStyle:React.CSSProperties = {
+	flex: "1 1 auto",
+	fontSize: "14px",
+	fontWeight: "normal",
+	width: "100%"
+}
+
 export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps, PSinglePayeeEditorState> {
 
 	private transactionsCount:HTMLDivElement;
@@ -91,21 +152,113 @@ export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps,
 
 	constructor(props:PSinglePayeeEditorProps) {
         super(props);
+		this.onRenameClicked = this.onRenameClicked.bind(this);
+		this.onPayeeNameChange = this.onPayeeNameChange.bind(this);
+		this.onSaveClicked = this.onSaveClicked.bind(this);
+		this.onCancelClicked = this.onCancelClicked.bind(this);
 		this.onPayeeEnabledChange = this.onPayeeEnabledChange.bind(this);
 		this.onTransactionsCountClick = this.onTransactionsCountClick.bind(this);
+		this.onPayeeCategoryChange = this.onPayeeCategoryChange.bind(this);
 		this.state = {
 			isEditing: false,
+			payeeName: null,
+			nameValidationState: null,
+			nameValidationMessage: null,
 			showTransactions: false,
 			transactionObjects: null
 		}
 	}
 
+	private onRenameClicked(event:React.MouseEvent<any>):void {
+		var state = Object.assign({}, this.state);
+		state.isEditing = true;
+		state.payeeName = this.props.payee.name;
+		state.nameValidationState = null;
+		state.nameValidationMessage = null;
+		this.setState(state);
+	}
+
+	private onPayeeNameChange(event:React.FormEvent<any>):void {
+		var state = Object.assign({}, this.state);
+		state.payeeName = (event.target as HTMLInputElement).value;
+		this.setState(state);
+	}
+
+	private onSaveClicked(event:React.MouseEvent<any>):void {
+
+		if(this.validatePayeeName()) {
+
+			// Create a clone of the payee and set the name in it
+			var payeeClone = Object.assign({}, this.props.payee, {
+				name: this.state.payeeName
+			});
+
+			// Send this payee clone entity for persistence
+			this.props.updateEntities({
+				payees: [payeeClone]
+			});
+
+			var state = Object.assign({}, this.state);
+			state.isEditing = false;
+			state.payeeName = null;
+			state.nameValidationState = null;
+			state.nameValidationMessage = null;
+			this.setState(state);
+		}
+	}
+
+	private onCancelClicked(event:React.MouseEvent<any>):void {
+
+		var state = Object.assign({}, this.state);
+		state.isEditing = false;
+		state.payeeName = null;
+		state.nameValidationState = null;
+		state.nameValidationMessage = null;
+		this.setState(state);
+	}
+
+	private validatePayeeName():boolean {
+
+		// We want to make sure that the payee name is not empty, or is not equal to the
+		// name of some other payee
+		var isValid = true;
+
+		// Ensure that the payee name is not empty
+		if(this.state.payeeName == "") {
+
+			isValid = false;
+			var state = Object.assign({}, this.state);
+			state.nameValidationState = "error";
+			state.nameValidationMessage = "The payee name is required.";
+			this.setState(state);
+		}
+		else {
+			// Ensure that the payee name is not the same as any other payee
+			var payeesArray = this.props.entitiesCollection.payees;
+			_.forEach(payeesArray.getAllItems(), (payee)=>{
+				if(payee.isTombstone == 0 && payee.name == this.state.payeeName && payee.entityId != this.props.payee.entityId) {
+					
+					isValid = false;
+					var state = Object.assign({}, this.state);
+					state.nameValidationState = "error";
+					state.nameValidationMessage = "This payee name is already in use."
+					this.setState(state);
+					return false;
+				};
+			})
+		}
+
+		return isValid;
+	}
+
 	private onPayeeEnabledChange(event:React.FormEvent<any>):void {
 
+		// Create a clone of the payee and set the enabled flag in it
 		var payeeClone = Object.assign({}, this.props.payee, {
 			enabled: this.props.payee.enabled == 0 ? 1 : 0
 		});
 
+		// Send this payee clone entity for persistence
 		this.props.updateEntities({
 			payees: [payeeClone]
 		});
@@ -118,6 +271,20 @@ export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps,
 			var transactionObjects = this.getTransactionObjects();
 			this.transactionsDialog.show(transactionObjects, this.transactionsCount);
 		}
+	}
+
+	private onPayeeCategoryChange(event:React.FormEvent<any>):void {
+
+		var updatedCategory = (event.target as HTMLSelectElement).value;
+		// Create a clone of the payee and set the auto fill category in it
+		var payeeClone = Object.assign({}, this.props.payee, {
+			autoFillSubCategoryId: updatedCategory == "None" ? null : updatedCategory
+		});
+
+		// Send this payee clone entity for persistence
+		this.props.updateEntities({
+			payees: [payeeClone]
+		});
 	}
 
 	private getTransactionObjects():Array<ITransactionObject> {
@@ -156,19 +323,97 @@ export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps,
 		return transactionObjects;
 	}
 
-	public render() {
-		
-		return (
-			<div style={PayeeEditorContainerStyle}>
+	private getAutoFillCategoryNodesList():Array<JSX.Element> {
+
+		var categoriesList:Array<JSX.Element> = [
+			<option key="empty_category" label="None">None</option>
+		];
+
+		var subCategoriesArray = this.props.entitiesCollection.subCategories;
+		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
+
+		_.forEach(masterCategoriesArray.getVisibleNonTombstonedMasterCategories(), (masterCategory)=>{
+
+			var subCategories = subCategoriesArray.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
+			var subCategoryNodes:Array<JSX.Element> = [];
+			_.forEach(subCategories, (subCategory)=>{
+				subCategoryNodes.push(
+					<option key={subCategory.entityId} label={subCategory.name}>{subCategory.entityId}</option>
+				);
+			});
+
+			var masterCategoryNode = (
+				<optgroup key={masterCategory.entityId} label={masterCategory.name}>
+					{subCategoryNodes}
+				</optgroup>
+			);
+
+			categoriesList.push(masterCategoryNode);
+		});
+
+		return categoriesList;
+	}
+
+	private getCategoryNameNode():JSX.Element {
+
+		var categoryNameNode:JSX.Element;
+
+		if(!this.state.isEditing) {
+			categoryNameNode = (
 				<div style={NameEditorContainerStyle}>
 					<label style={NameLabelStyle}>{this.props.payee.name}</label>
-					<button className="dialog-secondary-button" style={{fontSize: "14px"}}>Rename</button>
+					<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onRenameClicked}>Rename</button>
 				</div>
+			);
+		} 
+		else {
+			if(this.state.nameValidationState == "error") {
+
+				categoryNameNode = (
+					<div style={NameEditorContainerStyle}>
+						<FormGroup style={FormGroupStyle}>
+							<FormControl style={FormControlErrorStyle} type="text" value={this.state.payeeName} onChange={this.onPayeeNameChange} />
+							<label style={ErrorMessageStyle}>{this.state.nameValidationMessage}</label>
+						</FormGroup>
+						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onSaveClicked}>Save</button>
+						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onCancelClicked}>Cancel</button>
+					</div>
+				);
+			}
+			else {
+				categoryNameNode = (
+					<div style={NameEditorContainerStyle}>
+						<FormGroup style={FormGroupStyle}>
+							<FormControl style={FormControlStyle} type="text" value={this.state.payeeName} onChange={this.onPayeeNameChange} />
+						</FormGroup>
+						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onSaveClicked}>Save</button>
+						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onCancelClicked}>Cancel</button>
+					</div>
+				);
+			}	
+		}
+
+		return categoryNameNode;
+	}
+
+	public render() {
+		
+		var autoFillSubCategoryId = this.props.payee.autoFillSubCategoryId;
+		if(!autoFillSubCategoryId)
+			autoFillSubCategoryId = "None";
+
+		var categoryNameNode = this.getCategoryNameNode();
+		var autoFillCategoryNodes = this.getAutoFillCategoryNodesList();
+
+		return (
+			<div style={PayeeEditorContainerStyle}>
+
+				{categoryNameNode}
 
 				<hr style={SeparatorStyle} />
 				<div style={EnablePayeeContainerStyle}>
 					<input type="checkbox" checked={this.props.payee.enabled == 1} onChange={this.onPayeeEnabledChange} />
-					<div style={EnableLabelStyle}>
+					<div style={LabelStyle}>
 						Enable this payee (used in 
 						<div ref={(d)=> this.transactionsCount = d } style={EnableCountStyle} onClick={this.onTransactionsCountClick}>&nbsp;{this.props.transactionsCount}&nbsp;</div> 
 						transactions)
@@ -176,6 +421,12 @@ export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps,
 				</div>
 
 				<hr style={SeparatorStyle} />
+				<div style={PayeeCategoryContainerStyle}>
+					<label style={LabelStyle}>Automatically categorize this payee as:</label>
+					<FormControl componentClass="select" style={PayeeCategorySelectStyle} value={autoFillSubCategoryId}  onChange={this.onPayeeCategoryChange}>
+						{autoFillCategoryNodes}
+					</FormControl>
+				</div>
 
 				<PPayeeTransactionsDialog 
 					ref={(d)=> this.transactionsDialog = d}

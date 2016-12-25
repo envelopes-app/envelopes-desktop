@@ -235,27 +235,30 @@
 	font-size: 14px;
 	font-weight: normal;
 	margin-bottom: 0px;
+	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+}
+
+.categories-dropdown-list-available-amount {
+	font-size: 14px;
+	font-weight: normal;
+	margin-bottom: 0px;
 }
 
 .categories-dropdown-list-positive-available-amount {
+	&:extend(.categories-dropdown-list-available-amount);
 	color: #16A336;
-	font-size: 14px;
-	font-weight: normal;
-	margin-bottom: 0px;
 }
 
 .categories-dropdown-list-negative-available-amount {
+	&:extend(.categories-dropdown-list-available-amount);
 	color: #D33C2D;
-	font-size: 14px;
-	font-weight: normal;
-	margin-bottom: 0px;
 }
 
 .categories-dropdown-list-zero-available-amount {
+	&:extend(.categories-dropdown-list-available-amount);
 	color: #D1DBE1;
-	font-size: 14px;
-	font-weight: normal;
-	margin-bottom: 0px;
 }
 
 /* ******************************************************************************* */
