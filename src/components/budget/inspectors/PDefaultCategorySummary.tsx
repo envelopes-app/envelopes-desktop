@@ -45,10 +45,13 @@ const RowItemStyle:React.CSSProperties = {
 }
 
 const CategoryNameStyle:React.CSSProperties = {
-	flex: "0 0 auto",
+	flex: "1 1 auto",
 	color: "#003440",
 	fontSize: "22px",
-	fontWeight: "normal"
+	fontWeight: "normal",
+	whiteSpace: "nowrap",
+  	overflow: "hidden",
+  	textOverflow: "ellipsis"
 }
 
 const CategoryMenuStyle:React.CSSProperties = {
@@ -138,8 +141,7 @@ export class PDefaultCategorySummary extends React.Component<PDefaultCategorySum
 		return (
 			<div style={DefaultCategorySummaryContainerStyle}>
 				<div style={RowStyle}>
-					<label style={CategoryNameStyle}>{subCategory.name}</label>
-					<div className="spacer" />
+					<label style={CategoryNameStyle} title={subCategory.name}>{subCategory.name}</label>
 					<div style={CategoryMenuStyle} onClick={this.onEditClick} ref={(d)=> this.categoryEditMenu = d}>
 						<Glyphicon glyph="cog" />&nbsp;Edit
 					</div>
