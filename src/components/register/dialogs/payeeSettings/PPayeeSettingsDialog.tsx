@@ -6,6 +6,7 @@ import * as ReactDOM from 'react-dom';
 import { FormControl, Glyphicon, Modal } from 'react-bootstrap';
 
 import { PSinglePayeeEditor } from './PSinglePayeeEditor';
+import { PMultiPayeeEditor } from './PMultiPayeeEditor';
 import { PLinkButton } from '../../../common/PLinkButton';
 import { InternalCategories, SubCategoryType } from '../../../../constants';
 import { DataFormatter, SimpleObjectMap } from '../../../../utilities';
@@ -116,6 +117,8 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 	constructor(props:PPayeeSettingsDialogProps) {
         super(props);
 		this.hide = this.hide.bind(this);
+		this.combineSelectedPayees = this.combineSelectedPayees.bind(this);
+
 		this.state = {
 			show: false,
 			selectedPayees: [],
@@ -129,6 +132,25 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 	}
 	
 	public show():void {
+
+		var state = Object.assign({}, this.state) as PPayeeSettingsDialogState;
+		state.show = true;
+		state.selectedPayees = [];
+		state.selectedPayeesMap = {};
+		state.payeeTransactionsCountMap = this.getPayeeTransactionsCountMap();
+		this.setState(state);
+	}
+
+	public hide():void {
+		var state = Object.assign({}, this.state) as PPayeeSettingsDialogState;
+		state.show = false;
+		state.selectedPayees = null;
+		state.selectedPayeesMap = null;
+		state.payeeTransactionsCountMap = null;
+		this.setState(state);
+	}
+	
+	private getPayeeTransactionsCountMap():SimpleObjectMap<number> {
 
 		// Iterate through all the transactions and build a map for payee/transactions-count
 		var payeeTransactionsCountMap:SimpleObjectMap<number> = {};
@@ -145,23 +167,9 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 			}
 		});
 
-		var state = Object.assign({}, this.state) as PPayeeSettingsDialogState;
-		state.show = true;
-		state.selectedPayees = [];
-		state.selectedPayeesMap = {};
-		state.payeeTransactionsCountMap = payeeTransactionsCountMap;
-		this.setState(state);
+		return payeeTransactionsCountMap;
 	}
 
-	public hide():void {
-		var state = Object.assign({}, this.state) as PPayeeSettingsDialogState;
-		state.show = false;
-		state.selectedPayees = null;
-		state.selectedPayeesMap = null;
-		state.payeeTransactionsCountMap = null;
-		this.setState(state);
-	}
-	
 	private selectPayee(entityId:string, selected:boolean):void {
 
 		var state = Object.assign({}, this.state);
@@ -192,7 +200,7 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 		_.forEach(payees, (payee)=>{
 
 			// Don't include the internal payees in the list
-			if(!payee.internalName) {
+			if(payee.isTombstone == 0 && !payee.internalName && !payee.accountId) {
 				var selected = selectedPayeesMap[payee.entityId] ? selectedPayeesMap[payee.entityId] : false;
 				var disabledGlyph = <div />;
 				// If the payee is disabled, then we are going to show the glyph for it
@@ -213,6 +221,74 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 		});	
 
 		return payeeNodes;
+	}
+
+	private combineSelectedPayees(combinedPayeeName:string):void {
+
+		var payeesArray = this.props.entitiesCollection.payees;
+		var transactionsArray = this.props.entitiesCollection.transactions;
+		var scheduledTransactionsArray = this.props.entitiesCollection.scheduledTransactions;
+
+		var changedEntities:ISimpleEntitiesCollection = {
+			payees: [],
+			transactions: [],
+			scheduledTransactions: []
+		}
+
+		// Do we have an existing payee that has a name equal to the passed combinedPayeeName
+		var combinedPayee = this.props.entitiesCollection.payees.getPayeeByName(combinedPayeeName);
+		// If there is no current payee that has this name, then take the first payee from the 
+		// list of selected payees, and change it's name to be equal to the passed combinedPayeeName.
+		if(!combinedPayee) {
+
+			combinedPayee = payeesArray.getEntityById( this.state.selectedPayees[0] ); 
+			combinedPayee = Object.assign({}, combinedPayee);
+			combinedPayee.name = combinedPayeeName;
+			changedEntities.payees.push(combinedPayee);
+		}
+
+		// Iterate through all the selected payees
+		_.forEach(this.state.selectedPayees, (payeeId)=>{
+
+			if(payeeId != combinedPayee.entityId) {
+
+				// Get all the transactions and scheduled transactions that refer this payee
+				// and point them to the combinedPayee
+				_.forEach(transactionsArray.getAllItems(), (transaction)=>{
+					if(transaction.payeeId == payeeId) {
+
+						let transactionClone = Object.assign({}, transaction);
+						transactionClone.payeeId = combinedPayee.entityId;
+						changedEntities.transactions.push(transactionClone);
+					}
+				});
+
+				_.forEach(scheduledTransactionsArray.getAllItems(), (scheduledTransaction)=>{
+					if(scheduledTransaction.payeeId == payeeId) {
+
+						let scheduledTransactionClone = Object.assign({}, scheduledTransaction);
+						scheduledTransactionClone.payeeId = combinedPayee.entityId;
+						changedEntities.scheduledTransactions.push(scheduledTransactionClone);
+					}
+				});
+
+				// Tombstone this payee
+				let payee = payeesArray.getEntityById(payeeId);
+				let payeeClone = Object.assign({}, payee);
+				payeeClone.isTombstone = 1;
+				changedEntities.payees.push(payeeClone);
+			}			
+		});
+
+		// Send these changes for persistence
+		this.props.updateEntities(changedEntities);
+
+		// Update the local state, and set the combinedPayee as the selected payee
+		var state = Object.assign({}, this.state);
+		state.selectedPayees = [combinedPayee.entityId];
+		state.selectedPayeesMap = {};
+		state.selectedPayeesMap[combinedPayee.entityId] = true;
+		this.setState(state);
 	}
 
 	private getPayeeEditorForNoSelection():JSX.Element {
@@ -245,7 +321,28 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 
 	private getPayeeEditorForMultiSelection():JSX.Element {
 
-		return <div />;
+		var payeeIds = this.state.selectedPayees;
+		var payeesArray = this.props.entitiesCollection.payees;
+
+		// Get the payee entities corresponding to the selected payee ids
+		var payees = _.map(payeeIds, (payeeId)=>{
+			return payeesArray.getEntityById(payeeId);
+		});
+
+		return (
+			<PMultiPayeeEditor 
+				payees={payees}
+				combineSelectedPayees={this.combineSelectedPayees}
+			/>
+		);
+	}
+
+	public componentWillReceiveProps(nextProps:PPayeeSettingsDialogProps):void {
+
+		// Refresh the payee transactions count map in the state
+		var state = Object.assign({}, this.state) as PPayeeSettingsDialogState;
+		state.payeeTransactionsCountMap = this.getPayeeTransactionsCountMap();
+		this.setState(state);
 	}
 
 	public render() {
