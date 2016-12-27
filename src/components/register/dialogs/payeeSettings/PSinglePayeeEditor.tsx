@@ -5,6 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormControl, FormGroup } from 'react-bootstrap';
 
+import { PFormControl } from '../../../common/PFormControl';
 import { PPayeeTransactionsDialog } from './PPayeeTransactionsDialog';
 import { TransactionSources } from '../../../../constants';
 import * as budgetEntities from '../../../../interfaces/budgetEntities';
@@ -44,7 +45,7 @@ const NameEditorContainerStyle:React.CSSProperties = {
 	display: "flex",
 	flexFlow: "row nowrap",
 	justifyContent: "space-between",
-	alignItems: "center",
+	alignItems: "flex-start",
 	width: "100%"
 }
 
@@ -61,40 +62,6 @@ const NameButtonStyle:React.CSSProperties = {
 	width: "80px",
 	marginLeft: "5px",
 	fontSize: "14px"
-}
-
-const FormGroupStyle:React.CSSProperties = {
-	flex: "1 1 auto",
-	marginBottom: "0px"
-}
-
-const FormControlStyle:React.CSSProperties = {
-	borderColor: '#2FA2B5',
-	borderTopWidth: '2px',
-	borderBottomWidth: '2px',
-	borderLeftWidth: '2px',
-	borderRightWidth: '2px',
-}
-
-const FormControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
-	borderBottomLeftRadius: "0px",
-	borderBottomRightRadius: "0px"
-});
-
-const ErrorMessageStyle:React.CSSProperties = {
-	width: "100%",
-	color: "#FFFFFF",
-	backgroundColor: "#D33C2D",
-	fontSize: "12px",
-	fontWeight: "normal",
-	borderTopLeftRadius: "0px",
-	borderTopRightRadius: "0px",
-	borderBottomLeftRadius: "3px",
-	borderBottomRightRadius: "3px",
-	paddingLeft: "8px",
-	paddingRight: "8px",
-	paddingTop: "3px",
-	paddingBottom: "3px"
 }
 
 const EnablePayeeContainerStyle:React.CSSProperties = {
@@ -367,30 +334,13 @@ export class PSinglePayeeEditor extends React.Component<PSinglePayeeEditorProps,
 			);
 		} 
 		else {
-			if(this.state.nameValidationState == "error") {
-
-				categoryNameNode = (
-					<div style={NameEditorContainerStyle}>
-						<FormGroup style={FormGroupStyle}>
-							<FormControl style={FormControlErrorStyle} type="text" value={this.state.payeeName} onChange={this.onPayeeNameChange} />
-							<label style={ErrorMessageStyle}>{this.state.nameValidationMessage}</label>
-						</FormGroup>
-						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onSaveClicked}>Save</button>
-						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onCancelClicked}>Cancel</button>
-					</div>
-				);
-			}
-			else {
-				categoryNameNode = (
-					<div style={NameEditorContainerStyle}>
-						<FormGroup style={FormGroupStyle}>
-							<FormControl style={FormControlStyle} type="text" value={this.state.payeeName} onChange={this.onPayeeNameChange} />
-						</FormGroup>
-						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onSaveClicked}>Save</button>
-						<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onCancelClicked}>Cancel</button>
-					</div>
-				);
-			}	
+			categoryNameNode = (
+				<div style={NameEditorContainerStyle}>
+					<PFormControl value={this.state.payeeName} errorMessage={this.state.nameValidationMessage} onChange={this.onPayeeNameChange} />
+					<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onSaveClicked}>Save</button>
+					<button className="dialog-secondary-button" style={NameButtonStyle} onClick={this.onCancelClicked}>Cancel</button>
+				</div>
+			);
 		}
 
 		return categoryNameNode;

@@ -17,13 +17,12 @@ const FormGroupStyle:React.CSSProperties = {
 
 const FormControlStyle:React.CSSProperties = {
 	borderColor: '#2FA2B5',
-	borderTopWidth: '2px',
-	borderBottomWidth: '2px',
-	borderLeftWidth: '2px',
-	borderRightWidth: '2px',
+	borderWidth: '2px',
+	borderRadius: '3px'
 }
 
 const FormControlErrorStyle:React.CSSProperties = Object.assign({}, FormControlStyle, {
+	borderColor: "#D33C2D",
 	borderBottomLeftRadius: "0px",
 	borderBottomRightRadius: "0px"
 });
