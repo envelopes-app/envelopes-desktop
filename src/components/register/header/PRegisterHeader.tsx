@@ -15,7 +15,7 @@ export interface PRegisterHeaderProps {
 	unclearedBalance:number;
 	workingBalance:number;
 	selectedTotal:number;
-	showSelectedTotal:boolean;
+	selectedCount:number;
 	showReconcileButton:boolean;
 
 	dataFormatter:DataFormatter;
@@ -56,6 +56,7 @@ const ReconcileAccountButtonStyle:React.CSSProperties = {
 	backgroundColor: '#005164',
 	borderWidth: '1px',
 	borderRadius: '3px',
+	marginLeft: '10px',
 	outline: "none"
 }
 
@@ -84,12 +85,12 @@ export class PRegisterHeader extends React.Component<PRegisterHeaderProps, {}> {
 			<PHeaderValue key="working_balance" label="Working Balance" value={this.props.workingBalance} formattedValue={dataFormatter.formatCurrency(this.props.workingBalance)} />
 		];
 
-		if(this.props.showSelectedTotal) {
-			headerContents.push(<text key="separator_symbol" style={SymbolStyle}>|</text>);
-			headerContents.push(<PHeaderValue key="selected_total" label="Selected Total" value={this.props.selectedTotal} formattedValue={dataFormatter.formatCurrency(this.props.selectedTotal)} />);
-		}
-
 		headerContents.push(<div key="spacer" className="spacer" />);
+
+		if(this.props.selectedCount > 1) {
+			var label = `Selected Total (${this.props.selectedCount})`;
+			headerContents.push(<PHeaderValue key="selected_total" label={label} value={this.props.selectedTotal} formattedValue={dataFormatter.formatCurrency(this.props.selectedTotal)} />);
+		}
 			
 		if(this.props.showReconcileButton == true) {
 			headerContents.push(
