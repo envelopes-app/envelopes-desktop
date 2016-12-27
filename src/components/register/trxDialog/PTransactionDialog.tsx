@@ -757,7 +757,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 						<Modal.Footer>
 							<div className="buttons-container">
 								<button ref={(c) => this.saveAndAddAnotherButton = c} className="dialog-primary-button"
-									onClick={this.save} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
+									onClick={this.saveAndAddAnother} onKeyDown={this.handleKeyPressedOnSaveAndAddAnotherButton}>
 									Save and add another&nbsp;<Glyphicon glyph="ok-sign" />
 								</button>
 								<div style={{width:"8px"}} />
