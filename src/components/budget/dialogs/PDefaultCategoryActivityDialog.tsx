@@ -93,23 +93,38 @@ export class PDefaultCategoryActivityDialog extends React.Component<PDefaultCate
 			if(transaction.subCategoryId == subCategoryId && transaction.isTombstone == 0 && transaction.source != TransactionSources.Matched) {
 
 				var account = entitiesCollection.accounts.getEntityById(transaction.accountId);
-				var accountName = account ? account.accountName : "";
 				var payee = transaction.payeeId ? entitiesCollection.payees.getEntityById(transaction.payeeId) : null;
-				var payeeName = payee ? payee.name : "";
 				var subCategory = transaction.subCategoryId ? entitiesCollection.subCategories.getEntityById(transaction.subCategoryId) : null;
-				var subCategoryName = subCategory ? subCategory.name : "";
+				var transferAccount = transaction.transferAccountId ? entitiesCollection.accounts.getEntityById(transaction.transferAccountId) : null;
 				
-				var transactionObject:ITransactionObject = {
-					entityId: transaction.entityId,
-					account: accountName,
-					date: transaction.date,
-					payee: payeeName,
-					category: subCategoryName,
-					memo: transaction.memo,
-					amount: transaction.amount
-				} 
+				// Transactions in tracking accounts don't have categories, so skip those
+				if(account.onBudget == 1) {
 
-				transactionObjects.push(transactionObject);
+					// For Uncategorized Category transactions, we dont want to show transfers to tracking accounts
+					if(
+						subCategoryId != null || // We are not showing transactions for uncategorized category
+						(
+							transferAccount == null || // This is not a transfer
+							transferAccount.onBudget == 0 // This transfers to a tracking account
+						) 
+					) {
+						var accountName = account ? account.accountName : "";
+						var payeeName = payee ? payee.name : "";
+						var subCategoryName = subCategory ? subCategory.name : "";
+						
+						var transactionObject:ITransactionObject = {
+							entityId: transaction.entityId,
+							account: accountName,
+							date: transaction.date,
+							payee: payeeName,
+							category: subCategoryName,
+							memo: transaction.memo,
+							amount: transaction.amount
+						} 
+
+						transactionObjects.push(transactionObject);
+					}
+				}
 			}
 		});
 
