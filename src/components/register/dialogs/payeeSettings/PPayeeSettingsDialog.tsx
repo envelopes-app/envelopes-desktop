@@ -244,6 +244,7 @@ export class PPayeeSettingsDialog extends React.Component<PPayeeSettingsDialogPr
 			combinedPayee = payeesArray.getEntityById( this.state.selectedPayees[0] ); 
 			combinedPayee = Object.assign({}, combinedPayee);
 			combinedPayee.name = combinedPayeeName;
+			combinedPayee.isTombstone = 0; // Incase the payee that we find is tombstoned
 			changedEntities.payees.push(combinedPayee);
 		}
 
