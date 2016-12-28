@@ -12,6 +12,7 @@ import { PImportYnabDataDialog } from './dialogs/PImportYnabDataDialog';
 
 import CSidebar from './sidebar/CSidebar';
 import CBudget from './budget/CBudget';
+import CReports from './reports/CReports';
 import CRegister from './register/CRegister';
 import { DataFormats, DataFormatter, Logger } from '../utilities';
 import { IDataFormat } from '../interfaces/formatters';
@@ -58,8 +59,6 @@ export class PApp extends React.Component<AppProps, AppState> {
 	// TODO: Unit Tests
 	// TODO: Reports
 	// TODO: Undo/Redo Support
-	// TODO: When in production mode, log to files instead of console
-	// TODO: Clean log files older then 5 days
 	// TODO: Integration with Payment and Licensing
 	private budgetDialog:PBudgetDialog;
 	private openBudgetDialog:POpenBudgetDialog;
@@ -135,7 +134,8 @@ export class PApp extends React.Component<AppProps, AppState> {
 		var selectedTab = this.props.applicationState.sidebarState.selectedTab;
 		if(selectedTab == "Budget")
 			visibleModule = <CBudget />
-		else if(selectedTab == "Reports") {}
+		else if(selectedTab == "Reports")
+			visibleModule = <CReports />
 		else
 			visibleModule = <CRegister />;
 		

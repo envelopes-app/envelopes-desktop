@@ -9,6 +9,7 @@ export { InternalPayees } from './InternalPayees';
 export { RegisterFilterTimeFrame } from './RegisterFilterTimeFrame';
 export { RegisterSortField } from './RegisterSortField';
 export { RegisterSortOrder } from './RegisterSortOrder';
+export { ReportNames } from './ReportNames';
 export { SubCategoryGoalType } from './SubCategoryGoalType';
 export { SubCategoryType } from './SubCategoryType';
 export { TransactionFlag } from './TransactionFlag';

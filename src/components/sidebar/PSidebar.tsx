@@ -4,8 +4,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Glyphicon } from 'react-bootstrap';
-import MailOutline from 'material-ui/svg-icons/communication/mail-outline';
-import AccountBalance from 'material-ui/svg-icons/action/account-balance';
+import BudgetIcon from 'material-ui/svg-icons/communication/mail-outline';
+import AllAccountsIcon from 'material-ui/svg-icons/action/account-balance';
+import ReportsIcon from 'material-ui/svg-icons/action/assessment';
 
 import { PModuleButton } from './PModuleButton';
 import { PAccountButtonContainer } from './PAccountButtonContainer';
@@ -103,6 +104,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		this.setTrackingAccountsExpanded = this.setTrackingAccountsExpanded.bind(this);
 		this.setClosedAccountsExpanded = this.setClosedAccountsExpanded.bind(this);
 		this.onBudgetSelect = this.onBudgetSelect.bind(this);
+		this.onReportsSelect = this.onReportsSelect.bind(this);
 		this.onAllAccountsSelect = this.onAllAccountsSelect.bind(this);
 		this.onAccountSelect = this.onAccountSelect.bind(this);
 		this.onAddAccountClick = this.onAddAccountClick.bind(this);
@@ -167,7 +169,15 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 			// Set the "Budget" as selected tab in the sidebar state 
 			this.props.setSelectedTab("Budget", null);
-			// Navigate to the Budget
+		}
+	}
+
+	private onReportsSelect():void {
+		// If the "Budget" tab is not already the selected tab then
+		if(this.props.sidebarState.selectedTab != "Reports") {
+
+			// Set the "Reports" as selected tab in the sidebar state 
+			this.props.setSelectedTab("Reports", null);
 		}
 	}
 
@@ -177,7 +187,6 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 
 			// Set the "All Accounts" as selected tab in the sidebar state 
 			this.props.setSelectedTab("All Accounts", null);
-			// Navigate to All Accounts
 		}
 	}
 
@@ -318,6 +327,7 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 		if(this.props.entitiesCollection.accounts) {
 
 			var isBudgetSelected:boolean = this.props.sidebarState.selectedTab == "Budget";
+			var isReportsSelected:boolean = this.props.sidebarState.selectedTab == "Reports";
 			var isAllAccountsSelected:boolean = this.props.sidebarState.selectedTab == "All Accounts";
 			var accountButtonContainers:Array<JSX.Element> = this.getAccountButtonContainerNodes();
 
@@ -325,10 +335,13 @@ export class PSidebar extends React.Component<PSidebarProps, PSidebarState> {
 				return (
 					<div style={PSidebarExpandedStyle}>
 						<PModuleButton label="Budget" selected={isBudgetSelected} onClick={this.onBudgetSelect}>
-							<MailOutline style={ModuleButtonIconStyle} />
+							<BudgetIcon style={ModuleButtonIconStyle} />
+						</PModuleButton>
+						<PModuleButton label="Reports" selected={isReportsSelected} onClick={this.onReportsSelect}>
+							<ReportsIcon style={ModuleButtonIconStyle} />
 						</PModuleButton>
 						<PModuleButton label="All Accounts" selected={isAllAccountsSelected} onClick={this.onAllAccountsSelect}>
-							<AccountBalance style={ModuleButtonIconStyle} />
+							<AllAccountsIcon style={ModuleButtonIconStyle} />
 						</PModuleButton>
 						<hr className="sidebar-horizontal-rule" />
 						<div style={PContainerStyle}>

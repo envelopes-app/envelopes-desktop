@@ -1,7 +1,10 @@
 export class UIConstants {
 
+	// Common
+	public static HeaderBackgroundColor = "#003540";
+	public static BorderColor = "#DFE4E9";
+
 	// Budget
-	public static BudgetHeaderBackgroundColor = "#003540";
 	public static MonthlyBudgetBorderColor = "#DFE4E9";
 
 	public static CategoryNameColumnsWidth = "300px";

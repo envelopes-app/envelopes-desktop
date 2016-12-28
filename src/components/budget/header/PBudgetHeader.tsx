@@ -31,7 +31,7 @@ const BudgetHeaderContainerStyle:React.CSSProperties = {
 	alignItems: 'center',
 	height: '80px',
 	width: '100%',
-	backgroundColor: UIConstants.BudgetHeaderBackgroundColor,
+	backgroundColor: UIConstants.HeaderBackgroundColor,
 	paddingLeft: '5px',
 	paddingRight: '5px',
 }

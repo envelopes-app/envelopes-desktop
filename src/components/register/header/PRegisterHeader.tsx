@@ -7,6 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { PHeaderAccountName } from './PHeaderAccountName';
 import { PHeaderValue } from './PHeaderValue';
 
+import { UIConstants } from '../../../constants';
 import { DataFormatter } from '../../../utilities';
 
 export interface PRegisterHeaderProps {
@@ -26,7 +27,7 @@ const RegisterHeaderContainerStyle:React.CSSProperties = {
 	flex: '0 0 auto',
 	height: '70px',
 	width: '100%',
-	backgroundColor: '#003540',
+	backgroundColor: UIConstants.HeaderBackgroundColor,
 	paddingLeft: '0px',
 	paddingRight: '5px'
 }

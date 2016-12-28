@@ -12,6 +12,7 @@ import './styles/index.less';
 import './styles/sidebar.less';
 import './styles/budget.less';
 import './styles/register.less';
+import './styles/reports.less';
 import './styles/react-datepicker.css';
 import './styles/fixed-data-table.css';
 
