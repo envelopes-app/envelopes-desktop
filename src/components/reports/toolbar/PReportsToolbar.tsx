@@ -6,16 +6,21 @@ import * as ReactDOM from 'react-dom';
 import { Glyphicon } from 'react-bootstrap';
 
 import { PHoverableDiv } from '../../common/PHoverableDiv';
-import { PAccountSelectionDialog } from './PAccountSelectionDialog';
-import { PCategorySelectionDialog } from './PCategorySelectionDialog';
-import { PTimeframeSelectionDialog } from './PTimeframeSelectionDialog';
+import { PAccountSelectionDialog } from '../dialogs/PAccountSelectionDialog';
+import { PCategorySelectionDialog } from '../dialogs/PCategorySelectionDialog';
+import { PTimeframeSelectionDialog } from '../dialogs/PTimeframeSelectionDialog';
 
 import { UIConstants } from '../../../constants';
-import { IEntitiesCollection } from '../../../interfaces/state';
+import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
+import { IEntitiesCollection, IReportState } from '../../../interfaces/state';
 
 export interface PReportsToolbarProps {
+	dataFormatter:DataFormatter;
 	selectedReport:string;
+	reportState:IReportState;
 	entitiesCollection:IEntitiesCollection;
+
+	setReportState(reportState:IReportState):void;
 }
 
 const ReportsToolbarContainerStyle:React.CSSProperties = {
@@ -51,8 +56,10 @@ const ButtonHoverStyle = Object.assign({}, ButtonDefaultStyle, {
 });
 
 const GlyphStyle:React.CSSProperties = {
-	fontSize: "12px"
+	fontSize: "12px",
+	marginLeft: "5px"
 }
+
 export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 
 	private accountsSelectionButton:PHoverableDiv;
@@ -73,7 +80,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 	private handleCategorySelectionButtonClicked(event:React.MouseEvent<any>):void {
 
 		if(this.categorySelectionDialog.isShowing() == false)
-			this.categorySelectionDialog.show(this.categoriesSelectionButton.getRootElement(), "bottom");
+			this.categorySelectionDialog.show(this.props.selectedReport, this.props.reportState, this.categoriesSelectionButton.getRootElement(), "bottom");
 	}
 
 	private handleTimeframeSelectionButtonClicked(event:React.MouseEvent<any>):void {
@@ -90,6 +97,15 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 	
 	public render() {
 		
+		var reportState = this.props.reportState;
+		var categoriesSelectionButtonLabel:string;
+		if(reportState.allCategoriesSelected)
+			categoriesSelectionButtonLabel = "All Categories";
+		else if(reportState.noCategoriesSelected)
+			categoriesSelectionButtonLabel = "No Categories";
+		else
+			categoriesSelectionButtonLabel = "Some Categories";
+
 		return (
 			<div style={ReportsToolbarContainerStyle}>
 
@@ -97,7 +113,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
 					onClick={this.handleCategorySelectionButtonClicked}>
-					All Categories&nbsp;
+					{categoriesSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
 				</PHoverableDiv> 
 
@@ -105,7 +121,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
 					onClick={this.handleTimeframeSelectionButtonClicked}>
-					Dec 2015 - Dec 2016&nbsp;
+					Dec 2015 - Dec 2016
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
 				</PHoverableDiv> 
 
@@ -113,13 +129,14 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
 					onClick={this.handleAccountSelectionButtonClicked}>
-					All Accounts&nbsp;
+					All Accounts
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
 				</PHoverableDiv> 
 
 				<PCategorySelectionDialog 
 					ref={(d)=> this.categorySelectionDialog = d }
 					entitiesCollection={this.props.entitiesCollection}
+					setReportState={this.props.setReportState}
 				/>
 
 				<PAccountSelectionDialog 

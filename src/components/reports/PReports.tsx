@@ -10,9 +10,9 @@ import { PReportsToolbar } from './toolbar/PReportsToolbar';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
 import { IDataFormat } from '../../interfaces/formatters';
-import { ReportNames } from '../../constants';
+import { RegisterFilterTimeFrame, ReportNames } from '../../constants';
 import { DataFormats, DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../utilities';
-import { IEntitiesCollection } from '../../interfaces/state';
+import { IEntitiesCollection, IReportState } from '../../interfaces/state';
 
 export interface PReportsProps {
 	// State Variables
@@ -21,7 +21,12 @@ export interface PReportsProps {
 }
 
 export interface PReportsState {
+	dataFormat:string;
+	dataFormatter:DataFormatter;
 	selectedReport:string;
+	selectedReportState:IReportState;
+
+	reportsState: SimpleObjectMap<IReportState>;
 }
 
 const ReportsContainerStyle = {
@@ -36,14 +41,86 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 	constructor(props:PReportsProps) {
 		super(props);
 		this.setSelectedReport = this.setSelectedReport.bind(this);
-		this.state = {
-			selectedReport: ReportNames.Spending
+		this.setReportState = this.setReportState.bind(this);
+
+		// If there is not active budget, default the formatter to en_US so that 
+		// we have something to work with at startup
+		var dataFormat = DataFormats.locale_mappings["en_US"];
+		var activeBudgetId = props.activeBudgetId;
+		if(activeBudgetId && props.entitiesCollection.budgets) {
+
+			var activeBudget = props.entitiesCollection.budgets.getEntityById(activeBudgetId);
+			if(activeBudget && activeBudget.dataFormat) {
+				dataFormat = JSON.parse(activeBudget.dataFormat) as IDataFormat;
+			}
 		}
+
+		var reportsState = {};
+		reportsState[ReportNames.Spending] = this.getInitialStateForSpendingReport();
+		reportsState[ReportNames.NetWorth] = this.getInitialStateForNetWorthReport();
+		reportsState[ReportNames.IncomeVsExpense] = this.getInitialStateForIncomeVsExpenseReport();
+		
+		this.state = {
+			dataFormat: JSON.stringify(dataFormat),
+			dataFormatter: new DataFormatter(dataFormat),
+			selectedReport: ReportNames.Spending,
+			selectedReportState: reportsState[ReportNames.Spending],
+			reportsState: reportsState,
+		}
+	}
+	
+	private getInitialStateForSpendingReport():IReportState {
+
+		var categoryIds:Array<string> = [];
+		var masterCategories = this.props.entitiesCollection.masterCategories.getVisibleNonTombstonedMasterCategories();
+		_.forEach(masterCategories, (masterCategory)=>{
+
+			var subCategories = this.props.entitiesCollection.subCategories.getVisibleNonTombstonedSubCategoriesForMasterCategory(masterCategory.entityId);
+			_.forEach(subCategories, (subCategory)=>{
+				categoryIds.push(subCategory.entityId);
+			})
+		});
+
+		var reportState:IReportState = {
+			
+			allAccountsSelected: true,
+			noAccountsSelected: false,
+			selectedAccountIds: [],
+
+			allCategoriesSelected: true,
+			noCategoriesSelected: false,
+			uncategorizedTransactionsSelected: true,
+			hiddenCategoriesSelected: true,
+			selectedCategoryIds: categoryIds,
+
+			selectedTimeframe: RegisterFilterTimeFrame.LatestThreeMonths,
+			startDate: DateWithoutTime.createForCurrentMonth().subtractMonths(2),
+			endDate: DateWithoutTime.createForCurrentMonth()
+		};
+
+		return reportState;
+	}
+
+	private getInitialStateForNetWorthReport():IReportState {
+
+		return {} as any;
+	}
+
+	private getInitialStateForIncomeVsExpenseReport():IReportState {
+
+		return {} as any;
 	}
 
 	private setSelectedReport(reportName:string):void {
 		var state = Object.assign({}, this.state);
 		state.selectedReport = reportName;
+		state.selectedReportState = state.reportsState[reportName];
+		this.setState(state);
+	}
+
+	private setReportState(reportState:IReportState):void {
+		var state = Object.assign({}, this.state);
+		state.reportsState[state.selectedReport] = reportState;
 		this.setState(state);
 	}
 
@@ -56,8 +133,11 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 					setSelectedReport={this.setSelectedReport}
 				/>
 				<PReportsToolbar 
+					dataFormatter={this.state.dataFormatter}
 					selectedReport={this.state.selectedReport}
+					reportState={this.state.selectedReportState}
 					entitiesCollection={this.props.entitiesCollection}
+					setReportState={this.setReportState}
 				/>
 			</div>
 		);
