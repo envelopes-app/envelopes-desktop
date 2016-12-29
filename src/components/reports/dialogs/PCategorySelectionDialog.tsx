@@ -214,13 +214,31 @@ export class PCategorySelectionDialog extends React.Component<PCategorySelection
 		var selectedCategoryIdsMap = this.state.selectedCategoryIdsMap;
 		var subCategoryIds = _.keys(selectedCategoryIdsMap);
 
+		var selectedCategoriesCount = 0;
+		var unselectedCategoriesCount = 0;
 		_.forEach(subCategoryIds, (subCategoryId)=>{
-			if(selectedCategoryIdsMap[subCategoryId] == true)
+			if(selectedCategoryIdsMap[subCategoryId] == true) {
 				selectedCategoryIds.push(subCategoryId);
+				selectedCategoriesCount++;
+			}
+			else
+				unselectedCategoriesCount++;
 		});
 
+		if(this.state.uncategorizedTransactionsSelected)
+			selectedCategoriesCount++;
+		else
+			unselectedCategoriesCount++;
+
+		if(this.state.hiddenCategoriesSelected)
+			selectedCategoriesCount++;
+		else
+			unselectedCategoriesCount++;
+			
 		// Set the updated values back in the report state and send it back to the parent component
 		var reportState = this.state.reportState;
+		reportState.allCategoriesSelected = (unselectedCategoriesCount == 0);
+		reportState.noCategoriesSelected = (selectedCategoriesCount == 0);
 		reportState.uncategorizedTransactionsSelected = this.state.uncategorizedTransactionsSelected;
 		reportState.hiddenCategoriesSelected = this.state.hiddenCategoriesSelected;
 		reportState.selectedCategoryIds = selectedCategoryIds;
