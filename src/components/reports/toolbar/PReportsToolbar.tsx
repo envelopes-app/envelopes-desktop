@@ -92,7 +92,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 	private handleAccountSelectionButtonClicked(event:React.MouseEvent<any>):void {
 
 		if(this.accountSelectionDialog.isShowing() == false)
-			this.accountSelectionDialog.show(this.accountsSelectionButton.getRootElement(), "bottom");
+			this.accountSelectionDialog.show(this.props.selectedReport, this.props.reportState, this.accountsSelectionButton.getRootElement(), "bottom");
 	}
 	
 	public render() {
@@ -142,6 +142,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 				<PAccountSelectionDialog 
 					ref={(d)=> this.accountSelectionDialog = d }
 					entitiesCollection={this.props.entitiesCollection}
+					setReportState={this.props.setReportState}
 				/>
 
 				<PTimeframeSelectionDialog 

@@ -56,9 +56,9 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 		}
 
 		var reportsState = {};
-		reportsState[ReportNames.Spending] = this.getInitialStateForSpendingReport();
-		reportsState[ReportNames.NetWorth] = this.getInitialStateForNetWorthReport();
-		reportsState[ReportNames.IncomeVsExpense] = this.getInitialStateForIncomeVsExpenseReport();
+		reportsState[ReportNames.Spending] = this.getInitialStateForReport(ReportNames.Spending);
+		reportsState[ReportNames.NetWorth] = this.getInitialStateForReport(ReportNames.NetWorth);
+		reportsState[ReportNames.IncomeVsExpense] = this.getInitialStateForReport(ReportNames.IncomeVsExpense);
 		
 		this.state = {
 			dataFormat: JSON.stringify(dataFormat),
@@ -69,7 +69,7 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 		}
 	}
 	
-	private getInitialStateForSpendingReport():IReportState {
+	private getInitialStateForReport(reportName:string):IReportState {
 
 		var categoryIds:Array<string> = [];
 		var masterCategories = this.props.entitiesCollection.masterCategories.getVisibleNonTombstonedMasterCategories();
@@ -81,11 +81,19 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 			})
 		});
 
+		var accountIds:Array<string> = [];
+		var accounts = this.props.entitiesCollection.accounts.getNonTombstonedOpenAccounts();
+		_.forEach(accounts, (account)=>{
+			// For "Net Worth" report, add both budget and tracking accounts. Otherwise only include budget accounts.
+			if(reportName == ReportNames.NetWorth || account.onBudget == 1)
+				accountIds.push(account.entityId);
+		});
+
 		var reportState:IReportState = {
 			
 			allAccountsSelected: true,
 			noAccountsSelected: false,
-			selectedAccountIds: [],
+			selectedAccountIds: accountIds,
 
 			allCategoriesSelected: true,
 			noCategoriesSelected: false,
@@ -99,16 +107,6 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 		};
 
 		return reportState;
-	}
-
-	private getInitialStateForNetWorthReport():IReportState {
-
-		return {} as any;
-	}
-
-	private getInitialStateForIncomeVsExpenseReport():IReportState {
-
-		return {} as any;
 	}
 
 	private setSelectedReport(reportName:string):void {

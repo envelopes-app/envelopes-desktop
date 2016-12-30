@@ -100,6 +100,10 @@ const MasterCategoryListItem:React.CSSProperties = {
 	marginBottom: "0px",
 }
 
+const MasterCategoryNameStyle:React.CSSProperties = {
+	fontWeight: "bold"
+}
+
 const SubCategoryListItem:React.CSSProperties = {
 	marginTop: "0px",
 	marginBottom: "0px",
@@ -131,7 +135,7 @@ export class PCategorySelectionDialog extends React.Component<PCategorySelection
 		return this.state.show;
 	}
 	
-	public show(selectedReport:string, reportState:IReportState, target:HTMLElement, placement:string = "left"):void {
+	public show(selectedReport:string, reportState:IReportState, target:HTMLElement, placement:string = "bottom"):void {
 
 		// Clone the selected subcategory ids array from the report state
 		var selectedCategoryIds = reportState.selectedCategoryIds.slice();
@@ -306,7 +310,7 @@ export class PCategorySelectionDialog extends React.Component<PCategorySelection
 				checked={masterCategorySelected} 
 				onChange={this.handleMasterCategoryClicked.bind(this, masterCategory.entityId, !masterCategorySelected)}>
 				
-				{masterCategory.name}
+				<div style={MasterCategoryNameStyle}>{masterCategory.name}</div>
 			</Checkbox>
 		);
 	}
@@ -320,7 +324,7 @@ export class PCategorySelectionDialog extends React.Component<PCategorySelection
 				checked={this.state.uncategorizedTransactionsSelected} 
 				onChange={this.handleUncategorizedTransactionsClicked.bind(this, !this.state.uncategorizedTransactionsSelected)}>
 				
-				Uncategorized Transactions
+				<div style={MasterCategoryNameStyle}>Uncategorized Transactions</div>
 			</Checkbox>
 		);
 	}
@@ -334,7 +338,7 @@ export class PCategorySelectionDialog extends React.Component<PCategorySelection
 				checked={this.state.hiddenCategoriesSelected} 
 				onChange={this.handleHiddenCategoriesClicked.bind(this, !this.state.hiddenCategoriesSelected)}>
 				
-				Hidden Categories
+				<div style={MasterCategoryNameStyle}>Hidden Categories</div>
 			</Checkbox>
 		);
 	}
