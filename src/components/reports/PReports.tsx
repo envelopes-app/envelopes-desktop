@@ -6,6 +6,9 @@ import * as ReactDOM from 'react-dom';
 
 import { PReportsHeader } from './header/PReportsHeader';
 import { PReportsToolbar } from './toolbar/PReportsToolbar';
+import { PSpendingReport } from './spendingReport/PSpendingReport';
+import { PNetWorthReport } from './netWorthReport/PNetWorthReport';
+import { PIncomeExpenseReport } from './incomeExpenseReport/PIncomeExpenseReport';
 
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
@@ -124,6 +127,35 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 
 	public render() {
 
+		var report:JSX.Element; 
+		if(this.state.selectedReport == ReportNames.Spending) {
+			report = (
+				<PSpendingReport 
+					dataFormatter={this.state.dataFormatter}
+					reportState={this.state.reportsState[ReportNames.Spending]}
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+			);
+		}
+		else if(this.state.selectedReport == ReportNames.NetWorth) {
+			report = (
+				<PNetWorthReport 
+					dataFormatter={this.state.dataFormatter}
+					reportState={this.state.reportsState[ReportNames.NetWorth]}
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+			);
+		}
+		else if(this.state.selectedReport == ReportNames.IncomeVsExpense) {
+			report = (
+				<PIncomeExpenseReport 
+					dataFormatter={this.state.dataFormatter}
+					reportState={this.state.reportsState[ReportNames.NetWorth]}
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+			);
+		}
+
 		return (
 			<div style={ReportsContainerStyle}>
 				<PReportsHeader 
@@ -137,6 +169,7 @@ export class PReports extends React.Component<PReportsProps, PReportsState> {
 					entitiesCollection={this.props.entitiesCollection}
 					setReportState={this.setReportState}
 				/>
+				{report}
 			</div>
 		);
 	}
