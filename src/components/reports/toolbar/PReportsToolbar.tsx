@@ -86,7 +86,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 	private handleTimeframeSelectionButtonClicked(event:React.MouseEvent<any>):void {
 
 		if(this.timeframeSelectionDialog.isShowing() == false)
-			this.timeframeSelectionDialog.show(this.timeframeSelectionButton.getRootElement(), "bottom");
+			this.timeframeSelectionDialog.show(this.props.selectedReport, this.props.reportState, this.timeframeSelectionButton.getRootElement(), "bottom");
 	}
 
 	private handleAccountSelectionButtonClicked(event:React.MouseEvent<any>):void {
@@ -98,13 +98,27 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 	public render() {
 		
 		var reportState = this.props.reportState;
+		var accountsSelectionButtonLabel:string;
 		var categoriesSelectionButtonLabel:string;
+		var timeframeSelectionButtonLabel:string;
+
+		if(reportState.allAccountsSelected)
+			accountsSelectionButtonLabel = "All Accounts";
+		else if(reportState.noAccountsSelected)
+			accountsSelectionButtonLabel = "No Accounts";
+		else
+			accountsSelectionButtonLabel = "Some Accounts";
+
 		if(reportState.allCategoriesSelected)
 			categoriesSelectionButtonLabel = "All Categories";
 		else if(reportState.noCategoriesSelected)
 			categoriesSelectionButtonLabel = "No Categories";
 		else
 			categoriesSelectionButtonLabel = "Some Categories";
+
+		var startDate = reportState.startDate;
+		var endDate = reportState.endDate;
+		timeframeSelectionButtonLabel = `${startDate.format("MMM YYYY")} - ${endDate.format("MMM YYYY")}`;
 
 		return (
 			<div style={ReportsToolbarContainerStyle}>
@@ -121,7 +135,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
 					onClick={this.handleTimeframeSelectionButtonClicked}>
-					Dec 2015 - Dec 2016
+					{timeframeSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
 				</PHoverableDiv> 
 
@@ -129,7 +143,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
 					onClick={this.handleAccountSelectionButtonClicked}>
-					All Accounts
+					{accountsSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
 				</PHoverableDiv> 
 
@@ -148,6 +162,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 				<PTimeframeSelectionDialog 
 					ref={(d)=> this.timeframeSelectionDialog = d }
 					entitiesCollection={this.props.entitiesCollection}
+					setReportState={this.props.setReportState}
 				/>
 			</div>
 		);
