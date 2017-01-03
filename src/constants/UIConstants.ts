@@ -19,4 +19,10 @@ export class UIConstants {
 	public static InspectorExpandedWidth = "340px";
 	public static InspectorBorderColor = "#DFE4E9";
 	public static InspectorBackgroundColor = "#E5F5F9";
+
+	// Reports
+	public static ReportsChartMinWidth = "600px";
+	public static ReportsInspectorWidth = "380px";
+	public static ReportsInspectorBorderColor = "#DFE4E9";
+	public static ReportsInspectorBackgroundColor = "#E5F5F9";
 }

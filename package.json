@@ -30,6 +30,7 @@
     "@types/redux-thunk": "2.1.32",
     "@types/sqlite3": "2.2.31",
     "@types/uuid": "2.0.29",
+    "@types/victory": "0.9.5",
     "@types/winston": "0.0.32",
     "autoprefixer": "6.5.4",
     "babel-core": "6.20.0",
@@ -100,6 +101,7 @@
   "dependencies": {
     "babyparse": "0.4.6",
     "bootstrap": "3.3.7",
+    "chart.js": "^2.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "es6-promise": "4.0.5",
     "fixed-data-table": "0.6.3",
@@ -125,6 +127,7 @@
     "source-map-support": "0.4.6",
     "sqlite3": "3.1.8",
     "uuid": "3.0.1",
+    "victory": "0.14.2",
     "winston": "2.3.0"
   },
   "bin": {

@@ -1,0 +1,1 @@
+export { ISpendingReportItemData } from './ISpendingReportItemData';
