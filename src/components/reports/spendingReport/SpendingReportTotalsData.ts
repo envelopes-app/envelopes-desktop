@@ -43,6 +43,8 @@ export class SpendingReportTotalsData {
 			return this.itemDataMap[key];
 		});
 
+		// Sort the items by value in descending order
+		itemDataArray = _.orderBy(itemDataArray, ["value"], ["desc"]);
 		return itemDataArray;
 	}
 }

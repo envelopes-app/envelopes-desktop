@@ -11,6 +11,7 @@
   "devDependencies": {
     "@types/babyparse": "0.0.30",
     "@types/chai": "3.4.34",
+    "@types/chart.js": "0.0.9",
     "@types/electron": "1.4.29",
     "@types/fixed-data-table": "0.6.30",
     "@types/isomorphic-fetch": "0.0.31",
@@ -101,7 +102,7 @@
   "dependencies": {
     "babyparse": "0.4.6",
     "bootstrap": "3.3.7",
-    "chart.js": "^2.4.0",
+    "chart.js": "2.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "es6-promise": "4.0.5",
     "fixed-data-table": "0.6.3",
@@ -120,14 +121,12 @@
     "react-onclickoutside": "5.7.1",
     "react-redux": "4.4.6",
     "react-tap-event-plugin": "2.0.1",
-    "recharts": "0.20.1",
     "redux": "3.6.0",
     "redux-logger": "2.7.4",
     "redux-thunk": "2.1.0",
     "source-map-support": "0.4.6",
     "sqlite3": "3.1.8",
     "uuid": "3.0.1",
-    "victory": "0.14.2",
     "winston": "2.3.0"
   },
   "bin": {

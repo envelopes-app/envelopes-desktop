@@ -25,4 +25,32 @@ export class UIConstants {
 	public static ReportsInspectorWidth = "380px";
 	public static ReportsInspectorBorderColor = "#DFE4E9";
 	public static ReportsInspectorBackgroundColor = "#E5F5F9";
+
+	public static ChartColors = [
+		"rgba(193,93,93,1)",
+		"rgba(252,210,73,1)",
+		"rgba(158,226,106,1)",
+		"rgba(245,234,85,1)",
+		"rgba(249,173,96,1)",
+		"rgba(200,226,106,1)",
+		"rgba(206,136,165,1)",
+		"rgba(232,125,104,1)",
+		"rgba(220,95,122,1)",
+		"rgba(136,206,142,1)",
+		"rgba(219,224,229,1)"
+	];
+
+	public static ChartHoverColors = [
+		"rgba(193,93,93,0.8)",
+		"rgba(252,210,73,0.8)",
+		"rgba(158,226,106,0.8)",
+		"rgba(245,234,85,0.8)",
+		"rgba(249,173,96,0.8)",
+		"rgba(200,226,106,0.8)",
+		"rgba(206,136,165,0.8)",
+		"rgba(232,125,104,0.8)",
+		"rgba(220,95,122,0.8)",
+		"rgba(136,206,142,0.8)",
+		"rgba(219,224,229,0.8)"
+	];
 }

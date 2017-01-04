@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { PSpendingReportHeader } from './PSpendingReportHeader';
 import { PSpendingTotals } from './PSpendingTotals';
 import { PSpendingTrends } from './PSpendingTrends';
 import { PSpendingInspector } from './PSpendingInspector';
@@ -35,16 +36,31 @@ const ReportsContainerStyle:React.CSSProperties = {
 	height: "100%",
 }
 
+const ReportsInnerContainerStyle:React.CSSProperties = {
+	flex: "1 1 auto",
+	display: "flex",
+	flexFlow: "column nowrap",
+	width: "100%",
+	height: "100%",
+}
+
 export class PSpendingReport extends React.Component<PSpendingReportProps, PSpendingReportState> {
 
 	constructor(props:PSpendingReportProps) {
 		super(props);
+		this.setReportView = this.setReportView.bind(this);
 		this.state = {
 			showingTotals: true,
 			masterCategoryId: null,
 			totalsData: null,
 			trendsData: null
 		}
+	}
+
+	private setReportView(showTotals:boolean):void {
+		var state = Object.assign({}, this.state);
+		state.showingTotals = showTotals;
+		this.setState(state);
 	}
 
 	private calculateTopLevelChartData():{totalsData:SpendingReportTotalsData, trendsData:SpendingReportTrendsData} {
@@ -119,10 +135,12 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 						itemName = "Uncategorized Transactions";
 					}
 
-					var totalsItemData = totalsData.getSpendingReportItemData(itemId, itemName);
-					var trendsItemData = trendsData.getSpendingReportItemData(itemId, itemName, monthName);
-					totalsItemData.value += (-transaction.amount);
-					trendsItemData.value += (-transaction.amount);
+					if(itemId) {
+						var totalsItemData = totalsData.getSpendingReportItemData(itemId, itemName);
+						var trendsItemData = trendsData.getSpendingReportItemData(itemId, itemName, monthName);
+						totalsItemData.value += (-transaction.amount);
+						trendsItemData.value += (-transaction.amount);
+					}
 				}
 			});
 
@@ -148,12 +166,19 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		if(this.state.showingTotals) {
 			return (
 				<div style={ReportsContainerStyle}>
-					<PSpendingTotals 
-						dataFormatter={this.props.dataFormatter}	
-						reportState={this.props.reportState}
-						masterCategoryId={masterCategoryId}
-						totalsData={reportData.totalsData}
-					/>
+					<div style={ReportsInnerContainerStyle}>
+						<PSpendingReportHeader
+							reportState={this.props.reportState}
+							showingTotals={this.state.showingTotals}
+							setReportView={this.setReportView}
+						/>
+						<PSpendingTotals 
+							dataFormatter={this.props.dataFormatter}	
+							reportState={this.props.reportState}
+							masterCategoryId={masterCategoryId}
+							totalsData={reportData.totalsData}
+						/>
+					</div>
 					<PSpendingInspector />
 				</div>
 			);
@@ -161,7 +186,16 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		else {
 			return (
 				<div style={ReportsContainerStyle}>
-					<PSpendingTrends />
+					<div style={ReportsInnerContainerStyle}>
+						<PSpendingReportHeader
+							reportState={this.props.reportState}
+							showingTotals={this.state.showingTotals}
+							setReportView={this.setReportView}
+						/>
+						<div style={ReportsInnerContainerStyle}>
+							<PSpendingTrends />
+						</div>
+					</div>
 					<PSpendingInspector />
 				</div>
 			);
