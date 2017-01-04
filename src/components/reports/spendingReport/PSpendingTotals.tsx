@@ -40,6 +40,8 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 		var Chart = require('chart.js');
 		var element = ReactDOM.findDOMNode(this.refCanvas) as any;
       	var ctx = element.getContext("2d");
+		var dataFormatter = props.dataFormatter;
+
 		this.chart = new Chart(ctx, {
 			type: 'pie',
 			data: this.buildDataObject(props),
@@ -51,7 +53,36 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 					display: false
 				},
 				tooltips: {
-					position: "nearest"
+					position: "nearest",
+					displayColors: false,
+					backgroundColor: "#FFFFFF",
+					titleFontColor: "#000000",
+					bodyFontColor: "#000000",
+					bodyFontSize: 16,
+					bodyFontStyle: "bold",
+					footerFontColor: "#000000",
+					callbacks: {
+						title: (tooltipItems, data)=>{
+							var tooltipItem = tooltipItems[0];
+							var title = data.labels[tooltipItem.index];
+							return title;
+						},
+						label: (tooltipItem, data)=>{
+							var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+							var formattedValue = dataFormatter.formatCurrency(value);
+							return formattedValue;
+						},
+						footer: (tooltipItems, data)=>{
+							var tooltipItem = tooltipItems[0];
+							var valuesArray = data.datasets[tooltipItem.datasetIndex].data;
+							var value = valuesArray[tooltipItem.index];
+							var sumOfAllValues = _.reduce(valuesArray, (sum, value:number)=>{
+								return sum + value;
+							}, 0);
+							var percentage = value == 0 ? 0 : value/sumOfAllValues*100;
+							return `${Math.round(percentage*100)/100}% of Total`;	
+						}
+					}
 				},
 				onClick: (...args:any[])=>{
 					debugger;
@@ -66,6 +97,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 		var dataItems = totalsData.getOverallItemDataArray();
 		var labels = _.map(dataItems, "itemName");
 		var values = _.map(dataItems, "value");
+		var percentages = _.map(dataItems, "percentageOfTotal");
 
 		let data = {
 			labels: labels,

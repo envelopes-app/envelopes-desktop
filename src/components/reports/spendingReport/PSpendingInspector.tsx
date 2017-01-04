@@ -123,7 +123,7 @@ export class PSpendingInspector extends React.Component<PSpendingInspectorProps,
 
 		var totalSpending = this.props.totalsData.getTotalSpending();
 
-		var numberOfMonths = endMonth.monthsApart(startMonth);
+		var numberOfMonths = endMonth.monthsApart(startMonth) + 1;
 		var averageSpending = totalSpending / numberOfMonths;
 
 		var spendingItems:Array<JSX.Element> = [];
