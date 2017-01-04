@@ -22,7 +22,7 @@ export class UIConstants {
 
 	// Reports
 	public static ReportsChartMinWidth = "600px";
-	public static ReportsInspectorWidth = "380px";
+	public static ReportsInspectorWidth = "340px";
 	public static ReportsInspectorBorderColor = "#DFE4E9";
 	public static ReportsInspectorBackgroundColor = "#E5F5F9";
 

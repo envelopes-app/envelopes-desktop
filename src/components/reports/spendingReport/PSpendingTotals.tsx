@@ -63,7 +63,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 	private buildDataObject(props:PSpendingTotalsProps):any {
 
 		var totalsData = props.totalsData;
-		var dataItems = totalsData.getItemDataArray();
+		var dataItems = totalsData.getOverallItemDataArray();
 		var labels = _.map(dataItems, "itemName");
 		var values = _.map(dataItems, "value");
 
@@ -84,7 +84,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 	private updateDataObject(props:PSpendingTotalsProps):void {
 
 		var totalsData = props.totalsData;
-		var dataItems = totalsData.getItemDataArray();
+		var dataItems = totalsData.getOverallItemDataArray();
 		var labels = _.map(dataItems, "itemName");
 		var values = _.map(dataItems, "value");
 
@@ -110,9 +110,6 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 	}
 
 	public render() {
-
-		var dataFormatter = this.props.dataFormatter;
-		var data = this.props.totalsData.getItemDataArray();
 
 		return (
 			<div style={ChartContainerStyle}>

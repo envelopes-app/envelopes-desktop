@@ -2,49 +2,56 @@
 
 import * as _ from 'lodash';
 
-import { SimpleObjectMap } from '../../../utilities';
+import { SimpleObjectMap, MultiDictionary } from '../../../utilities';
 import { ISpendingReportItemData } from '../../../interfaces/reports';
 
 export class SpendingReportTotalsData {
 
-	private itemDataMap:SimpleObjectMap<ISpendingReportItemData> = {};
+	private overallItemDataMap:SimpleObjectMap<ISpendingReportItemData> = {};
+	private monthlyItemDataMap = new MultiDictionary<string, ISpendingReportItemData>();
 
-	public getSpendingReportItemData(itemId:string, itemName:string):ISpendingReportItemData {
+	public getSpendingReportItemData(itemId:string, itemName:string, monthName:string):ISpendingReportItemData {
 
 		// First check if we already have an existing item against this itemId
-		var itemData = this.itemDataMap[itemId];
+		var itemData = this.overallItemDataMap[itemId];
 		// If it is not found, then create and return a new one
 		if(!itemData) {
 			
 			itemData = {
 				itemId: itemId,
 				itemName: itemName,
-				monthName: null,
+				monthName: monthName,
 				value: 0,
 				percentageOfTotal: 0
 			};
 
-			this.itemDataMap[itemId] = itemData;
+			this.overallItemDataMap[itemId] = itemData;
+			this.monthlyItemDataMap.setValue(monthName, itemData);
 		}
 
 		return itemData;
 	}
 
-	public getItemIds():Array<string> {
+	public getOverallItemDataArray():Array<ISpendingReportItemData> {
 
-		var keys = _.keys(this.itemDataMap);
-		return keys;
-	}
-
-	public getItemDataArray():Array<ISpendingReportItemData> {
-
-		var keys = this.getItemIds();
+		var keys = _.keys(this.overallItemDataMap);
 		var itemDataArray:Array<ISpendingReportItemData> = _.map(keys, (key)=>{
-			return this.itemDataMap[key];
+			return this.overallItemDataMap[key];
 		});
 
 		// Sort the items by value in descending order
 		itemDataArray = _.orderBy(itemDataArray, ["value"], ["desc"]);
 		return itemDataArray;
+	}
+
+	public getTotalSpending():number {
+
+		var keys = _.keys(this.overallItemDataMap);
+		var totalSpending = _.reduce(keys, (sum , key)=>{
+			var itemData = this.overallItemDataMap[key];
+			return sum + itemData.value;
+		}, 0);
+
+		return totalSpending;
 	}
 }

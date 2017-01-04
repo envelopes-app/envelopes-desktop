@@ -136,7 +136,7 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					}
 
 					if(itemId) {
-						var totalsItemData = totalsData.getSpendingReportItemData(itemId, itemName);
+						var totalsItemData = totalsData.getSpendingReportItemData(itemId, itemName, monthName);
 						var trendsItemData = trendsData.getSpendingReportItemData(itemId, itemName, monthName);
 						totalsItemData.value += (-transaction.amount);
 						trendsItemData.value += (-transaction.amount);
@@ -179,7 +179,11 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 							totalsData={reportData.totalsData}
 						/>
 					</div>
-					<PSpendingInspector />
+					<PSpendingInspector 
+						dataFormatter={this.props.dataFormatter}	
+						reportState={this.props.reportState}
+						totalsData={reportData.totalsData}
+					/>
 				</div>
 			);
 		}
@@ -196,7 +200,11 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 							<PSpendingTrends />
 						</div>
 					</div>
-					<PSpendingInspector />
+					<PSpendingInspector 
+						dataFormatter={this.props.dataFormatter}	
+						reportState={this.props.reportState}
+						totalsData={reportData.totalsData}
+					/>
 				</div>
 			);
 		}
