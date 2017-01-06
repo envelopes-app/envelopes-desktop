@@ -131,7 +131,8 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					if(!transaction.subCategoryId && reportState.uncategorizedTransactionsSelected) {
 
 						var useTransaction = true;
-						// Make sure this is not a transfer between budget accounts (those are not considered uncategorized) 
+						// Make sure this is not a transfer between budget accounts 
+						// (those are not considered uncategorized transactions) 
 						if(transaction.transferAccountId) {
 							var account = accountsArray.getEntityById(transaction.accountId);
 							var transferAccount = accountsArray.getEntityById(transaction.transferAccountId);
@@ -157,11 +158,15 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					else if(reportState.hiddenCategoriesSelected && hiddenCategoryInclusionMap[transaction.subCategoryId] == true) {
 
 						// Add the amount of this transaction to the "hidden_categories" item
-						itemId = "uncategorized_transactions";
-						itemName = "Uncategorized Transactions";
+						itemId = "hidden_categories";
+						itemName = "Hidden Categories";
 					}
 
 					if(itemId) {
+
+						if(itemId == "d473314a-2cb5-4be8-9ae9-5e2d04efa46a")
+							debugger;
+							
 						var overallItemData = reportData.getOverallItemData(itemId, itemName);
 						overallItemData.value += (-transaction.amount);
 						var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);

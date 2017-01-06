@@ -54,7 +54,7 @@ export class SpendingReportData {
 
 		var key = `${itemId}_${monthName}`;
 		// First check if we already have an existing item against this itemId
-		var itemData = this.overallItemDataMap[key];
+		var itemData = this.monthlyItemDataMap[key];
 		// If it is not found, then create and return a new one
 		if(!itemData) {
 			

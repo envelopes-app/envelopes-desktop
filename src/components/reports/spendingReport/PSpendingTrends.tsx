@@ -100,6 +100,7 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 
 	private buildDataObject(props:PSpendingTrendsProps):any {
 
+		debugger;
 		var reportData = props.reportData;
 		var data = {
 			labels: reportData.getAllMonthNames(),
