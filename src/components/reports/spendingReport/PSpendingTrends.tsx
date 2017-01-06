@@ -75,6 +75,7 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var Chart = require('chart.js');
 		var element = ReactDOM.findDOMNode(this.refCanvas) as any;
       	var ctx = element.getContext("2d");
+		var dataFormatter = props.dataFormatter;
 
 		this.chart = new Chart(ctx, {
 			type: 'bar',
@@ -91,16 +92,53 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 						stacked: true
 					}],
 					yAxes: [{
-						stacked: true
-					}]
-		        }
+						stacked: true,
+						ticks: {
+							callback: (value, index, values)=>{
+								return dataFormatter.formatCurrency(value);
+							}
+						}
+					}],
+		        },
+				tooltips: {
+					position: "nearest",
+					displayColors: false,
+					backgroundColor: "#F5F6F8",
+					titleFontColor: "#000000",
+					bodyFontColor: "#000000",
+					bodyFontSize: 16,
+					bodyFontStyle: "bold",
+					footerFontColor: "#000000",
+					callbacks: {
+						title: (tooltipItems, data)=>{
+							var tooltipItem = tooltipItems[0];
+							var title = data.datasets[tooltipItem.datasetIndex].label;
+							return title;
+						},
+						label: (tooltipItem, data)=>{
+							var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+							var formattedValue = dataFormatter.formatCurrency(value);
+							return formattedValue;
+						},
+						footer: (tooltipItems, data)=>{
+							debugger;
+							var tooltipItem = tooltipItems[0];
+							var sumOfAllValues = _.reduce(data.datasets, (sum, dataset:any)=>{
+								return sum + dataset.data[tooltipItem.index];
+							}, 0);
+
+							var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+							var percentage = value == 0 ? 0 : value/sumOfAllValues*100;
+							return `${Math.round(percentage*100)/100}% of Total`;	
+						}
+					}
+				},
 			}
 		});
 	}
 
 	private buildDataObject(props:PSpendingTrendsProps):any {
 
-		debugger;
 		var reportData = props.reportData;
 		var data = {
 			labels: reportData.getAllMonthNames(),
@@ -111,6 +149,7 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var itemIds = reportData.getOverallSortedItemIds();
 		var itemNames = reportData.getOverallSortedItemNames();
 		var colors = UIConstants.ChartColors;
+		var hoverColors = UIConstants.ChartHoverColors;
 
 		for(var i:number = 0; i < itemIds.length; i++) {
 
@@ -121,15 +160,21 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 			// item is going to be represented by the same color in all months.
 			var backgroundColors:Array<string> = [];
 			var borderColors:Array<string> = [];
+			var hoverBackgroundColors:Array<string> = [];
+			var hoverBorderColors:Array<string> = [];
 			for(var k:number = 0; k < monthlyItemValues.length; k++) {
 				backgroundColors.push(color);
 				borderColors.push(color);
+				hoverBackgroundColors.push(color);
+				hoverBorderColors.push(color);
 			}
 
 			var dataSet = {
 				label: itemNames[i],
 				backgroundColor: backgroundColors,
 				borderColor: borderColors,
+				hoverBackgroundColor: hoverBackgroundColors,
+				hoverBorderColor: hoverBorderColors,
 				borderWidth: 1,
 				data: monthlyItemValues
 			};
@@ -137,7 +182,6 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 			data.datasets.push(dataSet);
 		}
 
-		debugger;
 		return data;
 	}
 

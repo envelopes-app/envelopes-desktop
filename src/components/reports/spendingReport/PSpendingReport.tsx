@@ -163,10 +163,6 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					}
 
 					if(itemId) {
-
-						if(itemId == "d473314a-2cb5-4be8-9ae9-5e2d04efa46a")
-							debugger;
-							
 						var overallItemData = reportData.getOverallItemData(itemId, itemName);
 						overallItemData.value += (-transaction.amount);
 						var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);

@@ -55,7 +55,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 				tooltips: {
 					position: "nearest",
 					displayColors: false,
-					backgroundColor: "#FFFFFF",
+					backgroundColor: "#F5F6F8",
 					titleFontColor: "#000000",
 					bodyFontColor: "#000000",
 					bodyFontSize: 16,
