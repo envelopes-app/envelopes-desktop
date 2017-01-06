@@ -7,12 +7,13 @@ import * as ReactDOM from 'react-dom';
 import { UIConstants } from '../../../constants';
 import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { IReportState } from '../../../interfaces/state';
-import { SpendingReportTotalsData } from './SpendingReportTotalsData';
+import { SpendingReportData } from './SpendingReportData';
 
 export interface PSpendingInspectorProps {
 	dataFormatter:DataFormatter;
 	reportState:IReportState;
-	totalsData:SpendingReportTotalsData;
+	reportData:SpendingReportData;
+	showSpendingActivityDialog:(itemId:string, itemName, element:HTMLElement, placement?:string)=>void;
 }
 
 const InspectorContainerStyle:React.CSSProperties = {
@@ -85,7 +86,8 @@ const ListItemStyle:React.CSSProperties = {
 	flexFlow: "row nowrap",
 	alignItems: "center",
 	justifyContent: "space-between",
-	width: "100%"
+	width: "100%",
+	cursor: "pointer"
 }
 
 const ListItemSvgStyle:React.CSSProperties = {
@@ -93,23 +95,32 @@ const ListItemSvgStyle:React.CSSProperties = {
 	width: "16px", 
 	height: "16px", 
 	marginBottom: "5px",
-	marginRight: "5px"
+	marginRight: "5px",
+	cursor: "inherit"
 }
 
 const ListItemLabelStyle:React.CSSProperties = {
 	flex: "1 1 auto",
 	fontSize: "14px",
-	fontWeight: "normal"
+	fontWeight: "normal",
+	cursor: "inherit"
 }
 
 const ListItemValueStyle:React.CSSProperties = {
 	flex: "0 0 auto",
 	textAlign: "right",
 	fontSize: "14px",
-	fontWeight: "normal"
+	fontWeight: "normal",
+	cursor: "inherit"
 }
 
 export class PSpendingInspector extends React.Component<PSpendingInspectorProps, {}> {
+
+	private handleItemClick(itemId:string, itemName:string, event:React.MouseEvent<any>):void {
+
+		var listElement = event.currentTarget;
+		this.props.showSpendingActivityDialog(itemId, itemName, listElement);
+	}
 
 	public render() {
 
@@ -121,27 +132,27 @@ export class PSpendingInspector extends React.Component<PSpendingInspectorProps,
 		var timeFrame = `${startMonth.format("MMM YYYY")} - ${endMonth.format("MMM YYYY")}`;
 		var inclusionString = (reportState.allAccountsSelected && reportState.allCategoriesSelected) ? "All categories and accounts included" : "Some categories and accounts excluded";
 
-		var totalSpending = this.props.totalsData.getTotalSpending();
+		var totalSpending = this.props.reportData.getOverallTotalSpending();
 
 		var numberOfMonths = endMonth.monthsApart(startMonth) + 1;
 		var averageSpending = totalSpending / numberOfMonths;
 
 		var spendingItems:Array<JSX.Element> = [];
-		var itemsDataArray = this.props.totalsData.getOverallItemDataArray();
+		var itemsDataArray = this.props.reportData.getOverallItemDataArray();
 		var colors = UIConstants.ChartColors;
 		for(var i:number = 0; i < itemsDataArray.length; i++) {
 
 			var color = colors[i];
 			var listItemSvgStyle = Object.assign({}, ListItemSvgStyle, {fill: color});
-			var itemsData = itemsDataArray[i];
+			var itemData = itemsDataArray[i];
 			
 			spendingItems.push(
-				<li key={itemsData.itemId} style={ListItemStyle}>
+				<li key={itemData.itemId} style={ListItemStyle} onClick={this.handleItemClick.bind(this, itemData.itemId, itemData.itemName)}>
 					<svg style={listItemSvgStyle}>
 						<circle cx="8" cy="8" r="8" />
 					</svg>
-					<label style={ListItemLabelStyle}>{itemsData.itemName}</label>
-					<label style={ListItemValueStyle}>{dataFormatter.formatCurrency(itemsData.value)}</label>
+					<label style={ListItemLabelStyle}>{itemData.itemName}</label>
+					<label style={ListItemValueStyle}>{dataFormatter.formatCurrency(itemData.value)}</label>
 				</li>
 			);
 		}

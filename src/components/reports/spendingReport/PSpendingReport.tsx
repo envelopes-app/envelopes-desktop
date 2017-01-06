@@ -8,12 +8,14 @@ import { PSpendingReportHeader } from './PSpendingReportHeader';
 import { PSpendingTotals } from './PSpendingTotals';
 import { PSpendingTrends } from './PSpendingTrends';
 import { PSpendingInspector } from './PSpendingInspector';
+import { PSpendingActivityDialog } from '../dialogs/PSpendingActivityDialog';
+
 import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import * as budgetEntities from '../../../interfaces/budgetEntities';
 import { IEntitiesCollection, IReportState } from '../../../interfaces/state';
 import { ISpendingReportItemData } from '../../../interfaces/reports';
-import { SpendingReportTotalsData } from './SpendingReportTotalsData';
-import { SpendingReportTrendsData } from './SpendingReportTrendsData';
+import { ITransaction } from '../../../interfaces/budgetEntities';
+import { SpendingReportData } from './SpendingReportData';
 
 export interface PSpendingReportProps {
 	dataFormatter:DataFormatter;
@@ -24,8 +26,7 @@ export interface PSpendingReportProps {
 export interface PSpendingReportState {
 	showingTotals:boolean;
 	masterCategoryId:string;
-	totalsData:SpendingReportTotalsData;
-	trendsData:any;
+	reportData:SpendingReportData;
 }
 
 const ReportsContainerStyle:React.CSSProperties = {
@@ -46,14 +47,16 @@ const ReportsInnerContainerStyle:React.CSSProperties = {
 
 export class PSpendingReport extends React.Component<PSpendingReportProps, PSpendingReportState> {
 
+	private spendingActivityDialog:PSpendingActivityDialog;
+
 	constructor(props:PSpendingReportProps) {
 		super(props);
 		this.setReportView = this.setReportView.bind(this);
+		this.showSpendingActivityDialog = this.showSpendingActivityDialog.bind(this);
 		this.state = {
 			showingTotals: true,
 			masterCategoryId: null,
-			totalsData: null,
-			trendsData: null
+			reportData: this.calculateTopLevelChartData()
 		}
 	}
 
@@ -63,11 +66,22 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		this.setState(state);
 	}
 
-	private calculateTopLevelChartData():{totalsData:SpendingReportTotalsData, trendsData:SpendingReportTrendsData} {
+	private setMasterCategoryId(masterCategoryId:string):void {
+		var state = Object.assign({}, this.state);
+		state.masterCategoryId = masterCategoryId;
+		this.setState(state);
+	}
 
-		var totalsData = new SpendingReportTotalsData();
-		var trendsData = new SpendingReportTrendsData();
+	private showSpendingActivityDialog(itemId:string, itemName:string, element:HTMLElement, placement:string = "left"):void {
 
+		// Get the transactions for this item from the report data and pass them to the spending activity dialog
+		var transactions:Array<ITransaction> = this.state.reportData.getTransactionsForItem(itemId);
+		this.spendingActivityDialog.show(itemName, transactions, element, placement);
+	}
+
+	private calculateTopLevelChartData():SpendingReportData {
+
+		var accountsArray = this.props.entitiesCollection.accounts;
 		var subCategoriesArray = this.props.entitiesCollection.subCategories;
 		var masterCategoriesArray = this.props.entitiesCollection.masterCategories;
 		var transactionsArray = this.props.entitiesCollection.transactions;
@@ -80,7 +94,8 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		var categoryInclusionMap:SimpleObjectMap<boolean> = {};
 		var hiddenCategoryInclusionMap:SimpleObjectMap<boolean> = {};
 		var subCategoryToMasterCategoryMap:SimpleObjectMap<budgetEntities.IMasterCategory> = {};
-		var spendingReportItemDataMap:SimpleObjectMap<ISpendingReportItemData> = {};
+
+		var reportData = new SpendingReportData(reportState.startDate, reportState.endDate);
 
 		// Put a true in the above maps for included accounts and categories
 		_.forEach(reportState.selectedAccountIds, (accountId)=>{
@@ -115,9 +130,20 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					// If this is an uncategorized transaction, and the report settings include those
 					if(!transaction.subCategoryId && reportState.uncategorizedTransactionsSelected) {
 
-						// Add the amount of this transaction to the "uncategorized_transactions" item
-						itemId = "uncategorized_transactions";
-						itemName = "Uncategorized Transactions";
+						var useTransaction = true;
+						// Make sure this is not a transfer between budget accounts (those are not considered uncategorized) 
+						if(transaction.transferAccountId) {
+							var account = accountsArray.getEntityById(transaction.accountId);
+							var transferAccount = accountsArray.getEntityById(transaction.transferAccountId);
+							if(account.onBudget == 1 && transferAccount.onBudget == 1)
+								useTransaction = false;
+						}
+
+						if(useTransaction == true) {
+							// Add the amount of this transaction to the "uncategorized_transactions" item
+							itemId = "uncategorized_transactions";
+							itemName = "Uncategorized Transactions";
+						}
 					}
 					// If the category on this transaction is not hidden, and is included by the report setttings
 					else if(categoryInclusionMap[transaction.subCategoryId] == true) {
@@ -136,10 +162,15 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					}
 
 					if(itemId) {
-						var totalsItemData = totalsData.getSpendingReportItemData(itemId, itemName, monthName);
-						var trendsItemData = trendsData.getSpendingReportItemData(itemId, itemName, monthName);
-						totalsItemData.value += (-transaction.amount);
-						trendsItemData.value += (-transaction.amount);
+						var overallItemData = reportData.getOverallItemData(itemId, itemName);
+						overallItemData.value += (-transaction.amount);
+						var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);
+						monthlyItemData.value += (-transaction.amount);
+
+						// Also save a reference to this transaction against the itemId. We would be able to use
+						// it later if we want to look at spending transactions for a particular item through the
+						// spending activity dialog
+						reportData.setTransactionReferenceForItem(itemId, transaction);
 					}
 				}
 			});
@@ -147,66 +178,79 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 			currentMonth.addMonths(1);
 		}
 
-		return {totalsData, trendsData};
+		reportData.prepareDataForPresentation();
+		return reportData;
 	}
 
-	private calculateSecondLevelChartData():SimpleObjectMap<ISpendingReportItemData> {
+	private calculateSecondLevelChartData():SpendingReportData {
 
 		return null;
 	}
 
+	public componentWillReceiveProps(nextProps:PSpendingReportProps):void {
+
+		var reportData:SpendingReportData;
+		if(!this.state.masterCategoryId)
+			reportData = this.calculateTopLevelChartData();
+		else
+			reportData = this.calculateSecondLevelChartData();
+
+		var state = Object.assign({}, this.state);
+		state.reportData = reportData;
+		this.setState(state);
+	}
+
 	public render() {
 
-		var reportData;
+		var reportData = this.state.reportData;
 		var masterCategoryId = this.state.masterCategoryId;
-
-		if(!masterCategoryId)
-			reportData = this.calculateTopLevelChartData();
+		var reportView:JSX.Element;
 
 		if(this.state.showingTotals) {
-			return (
-				<div style={ReportsContainerStyle}>
-					<div style={ReportsInnerContainerStyle}>
-						<PSpendingReportHeader
-							reportState={this.props.reportState}
-							showingTotals={this.state.showingTotals}
-							setReportView={this.setReportView}
-						/>
-						<PSpendingTotals 
-							dataFormatter={this.props.dataFormatter}	
-							reportState={this.props.reportState}
-							masterCategoryId={masterCategoryId}
-							totalsData={reportData.totalsData}
-						/>
-					</div>
-					<PSpendingInspector 
-						dataFormatter={this.props.dataFormatter}	
-						reportState={this.props.reportState}
-						totalsData={reportData.totalsData}
-					/>
-				</div>
+			reportView = (
+				<PSpendingTotals 
+					dataFormatter={this.props.dataFormatter}	
+					reportState={this.props.reportState}
+					masterCategoryId={masterCategoryId}
+					reportData={reportData}
+				/>
 			);
 		}
 		else {
-			return (
-				<div style={ReportsContainerStyle}>
-					<div style={ReportsInnerContainerStyle}>
-						<PSpendingReportHeader
-							reportState={this.props.reportState}
-							showingTotals={this.state.showingTotals}
-							setReportView={this.setReportView}
-						/>
-						<div style={ReportsInnerContainerStyle}>
-							<PSpendingTrends />
-						</div>
-					</div>
-					<PSpendingInspector 
-						dataFormatter={this.props.dataFormatter}	
-						reportState={this.props.reportState}
-						totalsData={reportData.totalsData}
-					/>
-				</div>
+			reportView = (
+				<PSpendingTrends 
+					dataFormatter={this.props.dataFormatter}	
+					reportState={this.props.reportState}
+					masterCategoryId={masterCategoryId}
+					reportData={reportData}
+				/>
 			);
 		}
+
+		return (
+			<div style={ReportsContainerStyle}>
+				<div style={ReportsInnerContainerStyle}>
+					<PSpendingReportHeader
+						reportState={this.props.reportState}
+						showingTotals={this.state.showingTotals}
+						setReportView={this.setReportView}
+					/>
+					{reportView}
+				</div>
+				<PSpendingInspector 
+					dataFormatter={this.props.dataFormatter}	
+					reportState={this.props.reportState}
+					reportData={reportData}
+					showSpendingActivityDialog={this.showSpendingActivityDialog}
+				/>
+
+				<PSpendingActivityDialog
+					ref={(d)=> this.spendingActivityDialog = d }
+					dataFormatter={this.props.dataFormatter}
+					entitiesCollection={this.props.entitiesCollection}
+				/>
+			</div>
+		);
+		
 	}
 }

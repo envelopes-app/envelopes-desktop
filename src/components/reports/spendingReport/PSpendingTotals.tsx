@@ -11,13 +11,13 @@ import { UIConstants } from '../../../constants';
 import { IReportState } from '../../../interfaces/state';
 import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { ISpendingReportItemData } from '../../../interfaces/reports';
-import { SpendingReportTotalsData } from './SpendingReportTotalsData';
+import { SpendingReportData } from './SpendingReportData';
 
 export interface PSpendingTotalsProps {
 	dataFormatter:DataFormatter;
 	reportState:IReportState;
 	masterCategoryId:string;
-	totalsData:SpendingReportTotalsData;
+	reportData:SpendingReportData;
 }
 
 const ChartContainerStyle:React.CSSProperties = {
@@ -93,8 +93,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 
 	private buildDataObject(props:PSpendingTotalsProps):any {
 
-		var totalsData = props.totalsData;
-		var dataItems = totalsData.getOverallItemDataArray();
+		var dataItems = props.reportData.getOverallItemDataArray();
 		var labels = _.map(dataItems, "itemName");
 		var values = _.map(dataItems, "value");
 		var percentages = _.map(dataItems, "percentageOfTotal");
@@ -115,8 +114,7 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 
 	private updateDataObject(props:PSpendingTotalsProps):void {
 
-		var totalsData = props.totalsData;
-		var dataItems = totalsData.getOverallItemDataArray();
+		var dataItems = props.reportData.getOverallItemDataArray();
 		var labels = _.map(dataItems, "itemName");
 		var values = _.map(dataItems, "value");
 
