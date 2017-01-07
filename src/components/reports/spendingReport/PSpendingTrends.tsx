@@ -121,15 +121,24 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 							return formattedValue;
 						},
 						footer: (tooltipItems, data)=>{
-							debugger;
-							var tooltipItem = tooltipItems[0];
-							var sumOfAllValues = _.reduce(data.datasets, (sum, dataset:any)=>{
-								return sum + dataset.data[tooltipItem.index];
-							}, 0);
 
-							var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-							var percentage = value == 0 ? 0 : value/sumOfAllValues*100;
-							return `${Math.round(percentage*100)/100}% of Total`;	
+							var tooltipItem = tooltipItems[0];
+							if(tooltipItem.datasetIndex == 0) {
+								// We are currently hovering over the totals line chart
+								// Instead of showing the percentage of total value, we are going to show the month name
+								var monthString = "01/" + tooltipItem.xLabel;
+								var date = DateWithoutTime.createFromString(monthString, "DD/MM/YYYY");
+								return date.format("MMM YYYY");
+							}
+							else {
+								var sumOfAllValues = _.reduce(data.datasets, (sum, dataset:any)=>{
+									return sum + dataset.data[tooltipItem.index];
+								}, 0);
+
+								var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+								var percentage = value == 0 ? 0 : value/sumOfAllValues*100;
+								return `${Math.round(percentage*100)/100}% of Total`;	
+							}
 						}
 					}
 				},
@@ -183,7 +192,6 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var itemIds = reportData.getOverallSortedItemIds();
 		var itemNames = reportData.getOverallSortedItemNames();
 		var colors = UIConstants.ChartColors;
-		var hoverColors = UIConstants.ChartHoverColors;
 
 		for(var i:number = 0; i < itemIds.length; i++) {
 

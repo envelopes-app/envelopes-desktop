@@ -52,6 +52,7 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 	constructor(props:PSpendingReportProps) {
 		super(props);
 		this.setReportView = this.setReportView.bind(this);
+		this.setMasterCategoryId = this.setMasterCategoryId.bind(this);
 		this.showSpendingActivityDialog = this.showSpendingActivityDialog.bind(this);
 		this.state = {
 			showingTotals: true,
@@ -67,8 +68,16 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 	}
 
 	private setMasterCategoryId(masterCategoryId:string):void {
+
+		var reportData:SpendingReportData;
+		if(!masterCategoryId)
+			reportData = this.calculateTopLevelChartData();
+		else
+			reportData = this.calculateSecondLevelChartData(masterCategoryId);
+
 		var state = Object.assign({}, this.state);
 		state.masterCategoryId = masterCategoryId;
+		state.reportData = reportData;
 		this.setState(state);
 	}
 
@@ -163,10 +172,13 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 					}
 
 					if(itemId) {
-						var overallItemData = reportData.getOverallItemData(itemId, itemName);
-						overallItemData.value += (-transaction.amount);
-						var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);
-						monthlyItemData.value += (-transaction.amount);
+
+						if(transaction.amount < 0) {
+							var overallItemData = reportData.getOverallItemData(itemId, itemName);
+							overallItemData.value += (-transaction.amount);
+							var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);
+							monthlyItemData.value += (-transaction.amount);
+						}
 
 						// Also save a reference to this transaction against the itemId. We would be able to use
 						// it later if we want to look at spending transactions for a particular item through the
@@ -183,9 +195,73 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		return reportData;
 	}
 
-	private calculateSecondLevelChartData():SpendingReportData {
+	private calculateSecondLevelChartData(masterCategoryId:string):SpendingReportData {
 
-		return null;
+		var entitiesCollection = this.props.entitiesCollection;
+		var accountsArray = entitiesCollection.accounts;
+		var subCategoriesArray = entitiesCollection.subCategories;
+		var masterCategoriesArray = entitiesCollection.masterCategories;
+		var transactionsArray = entitiesCollection.transactions;
+
+		// In order to ascertain if a transaction should be included, we need maps for 
+		// accounts and categories that contain true for those entities that are to be included.
+		// We also need a map of masterCategoryId for each included subCategory
+		var reportState = this.props.reportState;
+		var accountInclusionMap:SimpleObjectMap<boolean> = {};
+		var categoryInclusionMap:SimpleObjectMap<budgetEntities.ISubCategory> = {};
+		var reportData = new SpendingReportData(reportState.startDate, reportState.endDate);
+
+		// Put a true in the above maps for included accounts and categories
+		_.forEach(reportState.selectedAccountIds, (accountId)=>{
+			accountInclusionMap[accountId] = true;
+		});
+
+		_.forEach(reportState.selectedCategoryIds, (subCategoryId)=>{
+			let subCategory = subCategoriesArray.getEntityById(subCategoryId);
+			if(subCategory.masterCategoryId == masterCategoryId)
+				categoryInclusionMap[subCategoryId] = subCategory;
+		});
+
+		var currentMonth = reportState.startDate.clone();
+		var endMonth = reportState.endDate;
+
+		while(currentMonth.isAfter(endMonth) == false) {
+
+			var monthName = currentMonth.toISOString();
+			var transactions = transactionsArray.getTransactionsByMonth(currentMonth);
+			_.forEach(transactions, (transaction)=>{
+
+				// Is the accountId for this transaction included?
+				if(accountInclusionMap[transaction.accountId] == true) {
+
+					// If the category on this transaction is included by the report setttings
+					var subCategory = categoryInclusionMap[transaction.subCategoryId];
+					if(subCategory) {
+
+						// Add the amount of this transaction to the item corresponding to this subcategory
+						var itemId = subCategory.entityId;
+						var itemName = subCategory.name;
+
+						if(transaction.amount < 0) {
+							var overallItemData = reportData.getOverallItemData(itemId, itemName);
+							overallItemData.value += (-transaction.amount);
+							var monthlyItemData = reportData.getMonthlyItemData(itemId, itemName, monthName);
+							monthlyItemData.value += (-transaction.amount);
+						}
+
+						// Also save a reference to this transaction against the itemId. We would be able to use
+						// it later if we want to look at spending transactions for a particular item through the
+						// spending activity dialog
+						reportData.setTransactionReferenceForItem(itemId, transaction);
+					}
+				}
+			});
+
+			currentMonth.addMonths(1);
+		}
+
+		reportData.prepareDataForPresentation();
+		return reportData;
 	}
 
 	public componentWillReceiveProps(nextProps:PSpendingReportProps):void {
@@ -194,7 +270,7 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 		if(!this.state.masterCategoryId)
 			reportData = this.calculateTopLevelChartData();
 		else
-			reportData = this.calculateSecondLevelChartData();
+			reportData = this.calculateSecondLevelChartData(this.state.masterCategoryId);
 
 		var state = Object.assign({}, this.state);
 		state.reportData = reportData;
@@ -203,17 +279,22 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 
 	public render() {
 
+		var reportView:JSX.Element;
 		var reportData = this.state.reportData;
 		var masterCategoryId = this.state.masterCategoryId;
-		var reportView:JSX.Element;
+		var masterCategoryName = null;
+		if(masterCategoryId) {
+			var masterCategory = this.props.entitiesCollection.masterCategories.getEntityById(masterCategoryId);
+			masterCategoryName = masterCategory.name;
+		}
 
 		if(this.state.showingTotals) {
 			reportView = (
 				<PSpendingTotals 
 					dataFormatter={this.props.dataFormatter}	
-					reportState={this.props.reportState}
 					masterCategoryId={masterCategoryId}
 					reportData={reportData}
+					setMasterCategoryId={this.setMasterCategoryId}
 				/>
 			);
 		}
@@ -232,9 +313,10 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 			<div style={ReportsContainerStyle}>
 				<div style={ReportsInnerContainerStyle}>
 					<PSpendingReportHeader
-						reportState={this.props.reportState}
 						showingTotals={this.state.showingTotals}
+						masterCategoryName={masterCategoryName}
 						setReportView={this.setReportView}
+						setMasterCategoryId={this.setMasterCategoryId}
 					/>
 					{reportView}
 				</div>
@@ -252,6 +334,5 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 				/>
 			</div>
 		);
-		
 	}
 }

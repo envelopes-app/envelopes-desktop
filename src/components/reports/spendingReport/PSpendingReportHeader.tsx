@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Glyphicon } from 'react-bootstrap';
 
 import { PHoverableDiv } from '../../common/PHoverableDiv';
 import { UIConstants } from '../../../constants';
@@ -9,8 +10,9 @@ import { IReportState } from '../../../interfaces/state';
 
 export interface PSpendingReportHeaderProps {
 	showingTotals:boolean;
-	reportState:IReportState;
+	masterCategoryName:string;
 	setReportView:(showTotals:boolean)=>void;
+	setMasterCategoryId:(masterCategoryId:string)=>void;
 }
 
 const ReportsHeaderStyle:React.CSSProperties = {
@@ -39,6 +41,13 @@ const HeaderRightSection:React.CSSProperties = {
 	justifyContent: "flex-end"
 }
 
+const BreadCrumbContainer:React.CSSProperties = {
+	display: "flex",
+	flexFlow: "row nowrap",
+	alignItems: "center",
+	marginTop: "5px"
+}
+
 const ReportNameStyle:React.CSSProperties = {
 	fontSize: "20px",
 	fontWeight: "normal"
@@ -46,7 +55,23 @@ const ReportNameStyle:React.CSSProperties = {
 
 const CategorySelectionStyle:React.CSSProperties = {
 	fontSize: "14px",
-	fontWeight: "normal"
+	fontWeight: "normal",
+	marginBottom: "0px",
+	marginRight: "5px"
+}
+
+const CategorySelectionLinkStyle:React.CSSProperties = {
+	fontSize: "14px",
+	fontWeight: "normal",
+	color: "#23A9CA",
+	marginBottom: "0px",
+	marginRight: "5px",
+	cursor: "pointer"
+}
+
+const GlyphStyle:React.CSSProperties = {
+	fontSize: "12px",
+	marginRight: "4px"
 }
 
 const ButtonDefaultStyle:React.CSSProperties = {
@@ -76,8 +101,13 @@ export class PSpendingReportHeader extends React.Component<PSpendingReportHeader
 
 	constructor(props:PSpendingReportHeaderProps) {
 		super(props);
+		this.onAllCategoriesLinkClicked = this.onAllCategoriesLinkClicked.bind(this);
 		this.onTotalsButtonClicked = this.onTotalsButtonClicked.bind(this);
 		this.onTrendsButtonClicked = this.onTrendsButtonClicked.bind(this);
+	}
+
+	private onAllCategoriesLinkClicked(event:React.MouseEvent<any>):void {
+		this.props.setMasterCategoryId(null);
 	}
 
 	private onTotalsButtonClicked(event:React.MouseEvent<any>):void {
@@ -88,23 +118,40 @@ export class PSpendingReportHeader extends React.Component<PSpendingReportHeader
 		this.props.setReportView(false);
 	}
 
+	private getBreadCrumb():JSX.Element {
+
+		var breadCrumb:JSX.Element;
+
+		if(!this.props.masterCategoryName) {
+			breadCrumb = (
+				<div style={BreadCrumbContainer}>
+					<label style={CategorySelectionStyle}>All Categories</label>
+				</div>
+			);
+		}
+		else {
+			breadCrumb = (
+				<div style={BreadCrumbContainer}>
+					<label style={CategorySelectionLinkStyle} onClick={this.onAllCategoriesLinkClicked}>All Categories</label>
+					<Glyphicon glyph="triangle-right" style={GlyphStyle}/>
+					<label style={CategorySelectionStyle}>{this.props.masterCategoryName}</label>
+				</div>
+			);
+		}
+
+		return breadCrumb;
+	}
+
 	public render() {
 
-		var reportState = this.props.reportState;
 		var reportName = this.props.showingTotals ? "Spending Totals" : "Spending Trends";
-		var categorySelection:string;
-		if(reportState.allCategoriesSelected)
-			categorySelection = "All Categories";
-		else if(reportState.allCategoriesSelected == false && reportState.noCategoriesSelected == false)
-			categorySelection = "Some Categories";
-		else
-			categorySelection = "No Categories";
+		var breadCrumb = this.getBreadCrumb();
 
 		return (
 			<div style={ReportsHeaderStyle}>
 				<div style={HeaderLeftSection}>
 					<label style={ReportNameStyle}>{reportName}</label>
-					<label style={CategorySelectionStyle}>{categorySelection}</label>
+					{breadCrumb}
 				</div>
 				<div style={HeaderRightSection}>
 					<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
@@ -112,14 +159,14 @@ export class PSpendingReportHeader extends React.Component<PSpendingReportHeader
 						selectedStyle={ButtonSelectedStyle}
 						onClick={this.onTotalsButtonClicked}
 						selected={this.props.showingTotals == true}>
-						Totals
+						<div>Totals</div>
 					</PHoverableDiv> 
 					<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
 						hoverStyle={ButtonHoverStyle} 
 						selectedStyle={ButtonSelectedStyle}
 						onClick={this.onTrendsButtonClicked}
 						selected={this.props.showingTotals == false}>
-						Trends
+						<div>Trends</div>
 					</PHoverableDiv> 
 				</div>
 			</div>

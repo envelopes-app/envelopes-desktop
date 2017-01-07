@@ -8,16 +8,16 @@ const pattern = require('patternomaly');
 const { Chart } = require('chart.js');
 
 import { UIConstants } from '../../../constants';
-import { IReportState } from '../../../interfaces/state';
 import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { ISpendingReportItemData } from '../../../interfaces/reports';
 import { SpendingReportData } from './SpendingReportData';
 
 export interface PSpendingTotalsProps {
 	dataFormatter:DataFormatter;
-	reportState:IReportState;
 	masterCategoryId:string;
 	reportData:SpendingReportData;
+
+	setMasterCategoryId:(masterCategoryId:string)=>void;
 }
 
 const ChartContainerStyle:React.CSSProperties = {
@@ -34,6 +34,24 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 
 	private chart:any;
 	private refCanvas:HTMLCanvasElement;
+
+	constructor(props:PSpendingTotalsProps) {
+		super(props);
+		this.handleChartClick = this.handleChartClick.bind(this);
+	}
+
+	private handleChartClick(itemIndex:number):void {
+
+		// Are we currently showing top-level chart, or the first level chart
+		if(!this.props.masterCategoryId) {
+
+			// We are currently showing the top level chart (master categories data). Determine the master
+			// category item that was clicked. 
+			var itemIds = this.props.reportData.getOverallSortedItemIds();
+			var clickedMasterCategoryId = itemIds[itemIndex];
+			this.props.setMasterCategoryId(clickedMasterCategoryId);
+		} 
+	}
 
 	private initializeChart(props:PSpendingTotalsProps) {
 
@@ -84,8 +102,14 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 						}
 					}
 				},
-				onClick: (...args:any[])=>{
-					debugger;
+				onClick: (event, chartElements)=>{
+
+					if(chartElements.length > 0) {
+
+						var chartElement = chartElements[0];
+						var itemIndex = chartElement._index;
+						this.handleChartClick(itemIndex);
+					}
 				}
 			}
 		});
