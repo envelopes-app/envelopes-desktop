@@ -142,8 +142,42 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var reportData = props.reportData;
 		var data = {
 			labels: reportData.getAllMonthNames(),
-			datasets: [],
+			datasets: this.buildDatasets(props)
 		};
+
+		return data;
+	}
+
+	private updateDataObject(props:PSpendingTrendsProps):void {
+
+		var reportData = props.reportData;
+		var labels = reportData.getAllMonthNames();
+		var datasets = this.buildDatasets(props);
+		// Update the chart data with these new values
+		this.chart.data.labels = labels;
+		this.chart.data.datasets = datasets;
+	}
+
+	private buildDatasets(props:PSpendingTrendsProps):Array<any> {
+
+		var reportData = props.reportData;
+		let datasets:Array<any> = [];
+		// First add a dataset for the line chart
+		let dataSet = {
+			type: 'line',
+			fill: false,
+			lineTension: 0,
+			label: 'Total Spending',
+			borderColor: "#333333",
+			pointBorderWidth: 2,
+			pointBorderColor: "#333333",
+			pointBackgroundColor: "#E5F5F9",
+			pointHoverBackgroundColor: "#E5F5F9",
+			pointRadius: 6,
+			pointHoverRadius: 6,
+			data: reportData.getMonthlyTotalValues()
+		};
+		datasets.push(dataSet);
 
 		// Add dataset for each item in the report data
 		var itemIds = reportData.getOverallSortedItemIds();
@@ -156,7 +190,7 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 			var itemId = itemIds[i];
 			var monthlyItemValues = reportData.getMonthlyValuesForItem(itemId);
 			var color = colors[i];
-			// We want a colors array of the same length as the values array. Woulc contain the same color as this 
+			// We want a colors array of the same length as the values array. Would contain the same color as this 
 			// item is going to be represented by the same color in all months.
 			var backgroundColors:Array<string> = [];
 			var borderColors:Array<string> = [];
@@ -169,7 +203,7 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 				hoverBorderColors.push(color);
 			}
 
-			var dataSet = {
+			let dataSet = {
 				label: itemNames[i],
 				backgroundColor: backgroundColors,
 				borderColor: borderColors,
@@ -179,14 +213,10 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 				data: monthlyItemValues
 			};
 
-			data.datasets.push(dataSet);
+			datasets.push(dataSet);
 		}
 
-		return data;
-	}
-
-	private updateDataObject(props:PSpendingTrendsProps):void {
-
+		return datasets;
 	}
 
 	public componentDidMount():void {
