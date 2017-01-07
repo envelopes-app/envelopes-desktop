@@ -45,7 +45,7 @@ export class PHoverableDiv extends React.Component<PHoverableDivProps, PHoverabl
 
 	private handleClick(event:React.MouseEvent<any>):void {
 
-		var enabled = this.props.enabled ? this.props.enabled : true;
+		var enabled = this.props.enabled == false ? false : true;
 		if(enabled && this.props.onClick)
 			this.props.onClick(event);
 	}
@@ -56,8 +56,8 @@ export class PHoverableDiv extends React.Component<PHoverableDivProps, PHoverabl
 
 	public render() {
 
-		var enabled = this.props.enabled ? this.props.enabled : true;
-		var selected = this.props.selected ? this.props.selected : false;
+		var enabled = this.props.enabled == false ? false : true;
+		var selected = this.props.selected == true ? true : false;
 
 		// Choose the appropriate style object for the component
 		var styleObject:React.CSSProperties;;

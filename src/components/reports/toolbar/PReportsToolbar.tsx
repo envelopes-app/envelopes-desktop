@@ -10,7 +10,7 @@ import { PAccountSelectionDialog } from '../dialogs/PAccountSelectionDialog';
 import { PCategorySelectionDialog } from '../dialogs/PCategorySelectionDialog';
 import { PTimeframeSelectionDialog } from '../dialogs/PTimeframeSelectionDialog';
 
-import { UIConstants } from '../../../constants';
+import { ReportNames, UIConstants } from '../../../constants';
 import { DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../../utilities';
 import { IEntitiesCollection, IReportState } from '../../../interfaces/state';
 
@@ -53,6 +53,11 @@ const ButtonDefaultStyle:React.CSSProperties = {
 
 const ButtonHoverStyle = Object.assign({}, ButtonDefaultStyle, {
 	color: "#005076"
+});
+
+const ButtonDisabledStyle = Object.assign({}, ButtonDefaultStyle, {
+	color: "#DEE3E8",
+	cursor: "default"
 });
 
 const GlyphStyle:React.CSSProperties = {
@@ -126,6 +131,8 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 				<PHoverableDiv ref={(b)=> this.categoriesSelectionButton = b }
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
+					disabledStyle={ButtonDisabledStyle}
+					enabled={this.props.selectedReport != ReportNames.NetWorth}
 					onClick={this.handleCategorySelectionButtonClicked}>
 					{categoriesSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
@@ -134,6 +141,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 				<PHoverableDiv ref={(b)=> this.timeframeSelectionButton = b }
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
+					disabledStyle={ButtonDisabledStyle}
 					onClick={this.handleTimeframeSelectionButtonClicked}>
 					{timeframeSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
@@ -142,6 +150,7 @@ export class PReportsToolbar extends React.Component<PReportsToolbarProps, {}> {
 				<PHoverableDiv ref={(b)=> this.accountsSelectionButton = b }
 					defaultStyle={ButtonDefaultStyle} 
 					hoverStyle={ButtonHoverStyle} 
+					disabledStyle={ButtonDisabledStyle}
 					onClick={this.handleAccountSelectionButtonClicked}>
 					{accountsSelectionButtonLabel}
 					<Glyphicon glyph="triangle-bottom" style={GlyphStyle} />
