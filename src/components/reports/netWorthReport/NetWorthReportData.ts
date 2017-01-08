@@ -45,6 +45,36 @@ export class NetWorthReportData {
 
 	public prepareDataForPresentation():void {
 
+		// Find out the min and max month for which we have data
+		var minMonth, maxMonth:DateWithoutTime;
+		var allMonths = _.keys(this.itemDataMap);
+		_.forEach(allMonths, (monthString)=>{
+			var month = DateWithoutTime.createFromISOString(monthString);
+			if(!minMonth || month.isBefore(minMonth))
+				minMonth = month;
+			if(!maxMonth || month.isAfter(maxMonth))
+				maxMonth = month;
+		});
+
+		// Starting from the minMonth and ending at maxMonth, update the asset and debt values
+		var prevMonthItem, currentMonthItem:INetWorthReportItemData;
+		var currentMonth = minMonth.clone();
+		while(currentMonth.isAfter(maxMonth) == false) {
+			// Get the itemData for the current month of the loop
+			currentMonthItem = this.itemDataMap[currentMonth.toISOString()];
+			// If we have a previous month item, then add it's values to the current month item
+			if(prevMonthItem) {
+				currentMonthItem.debtValue += prevMonthItem.debtValue;
+				currentMonthItem.assetValue += prevMonthItem.assetValue;
+			}
+
+			// Set the currentMonthItem to be the prevMonthItem for next iteration
+			prevMonthItem = currentMonthItem;
+			// Increment the current month for the next iteration
+			currentMonth.addMonths(1);
+		}
+
+		// **************************************************************************************
 		// Iterate through the items and calculate the remaining values in them
 		var month = this.startMonth.clone();
 		this.allMonthNames = [];
@@ -57,7 +87,7 @@ export class NetWorthReportData {
 		} 
 
 		var firstItemData = this.itemDataArray[0];
-		firstItemData.netWorth = firstItemData.assetValue + firstItemData.debtValue;
+		firstItemData.netWorth = firstItemData.assetValue - firstItemData.debtValue;
 		firstItemData.netWorthDecreasing = false;
 		firstItemData.netWorthIncreasing = false;
 
@@ -65,7 +95,7 @@ export class NetWorthReportData {
 
 			var itemData = this.itemDataArray[i];
 			var prevItemData = this.itemDataArray[i-1];
-			itemData.netWorth = itemData.assetValue + itemData.debtValue;
+			itemData.netWorth = itemData.assetValue - itemData.debtValue;
 			itemData.netWorthIncreasing = itemData.netWorth > prevItemData.netWorth;
 			itemData.netWorthDecreasing = itemData.netWorth < prevItemData.netWorth;
 		}

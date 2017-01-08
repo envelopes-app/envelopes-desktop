@@ -72,30 +72,21 @@ export class PNetWorthReport extends React.Component<PNetWorthReportProps, PNetW
 			accountInclusionMap[accountId] = true;
 		});
 
-		var currentMonth = reportState.startDate.clone();
-		var endMonth = reportState.endDate;
-		while(currentMonth.isAfter(endMonth) == false) {
+		var accountMonthlyCalculations = accountMonthlyCalculationsArray.getAllItems();
+		// Iterate through each of these accountMonthlyCalculations and add their balance to the itemData object
+		_.forEach(accountMonthlyCalculations, (accountMonthlyCalculation)=>{
 
-			var monthName = currentMonth.toISOString();
-			var itemData = reportData.getMonthlyItemData(monthName);
-			var accountMonthlyCalculations = accountMonthlyCalculationsArray.getAccountMonthlyCalculationsByMonth(currentMonth);
+			let itemData = reportData.getMonthlyItemData(accountMonthlyCalculation.month);
+			// Is this account included in the report
+			if(accountInclusionMap[accountMonthlyCalculation.accountId] == true) {
 
-			// Iterate through each of these accountMonthlyCalculations and add their balance to the itemData object
-			_.forEach(accountMonthlyCalculations, (accountMonthlyCalculation)=>{
-
-				// Is this account included in the report
-				if(accountInclusionMap[accountMonthlyCalculation.accountId] == true) {
-
-					var accountBalance = accountMonthlyCalculation.clearedBalance + accountMonthlyCalculation.unclearedBalance;
-					if(accountBalance > 0)
-						itemData.assetValue += accountBalance;
-					else
-						itemData.debtValue += accountBalance;
-				}
-			});
-
-			currentMonth.addMonths(1);
-		}
+				var accountBalance = accountMonthlyCalculation.clearedBalance + accountMonthlyCalculation.unclearedBalance;
+				if(accountBalance > 0)
+					itemData.assetValue += accountBalance;
+				else
+					itemData.debtValue += (-accountBalance);
+			}
+		});
 
 		reportData.prepareDataForPresentation();
 		return reportData;
