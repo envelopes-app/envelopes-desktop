@@ -40,8 +40,7 @@ export class SpendingReportData {
 				itemId: itemId,
 				itemName: itemName,
 				monthName: null,
-				value: 0,
-				percentageOfTotal: 0
+				value: 0
 			};
 
 			this.overallItemDataMap[itemId] = itemData;
@@ -62,8 +61,7 @@ export class SpendingReportData {
 				itemId: itemId,
 				itemName: itemName,
 				monthName: monthName,
-				value: 0,
-				percentageOfTotal: 0
+				value: 0
 			};
 
 			this.monthlyItemDataMap[key] = itemData;
@@ -106,8 +104,7 @@ export class SpendingReportData {
 				itemId: "all_other_categories",
 				itemName: "All Other Categories",
 				monthName: null,
-				value: valueOfExcessItems,
-				percentageOfTotal: 0
+				value: valueOfExcessItems
 			};
 
 			overallItemDataArray.push(bundleItem);

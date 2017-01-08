@@ -385,6 +385,7 @@ export class PersistenceManager {
 			catalogQueries.BudgetQueries.updateLastAccessedOnForBudget(budgetId),
 			catalogQueries.BudgetQueries.loadDatabaseObject(catalogDeviceKnowledge),
 			catalogQueries.GlobalSettingQueries.loadDatabaseObject(catalogDeviceKnowledge),
+			budgetQueries.AccountQueries.loadDatabaseCalculationObject(budgetId, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.AccountQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),
 			budgetQueries.MasterCategoryQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege),
 			budgetQueries.MonthlyBudgetQueries.loadDatabaseObject(budgetId, budgetDeviceKnowlege, budgetDeviceKnowledgeForCalculations),

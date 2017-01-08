@@ -88,6 +88,7 @@ export class GlobalReducers {
 
 		// We have data for a new budget coming in through the action. Replace all data in the state
 		// with the this new data.
+		newValue.accountMonthlyCalculations = new collections.AccountMonthlyCalculationsArray(action.entities.accountMonthlyCalculations);
 		newValue.accounts = new collections.AccountsArray(action.entities.accounts);
 		newValue.masterCategories = new collections.MasterCategoriesArray(action.entities.masterCategories);
 		newValue.monthlyBudgets = new collections.MonthlyBudgetsArray(action.entities.monthlyBudgets);
@@ -106,6 +107,7 @@ export class GlobalReducers {
 		GlobalReducers.updateCollectionArray(newValue.budgets, action.entities.budgets);
 		GlobalReducers.updateCollectionArray(newValue.globalSettings, action.entities.globalSettings);
 
+		GlobalReducers.updateCollectionArray(newValue.accountMonthlyCalculations, action.entities.accountMonthlyCalculations);
 		GlobalReducers.updateCollectionArray(newValue.accounts, action.entities.accounts);
 		GlobalReducers.updateCollectionArray(newValue.masterCategories, action.entities.masterCategories);
 		GlobalReducers.updateCollectionArray(newValue.monthlyBudgets, action.entities.monthlyBudgets);

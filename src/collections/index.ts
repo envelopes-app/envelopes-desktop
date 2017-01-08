@@ -3,6 +3,7 @@ export { EntitiesArray } from './EntitiesArray';
 export { BudgetsArray } from './BudgetsArray';
 export { GlobalSettingsArray } from './GlobalSettingsArray';
 
+export { AccountMonthlyCalculationsArray } from './AccountMonthlyCalculationsArray';
 export { AccountsArray } from './AccountsArray';
 export { MasterCategoriesArray } from './MasterCategoriesArray';
 export { MonthlyBudgetsArray } from './MonthlyBudgetsArray';

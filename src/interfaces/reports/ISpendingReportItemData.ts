@@ -3,5 +3,4 @@ export interface ISpendingReportItemData {
 	itemName:string;
 	monthName:string;
 	value:number;
-	percentageOfTotal:number;
 }
