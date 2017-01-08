@@ -75,32 +75,51 @@ export class PReportsHeader extends React.Component<PReportsHeaderProps, {}> {
 			this.props.setSelectedReport(ReportNames.IncomeVsExpense);
 	}
 
+	private getButtonForSpendingReport():JSX.Element {
+		return (
+			<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
+				hoverStyle={ButtonHoverStyle} 
+				selectedStyle={ButtonSelectedStyle}
+				onClick={this.handleSpendingReportClick}
+				selected={this.props.selectedReport == ReportNames.Spending}>
+				Spending
+			</PHoverableDiv> 
+		);
+	}
+
+	private getButtonForNetWorthReport():JSX.Element {
+		return (
+			<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
+				hoverStyle={ButtonHoverStyle} 
+				selectedStyle={ButtonSelectedStyle}
+				onClick={this.handleNetWorthReportClick}
+				selected={this.props.selectedReport == ReportNames.NetWorth}>
+				Net Worth
+			</PHoverableDiv> 
+		);
+	}
+
+	private getButtonForIncomeExpenseReport():JSX.Element {
+		return (
+			<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
+				hoverStyle={ButtonHoverStyle} 
+				selectedStyle={ButtonSelectedStyle}
+				onClick={this.handleIncomeExpenseReportClick}
+				selected={this.props.selectedReport == ReportNames.IncomeVsExpense}>
+				Income v Expense
+			</PHoverableDiv> 
+		);
+	}
+
 	public render() {
+
+		var spendingReport = this.getButtonForSpendingReport();
+		var netWorthReport = this.getButtonForNetWorthReport();
+
 		return (
 			<div style={ReportsHeaderContainerStyle}>
-				<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
-					hoverStyle={ButtonHoverStyle} 
-					selectedStyle={ButtonSelectedStyle}
-					onClick={this.handleSpendingReportClick}
-					selected={this.props.selectedReport == ReportNames.Spending}>
-					Spending
-				</PHoverableDiv> 
-
-				<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
-					hoverStyle={ButtonHoverStyle} 
-					selectedStyle={ButtonSelectedStyle}
-					onClick={this.handleNetWorthReportClick}
-					selected={this.props.selectedReport == ReportNames.NetWorth}>
-					Net Worth
-				</PHoverableDiv> 
-
-				<PHoverableDiv defaultStyle={ButtonDefaultStyle} 
-					hoverStyle={ButtonHoverStyle} 
-					selectedStyle={ButtonSelectedStyle}
-					onClick={this.handleIncomeExpenseReportClick}
-					selected={this.props.selectedReport == ReportNames.IncomeVsExpense}>
-					Income v Expense
-				</PHoverableDiv> 
+				{spendingReport}
+				{netWorthReport}
 			</div>
 		);
 	}
