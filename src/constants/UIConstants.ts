@@ -53,4 +53,7 @@ export class UIConstants {
 		"rgba(136,206,142,0.8)",
 		"rgba(219,224,229,0.8)"
 	];
+
+	public static NetWorthDebtColor = "#EA644E";
+	public static NetWorthAssetColor = "#2CADBF";
 }

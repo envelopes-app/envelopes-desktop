@@ -175,9 +175,9 @@ export class PNetWorthInspector extends React.Component<PNetWorthInspectorProps,
 		}
 
 		var glyphForOverallChangeInNetWorth:JSX.Element = null;
-		if(reportData.changeInNetWorth > 0)
+		if(reportData.getChangeInNetWorth() > 0)
 			glyphForOverallChangeInNetWorth = <Glyphicon glyph="upload" style={LargeArrowGlyphStyle} />;
-		else if(reportData.changeInNetWorth < 0)
+		else if(reportData.getChangeInNetWorth() < 0)
 			glyphForOverallChangeInNetWorth = <Glyphicon glyph="download" style={LargeArrowGlyphStyle} />;
 
 		return (
@@ -191,9 +191,9 @@ export class PNetWorthInspector extends React.Component<PNetWorthInspectorProps,
 					<label style={Label1Style}>CHANGE IN NET WORTH</label>
 					<div style={ChangeInNetWorthValueContainerStyle}>
 						{glyphForOverallChangeInNetWorth}
-						<label style={ValueStyle}>{dataFormatter.formatCurrency(Math.abs(reportData.changeInNetWorth))}</label>
+						<label style={ValueStyle}>{dataFormatter.formatCurrency(Math.abs(reportData.getChangeInNetWorth()))}</label>
 					</div>
-					<label style={Label2Style}>{reportData.percentageChangeInNetWorth}%</label>
+					<label style={Label2Style}>{reportData.getPercentageChangeInNetWorth()}%</label>
 				</div>
 				<hr style={HRStyle} />
 				<ul style={ListStyle}>

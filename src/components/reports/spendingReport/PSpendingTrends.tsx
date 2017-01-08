@@ -30,41 +30,6 @@ const ChartContainerStyle:React.CSSProperties = {
 	minWidth: UIConstants.ReportsChartMinWidth
 }
 
-var hardData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-        {
-            label: "My First dataset",
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
-            data: [65, 59, 80, 81, 56, 55, 40],
-        },
-        {
-            label: "My Second dataset",
-            backgroundColor: [
-                'rgba(54, 162, 235, 0.2)',
-            ],
-            borderColor: [
-                'rgba(54, 162, 235, 1)',
-            ],
-            borderWidth: 1,
-            data: [65, 59, 80, 81, 56, 55, 40],
-        },
-		{
-			type: 'line',
-			fill: false,
-			lineTension: 0,
-			label: 'Line Component',
-			data: [130, 118, 160, 162, 112, 110, 80],
-		}
-	]
-};
-
 export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 
 	private chart:any;
@@ -72,7 +37,6 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 
 	private initializeChart(props:PSpendingTrendsProps) {
 
-		var Chart = require('chart.js');
 		var element = ReactDOM.findDOMNode(this.refCanvas) as any;
       	var ctx = element.getContext("2d");
 		var dataFormatter = props.dataFormatter;

@@ -55,7 +55,6 @@ export class PSpendingTotals extends React.Component<PSpendingTotalsProps, {}> {
 
 	private initializeChart(props:PSpendingTotalsProps) {
 
-		var Chart = require('chart.js');
 		var element = ReactDOM.findDOMNode(this.refCanvas) as any;
       	var ctx = element.getContext("2d");
 		var dataFormatter = props.dataFormatter;

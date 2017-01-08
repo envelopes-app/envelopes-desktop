@@ -115,7 +115,11 @@ export class PNetWorthReport extends React.Component<PNetWorthReportProps, PNetW
 			<div style={ReportsContainerStyle}>
 				<div style={ReportsInnerContainerStyle}>
 					<div style={ReportNameStyle}>Net Worth</div>
-					<PNetWorthChart />
+					<PNetWorthChart 
+						dataFormatter={this.props.dataFormatter}
+						reportState={this.props.reportState}
+						reportData={this.state.reportData}
+					/>
 				</div>
 				<PNetWorthInspector 
 					dataFormatter={this.props.dataFormatter}

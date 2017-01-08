@@ -11,8 +11,10 @@ export class NetWorthReportData {
 	private endMonth:DateWithoutTime;
 	private itemDataMap:SimpleObjectMap<INetWorthReportItemData> = {};
 
-	public changeInNetWorth:number;
-	public percentageChangeInNetWorth:number;
+	private allMonthNames:Array<string>;
+	private changeInNetWorth:number;
+	private percentageChangeInNetWorth:number;
+	private itemDataArray:Array<INetWorthReportItemData>;
 
 	constructor(startMonth:DateWithoutTime, endMonth:DateWithoutTime) {
 		this.startMonth = startMonth;
@@ -45,27 +47,30 @@ export class NetWorthReportData {
 
 		// Iterate through the items and calculate the remaining values in them
 		var month = this.startMonth.clone();
-		var monthNames:Array<string> = [];
+		this.allMonthNames = [];
+		this.itemDataArray = [];
+
 		while(month.isAfter(this.endMonth) == false) {
-			monthNames.push(month.toISOString());
+			this.allMonthNames.push(month.format("MM/YYYY"));
+			this.itemDataArray.push(this.itemDataMap[ month.toISOString() ]);
 			month.addMonths(1);
 		} 
 
-		var firstItemData = this.itemDataMap[ monthNames[0] ];
-		firstItemData.netWorth = firstItemData.assetValue - firstItemData.debtValue;
+		var firstItemData = this.itemDataArray[0];
+		firstItemData.netWorth = firstItemData.assetValue + firstItemData.debtValue;
 		firstItemData.netWorthDecreasing = false;
 		firstItemData.netWorthIncreasing = false;
 
-		for(var i:number = 1; i < monthNames.length; i++) {
+		for(var i:number = 1; i < this.itemDataArray.length; i++) {
 
-			var itemData = this.itemDataMap[ monthNames[i] ];
-			var prevItemData = this.itemDataMap[ monthNames[i-1] ];
-			itemData.netWorth = itemData.assetValue - itemData.debtValue;
+			var itemData = this.itemDataArray[i];
+			var prevItemData = this.itemDataArray[i-1];
+			itemData.netWorth = itemData.assetValue + itemData.debtValue;
 			itemData.netWorthIncreasing = itemData.netWorth > prevItemData.netWorth;
 			itemData.netWorthDecreasing = itemData.netWorth < prevItemData.netWorth;
 		}
 
-		var lastItemData = this.itemDataMap[ monthNames[monthNames.length - 1] ];
+		var lastItemData = this.itemDataArray[this.itemDataArray.length - 1];
 		this.changeInNetWorth = lastItemData.netWorth - firstItemData.netWorth;
 		this.percentageChangeInNetWorth = (this.changeInNetWorth / firstItemData.netWorth) * 100; 
 		// Round this percentage value to two decimal values
@@ -73,13 +78,30 @@ export class NetWorthReportData {
 	}
 
 	public getItemDataArray():Array<INetWorthReportItemData> {
-
-		// Create an array from itemData objects in the overallItemDataMap 
-		var keys = _.keys(this.itemDataMap);
-		var itemDataArray:Array<INetWorthReportItemData> = _.map(keys, (key)=>{
-			return this.itemDataMap[key];
-		});
-
-		return itemDataArray;
+		return this.itemDataArray;
 	}
- }
+
+	public getAllMonthNames():Array<string> {
+		return this.allMonthNames;
+	}
+
+	public getChangeInNetWorth():number {
+		return this.changeInNetWorth;
+	}
+
+	public getPercentageChangeInNetWorth():number {
+		return this.percentageChangeInNetWorth;		
+	}
+
+	public getAssetValues():Array<number> {
+		return _.map(this.itemDataArray, "assetValue") as Array<number>;
+	}	
+
+	public getDebtValues():Array<number> {
+		return _.map(this.itemDataArray, "debtValue") as Array<number>;
+	}	
+
+	public getNetWorthValues():Array<number> {
+		return _.map(this.itemDataArray, "netWorth") as Array<number>;
+	}	
+}
