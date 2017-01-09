@@ -27,7 +27,8 @@ const InspectorContainerStyle:React.CSSProperties = {
 	borderBottomWidth: "0px",
 	borderRightWidth: "0px",
 	borderLeftWidth: "1px",
-	backgroundColor: UIConstants.ReportsInspectorBackgroundColor
+	backgroundColor: UIConstants.ReportsInspectorBackgroundColor,
+	overflowY: "auto"
 }
 
 const SectionStyle:React.CSSProperties = {

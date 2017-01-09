@@ -16,7 +16,6 @@ export interface PSpendingTotalsProps {
 	dataFormatter:DataFormatter;
 	masterCategoryId:string;
 	reportData:SpendingReportData;
-
 	setMasterCategoryId:(masterCategoryId:string)=>void;
 }
 

@@ -75,7 +75,20 @@ export class SpendingReportData {
 	}
 
 	public getTransactionsForItem(itemId:string):Array<ITransaction> {
-		return this.itemTransactions.getValue(itemId);
+		if(itemId != "all_other_categories")
+			return this.itemTransactions.getValue(itemId);
+		else {
+			// Make a new array for transactions of all the bundled items and return that
+			var bundledTransactions:Array<ITransaction> = [];
+			_.forEach(this.bundledItemIds, (itemId)=>{
+				var transactions = this.itemTransactions.getValue(itemId);
+				bundledTransactions = bundledTransactions.concat(transactions);
+			});
+
+			// Sort these transactions by data
+			bundledTransactions = _.orderBy(bundledTransactions, ["date", "amount"], ["desc", "asc"]);
+			return bundledTransactions;
+		}
 	}
 
 	public prepareDataForPresentation():void {
@@ -87,7 +100,7 @@ export class SpendingReportData {
 		});
 
 		// Sort the items by value in descending order
-		overallItemDataArray = _.orderBy(overallItemDataArray, ["value"], ["desc"]);
+		overallItemDataArray = _.orderBy(overallItemDataArray, ["value", "itemName"], ["desc", "asc"]);
 
 		// If the nummber of items exceeds 10, then bundle all items beyond that into a single
 		// "All Other Categories" item.
@@ -162,12 +175,27 @@ export class SpendingReportData {
 		while(month.isAfter(this.endMonth) == false) {
 
 			var monthName = month.toISOString();
-			var key = `${itemId}_${monthName}`;
-			var itemData = this.monthlyItemDataMap[key];
-			if(!itemData)
-				monthlyValues.push(0);
-			else
-				monthlyValues.push(itemData.value);
+			if(itemId != "all_other_categories") {
+
+				var key = `${itemId}_${monthName}`;
+				var itemData = this.monthlyItemDataMap[key];
+				if(!itemData)
+					monthlyValues.push(0);
+				else
+					monthlyValues.push(itemData.value);
+			}
+			else {
+				var monthValue = 0;
+				// We need to get monthly values for all bundled items and sum those up
+				_.forEach(this.bundledItemIds, (itemId)=>{
+					var key = `${itemId}_${monthName}`;
+					var itemData = this.monthlyItemDataMap[key];
+					if(itemData)
+						monthValue += itemData.value;
+				});
+
+				monthlyValues.push(monthValue);
+			}
 
 			month.addMonths(1);
 		}
@@ -188,10 +216,20 @@ export class SpendingReportData {
 			var monthTotal = 0;
 			_.forEach(itemIds, (itemId)=>{
 
-				var key = `${itemId}_${monthName}`;
-				var itemData = this.monthlyItemDataMap[key];
-				if(itemData)
-					monthTotal += itemData.value;
+				if(itemId != "all_other_categories") {
+					let key = `${itemId}_${monthName}`;
+					let itemData = this.monthlyItemDataMap[key];
+					if(itemData)
+						monthTotal += itemData.value;
+				}
+				else {
+					_.forEach(this.bundledItemIds, (itemId)=>{
+						let key = `${itemId}_${monthName}`;
+						let itemData = this.monthlyItemDataMap[key];
+						if(itemData)
+							monthTotal += itemData.value;
+					});
+				}
 			})
 
 			monthlyTotalValues.push(monthTotal);

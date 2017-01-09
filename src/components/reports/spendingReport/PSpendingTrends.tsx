@@ -15,9 +15,9 @@ import { SpendingReportData } from './SpendingReportData';
 
 export interface PSpendingTrendsProps {
 	dataFormatter:DataFormatter;
-	reportState:IReportState;
 	masterCategoryId:string;
 	reportData:SpendingReportData;
+	setMasterCategoryId:(masterCategoryId:string)=>void;
 }
 
 const ChartContainerStyle:React.CSSProperties = {
@@ -34,6 +34,23 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 
 	private chart:any;
 	private refCanvas:HTMLCanvasElement;
+
+	constructor(props:PSpendingTrendsProps) {
+		super(props);
+		this.handleChartClick = this.handleChartClick.bind(this);
+	}
+
+	private handleChartClick(itemIndex:number):void {
+
+		// Are we currently showing top-level chart, or the first level chart
+		if(!this.props.masterCategoryId) {
+			// We are currently showing the top level chart (master categories data). Determine the master
+			// category item that was clicked. 
+			var itemIds = this.props.reportData.getOverallSortedItemIds();
+			var clickedMasterCategoryId = itemIds[itemIndex];
+			this.props.setMasterCategoryId(clickedMasterCategoryId);
+		} 
+	}
 
 	private initializeChart(props:PSpendingTrendsProps) {
 
@@ -106,6 +123,20 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 						}
 					}
 				},
+				onClick: (event, chartElements)=>{
+
+					var chartElements = this.chart.getElementAtEvent(event);
+					if(chartElements.length > 0) {
+
+						var chartElement = chartElements[0];
+						var itemIndex = chartElement._datasetIndex;
+						// We dont want to handle click on the line chart, and the "all_other_categories" item
+						if(itemIndex > 0 && itemIndex < 11) {
+							// We are subtracting 1 because the first dataset is for the "totals" line chart 
+							this.handleChartClick(itemIndex - 1);
+						}
+					}
+				}
 			}
 		});
 	}
@@ -126,9 +157,14 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var reportData = props.reportData;
 		var labels = reportData.getAllMonthNames();
 		var datasets = this.buildDatasets(props);
+
 		// Update the chart data with these new values
 		this.chart.data.labels = labels;
-		this.chart.data.datasets = datasets;
+		for(var i:number = 0; i <= 11; i++) {
+			this.chart.data.datasets[i].label = datasets[i].label;
+			this.chart.data.datasets[i].data = datasets[i].data;
+		}
+		this.chart.update();
 	}
 
 	private buildDatasets(props:PSpendingTrendsProps):Array<any> {
@@ -157,18 +193,23 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 		var itemNames = reportData.getOverallSortedItemNames();
 		var colors = UIConstants.ChartColors;
 
-		for(var i:number = 0; i < itemIds.length; i++) {
+		for(let i:number = 0; i < 11; i++) {
 
 			var itemId = itemIds[i];
-			var monthlyItemValues = reportData.getMonthlyValuesForItem(itemId);
+			var monthlyItemValues:Array<number>;
+			if(itemId)
+				monthlyItemValues = reportData.getMonthlyValuesForItem(itemId);
+			else
+				monthlyItemValues = [];
+
 			var color = colors[i];
 			// We want a colors array of the same length as the values array. Would contain the same color as this 
 			// item is going to be represented by the same color in all months.
-			var backgroundColors:Array<string> = [];
-			var borderColors:Array<string> = [];
-			var hoverBackgroundColors:Array<string> = [];
-			var hoverBorderColors:Array<string> = [];
-			for(var k:number = 0; k < monthlyItemValues.length; k++) {
+			let backgroundColors:Array<string> = [];
+			let borderColors:Array<string> = [];
+			let hoverBackgroundColors:Array<string> = [];
+			let hoverBorderColors:Array<string> = [];
+			for(let j:number = 0; j < monthlyItemValues.length; j++) {
 				backgroundColors.push(color);
 				borderColors.push(color);
 				hoverBackgroundColors.push(color);
@@ -198,14 +239,12 @@ export class PSpendingTrends extends React.Component<PSpendingTrendsProps, {}> {
 
 	public componentWillUnmount():void {
 
-		var chart = this.chart;
-      	chart.destroy();
+		this.chart.destroy();
 	}
 
 	public componentWillReceiveProps(nextProps:PSpendingTrendsProps):void {
 
 		this.updateDataObject(nextProps);
-		this.chart.update();
 	}
 
 	public render() {

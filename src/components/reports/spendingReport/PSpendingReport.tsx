@@ -132,7 +132,7 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 			_.forEach(transactions, (transaction)=>{
 
 				// Is the accountId for this transaction included?
-				if(accountInclusionMap[transaction.accountId] == true) {
+				if(transaction.isTombstone == 0 && accountInclusionMap[transaction.accountId] == true) {
 
 					var itemId, itemName:string;
 
@@ -232,7 +232,7 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 			_.forEach(transactions, (transaction)=>{
 
 				// Is the accountId for this transaction included?
-				if(accountInclusionMap[transaction.accountId] == true) {
+				if(transaction.isTombstone == 0 && accountInclusionMap[transaction.accountId] == true) {
 
 					// If the category on this transaction is included by the report setttings
 					var subCategory = categoryInclusionMap[transaction.subCategoryId];
@@ -302,9 +302,9 @@ export class PSpendingReport extends React.Component<PSpendingReportProps, PSpen
 			reportView = (
 				<PSpendingTrends 
 					dataFormatter={this.props.dataFormatter}	
-					reportState={this.props.reportState}
 					masterCategoryId={masterCategoryId}
 					reportData={reportData}
+					setMasterCategoryId={this.setMasterCategoryId}
 				/>
 			);
 		}

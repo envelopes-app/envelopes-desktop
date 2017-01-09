@@ -55,6 +55,11 @@ export interface PTransactionDialogState {
 	memo?: string;
 	inflowAmount?: number;
 	outflowAmount?: number;
+
+	// Variables for reference data
+	accountsList:Array<objects.IAccountObject>;
+	payeesList:Array<objects.IPayeeObject>;
+	categoriesList:Array<objects.ICategoryObject>;
 }
 
 export class PTransactionDialog extends React.Component<PTransactionDialogProps, PTransactionDialogState> {
@@ -70,9 +75,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 	private saveButton:HTMLButtonElement;
 	private cancelButton:HTMLButtonElement;
 
-	private accountsList:Array<objects.IAccountObject>;
-	private payeesList:Array<objects.IPayeeObject>;
-	private categoriesList:Array<objects.ICategoryObject>;
 	private focusManager:FocusManager = new FocusManager(); 
 	 
 	constructor(props:PTransactionDialogProps) {
@@ -81,6 +83,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.showForExistingTransaction = this.showForExistingTransaction.bind(this);
 		this.showForExistingScheduledTransaction = this.showForExistingScheduledTransaction.bind(this);
 		this.save = this.save.bind(this);
+		this.saveAndAddAnother = this.saveAndAddAnother.bind(this);
 		this.close = this.close.bind(this);
 		this.onEntered = this.onEntered.bind(this);
 
@@ -120,7 +123,15 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		this.setMemo = this.setMemo.bind(this);
 		this.setAmount = this.setAmount.bind(this);
 
-        this.state = { showModal: false, action: null, activeField: null, activeFieldOnInitialShow: null };
+        this.state = { 
+			showModal: false, 
+			action: null, 
+			activeField: null, 
+			activeFieldOnInitialShow: null,
+			accountsList: null,
+			payeesList: null,
+			categoriesList: null 
+		};
 
 		this.focusManager.addFocusObject("account", this.setFocusOnAccountSelector);
 		this.focusManager.addFocusObject("date", this.setFocusOnDateSelector);
@@ -172,12 +183,6 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	public showForNewTransaction(accountId:string):void {
 
-		// Before updating the state, refresh the lists of accounts, payees and categories 
-		// for showing in the popovers of the transaction dialog.
-		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
-		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
-		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
-
 		// Update the state of this dialog to make it visible. 
 		// Also reset all the fields for storing the values for the new transaction 
 		// Note: We are not setting the activeField here, as it needs to be set in the "onEnter" handler
@@ -198,17 +203,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			manuallyEnteredCategoryName: null,
 			memo: "",
 			inflowAmount: 0,
-			outflowAmount: 0
+			outflowAmount: 0,
+			accountsList: DialogUtilities.buildAccountsList(this.props.entitiesCollection),
+			payeesList: DialogUtilities.buildPayeesList(this.props.entitiesCollection),
+			categoriesList: DialogUtilities.buildCategoriesList(this.props.entitiesCollection)
 		});
 	};
 
 	public showForExistingTransaction(transaction:budgetEntities.ITransaction, activeField:string):void {
-
-		// Before updating the state, refresh the lists of accounts, payees and categories 
-		// for showing in the popovers of the transaction dialog.
-		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
-		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
-		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
 
 		// Update the state of this dialog to make it visible. 
 		// Also reset all the fields for storing the values for the new transaction 
@@ -231,17 +233,14 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			manuallyEnteredCategoryName: null,
 			memo: transaction.memo ? transaction.memo : "",
 			outflowAmount: transaction.amount < 0 ? -transaction.amount : 0,
-			inflowAmount: transaction.amount > 0 ? transaction.amount : 0
+			inflowAmount: transaction.amount > 0 ? transaction.amount : 0,
+			accountsList: DialogUtilities.buildAccountsList(this.props.entitiesCollection),
+			payeesList: DialogUtilities.buildPayeesList(this.props.entitiesCollection),
+			categoriesList: DialogUtilities.buildCategoriesList(this.props.entitiesCollection)
 		});
 	}
 
 	public showForExistingScheduledTransaction(scheduledTransaction:budgetEntities.IScheduledTransaction, activeField:string):void {
-
-		// Before updating the state, refresh the lists of accounts, payees and categories 
-		// for showing in the popovers of the transaction dialog.
-		this.accountsList = DialogUtilities.buildAccountsList(this.props.entitiesCollection);
-		this.payeesList = DialogUtilities.buildPayeesList(this.props.entitiesCollection);
-		this.categoriesList = DialogUtilities.buildCategoriesList(this.props.entitiesCollection);
 
 		// Update the state of this dialog to make it visible. 
 		// Also reset all the fields for storing the values for the new transaction 
@@ -264,7 +263,10 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			manuallyEnteredCategoryName: null,
 			memo: scheduledTransaction.memo ? scheduledTransaction.memo : "",
 			outflowAmount: scheduledTransaction.amount < 0 ? -scheduledTransaction.amount : 0,
-			inflowAmount: scheduledTransaction.amount > 0 ? scheduledTransaction.amount : 0
+			inflowAmount: scheduledTransaction.amount > 0 ? scheduledTransaction.amount : 0,
+			accountsList: DialogUtilities.buildAccountsList(this.props.entitiesCollection),
+			payeesList: DialogUtilities.buildPayeesList(this.props.entitiesCollection),
+			categoriesList: DialogUtilities.buildCategoriesList(this.props.entitiesCollection)
 		});
 	}
 
@@ -640,7 +642,15 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private close():void {
 		// Hide the modal, and set the account in state to null
-		this.setState({ showModal: false, action: null, activeField: null, activeFieldOnInitialShow: null });
+		this.setState({ 
+			showModal: false, 
+			action: null, 
+			activeField: null, 
+			activeFieldOnInitialShow: null,
+			accountsList: null,
+			payeesList: null,
+			categoriesList: null
+		});
 	};
 
 	private createNewTransaction(entitiesCollection:ISimpleEntitiesCollection):void {
@@ -699,15 +709,24 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		entitiesCollection.payees = [payee];
 	}
 
+	public componentWillReceiveProps(nextProps:PTransactionDialogProps):void {
+
+		var state = Object.assign({}, this.state);
+		state.accountsList = DialogUtilities.buildAccountsList(nextProps.entitiesCollection);
+		state.payeesList = DialogUtilities.buildPayeesList(nextProps.entitiesCollection);
+		state.categoriesList = DialogUtilities.buildCategoriesList(nextProps.entitiesCollection);
+		this.setState(state);
+	}
+
 	public render() {
 
 		if(this.state.showModal) {
 			// Whatever the current selected account is, we need to remove it's corresponding payee from the payees list 
-			var filteredPayeesList = _.filter(this.payeesList, (payeeObj:objects.IPayeeObject)=>{
+			var filteredPayeesList = _.filter(this.state.payeesList, (payeeObj:objects.IPayeeObject)=>{
 				return (payeeObj.accountId != this.state.accountId);
 			});
 
-			var categoriesList = this.categoriesList;
+			var categoriesList = this.state.categoriesList;
 			var showFrequencyControl = (this.state.action == "new-transaction" || this.state.action == "existing-scheduled-transaction");
 			var showFrequencyNeverOption = (this.state.action == "new-transaction");
 
@@ -721,7 +740,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 							<Form horizontal>
 								<PAccountSelector ref={(c) => this.accountSelector = c} 
 									activeField={this.state.activeField} setActiveField={this.setActiveField}
-									selectedAccountId={this.state.accountId} accountsList={this.accountsList} 
+									selectedAccountId={this.state.accountId} accountsList={this.state.accountsList} 
 									setSelectedAccountId={this.setSelectedAccountId} handleTabPressed={this.handleTabPressedOnAccountSelector} />
 								<PDateSelector ref={(c) => this.dateSelector = c} 
 									activeField={this.state.activeField} setActiveField={this.setActiveField}
