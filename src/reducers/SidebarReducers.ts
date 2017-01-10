@@ -21,7 +21,7 @@ export class SidebarReducers {
 		switch(action.type) {
 
 			case ActionNames.GLOBAL_LOAD_BUDGET_COMPLETED:
-				newValue.selectedTab = "Reports";
+				newValue.selectedTab = "Budget";
 				newValue.selectedAccountId = null;
 				break;
 
