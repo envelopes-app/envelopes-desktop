@@ -24,6 +24,7 @@ export interface PSubCategoryRowProps {
 	editingSubCategoryMonth:DateWithoutTime;
 	selectedSubCategoriesMap:SimpleObjectMap<boolean>;
 
+	setBudgetedAmountForCategory:(subCategoryId:string, month:DateWithoutTime, budgetedValue:number)=>void;
 	selectSubCategory:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	unselectSubCategory:(subCategory:budgetEntities.ISubCategory)=>void;
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
@@ -34,9 +35,6 @@ export interface PSubCategoryRowProps {
 	showMoveMoneyDialog:(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	showDefaultSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 	showDebtSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
-
-	// Dispatcher Functions
-	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 const SubCategoryRowContainerStyle:React.CSSProperties = {
@@ -181,6 +179,7 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, {}> {
 					isSelected={isSelected}
 					monthlySubCategoryBudgetsMap={this.props.monthlySubCategoryBudgetsMap}
 
+					setBudgetedAmountForCategory={this.props.setBudgetedAmountForCategory}
 					selectSubCategory={this.props.selectSubCategory}
 					selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
 					selectNextSubCategoryForEditing={this.props.selectNextSubCategoryForEditing}
@@ -189,7 +188,6 @@ export class PSubCategoryRow extends React.Component<PSubCategoryRowProps, {}> {
 					showMoveMoneyDialog={this.props.showMoveMoneyDialog}
 					showDefaultSubCategoryActivityDialog={this.props.showDefaultSubCategoryActivityDialog}
 					showDebtSubCategoryActivityDialog={this.props.showDebtSubCategoryActivityDialog}
-					updateEntities={this.props.updateEntities}
 				/>
 			);
 

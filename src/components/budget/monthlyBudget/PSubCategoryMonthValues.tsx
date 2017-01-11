@@ -25,6 +25,7 @@ export interface PSubCategoryMonthValuesProps {
 	// MonthlySubCategoryBudget entities mapped by month and subCategoryId
 	monthlySubCategoryBudgetsMap:SimpleObjectMap<budgetEntities.IMonthlySubCategoryBudget>;
 
+	setBudgetedAmountForCategory:(subCategoryId:string, month:DateWithoutTime, budgetedValue:number)=>void;
 	selectSubCategory:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
 	selectNextSubCategoryForEditing:()=>void;
@@ -33,8 +34,6 @@ export interface PSubCategoryMonthValuesProps {
 	showMoveMoneyDialog:(subCategoryId:string, month:DateWithoutTime, amountToMove:number, element:HTMLElement, placement?:string)=>void;
 	showDefaultSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
 	showDebtSubCategoryActivityDialog:(subCategoryId:string, month:DateWithoutTime, element:HTMLElement, placement?:string)=>void;
-	// Dispatcher Functions
-	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 export interface PSubCategoryMonthValuesState {
@@ -165,9 +164,9 @@ export class PSubCategoryMonthValues extends React.Component<PSubCategoryMonthVa
 					subCategory={subCategory}
 					currentMonth={currentMonth}
 					monthlySubCategoryBudget={monthlySubCategoryBudget}
+					setBudgetedAmountForCategory={this.props.setBudgetedAmountForCategory}
 					selectSubCategory={this.props.selectSubCategory}
 					selectSubCategoryForEditing={this.props.selectSubCategoryForEditing}
-					updateEntities={this.props.updateEntities}
 				/>
 
 				<PSubCategoryActivityValue 

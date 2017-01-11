@@ -16,10 +16,9 @@ export interface PSubCategoryBudgetedValueProps {
 	currentMonth:DateWithoutTime;
 	subCategory:budgetEntities.ISubCategory;
 	monthlySubCategoryBudget:budgetEntities.IMonthlySubCategoryBudget;
+	setBudgetedAmountForCategory:(subCategoryId:string, month:DateWithoutTime, budgetedValue:number)=>void;
 	selectSubCategory:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime, unselectAllOthers:boolean, setAsEditing:boolean)=>void;
 	selectSubCategoryForEditing:(subCategory:budgetEntities.ISubCategory, month:DateWithoutTime)=>void;
-	// Dispatcher Functions
-	updateEntities:(entities:ISimpleEntitiesCollection)=>void;
 }
 
 export interface PSubCategoryBudgetedValueState {
@@ -123,13 +122,7 @@ export class PSubCategoryBudgetedValue extends React.Component<PSubCategoryBudge
 			var budgetedValueString = this.state.budgetedValue;
 			var budgetedValue = this.props.dataFormatter.unformatCurrency(budgetedValueString);
 			// Update the monthlySubCategoryBudget entity with this new value, if it has changed
-			if(budgetedValue != this.props.monthlySubCategoryBudget.budgeted) {
-				var updatedMonthlySubCategoryBudget = Object.assign({}, this.props.monthlySubCategoryBudget);
-				updatedMonthlySubCategoryBudget.budgeted = budgetedValue;
-				this.props.updateEntities({
-					monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
-				});
-			}
+			this.props.setBudgetedAmountForCategory(this.props.subCategory.entityId, this.props.currentMonth, budgetedValue);
 		}
 	}
 

@@ -13,6 +13,7 @@ import { InternalCategories } from '../../constants';
 import * as budgetEntities from '../../interfaces/budgetEntities';
 import * as catalogEntities from '../../interfaces/catalogEntities';
 import { IDataFormat } from '../../interfaces/formatters';
+import { EntityFactory } from '../../persistence';
 import { DataFormats, DataFormatter, DateWithoutTime, SimpleObjectMap } from '../../utilities';
 import { IEntitiesCollection, ISimpleEntitiesCollection } from '../../interfaces/state';
 
@@ -94,6 +95,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.expandAllMasterCategories = this.expandAllMasterCategories.bind(this);
 		this.collapseAllMasterCategories = this.collapseAllMasterCategories.bind(this);
 		this.setInspectorState = this.setInspectorState.bind(this);
+		this.setBudgetedAmountForCategory = this.setBudgetedAmountForCategory.bind(this);
 		this.showSubCategoryEditDialog = this.showSubCategoryEditDialog.bind(this);
 		this.showMasterCategoryEditDialog = this.showMasterCategoryEditDialog.bind(this);
 		this.showCreateCategoryDialog = this.showCreateCategoryDialog.bind(this);
@@ -412,6 +414,59 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 		this.setState(state);
 	}
 
+	private setBudgetedAmountForCategory(subCategoryId:string, month:DateWithoutTime, budgetedValue:number):void {
+
+		// Check if we have a monthlyBudget entity for this month. If it exists, then we just need to 
+		// update the monthlySubCategoryBudget entity for the passed data.
+		// If it does not exist, it means that the user updated data for a past month for which the entities
+		// do not exist, and we need to create all the monthlyBudget and monthlySubCategoryBudget entities 
+		// from this month onwards
+		var entitiesCollection = this.props.entitiesCollection;
+		var monthlyBudget = entitiesCollection.monthlyBudgets.getMonthlyBudgetByMonth(month.toISOString());
+		if(monthlyBudget) {
+			// Get the monthlySubCategoryBudget for the category, clone and update it, and send for persistence
+			var monthlySubCategoryBudget = entitiesCollection.monthlySubCategoryBudgets.getMonthlySubCategoryBudgetsForSubCategoryInMonth(subCategoryId, month.toISOString());
+			if(budgetedValue != monthlySubCategoryBudget.budgeted) {
+				var updatedMonthlySubCategoryBudget = Object.assign({}, monthlySubCategoryBudget);
+				updatedMonthlySubCategoryBudget.budgeted = budgetedValue;
+				this.props.updateEntities({
+					monthlySubCategoryBudgets: [updatedMonthlySubCategoryBudget]
+				});
+			}
+		}
+		else {
+
+			var currentMonth = month.clone();
+			var minMonth = entitiesCollection.monthlyBudgets.getMinMonth();
+			var changedEntities:ISimpleEntitiesCollection = {
+				monthlyBudgets: [],
+				monthlySubCategoryBudgets: []
+			};
+
+			while(currentMonth.isBefore(minMonth)) {
+
+				var monthlyBudget = EntityFactory.createNewMonthlyBudget(this.props.activeBudgetId, currentMonth);
+				changedEntities.monthlyBudgets.push(monthlyBudget);
+
+				var subCategories = entitiesCollection.subCategories.getAllItems();
+				_.forEach(subCategories, (subCategory)=>{
+
+					var monthlySubCategoryBudget = EntityFactory.createNewMonthlySubCategoryBudget(this.props.activeBudgetId, subCategory.entityId, currentMonth);
+					if(subCategory.entityId == subCategoryId && currentMonth.equalsByMonth(month)) {
+						monthlySubCategoryBudget.budgeted = budgetedValue;
+					}
+
+					changedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
+				});
+
+				currentMonth.addMonths(1);
+			}
+
+			// Send all the created entities for persistence
+			this.props.updateEntities(changedEntities);
+		}
+	}
+
 	private showSubCategoryEditDialog(subCategoryId:string, element:HTMLElement, placement:string = "bottom"):void {
 		// Show the dialog for editing the subcategory
 		this.subCategoryEditDialog.show(subCategoryId, element, placement);
@@ -589,7 +644,6 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						visibleMonths={this.state.visibleMonths}
 						currentMonth={selectedMonth} 
 						entitiesCollection={this.props.entitiesCollection} 
-						updateEntities={this.props.updateEntities} 
 						editingSubCategoryId={this.state.editingSubCategoryId}
 						editingSubCategoryMonth={this.state.editingSubCategoryMonth}
 						selectedSubCategoriesMap={this.state.selectedSubCategoriesMap}
@@ -606,6 +660,7 @@ export class PBudget extends React.Component<PBudgetProps, PBudgetState> {
 						selectPreviousSubCategoryForEditing={this.selectPreviousSubCategoryForEditing}
 						expandAllMasterCategories={this.expandAllMasterCategories}
 						collapseAllMasterCategories={this.collapseAllMasterCategories}
+						setBudgetedAmountForCategory={this.setBudgetedAmountForCategory}
 						onAddCategoryGroupSelected={this.onAddCategoryGroupSelected} 
 						showReorderCategoriesDialog={this.showReorderCategoriesDialog}
 						expandMasterCategory={this.expandMasterCategory}
