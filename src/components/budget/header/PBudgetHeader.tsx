@@ -103,15 +103,15 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 		// Get the first and last months from the budget entity. Min and Max months will
 		// be -1 and +1 months from them respectively.
 		var minMonth, maxMonth:DateWithoutTime;
-		var budgetEntity = this.props.currentBudget;
+		var monthlyBudgetsArray = this.props.entitiesCollection.monthlyBudgets;
 
-		if(budgetEntity && budgetEntity.firstMonth)
-			minMonth = DateWithoutTime.createFromISOString(budgetEntity.firstMonth).subtractMonths(1);
+		if(monthlyBudgetsArray)
+			minMonth = monthlyBudgetsArray.getMinMonth().clone().subtractMonths(1);
 		else 
 			minMonth = DateWithoutTime.createForCurrentMonth().subtractMonths(1);
 		
-		if(budgetEntity && budgetEntity.lastMonth)
-			maxMonth = DateWithoutTime.createFromISOString(budgetEntity.lastMonth).addMonths(1);
+		if(monthlyBudgetsArray)
+			maxMonth = monthlyBudgetsArray.getMaxMonth().clone().addMonths(1);
 		else 
 			maxMonth = DateWithoutTime.createForCurrentMonth().addMonths(1);
 
@@ -119,7 +119,8 @@ export class PBudgetHeader extends React.Component<PBudgetHeaderProps, {}> {
 			<div style={BudgetHeaderContainerStyle}>
 				<PMonthSelection 
 					currentMonth={this.props.currentMonth} 
-					minMonth={minMonth} maxMonth={maxMonth} 
+					minMonth={minMonth} 
+					maxMonth={maxMonth} 
 					setSelectedMonth={this.props.setSelectedMonth} 
 				/>
 
