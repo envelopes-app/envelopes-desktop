@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-const pattern = require('patternomaly');
 const { Chart } = require('chart.js');
 
 import { UIConstants } from '../../../constants';
