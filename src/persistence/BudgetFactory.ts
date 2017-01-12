@@ -151,8 +151,6 @@ export class BudgetFactory {
 					budgetName: clonedBudgetName,
 					dataFormat: existingBudget.dataFormat,
 					lastAccessedOn: null,
-					firstMonth: existingBudget.firstMonth,
-					lastMonth: existingBudget.lastMonth,
 					isTombstone: 0,
 					deviceKnowledge: catalogKnowledge.getNextValue()
 				}));

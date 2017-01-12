@@ -189,8 +189,6 @@ export class DatabaseFactory {
 					'budgetName' VARCHAR NOT NULL,
 					'dataFormat' VARCHAR,
 					'lastAccessedOn' DATETIME,
-					'firstMonth' VARCHAR,
-					'lastMonth' VARCHAR,
 					'isTombstone' BOOL NOT NULL,
 					'deviceKnowledge' NUMERIC NOT NULL)`,
 				arguments: []

@@ -285,15 +285,6 @@ export class YNABDataImporter {
 			if(!this.updatedMonthlySubCategoryBudgetsMapById[monthlySubCategoryBudgetId])
 				this.updatedEntities.monthlySubCategoryBudgets.push(monthlySubCategoryBudget);
 		}
-
-		// *************************************************************************************************
-		// Final Step: Update the firstMonth and lastMonth values in the active budget entity
-		// *************************************************************************************************
-		// Update the active budget entity with the minTransactionDate
-		var updatedBudget = Object.assign({}, this.activeBudget);
-		updatedBudget.firstMonth = this.minTransactionDate.startOfMonth().toISOString();
-		updatedBudget.lastMonth = this.maxTransactionDate.startOfMonth().toISOString();
-		this.updatedEntities.budgets.push(updatedBudget);
 	}
 
 	private ensurePayee(payeeName:string):void {

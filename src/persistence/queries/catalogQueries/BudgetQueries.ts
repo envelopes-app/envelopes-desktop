@@ -13,14 +13,12 @@ export class BudgetQueries {
 
 		var query:IDatabaseQuery = {
 
-			query: "REPLACE INTO Budgets (entityId, budgetName, dataFormat, lastAccessedOn, firstMonth, lastMonth, isTombstone, deviceKnowledge) VALUES (?,?,?,?,?,?,?,?)",
+			query: "REPLACE INTO Budgets (entityId, budgetName, dataFormat, lastAccessedOn, isTombstone, deviceKnowledge) VALUES (?,?,?,?,?,?)",
 			arguments: [
 				dbObject.entityId,
 				dbObject.budgetName,
 				dbObject.dataFormat,
 				dbObject.lastAccessedOn,
-				dbObject.firstMonth,
-				dbObject.lastMonth,
 				dbObject.isTombstone,
 				dbObject.deviceKnowledge
 			]

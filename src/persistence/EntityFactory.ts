@@ -14,8 +14,6 @@ export class EntityFactory {
 			budgetName: "",
 			lastAccessedOn: null,
 			dataFormat: JSON.stringify(DataFormats.locale_mappings["en_US"]),
-			firstMonth: currentMonth.toISOString(),
-			lastMonth: currentMonth.toISOString(),
 			deviceKnowledge: 0
 		}
 
