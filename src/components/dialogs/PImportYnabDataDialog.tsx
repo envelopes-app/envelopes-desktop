@@ -29,10 +29,12 @@ export interface PImportYnabDataDialogState {
 
 	showModal:boolean;
 	currentStep:number;
-	budgetPath:string;
+	budgetFileName:string;
+	budgetFilePath:string;
 	budgetPathValidationState:string;
 	budgetPathValidationMessage:string;
-	registerPath:string;
+	registerFileName:string;
+	registerFilePath:string;
 	registerPathValidationState:string;
 	registerPathValidationMessage:string;
 
@@ -145,8 +147,10 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
         this.state = { 
 			showModal: false,
 			currentStep: 0,
-			budgetPath: "",
-			registerPath: "",
+			budgetFileName: "",
+			budgetFilePath: "",
+			registerFileName: "",
+			registerFilePath: "",
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
@@ -175,11 +179,13 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 				var fileName = file.name;
 				if(fileName.endsWith("Budget.csv")) {
-					state.budgetPath = file.path;
+					state.budgetFileName = file.name;
+					state.budgetFilePath = file.path;
 					stateModified = true;
 				}
 				else if(fileName.endsWith("Register.csv")) {
-					state.registerPath = file.path;
+					state.registerFileName = file.name;
+					state.registerFilePath = file.path;
 					stateModified = true;
 				}
 			}
@@ -196,13 +202,13 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		// Validate Budget File Path
 		// ****************************************************************
 		var budgetPathValidated = true;
-		if(this.state.budgetPath == "") {
+		if(this.state.budgetFileName == "") {
 			budgetPathValidated = false;
 			state.budgetPathValidationState = 'error';
 			state.budgetPathValidationMessage = "We need the 'Budget.csv' file for importing the data.";
 		}
 		else {
-			var parsed = Baby.parseFiles(this.state.budgetPath);
+			var parsed = Baby.parseFiles(this.state.budgetFilePath);
 			var budgetRows = parsed.data;
 			// As part of validation, we are just going to check the header names to ensure that they are 
 			// what we are expecting.
@@ -235,13 +241,13 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		// Validate Register File Path
 		// ****************************************************************
 		var registerPathValidated = true;
-		if(this.state.registerPath == "") {
+		if(this.state.registerFileName == "") {
 			registerPathValidated = false;
 			state.registerPathValidationState = 'error';
 			state.registerPathValidationMessage = "We need the 'Register.csv' file for importing the data.";
 		}
 		else {
-			var parsed = Baby.parseFiles(this.state.registerPath);
+			var parsed = Baby.parseFiles(this.state.registerFilePath);
 			var registerRows = parsed.data;
 			// As part of validation, we are just going to check the header names to ensure that they are 
 			// what we are expecting.
@@ -305,14 +311,21 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 
 		if(validated == true) {
 
-			// Get the active budget and get the data format from it
-			var activeBudget = this.props.entitiesCollection.budgets.getEntityById( this.props.activeBudgetId ); 
-			var dataImporter = new YNABDataImporter(activeBudget, this.props.entitiesCollection, this.props.dataFormatter);
-			// Build up the list of entities that need to be created/updated in the budget
-			dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, accountsList);
-			// Send the entities for persistence
-			this.props.updateEntities(dataImporter.updatedEntities);
-			this.hide();
+			try {
+				// Get the active budget and get the data format from it
+				var activeBudget = this.props.entitiesCollection.budgets.getEntityById( this.props.activeBudgetId ); 
+				var dataImporter = new YNABDataImporter(activeBudget, this.props.entitiesCollection, this.props.dataFormatter);
+				// Build up the list of entities that need to be created/updated in the budget
+				dataImporter.buildEntitiesList(this.state.budgetRows, this.state.registerRows, accountsList);
+				// Send the entities for persistence
+				this.props.updateEntities(dataImporter.updatedEntities);
+				this.hide();
+			}
+			catch(error) {
+				var state = Object.assign({}, this.state);
+				state.currentStep = 3;
+				this.setState(state);
+			}
 		}
 	}
 
@@ -325,8 +338,10 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.setState({ 
 			showModal: true,
 			currentStep: 1,
-			budgetPath: "",
-			registerPath: "",
+			budgetFileName: "",
+			budgetFilePath: "",
+			registerFileName: "",
+			registerFilePath: "",
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
@@ -342,8 +357,10 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		this.setState({ 
 			showModal: false,
 			currentStep: 0,
-			budgetPath: "",
-			registerPath: "",
+			budgetFileName: "",
+			budgetFilePath: "",
+			registerFileName: "",
+			registerFilePath: "",
 			budgetPathValidationState: null,
 			budgetPathValidationMessage: null,
 			registerPathValidationState: null,
@@ -363,7 +380,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Budget.csv' Path:
 					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetPath} readOnly={true} />
+					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.budgetFileName} title={this.state.budgetFilePath} readOnly={true} />
 					<label style={ErrorMessageStyle}>{this.state.budgetPathValidationMessage}</label>
 				</FormGroup>
 			);
@@ -374,7 +391,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Budget.csv' Path:
 					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetPath} readOnly={true} />
+					<FormControl ref={(c)=> {this.ctrlBudgetCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.budgetFileName} title={this.state.budgetFilePath} readOnly={true} />
 				</FormGroup>
 			);
 		}
@@ -391,7 +408,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Register.csv' Path:
 					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerPath} readOnly={true} />
+					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputErrorStyle} value={this.state.registerFileName} title={this.state.registerFilePath} readOnly={true} />
 					<label style={ErrorMessageStyle}>{this.state.registerPathValidationMessage}</label>
 				</FormGroup>
 			);
@@ -402,7 +419,7 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 					<ControlLabel>
 						'Register.csv' Path:
 					</ControlLabel>
-					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerPath} readOnly={true} />
+					<FormControl ref={(c)=> {this.ctrlRegisterCsvPath = c;}} type="text" style={FileInputStyle} value={this.state.registerFileName} title={this.state.registerFilePath} readOnly={true} />
 				</FormGroup>
 			);
 		}
@@ -561,6 +578,31 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 		);
 	}
 
+	private getModalForStep3():JSX.Element {
+
+		return (
+			<div className="import-ynab-data-dialog">
+				<Modal show={this.state.showModal} animation={true} onHide={this.hide} backdrop="static" keyboard={false}>
+					<Modal.Header>
+						<Modal.Title>Import YNAB Data</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<div>
+						And error occurred during import of the data. Makre sure that the budget settings for this budget match the settings of your YNAB Online budget and try again.   
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<div className="buttons-container">
+							<button className="dialog-primary-button" onClick={this.hide}>
+								Close&nbsp;<Glyphicon glyph="ok-sign" />
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
+			</div>
+		);
+	}
+
 	public render() {
 
 		if(this.state.showModal) {
@@ -570,6 +612,9 @@ export class PImportYnabDataDialog extends React.Component<PImportYnabDataDialog
 			}
 			else if(this.state.currentStep == 2) {
 				return this.getModalForStep2();
+			}
+			else if(this.state.currentStep == 3) {
+				return this.getModalForStep3();
 			}
 		}
 		else
