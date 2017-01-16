@@ -180,6 +180,7 @@ export class PAccountCreationDialog extends React.Component<PAccountCreationDial
 			account.accountName = this.state.accountName;
 			account.accountType = this.state.accountType;
 			account.sortableIndex = this.props.entitiesCollection.accounts.getSortableIndexForNewAccount();
+			account.onBudget = AccountTypes.isRecommendedOnBudget(account.accountType) ? 1 : 0;
 
 			var currentBalance:number = 0;
 			if(this.state.accountBalance != "")
