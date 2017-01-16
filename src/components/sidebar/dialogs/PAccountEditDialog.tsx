@@ -240,7 +240,13 @@ export class PAccountEditDialog extends React.Component<PAccountEditDialogProps,
 		else {
 			// Else show the reopen account and delete account buttons
 			// The delete account button is to enabled only if there are no transactions in the account
-			var transactionCount = this.props.entitiesCollection.transactions.getTransactionsByAccountId(account.entityId).length;
+			var transactions = this.props.entitiesCollection.transactions.getTransactionsByAccountId(account.entityId);
+			var transactionCount:number = _.reduce(transactions, (transactionCount, transaction)=>{
+				if(transaction.isTombstone == 0)
+					transactionCount++;
+
+				return transactionCount;
+			}, 0);
 
 			var buttons = [
 				<button key="reopen-account-button" className="dialog-secondary-button" onClick={this.handleReopenAccount}>
