@@ -151,6 +151,8 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 			var sortField = registerState.sortByFields[0];
 			var sortOrder = registerState.sortOrders[0];
 			var registerTransactionObjects = registerState.registerTransactionObjectsArray;
+			var accountId = this.props.accountId;
+			var account = this.props.isAllAccounts ? null : this.props.entitiesCollection.accounts.getEntityById(accountId);
 
 			var tableColumns = [
 				// Index 0
@@ -381,6 +383,11 @@ export class PRegisterDataGrid extends React.Component<PRegisterDataGridProps, P
 			if(registerState.showMemoColumn == false) {
 				// Remove the memo column from the array we created above
 				tableColumns.splice(8, 1);
+			}
+
+			if(account && account.onBudget == 0) {
+				// Remove the category column from the array we created above
+				tableColumns.splice(7, 1);
 			}
 
 			if(registerState.showCheckColumn == false) {
