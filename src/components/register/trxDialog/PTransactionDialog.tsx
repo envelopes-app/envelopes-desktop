@@ -156,29 +156,29 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private isCategoryNotRequired():boolean {
 
-		var isTransferAccountOnBudget = false;
 		var accountId = this.state.accountId;
 		var account = this.props.entitiesCollection.accounts.getEntityById(accountId);
 		var isAccountOnbudget = account.onBudget == 1 ? true : false;
+		// If this is a tracking account, then category is not required
+		if(isAccountOnbudget == false)
+			return true;
 
+		// Getting to this point means that we are in a budget account. Category would be required, unless
+		// this is a transfer to another budget account
+		var isTransferAccountOnBudget = false;
 		var payeeId = this.state.payeeId;
 		var payee:budgetEntities.IPayee = null;
 		if(payeeId && payeeId != "")
 			payee = this.props.entitiesCollection.payees.getEntityById(payeeId);
-		else
-			return false;
 
 		var transferAccount:budgetEntities.IAccount = null;
 		if(payee && payee.accountId)
 			transferAccount = this.props.entitiesCollection.accounts.getEntityById(payee.accountId);
-		else
-			return false;
 
-		var isTransferAccountOnBudget = false;
 		if(transferAccount && transferAccount.onBudget == 1)
-			isTransferAccountOnBudget = true;
+			return true;
 
-		return isAccountOnbudget && isTransferAccountOnBudget;
+		return false;
 	}
 
 	public showForNewTransaction(accountId:string):void {
@@ -394,7 +394,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 		else
 		{
 			var isCategoryNotRequired = this.isCategoryNotRequired();
-			// If category is not required, then move the focus forward 2 steps		
+			// If category is not required, then move the focus backwards 2 steps		
 			if(isCategoryNotRequired)
 				this.focusManager.moveFocusBackward("memo", 2);
 			else
@@ -520,28 +520,30 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 
 	private saveTransaction():void {
 
-		var entitiesCollection:ISimpleEntitiesCollection = {};
+		var changedEntities:ISimpleEntitiesCollection = {};
 
 		if(this.state.action == "new-transaction") {
 
 			if(this.state.frequency == TransactionFrequency.Never) {
 				// Create the transaction entity and add it to the entitiesCollection 
-				this.createNewTransaction(entitiesCollection);
+				this.createNewTransaction(changedEntities);
 			}
 			else {
 				// Create the scheduled transaction entity and add it to the entitiesCollection 
-				this.createNewScheduledTransaction(entitiesCollection);
+				this.createNewScheduledTransaction(changedEntities);
 			}
 		}
 		else if(this.state.action == "existing-transaction") {
 
+			debugger;
 			// Get the transaction entity that we were editing and make a clone of it for updating
 			var transaction = Object.assign({}, this.state.transaction);
+			var categoryNotRequired = this.isCategoryNotRequired();
 			// Update the values in this transaction from the state
 			transaction.accountId = this.state.accountId;
 			transaction.date = this.state.date.getUTCTime();
 			transaction.payeeId = this.state.payeeId;
-			transaction.subCategoryId = this.state.subCategoryId;
+			transaction.subCategoryId = categoryNotRequired ? null : this.state.subCategoryId;
 			transaction.memo = this.state.memo;
 			transaction.checkNumber = this.state.checkNumber;
 			transaction.accepted = 1;
@@ -554,18 +556,19 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 				transaction.amount = 0;
 
 			// Add this transaction to the entities collection
-			entitiesCollection.transactions = [transaction];
+			changedEntities.transactions = [transaction];
 		}
 		else if(this.state.action == "existing-scheduled-transaction") {
 
 			// Get the transaction entity that we were editing and male a clone of it for updating
 			var scheduledTransaction = Object.assign({}, this.state.scheduledTransaction);
+			var categoryNotRequired = this.isCategoryNotRequired();
 			// Update the values in this scheduled transaction from the state
 			scheduledTransaction.accountId = this.state.accountId;
 			scheduledTransaction.date = this.state.date.getUTCTime();
 			scheduledTransaction.frequency = this.state.frequency;
 			scheduledTransaction.payeeId = this.state.payeeId;
-			scheduledTransaction.subCategoryId = this.state.subCategoryId;
+			scheduledTransaction.subCategoryId = categoryNotRequired ? null : this.state.subCategoryId;
 			scheduledTransaction.memo = this.state.memo;
 
 			if(this.state.inflowAmount > 0)
@@ -576,7 +579,7 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 				scheduledTransaction.amount = 0;
 
 			// Add this scheduledtransaction to the entities collection
-			entitiesCollection.scheduledTransactions = [scheduledTransaction];
+			changedEntities.scheduledTransactions = [scheduledTransaction];
 		}
 
 		// Check if we need to create a new payee
@@ -585,20 +588,20 @@ export class PTransactionDialog extends React.Component<PTransactionDialogProps,
 			// There is no selected pre-existing payee, but we do have a payee name manually
 			// entered by the user in the payee input box. 
 			// Create a new payee and save it in the entitiesCollection
-			this.createNewPayee(entitiesCollection);
+			this.createNewPayee(changedEntities);
 
-			var payee = entitiesCollection.payees[0];
-			// Update the transaction/scheduled-transaction to point to this new payee 
-			if(entitiesCollection.transactions && entitiesCollection.transactions.length > 0) {
-				entitiesCollection.transactions[0].payeeId = payee.entityId;
+			var payee = changedEntities.payees[0];
+			// Update the transaction to point to this new payee 
+			if(changedEntities.transactions && changedEntities.transactions.length > 0) {
+				changedEntities.transactions[0].payeeId = payee.entityId;
 			}
-			else if(entitiesCollection.scheduledTransactions && entitiesCollection.scheduledTransactions.length > 0) {
-				entitiesCollection.scheduledTransactions[0].payeeId = payee.entityId;
+			else if(changedEntities.scheduledTransactions && changedEntities.scheduledTransactions.length > 0) {
+				changedEntities.scheduledTransactions[0].payeeId = payee.entityId;
 			}
 		}
 
 		// Call the passed updateEntities method in the props to save the entities
-		this.props.updateEntities(entitiesCollection);
+		this.props.updateEntities(changedEntities);
 	}
 
 	private saveAndAddAnother():void {
