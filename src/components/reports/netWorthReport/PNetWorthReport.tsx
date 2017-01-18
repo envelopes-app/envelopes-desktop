@@ -100,8 +100,6 @@ export class PNetWorthReport extends React.Component<PNetWorthReportProps, PNetW
 	}
 
 	public render() {
-		debugger;
-
 		return (
 			<div style={ReportsContainerStyle}>
 				<div style={ReportsInnerContainerStyle}>

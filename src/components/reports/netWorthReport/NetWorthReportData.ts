@@ -82,7 +82,7 @@ export class NetWorthReportData {
 
 		while(month.isAfter(this.endMonth) == false) {
 			this.allMonthNames.push(month.format("MM/YYYY"));
-			this.itemDataArray.push(this.itemDataMap[ month.toISOString() ]);
+			this.itemDataArray.push(this.getMonthlyItemData(month.toISOString()));
 			month.addMonths(1);
 		} 
 
