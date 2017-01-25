@@ -145,7 +145,6 @@
     "rebuild-modules": "electron-rebuild --pre-gyp-fix",
     "transpile": "node ./transpile.js",
     "build-installer": "build",
-    "build-linux-installers": "build --linux deb rpm tar.xz",
     "pretest": "webpack --config ./config/webpack.config.test.js",
     "test": "NODE_ENV=test karma start ./config/karma.config.js"
   },
