@@ -1,4 +1,3 @@
-NOTE: Pre-built macOS and Windows installers are available on [ENAB Website](https://www.enab-app.com).  
 Below you will find information on how to perform common tasks. 
 
 ## Getting development environment up and running
