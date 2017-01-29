@@ -9,7 +9,6 @@ Below you will find information on how to perform common tasks.
 With the above, you get hot reloading of the react app in the electron container.
 
 ## Building the Installer
-- Run `npm run transpile`
 - Run `npm run build-installer`
 If you are on macOS, this will build the .dmg package in the dist folder. On windows, this will build the installer executable.
 
