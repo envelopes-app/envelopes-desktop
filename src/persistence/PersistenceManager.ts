@@ -67,7 +67,7 @@ export class PersistenceManager {
 		if(process.env.NODE_ENV === 'test') {
 
 			// Open a connection to the database.
-			var refDatabase = openDatabase("ENAB", "1.0", "ENAB Test Database", 5 * 1024 * 1024);
+			var refDatabase = openDatabase("Envelopes", "1.0", "Envelopes Test Database", 5 * 1024 * 1024);
 			// Set the reference of the database in the QueryExecutionUtility
 			setDatabaseReference(refDatabase);
 			// Explicitly set refreshDatabaseAtStartup to true to force a blank database

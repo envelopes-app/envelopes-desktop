@@ -4,7 +4,7 @@ export class DropboxManager {
 
 	private deviceId:string;
 	private dropboxFolderPath:string;
-	private appFolderName:string = "ENAB";
+	private appFolderName:string = "Envelopes";
 	private dropboxFolderFound:boolean = false;
 
 	public initialize(deviceId:string):Promise<boolean> {

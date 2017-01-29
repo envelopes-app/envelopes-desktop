@@ -239,10 +239,10 @@ export class PReconcileAccountDialog extends React.Component<PReconcileAccountDi
 		var dataFormatter = this.props.dataFormatter;
 
 		if(accountBalance < userEnteredBalance) {
-			message = `This account's cleared balance in ENAB is ${dataFormatter.formatCurrency(userEnteredBalance - accountBalance)} lower than your actual account.`;
+			message = `This account's cleared balance in Envelopes is ${dataFormatter.formatCurrency(userEnteredBalance - accountBalance)} lower than your actual account.`;
 		}
 		else {
-			message = `This account's cleared balance in ENAB is ${dataFormatter.formatCurrency(accountBalance - userEnteredBalance)} higher than your actual account.`;
+			message = `This account's cleared balance in Envelopes is ${dataFormatter.formatCurrency(accountBalance - userEnteredBalance)} higher than your actual account.`;
 		}
 		
 		return [

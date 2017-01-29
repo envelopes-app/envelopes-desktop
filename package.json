@@ -1,10 +1,10 @@
 {
-  "name": "enab",
-  "productName": "ENAB",
+  "name": "envelopes",
+  "productName": "Envelopes",
   "description": "An alternate implementation of the YNAB methodology.",
   "version": "1.0.1",
   "author": {
-    "name": "ByteSmiths Pvt. Ltd."
+    "name": "Faisal Ahmad"
   },
   "private": true,
   "main": "app/electron.js",
@@ -152,7 +152,7 @@
     "extends": "./config/eslint.js"
   },
   "build": {
-    "appId": "com.bytesmiths.enab",
+    "appId": "com.bytesmiths.envelopes",
     "mac": {
       "category": "public.app-category.finance",
       "target": "dmg"

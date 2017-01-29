@@ -120,7 +120,7 @@ function initializeModule() {
 
 	if (process.platform === 'darwin') {
 		template.unshift({
-			label: "ENAB",
+			label: "Envelopes",
 			submenu: [
 				{
 					role: 'about'

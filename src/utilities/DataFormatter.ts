@@ -13,8 +13,8 @@ export class DataFormatter {
 
 		this.dataFormat = dataFormat;
 
-		// Setup a fake 'enab' language with the details we need
-		numeral.language('enab', {
+		// Setup a fake 'envelopes' language with the details we need
+		numeral.language('envelopes', {
 			delimiters: {
 				thousands: dataFormat.group_separator,
 				decimal: dataFormat.decimal_separator
@@ -37,7 +37,7 @@ export class DataFormatter {
 			}
 		});
 
-		numeral.language('enab');
+		numeral.language('envelopes');
 
 		var currencyFormatString = `0,0`;
 		if(dataFormat.decimal_digits == 1)

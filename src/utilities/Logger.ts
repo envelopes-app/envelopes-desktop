@@ -27,15 +27,15 @@ export class Logger {
 		const path = remote.require('path');
 		const { app } = require('electron').remote;
 	
-		var appFolderName = (process.env.NODE_ENV === 'development') ? "ENAB-DEV" : "ENAB";  
+		var appFolderName = (process.env.NODE_ENV === 'development') ? "Envelopes-DEV" : "Envelopes";  
 		var loggingDir = path.join(app.getPath('documents'), appFolderName, 'logs');
 		if (!fs.existsSync(loggingDir)) {
 			// Create the directory if it does not exist
 			fs.mkdirSync(loggingDir);
     	}
 
-		var logFileName = path.join(loggingDir, "enab.log");
-		var exceptionFileName = path.join(loggingDir, "enab-exceptions.log");
+		var logFileName = path.join(loggingDir, "envelopes.log");
+		var exceptionFileName = path.join(loggingDir, "envelopes-exceptions.log");
 		winston.configure({
 			transports: [
 				new (winston.transports.File)({

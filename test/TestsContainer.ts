@@ -22,7 +22,7 @@ import { _TestsContainer as CalculationTestsContainer } from './calculations/_Te
 //Let's make sure we do include the stack trace
 chai.config.includeStack = true; // turn on stack trace
 
-describe("ENAB Unit Tests", function() {
+describe("Envelopes Unit Tests", function() {
 
 	before(function() {
 		// Create and Initialize the PersistenceManager

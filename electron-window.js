@@ -1,7 +1,7 @@
 const { app, dialog, ipcMain } = require('electron');
 
 let browserWindow;
-let appName = `ENAB v${app.getVersion()}`; 
+let appName = `Envelopes v${app.getVersion()}`; 
 let openBudgetName; 
 
 function initializeModule(mainWindow) {

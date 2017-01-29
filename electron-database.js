@@ -43,13 +43,13 @@ function initializeDatabase() {
 
 	return new Promise((resolve, reject)=>{
 
-		var databaseFolderName = (process.env.NODE_ENV === 'development') ? "ENAB-DEV" : "ENAB";  
+		var databaseFolderName = (process.env.NODE_ENV === 'development') ? "Envelopes-DEV" : "Envelopes";  
 		// Ensure that the directory for storing the database file exists
 		var databaseDir = path.join(app.getPath('documents'), databaseFolderName);
 		if (!fs.existsSync(databaseDir))
 			fs.mkdirSync(databaseDir);
 
-		var databaseFileName = path.join(databaseDir,'enab.db');
+		var databaseFileName = path.join(databaseDir,'envelopes.db');
 		// Open a connection to the database.
 		database = new sqlite3.Database(databaseFileName);
 		// Provide an error handler on the database object
