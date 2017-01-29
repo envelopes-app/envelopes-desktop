@@ -24,4 +24,8 @@ build_script:
   - npm --version
   - npm run build-installer
 
+artifacts:
+  - path: 'dist/*.exe'
+  - name: Windows (x64) Installer
+  
 test: off
