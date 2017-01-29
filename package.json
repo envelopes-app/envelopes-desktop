@@ -2,7 +2,7 @@
   "name": "envelopes",
   "productName": "Envelopes",
   "description": "An alternate implementation of the YNAB methodology.",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "author": {
     "name": "Faisal Ahmad"
   },
