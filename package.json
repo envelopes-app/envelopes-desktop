@@ -1,12 +1,12 @@
 {
   "name": "envelopes",
   "productName": "Envelopes",
-  "description": "An alternate implementation of the YNAB methodology.",
+  "description": "An open source implementation of the YNAB methodology.",
   "version": "1.0.0",
   "author": {
     "name": "Faisal Ahmad"
   },
-  "private": true,
+  "private": false,
   "main": "app/electron.js",
   "devDependencies": {
     "@types/babyparse": "0.0.30",
