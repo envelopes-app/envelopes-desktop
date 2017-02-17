@@ -46,6 +46,7 @@ export interface AppProps {
 	// Dispatcher functions
 	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
+	cloneBudget:(budget:catalogEntities.IBudget)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
@@ -57,9 +58,7 @@ export interface AppState {
 export class PApp extends React.Component<AppProps, AppState> {
   
 	// TODO: Unit Tests
-	// TODO: Reports
 	// TODO: Undo/Redo Support
-	// TODO: Integration with Payment and Licensing
 	private budgetDialog:PBudgetDialog;
 	private openBudgetDialog:POpenBudgetDialog;
 	private importYnabDataDialog:PImportYnabDataDialog;
@@ -194,6 +193,12 @@ export class PApp extends React.Component<AppProps, AppState> {
 			else if(menuArgs && menuArgs.menu == "open_budget")			
 				this.handleOpenBudgetMessage();
 
+			else if(menuArgs && menuArgs.menu == "clone_budget")			
+				this.handleCloneBudgetMessage();
+
+			else if(menuArgs && menuArgs.menu == "fresh_start")			
+				this.handleFreshStartMessage();
+
 			else if(menuArgs && menuArgs.menu == "show_budget_settings")			
 				this.handleShowBudgetSettings();
 
@@ -216,10 +221,22 @@ export class PApp extends React.Component<AppProps, AppState> {
 		}
 	}
 
+	private handleCloneBudgetMessage():void {
+
+		// Get the currently active budget from the state and pass it to the budget dialog
+		var budgetId = this.props.applicationState.activeBudgetId;
+		var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
+		this.props.cloneBudget(budget);
+	}
+
+	private handleFreshStartMessage():void {
+
+	}
+
 	private handleShowBudgetSettings():void {
 
 		if(this.budgetDialog.isShowing() == false) {
-			// Get the currentl active budget from the state and pass it to the budget dialog
+			// Get the currently active budget from the state and pass it to the budget dialog
 			var budgetId = this.props.applicationState.activeBudgetId;
 			var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
 			this.budgetDialog.show(budget);

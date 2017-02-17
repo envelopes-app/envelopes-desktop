@@ -10,6 +10,7 @@ import { IApplicationState, IEntitiesCollection, ISimpleEntitiesCollection } fro
 import { 
 	CreateBudgetCompletedAction, 
 	OpenBudgetCompletedAction, 
+	CloneBudgetCompletedAction,
 	SyncDataWithDatabaseCompletedAction,
 	EnsureBudgetEntitiesForMonthCompletedAction 
 } from '../interfaces/actions';
@@ -23,6 +24,13 @@ export class GlobalActionsCreator {
 		return {
 			type: ActionNames.GLOBAL_CREATE_BUDGET_COMPLETED,
 			budgetId: budgetId
+		};
+	}
+
+	public static cloneBudgetCompleted(entities:ISimpleEntitiesCollection):CloneBudgetCompletedAction {
+		return {
+			type: ActionNames.GLOBAL_CLONE_BUDGET_COMPLETED,
+			entities: entities
 		};
 	}
 
@@ -102,6 +110,24 @@ export class GlobalActionsCreator {
 
 					// dispatch action open budget completed
 					dispatch(GlobalActionsCreator.openBudgetCompleted(budget, updatedEntities));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
+		};
+	}
+
+	public static cloneBudget(budget:catalogEntities.IBudget) {
+
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.cloneBudget(budget)
+				.then((updatedEntities:ISimpleEntitiesCollection)=>{
+
+					// dispatch action clone budget completed
+					dispatch(GlobalActionsCreator.cloneBudgetCompleted(updatedEntities));
 				})
 				.catch((error)=>{
 					Logger.error(error.message);

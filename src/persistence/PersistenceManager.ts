@@ -171,8 +171,25 @@ export class PersistenceManager {
 	public createNewBudget(budget:catalogEntities.IBudget):Promise<catalogEntities.IBudget> {
 
 		// Create a blank new budget.
-		var budgetFactory = new BudgetFactory();
+		let budgetFactory = new BudgetFactory();
 		return budgetFactory.createNewBudget(budget, this.catalogKnowledge)
+	}
+
+	public cloneBudget(budget:catalogEntities.IBudget):Promise<ISimpleEntitiesCollection> {
+
+		// Create a clone of the passed budget.
+		let budgetFactory = new BudgetFactory();
+		let clonedBudgetName = `${budget.budgetName} - Clone`;
+		let clonedBudgetId = null;
+
+		return budgetFactory.cloneBudget(budget.entityId, clonedBudgetName, this.catalogKnowledge)
+			.then((budgetId:string)=>{
+
+				clonedBudgetId = budgetId;
+				// Load updated catalog data from the database so that the newly created budget entity gets loaded
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				return this.loadCatalogEntitiesFromDatabase(catalogDeviceKnowledge);
+			});
 	}
 
 	public ensureMonthlyDataExistsForMonth(month:DateWithoutTime, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
@@ -405,10 +422,30 @@ export class PersistenceManager {
 		return executeSqlQueries(queryList)
 			.then((result:any)=>{
 
-				// Use the loaded knowledge values to update the values in the budgetKnowledge object
+				// Use the loaded knowledge values to update the values in the knowledge objects
 				this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage = result.catalogKnowledge[0].currentDeviceKnowledge;
 				this.budgetKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage = result.budgetKnowledge[0].currentDeviceKnowledge;
 				this.budgetKnowledge.lastDeviceKnowledgeForCalculationsLoadedFromLocalStorage = result.budgetKnowledge[0].currentDeviceKnowledgeForCalculations;
+
+				// resolve the promise with the result object
+				return Promise.resolve(result);
+			});
+	}
+
+	private loadCatalogEntitiesFromDatabase(catalogDeviceKnowledge:number):Promise<ISimpleEntitiesCollection> {
+
+		var queryList = [
+			catalogQueries.BudgetQueries.loadDatabaseObject(catalogDeviceKnowledge),
+			catalogQueries.GlobalSettingQueries.loadDatabaseObject(catalogDeviceKnowledge),
+			// Also load the knowledge values that are in the database
+			miscQueries.KnowledgeValueQueries.getLoadCatalogKnowledgeValueQuery()
+		];
+
+		return executeSqlQueries(queryList)
+			.then((result:any)=>{
+
+				// Use the loaded knowledge values to update the values in the catalogKnowledge object
+				this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage = result.catalogKnowledge[0].currentDeviceKnowledge;
 
 				// resolve the promise with the result object
 				return Promise.resolve(result);

@@ -9,6 +9,11 @@ export interface CreateBudgetCompletedAction extends Redux.Action {
 	budgetId:string;
 }
 
+export interface CloneBudgetCompletedAction extends Redux.Action { 
+	// Newly created catalog entities for the cloned budget
+	entities:ISimpleEntitiesCollection;
+}
+
 export interface OpenBudgetCompletedAction extends Redux.Action { 
 	// The opened budget 
 	budget:catalogEntities.IBudget;

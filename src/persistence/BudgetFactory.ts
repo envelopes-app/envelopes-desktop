@@ -291,19 +291,25 @@ export class BudgetFactory {
 
 						let month = KeyGenerator.extractMonthFromMonthlySubCategoryBudgetIdentity(monthlySubCategoryBudget.entityId);
 						let subCategoryId = entityIdsMap[monthlySubCategoryBudget.subCategoryId];
-						// Generate a new entityId value for this entity
-						let newEntityId = KeyGenerator.getMonthlySubCategoryBudgetIdentity(subCategoryId, month);
-						let newParentEntityId = KeyGenerator.getMonthlyBudgetIdentity(budgetId, month);
-						// Update the budgetId and the entityId of this entity
-						monthlySubCategoryBudget.budgetId = budgetId;
-						monthlySubCategoryBudget.entityId = newEntityId;
-						monthlySubCategoryBudget.monthlyBudgetId = newParentEntityId;
-						monthlySubCategoryBudget.subCategoryId = subCategoryId;
-						monthlySubCategoryBudget.deviceKnowledge = 1;
-						// Generate the query to insert this entity into the database
-						queriesList.push(budgetQueries.MonthlySubCategoryBudgetQueries.insertDatabaseObject(monthlySubCategoryBudget));
+						if(subCategoryId) {
+
+							// Generate a new entityId value for this entity
+							let newEntityId = KeyGenerator.getMonthlySubCategoryBudgetIdentity(subCategoryId, month);
+							let newParentEntityId = KeyGenerator.getMonthlyBudgetIdentity(budgetId, month);
+							// Update the budgetId and the entityId of this entity
+							monthlySubCategoryBudget.budgetId = budgetId;
+							monthlySubCategoryBudget.entityId = newEntityId;
+							monthlySubCategoryBudget.monthlyBudgetId = newParentEntityId;
+							monthlySubCategoryBudget.subCategoryId = subCategoryId;
+							monthlySubCategoryBudget.deviceKnowledge = 1;
+							// Generate the query to insert this entity into the database
+							queriesList.push(budgetQueries.MonthlySubCategoryBudgetQueries.insertDatabaseObject(monthlySubCategoryBudget));
+						}
 					});
 				}
+
+				// Add query to persist the updated catalog knowledge
+				queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 
 				// Update the budget knowledge object for this budget and save that
 				// DeviceKnowledge is stored on both the clients and the server on a per-budget basis, so we'll start this
@@ -311,8 +317,6 @@ export class BudgetFactory {
 				budgetKnowledge.currentDeviceKnowledge = 1;
 				budgetKnowledge.deviceKnowledgeOfServer = 0;
 				budgetKnowledge.serverKnowledgeOfDevice = 0;
-
-				queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
 
 				// Execute the queries
 				return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
@@ -357,12 +361,10 @@ export class BudgetFactory {
 		var queriesList:Array<IDatabaseQuery> = [];
 		var internalMasterCategoryId:string = KeyGenerator.generateUUID();
 		var immediateIncomeSubCategoryId:string = KeyGenerator.generateUUID();
-		var splitSubCategoryId:string = KeyGenerator.generateUUID();
 		var uncategorizedSubCategoryId:string = KeyGenerator.generateUUID();
 
 		// Save these sub-category ids in the static array so that we can later generate monthly subcategory budget entities for these
 		subCategoryIds.push(immediateIncomeSubCategoryId);
-		subCategoryIds.push(splitSubCategoryId);
 		subCategoryIds.push(uncategorizedSubCategoryId);
 
 		// Create the internal master category entity

@@ -8,7 +8,7 @@ import { IEntitiesCollection } from '../interfaces/state';
 import { ActionNames } from '../constants';
 import { DateWithoutTime, DataFormatter } from '../utilities';
 
-import { OpenBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
+import { OpenBudgetCompletedAction, CloneBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
 
 export class GlobalReducers {
 
@@ -66,6 +66,10 @@ export class GlobalReducers {
 			case ActionNames.GLOBAL_SYNC_DATA_WITH_DATABASE_COMPLETED:
 				GlobalReducers.updateCollection(newValue, action as SyncDataWithDatabaseCompletedAction);
 				break;
+
+			case ActionNames.GLOBAL_CLONE_BUDGET_COMPLETED:
+				GlobalReducers.updateCatalogCollection(newValue, action as CloneBudgetCompletedAction);
+				break;
 		}
 
 		return newValue;
@@ -100,6 +104,12 @@ export class GlobalReducers {
 		newValue.settings = new collections.SettingsArray(action.entities.settings);
 		newValue.subCategories = new collections.SubCategoriesArray(action.entities.subCategories);
 		newValue.transactions = new collections.TransactionsArray(action.entities.transactions);
+	}
+
+	private static updateCatalogCollection(newValue:IEntitiesCollection, action:CloneBudgetCompletedAction):void {
+
+		GlobalReducers.updateCollectionArray(newValue.budgets, action.entities.budgets);
+		GlobalReducers.updateCollectionArray(newValue.globalSettings, action.entities.globalSettings);
 	}
 
 	private static updateCollection(newValue:IEntitiesCollection, action:SyncDataWithDatabaseCompletedAction):void {

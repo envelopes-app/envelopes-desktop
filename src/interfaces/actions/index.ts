@@ -1,6 +1,7 @@
 export { 
 	CreateBudgetCompletedAction, 
 	OpenBudgetCompletedAction, 
+	CloneBudgetCompletedAction, 
 	SyncDataWithDatabaseCompletedAction, 
 	EnsureBudgetEntitiesForMonthCompletedAction 
 } from './GlobalActions';

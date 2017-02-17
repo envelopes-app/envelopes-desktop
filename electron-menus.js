@@ -23,6 +23,21 @@ function initializeModule() {
 				type: 'separator'
 			},
 			{
+				label: 'Clone Budget',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"clone_budget"});
+				}
+			},
+			{
+				label: 'Make a Fresh Start...',
+				click: function(menuItem, browserWindow, event) {
+					browserWindow.webContents.send("menu-message", {menu:"fresh_start"});
+				}
+			},
+			{
+				type: 'separator'
+			},
+			{
 				label: 'Budget Settings...',
 				click: function(menuItem, browserWindow, event) {
 					browserWindow.webContents.send("menu-message", {menu:"show_budget_settings"});

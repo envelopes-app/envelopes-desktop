@@ -44,7 +44,7 @@ export class GlobalSettingQueries {
 	public static findSettingByName(settingName:string):IDatabaseQuery {
 
 		return {
-			name: "userSettings",
+			name: "globalSettings",
 			query: "Select * FROM GlobalSettings WHERE settingName = ?",
 			arguments: [settingName]
 		};
