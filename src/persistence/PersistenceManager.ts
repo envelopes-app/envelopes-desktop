@@ -192,6 +192,23 @@ export class PersistenceManager {
 			});
 	}
 
+	public freshStartBudget(budget:catalogEntities.IBudget):Promise<ISimpleEntitiesCollection> {
+
+		// Create a clone of the passed budget.
+		let budgetFactory = new BudgetFactory();
+		let freshStartBudgetName = `${budget.budgetName} - Fresh Started`;
+		let freshStartBudgetId = null;
+
+		return budgetFactory.freshStartBudget(budget.entityId, freshStartBudgetName, this.catalogKnowledge)
+			.then((budgetId:string)=>{
+
+				freshStartBudgetId = budgetId;
+				// Load updated catalog data from the database so that the newly created budget entity gets loaded
+				var catalogDeviceKnowledge = this.catalogKnowledge.lastDeviceKnowledgeLoadedFromLocalStorage;
+				return this.loadCatalogEntitiesFromDatabase(catalogDeviceKnowledge);
+			});
+	}
+
 	public ensureMonthlyDataExistsForMonth(month:DateWithoutTime, existingEntitiesCollection:IEntitiesCollection):Promise<ISimpleEntitiesCollection> {
 
 		var budgetId = this.activeBudget.entityId;

@@ -11,6 +11,7 @@ import {
 	CreateBudgetCompletedAction, 
 	OpenBudgetCompletedAction, 
 	CloneBudgetCompletedAction,
+	FreshStartBudgetCompletedAction,
 	SyncDataWithDatabaseCompletedAction,
 	EnsureBudgetEntitiesForMonthCompletedAction 
 } from '../interfaces/actions';
@@ -30,6 +31,13 @@ export class GlobalActionsCreator {
 	public static cloneBudgetCompleted(entities:ISimpleEntitiesCollection):CloneBudgetCompletedAction {
 		return {
 			type: ActionNames.GLOBAL_CLONE_BUDGET_COMPLETED,
+			entities: entities
+		};
+	}
+
+	public static freshStartBudgetCompleted(entities:ISimpleEntitiesCollection):FreshStartBudgetCompletedAction {
+		return {
+			type: ActionNames.GLOBAL_FRESH_START_BUDGET_COMPLETED,
 			entities: entities
 		};
 	}
@@ -128,6 +136,24 @@ export class GlobalActionsCreator {
 
 					// dispatch action clone budget completed
 					dispatch(GlobalActionsCreator.cloneBudgetCompleted(updatedEntities));
+				})
+				.catch((error)=>{
+					Logger.error(error.message);
+					Logger.error(error.stack);
+				});
+		};
+	}
+
+	public static freshStartBudget(budget:catalogEntities.IBudget) {
+
+		return function(dispatch:Dispatch<IApplicationState>, getState:()=>IApplicationState) {
+
+			var persistenceManager = PersistenceManager.getInstance();
+			return persistenceManager.freshStartBudget(budget)
+				.then((updatedEntities:ISimpleEntitiesCollection)=>{
+
+					// dispatch action fresh start budget completed
+					dispatch(GlobalActionsCreator.freshStartBudgetCompleted(updatedEntities));
 				})
 				.catch((error)=>{
 					Logger.error(error.message);

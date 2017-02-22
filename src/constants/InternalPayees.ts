@@ -18,3 +18,10 @@ export class InternalPayees {
 		return "";
 	}
 }
+
+export class InternalPayeeNames {
+
+	public static ManualBalanceAdjustment           : string = "Manual Balance Adjustment";
+	public static ReconciliationBalanceAdjustment   : string = "Reconciliation Balance Adjustment";
+	public static StartingBalance                   : string = "Starting Balance";
+}

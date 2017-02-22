@@ -47,6 +47,7 @@ export interface AppProps {
 	createBudget:(budget:catalogEntities.IBudget)=>void;
 	openBudget:(budget:catalogEntities.IBudget)=>void;
 	cloneBudget:(budget:catalogEntities.IBudget)=>void;
+	freshStartBudget:(budget:catalogEntities.IBudget)=>void;
 	updateEntities:(entitiesCollection:ISimpleEntitiesCollection)=>void;
 }
 
@@ -223,7 +224,7 @@ export class PApp extends React.Component<AppProps, AppState> {
 
 	private handleCloneBudgetMessage():void {
 
-		// Get the currently active budget from the state and pass it to the budget dialog
+		// Get the currently active budget from the state and pass it to the clone budget method
 		var budgetId = this.props.applicationState.activeBudgetId;
 		var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
 		this.props.cloneBudget(budget);
@@ -231,6 +232,10 @@ export class PApp extends React.Component<AppProps, AppState> {
 
 	private handleFreshStartMessage():void {
 
+		// Get the currently active budget from the state and pass it to the fresh start budget method
+		var budgetId = this.props.applicationState.activeBudgetId;
+		var budget = this.props.applicationState.entitiesCollection.budgets.getEntityById(budgetId);
+		this.props.freshStartBudget(budget);
 	}
 
 	private handleShowBudgetSettings():void {

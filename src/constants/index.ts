@@ -5,7 +5,7 @@ export { CalculationQueueItemTypes } from './CalculationQueueItemTypes';
 export { CatalogEntityType } from './CatalogEntityType';
 export { ClearedFlag } from './ClearedFlag';
 export { InternalCategories, InternalCategoryNames } from './InternalCategories';
-export { InternalPayees } from './InternalPayees';
+export { InternalPayees, InternalPayeeNames } from './InternalPayees';
 export { RegisterFilterTimeFrame } from './RegisterFilterTimeFrame';
 export { RegisterSortField } from './RegisterSortField';
 export { RegisterSortOrder } from './RegisterSortOrder';

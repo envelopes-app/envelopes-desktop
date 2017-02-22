@@ -2,6 +2,7 @@
 
 import * as _ from 'lodash';
 
+import { EntityFactory } from './EntityFactory';
 import { executeSqlQueries, executeSqlQueriesAndSaveKnowledge } from './QueryExecutionUtility';
 import { CatalogKnowledge, BudgetKnowledge } from './KnowledgeObjects';
 import * as commonInterfaces from '../interfaces/common'; 
@@ -9,7 +10,7 @@ import * as catalogEntities from '../interfaces/catalogEntities';
 import * as budgetEntities from '../interfaces/budgetEntities'; 
 import { IDatabaseQuery, IReferenceDataForEnsuringMonthlyDataExists } from '../interfaces/persistence';
 import { DateWithoutTime, KeyGenerator, Logger } from '../utilities';
-import { InternalCategories, InternalCategoryNames, InternalPayees, SubCategoryType } from '../constants';
+import { InternalCategories, InternalCategoryNames, InternalPayees, InternalPayeeNames, SubCategoryType } from '../constants';
 import * as catalogQueries from './queries/catalogQueries';
 import * as budgetQueries from './queries/budgetQueries';
 import * as miscQueries from './queries/miscQueries';
@@ -111,14 +112,202 @@ export class BudgetFactory {
 			});
 	}
 
+	public freshStartBudget(budgetIdOfOriginalBudget:string,
+						freshStartedBudgetName:string,
+						catalogKnowledge:CatalogKnowledge):Promise<string> {
+
+		Logger.info(`BudgetFactory::Creating fresh started budget ${freshStartedBudgetName}.`);
+		let queriesList:Array<IDatabaseQuery> = [];
+		let budgetKnowledge = new BudgetKnowledge();
+		let budgetId = KeyGenerator.generateUUID();
+		let currentDate = DateWithoutTime.createForToday();
+
+		let startingBalancePayeeId, immediateIncomeSubCategoryId;
+		let subCategoryIds:Array<string> = []; 
+
+		// Let's first load all the entities for this budget
+		queriesList.push(catalogQueries.BudgetQueries.findBudgetById(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.AccountQueries.getAllAccounts(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.MasterCategoryQueries.getAllMasterCategories(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.PayeeLocationQueries.getAllPayeeLocations(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.PayeeQueries.getAllPayees(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.PayeeRenameConditionQueries.getAllPayeeRenameConditions(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.ScheduledTransactionQueries.getAllScheduledTransactions(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.SettingQueries.getAllSettings(budgetIdOfOriginalBudget));
+		queriesList.push(budgetQueries.SubCategoryQueries.getAllSubCategories(budgetIdOfOriginalBudget));
+
+		return executeSqlQueries(queriesList)
+			.then((result:any)=>{
+
+				let existingBudget = result.budgets && result.budgets[0] ? result.budgets[0] : null;
+				if(!existingBudget)
+					Promise.reject("Existing budget for fresh starting was not found.");
+
+				queriesList = [];
+				let entityIdsMap = {};
+
+				// Create the budget entity
+				queriesList.push(catalogQueries.BudgetQueries.insertDatabaseObject({
+					entityId: budgetId,
+					budgetName: freshStartedBudgetName,
+					dataFormat: existingBudget.dataFormat,
+					lastAccessedOn: null,
+					isTombstone: 0,
+					deviceKnowledge: catalogKnowledge.getNextValue()
+				}));
+
+				let cloningFunction = (dbObjects:Array<commonInterfaces.IBudgetEntity>,
+										queryFunc:(dbObject:commonInterfaces.IBudgetEntity, deviceKnowledge:number)=>IDatabaseQuery,
+										additionalProcessingFunction:(dbObject:commonInterfaces.IBudgetEntity)=>void = null)=>{
+
+					if(dbObjects && dbObjects.length > 0) {
+
+						_.forEach(dbObjects, (dbObject:commonInterfaces.IBudgetEntity)=>{
+
+							// Generate a new entityId value for this entity
+							let newEntityId = KeyGenerator.generateUUID();
+							// Put this new entityId against the original entityId of the entity
+							entityIdsMap[dbObject.entityId] = newEntityId;
+							// Update the budgetId and the entityId of this entity
+							dbObject.budgetId = budgetId;
+							dbObject.entityId = newEntityId;
+							dbObject.deviceKnowledge = 1;
+							// If there is some additional processing that needs to be done, then do that here
+							if(additionalProcessingFunction)
+								additionalProcessingFunction(dbObject);
+							// Generate the query to insert this entity into the database
+							queriesList.push(queryFunc(dbObject, 1));
+						});
+					}
+				}
+
+				// Iterate through the setting entities and clone them
+				cloningFunction(result.settings, budgetQueries.SettingQueries.insertDatabaseObject);
+
+				// Iterate through the account entities and clone them
+				cloningFunction(result.accounts, budgetQueries.AccountQueries.insertDatabaseObject);
+
+				// Iterate through the master category entities and clone them
+				cloningFunction(result.masterCategories, budgetQueries.MasterCategoryQueries.insertDatabaseObject);
+
+				// Iterate through the subcategory entities and clone them
+				cloningFunction(result.subCategories, budgetQueries.SubCategoryQueries.insertDatabaseObject, (subCategory:budgetEntities.ISubCategory)=>{
+
+					// Save the entityId of the subcategory in the local array so that later we can iterate over them
+					// to create monthly subcategory budget entities
+					subCategoryIds.push(subCategory.entityId);
+					
+					// Lookup and replace the old ids with the new ids from the map
+					let masterCategoryId = entityIdsMap[subCategory.masterCategoryId];
+					subCategory.masterCategoryId = masterCategoryId; 
+
+					if(subCategory.accountId)
+						subCategory.accountId = entityIdsMap[subCategory.accountId];
+					if(subCategory.isHidden == 1 && subCategory.internalName)
+						subCategory.internalName = entityIdsMap[subCategory.internalName];
+
+					// If this is the immediate income subcategory, save it's id in the local variable
+					if(subCategory.name == InternalCategoryNames.ImmediateIncomeSubCategory)
+						immediateIncomeSubCategoryId = subCategory.entityId;
+				});
+
+				// Iterate through the payee entities and clone them
+				cloningFunction(result.payees, budgetQueries.PayeeQueries.insertDatabaseObject, (payee:budgetEntities.IPayee)=>{
+
+					// Lookup and replace the old account id with the new id from the map
+					if(payee.accountId)
+						payee.accountId = entityIdsMap[payee.accountId];
+
+					// Lookup and replace the old autoFillSubCategoryId with the new id from the map
+					if(payee.autoFillSubCategoryId)
+						payee.autoFillSubCategoryId = entityIdsMap[payee.autoFillSubCategoryId];
+
+					// If this is the starting balance payee, save it's id in the local variable
+					if(payee.name == InternalPayeeNames.StartingBalance)
+						startingBalancePayeeId = payee.entityId;
+				});
+
+				// Iterate through the payee location entities and clone them
+				cloningFunction(result.payeeLocations, budgetQueries.PayeeLocationQueries.insertDatabaseObject, (payeeLocation:budgetEntities.IPayeeLocation)=>{
+
+					// Lookup and replace the old payee id with the new id from the map
+					payeeLocation.payeeId = entityIdsMap[payeeLocation.payeeId];
+				});
+
+				// Iterate through the payee rename conditions entities and clone them
+				cloningFunction(result.payeeRenameConditions, budgetQueries.PayeeRenameConditionQueries.insertDatabaseObject, (payeeRenameCondition:budgetEntities.IPayeeRenameCondition)=>{
+
+					// Lookup and replace the old payee id with the new id from the map
+					payeeRenameCondition.payeeId = entityIdsMap[payeeRenameCondition.payeeId];
+				});
+
+				// Iterate through the scheduled transaction entities and clone them
+				cloningFunction(result.scheduledTransactions, budgetQueries.ScheduledTransactionQueries.insertDatabaseObject, (scheduledTransaction:budgetEntities.IScheduledTransaction)=>{
+
+					// Lookup and replace the old ids with the new ids from the map
+					scheduledTransaction.accountId = entityIdsMap[scheduledTransaction.accountId];
+					scheduledTransaction.payeeId = entityIdsMap[scheduledTransaction.payeeId];
+					scheduledTransaction.subCategoryId = entityIdsMap[scheduledTransaction.subCategoryId];
+					scheduledTransaction.transferAccountId = entityIdsMap[scheduledTransaction.transferAccountId];
+				});
+
+				// Iterate through the account entities and add starting balance transactions for them
+				_.forEach(result.accounts, (account:budgetEntities.IAccount)=>{
+
+					let transaction = EntityFactory.createNewTransaction(budgetId);
+					// Note: We can use the entityId of the account directly instead of looking it up
+					// from the entityIdsMap because when we looped over the accounts above, we updated their
+					// entityId values
+					transaction.accountId = account.entityId;
+					transaction.date = currentDate.getUTCTime();
+					transaction.payeeId = startingBalancePayeeId;
+					transaction.subCategoryId = immediateIncomeSubCategoryId;
+					transaction.amount = account.clearedBalance + account.unclearedBalance;
+					transaction.accepted = 1;
+
+					let dbQuery = budgetQueries.TransactionQueries.insertDatabaseObject(transaction);
+					queriesList.push( dbQuery );
+				});
+
+				// Create the monthly budgets and the monthly subcategory budgets for previous,current and next month.
+				var month = DateWithoutTime.createForCurrentMonth().subtractMonths(1);
+				for(var i:number = 0; i < 2; i++) {
+
+					var query = this.createMonthlyBudgetForMonth(budgetId, month, null, budgetKnowledge);
+					if(query)
+						queriesList.push(query);
+
+					queriesList = queriesList.concat( this.createMonthlySubCategoryBudgetsForMonth(budgetId, month, subCategoryIds, null, budgetKnowledge) );
+					month.addMonths(1);
+				}
+
+				// Add query to persist the updated catalog knowledge
+				queriesList.push( miscQueries.KnowledgeValueQueries.getSaveCatalogKnowledgeValueQuery(catalogKnowledge) );
+
+				// Update the budget knowledge object for this budget and save that
+				// DeviceKnowledge is stored on both the clients and the server on a per-budget basis, so we'll start this
+				// budget's knowledge off at 1.
+				budgetKnowledge.currentDeviceKnowledge = 1;
+				budgetKnowledge.deviceKnowledgeOfServer = 0;
+				budgetKnowledge.serverKnowledgeOfDevice = 0;
+
+				// Execute the queries
+				return executeSqlQueriesAndSaveKnowledge(queriesList, budgetId, budgetKnowledge);
+			})
+			.then((result:any)=>{
+
+				return budgetId;
+			});
+	}
+
 	public cloneBudget(budgetIdOfOriginalBudget:string,
 						clonedBudgetName:string,
 						catalogKnowledge:CatalogKnowledge):Promise<string> {
 
+		Logger.info(`BudgetFactory::Creating cloned budget ${clonedBudgetName}.`);
 		var queriesList:Array<IDatabaseQuery> = [];
 		var budgetKnowledge = new BudgetKnowledge();
 		var budgetId = KeyGenerator.generateUUID();
-		var userBudgetId = KeyGenerator.generateUUID();
 
 		// Let's first load all the entities for this budget
 		queriesList.push(catalogQueries.BudgetQueries.findBudgetById(budgetIdOfOriginalBudget));
@@ -183,6 +372,9 @@ export class BudgetFactory {
 				// Iterate through the setting entities and clone them
 				cloningFunction(result.settings, budgetQueries.SettingQueries.insertDatabaseObject);
 
+				// Iterate through the account entities and clone them
+				cloningFunction(result.accounts, budgetQueries.AccountQueries.insertDatabaseObject);
+
 				// Iterate through the master category entities and clone them
 				cloningFunction(result.masterCategories, budgetQueries.MasterCategoryQueries.insertDatabaseObject);
 
@@ -196,9 +388,6 @@ export class BudgetFactory {
 					if(subCategory.isHidden == 1 && subCategory.internalName)
 						subCategory.internalName = entityIdsMap[subCategory.internalName];
 				});
-
-				// Iterate through the account entities and clone them
-				cloningFunction(result.accounts, budgetQueries.AccountQueries.insertDatabaseObject);
 
 				// Iterate through the payee entities and clone them
 				cloningFunction(result.payees, budgetQueries.PayeeQueries.insertDatabaseObject, (payee:budgetEntities.IPayee)=>{

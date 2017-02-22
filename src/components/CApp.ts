@@ -25,6 +25,9 @@ const mapDispatchToProps = (dispatch:Dispatch<IApplicationState>) => {
 		cloneBudget:(budget:catalogEntities.IBudget) => {
       		dispatch(GlobalActionsCreator.cloneBudget(budget));
 		},
+		freshStartBudget:(budget:catalogEntities.IBudget) => {
+      		dispatch(GlobalActionsCreator.freshStartBudget(budget));
+		},
 		updateEntities:(entitiesCollection:ISimpleEntitiesCollection) => {
       		dispatch(GlobalActionsCreator.syncBudgetDataWithDatabase(entitiesCollection));
 		}

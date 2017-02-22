@@ -14,6 +14,8 @@ export interface CloneBudgetCompletedAction extends Redux.Action {
 	entities:ISimpleEntitiesCollection;
 }
 
+export interface FreshStartBudgetCompletedAction extends CloneBudgetCompletedAction { }
+
 export interface OpenBudgetCompletedAction extends Redux.Action { 
 	// The opened budget 
 	budget:catalogEntities.IBudget;

@@ -8,7 +8,13 @@ import { IEntitiesCollection } from '../interfaces/state';
 import { ActionNames } from '../constants';
 import { DateWithoutTime, DataFormatter } from '../utilities';
 
-import { OpenBudgetCompletedAction, CloneBudgetCompletedAction, SyncDataWithDatabaseCompletedAction, EnsureBudgetEntitiesForMonthCompletedAction} from '../interfaces/actions';
+import { 
+	OpenBudgetCompletedAction, 
+	CloneBudgetCompletedAction, 
+	FreshStartBudgetCompletedAction,
+	SyncDataWithDatabaseCompletedAction, 
+	EnsureBudgetEntitiesForMonthCompletedAction
+} from '../interfaces/actions';
 
 export class GlobalReducers {
 
@@ -69,6 +75,10 @@ export class GlobalReducers {
 
 			case ActionNames.GLOBAL_CLONE_BUDGET_COMPLETED:
 				GlobalReducers.updateCatalogCollection(newValue, action as CloneBudgetCompletedAction);
+				break;
+
+			case ActionNames.GLOBAL_FRESH_START_BUDGET_COMPLETED:
+				GlobalReducers.updateCatalogCollection(newValue, action as FreshStartBudgetCompletedAction);
 				break;
 		}
 

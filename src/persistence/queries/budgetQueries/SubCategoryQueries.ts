@@ -89,7 +89,7 @@ export class SubCategoryQueries {
 		else {
 			return {
 				name: "subCategories",
-				query: "Select * FROM SubCategories WHERE budgetId = ? AND isTombstone = 0",
+				query: `Select * FROM SubCategories WHERE budgetId = ? AND isTombstone = 0 AND masterCategoryId NOT IN (SELECT entityId FROM MasterCategories WHERE isTombstone = 1)`,
 				arguments: [budgetId]
 			};
 		}
